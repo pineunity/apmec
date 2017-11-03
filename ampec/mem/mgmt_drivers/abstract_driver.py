@@ -18,7 +18,7 @@ import abc
 
 import six
 
-from tacker.api import extensions
+from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -26,7 +26,7 @@ class DeviceMGMTAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def get_type(self):
-        """Return one of predefined type of the hosting vnf drivers."""
+        """Return one of predefined type of the hosting mea drivers."""
         pass
 
     @abc.abstractmethod
@@ -38,29 +38,29 @@ class DeviceMGMTAbstractDriver(extensions.PluginInterface):
     def get_description(self):
         pass
 
-    def mgmt_create_pre(self, plugin, context, vnf):
+    def mgmt_create_pre(self, plugin, context, mea):
         pass
 
-    def mgmt_create_post(self, plugin, context, vnf):
+    def mgmt_create_post(self, plugin, context, mea):
         pass
 
-    def mgmt_update_pre(self, plugin, context, vnf):
+    def mgmt_update_pre(self, plugin, context, mea):
         pass
 
-    def mgmt_update_post(self, plugin, context, vnf):
+    def mgmt_update_post(self, plugin, context, mea):
         pass
 
-    def mgmt_delete_pre(self, plugin, context, vnf):
+    def mgmt_delete_pre(self, plugin, context, mea):
         pass
 
-    def mgmt_delete_post(self, plugin, context, vnf):
+    def mgmt_delete_post(self, plugin, context, mea):
         pass
 
-    def mgmt_get_config(self, plugin, context, vnf):
+    def mgmt_get_config(self, plugin, context, mea):
         """Get a dict of objects.
 
         Returns dict of file-like objects which will be passed to hosting
-        vnf.
+        mea.
         It depends on drivers how to use it.
         for nova case, it can be used for meta data, file injection or
         config drive
@@ -73,9 +73,9 @@ class DeviceMGMTAbstractDriver(extensions.PluginInterface):
         return {}
 
     @abc.abstractmethod
-    def mgmt_url(self, plugin, context, vnf):
+    def mgmt_url(self, plugin, context, mea):
         pass
 
     @abc.abstractmethod
-    def mgmt_call(self, plugin, context, vnf, kwargs):
+    def mgmt_call(self, plugin, context, mea, kwargs):
         pass

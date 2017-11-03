@@ -25,10 +25,10 @@ from oslo_serialization import jsonutils
 from oslo_utils import timeutils
 
 
-from tacker.common import driver_manager
-from tacker import context as t_context
-from tacker.db.common_services import common_services_db_plugin
-from tacker.plugins.common import constants
+from apmec.common import driver_manager
+from apmec import context as t_context
+from apmec.db.common_services import common_services_db_plugin
+from apmec.plugins.common import constants
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
@@ -42,25 +42,25 @@ CONF.register_opts(OPTS, group='monitor')
 
 def config_opts():
     return [('monitor', OPTS),
-            ('tacker', VNFMonitor.OPTS),
-            ('tacker', VNFAlarmMonitor.OPTS), ]
+            ('apmec', MEAMonitor.OPTS),
+            ('apmec', MEAAlarmMonitor.OPTS), ]
 
 
-def _log_monitor_events(context, vnf_dict, evt_details):
+def _log_monitor_events(context, mea_dict, evt_details):
     _cos_db_plg = common_services_db_plugin.CommonServicesPluginDb()
-    _cos_db_plg.create_event(context, res_id=vnf_dict['id'],
-                             res_type=constants.RES_TYPE_VNF,
-                             res_state=vnf_dict['status'],
+    _cos_db_plg.create_event(context, res_id=mea_dict['id'],
+                             res_type=constants.RES_TYPE_MEA,
+                             res_state=mea_dict['status'],
                              evt_type=constants.RES_EVT_MONITOR,
                              tstamp=timeutils.utcnow(),
                              details=evt_details)
 
 
-class VNFMonitor(object):
-    """VNF Monitor."""
+class MEAMonitor(object):
+    """MEA Monitor."""
 
     _instance = None
-    _hosting_vnfs = dict()   # vnf_id => dict of parameters
+    _hosting_meas = dict()   # mea_id => dict of parameters
     _status_check_intvl = 0
     _lock = threading.RLock()
 
@@ -68,26 +68,26 @@ class VNFMonitor(object):
         cfg.ListOpt(
             'monitor_driver', default=['ping', 'http_ping'],
             help=_('Monitor driver to communicate with '
-                   'Hosting VNF/logical service '
-                   'instance tacker plugin will use')),
+                   'Hosting MEA/logical service '
+                   'instance apmec plugin will use')),
     ]
-    cfg.CONF.register_opts(OPTS, 'tacker')
+    cfg.CONF.register_opts(OPTS, 'apmec')
 
     def __new__(cls, boot_wait, check_intvl=None):
         if not cls._instance:
-            cls._instance = super(VNFMonitor, cls).__new__(cls)
+            cls._instance = super(MEAMonitor, cls).__new__(cls)
         return cls._instance
 
     def __init__(self, boot_wait, check_intvl=None):
         self._monitor_manager = driver_manager.DriverManager(
-            'tacker.tacker.monitor.drivers',
-            cfg.CONF.tacker.monitor_driver)
+            'apmec.apmec.monitor.drivers',
+            cfg.CONF.apmec.monitor_driver)
 
         self.boot_wait = boot_wait
         if check_intvl is None:
             check_intvl = cfg.CONF.monitor.check_intvl
         self._status_check_intvl = check_intvl
-        LOG.debug('Spawning VNF monitor thread')
+        LOG.debug('Spawning MEA monitor thread')
         threading.Thread(target=self.__run__).start()
 
     def __run__(self):
@@ -95,68 +95,68 @@ class VNFMonitor(object):
             time.sleep(self._status_check_intvl)
 
             with self._lock:
-                for hosting_vnf in self._hosting_vnfs.values():
-                    if hosting_vnf.get('dead', False):
-                        LOG.debug('monitor skips dead vnf %s', hosting_vnf)
+                for hosting_mea in self._hosting_meas.values():
+                    if hosting_mea.get('dead', False):
+                        LOG.debug('monitor skips dead mea %s', hosting_mea)
                         continue
 
-                    self.run_monitor(hosting_vnf)
+                    self.run_monitor(hosting_mea)
 
     @staticmethod
-    def to_hosting_vnf(vnf_dict, action_cb):
+    def to_hosting_mea(mea_dict, action_cb):
         return {
-            'id': vnf_dict['id'],
+            'id': mea_dict['id'],
             'management_ip_addresses': jsonutils.loads(
-                vnf_dict['mgmt_url']),
+                mea_dict['mgmt_url']),
             'action_cb': action_cb,
-            'vnf': vnf_dict,
+            'mea': mea_dict,
             'monitoring_policy': jsonutils.loads(
-                vnf_dict['attributes']['monitoring_policy'])
+                mea_dict['attributes']['monitoring_policy'])
         }
 
-    def add_hosting_vnf(self, new_vnf):
+    def add_hosting_mea(self, new_mea):
         LOG.debug('Adding host %(id)s, Mgmt IP %(ips)s',
-                  {'id': new_vnf['id'],
-                   'ips': new_vnf['management_ip_addresses']})
-        new_vnf['boot_at'] = timeutils.utcnow()
+                  {'id': new_mea['id'],
+                   'ips': new_mea['management_ip_addresses']})
+        new_mea['boot_at'] = timeutils.utcnow()
         with self._lock:
-            self._hosting_vnfs[new_vnf['id']] = new_vnf
+            self._hosting_meas[new_mea['id']] = new_mea
 
-        attrib_dict = new_vnf['vnf']['attributes']
+        attrib_dict = new_mea['mea']['attributes']
         mon_policy_dict = attrib_dict['monitoring_policy']
-        evt_details = (("VNF added for monitoring. "
+        evt_details = (("MEA added for monitoring. "
                         "mon_policy_dict = %s,") % (mon_policy_dict))
-        _log_monitor_events(t_context.get_admin_context(), new_vnf['vnf'],
+        _log_monitor_events(t_context.get_admin_context(), new_mea['mea'],
                             evt_details)
 
-    def delete_hosting_vnf(self, vnf_id):
-        LOG.debug('deleting vnf_id %(vnf_id)s', {'vnf_id': vnf_id})
+    def delete_hosting_mea(self, mea_id):
+        LOG.debug('deleting mea_id %(mea_id)s', {'mea_id': mea_id})
         with self._lock:
-            hosting_vnf = self._hosting_vnfs.pop(vnf_id, None)
-            if hosting_vnf:
-                LOG.debug('deleting vnf_id %(vnf_id)s, Mgmt IP %(ips)s',
-                          {'vnf_id': vnf_id,
-                           'ips': hosting_vnf['management_ip_addresses']})
+            hosting_mea = self._hosting_meas.pop(mea_id, None)
+            if hosting_mea:
+                LOG.debug('deleting mea_id %(mea_id)s, Mgmt IP %(ips)s',
+                          {'mea_id': mea_id,
+                           'ips': hosting_mea['management_ip_addresses']})
 
-    def run_monitor(self, hosting_vnf):
-        mgmt_ips = hosting_vnf['management_ip_addresses']
-        vdupolicies = hosting_vnf['monitoring_policy']['vdus']
+    def run_monitor(self, hosting_mea):
+        mgmt_ips = hosting_mea['management_ip_addresses']
+        vdupolicies = hosting_mea['monitoring_policy']['vdus']
 
-        vnf_delay = hosting_vnf['monitoring_policy'].get(
+        mea_delay = hosting_mea['monitoring_policy'].get(
             'monitoring_delay', self.boot_wait)
 
         for vdu in vdupolicies.keys():
-            if hosting_vnf.get('dead'):
+            if hosting_mea.get('dead'):
                 return
 
             policy = vdupolicies[vdu]
             for driver in policy.keys():
                 params = policy[driver].get('monitoring_params', {})
 
-                vdu_delay = params.get('monitoring_delay', vnf_delay)
+                vdu_delay = params.get('monitoring_delay', mea_delay)
 
                 if not timeutils.is_older_than(
-                    hosting_vnf['boot_at'],
+                    hosting_mea['boot_at'],
                         vdu_delay):
                         continue
 
@@ -165,66 +165,66 @@ class VNFMonitor(object):
                     params['mgmt_ip'] = mgmt_ips[vdu]
 
                 driver_return = self.monitor_call(driver,
-                                                  hosting_vnf['vnf'],
+                                                  hosting_mea['mea'],
                                                   params)
 
                 LOG.debug('driver_return %s', driver_return)
 
                 if driver_return in actions:
                     action = actions[driver_return]
-                    hosting_vnf['action_cb'](action)
+                    hosting_mea['action_cb'](action)
 
-    def mark_dead(self, vnf_id):
-        self._hosting_vnfs[vnf_id]['dead'] = True
+    def mark_dead(self, mea_id):
+        self._hosting_meas[mea_id]['dead'] = True
 
     def _invoke(self, driver, **kwargs):
         method = inspect.stack()[1][3]
         return self._monitor_manager.invoke(
             driver, method, **kwargs)
 
-    def monitor_get_config(self, vnf_dict):
+    def monitor_get_config(self, mea_dict):
         return self._invoke(
-            vnf_dict, monitor=self, vnf=vnf_dict)
+            mea_dict, monitor=self, mea=mea_dict)
 
-    def monitor_url(self, vnf_dict):
+    def monitor_url(self, mea_dict):
         return self._invoke(
-            vnf_dict, monitor=self, vnf=vnf_dict)
+            mea_dict, monitor=self, mea=mea_dict)
 
-    def monitor_call(self, driver, vnf_dict, kwargs):
+    def monitor_call(self, driver, mea_dict, kwargs):
         return self._invoke(driver,
-                            vnf=vnf_dict, kwargs=kwargs)
+                            mea=mea_dict, kwargs=kwargs)
 
 
-class VNFAlarmMonitor(object):
-    """VNF Alarm monitor"""
+class MEAAlarmMonitor(object):
+    """MEA Alarm monitor"""
     OPTS = [
         cfg.ListOpt(
             'alarm_monitor_driver', default=['ceilometer'],
             help=_('Alarm monitoring driver to communicate with '
-                   'Hosting VNF/logical service '
-                   'instance tacker plugin will use')),
+                   'Hosting MEA/logical service '
+                   'instance apmec plugin will use')),
     ]
-    cfg.CONF.register_opts(OPTS, 'tacker')
+    cfg.CONF.register_opts(OPTS, 'apmec')
 
     # get alarm here
     def __init__(self):
         self._alarm_monitor_manager = driver_manager.DriverManager(
-            'tacker.tacker.alarm_monitor.drivers',
-            cfg.CONF.tacker.alarm_monitor_driver)
+            'apmec.apmec.alarm_monitor.drivers',
+            cfg.CONF.apmec.alarm_monitor_driver)
 
-    def update_vnf_with_alarm(self, plugin, context, vnf, policy_dict):
+    def update_mea_with_alarm(self, plugin, context, mea, policy_dict):
         triggers = policy_dict['triggers']
         alarm_url = dict()
         for trigger_name, trigger_dict in triggers.items():
             params = dict()
-            params['vnf_id'] = vnf['id']
+            params['mea_id'] = mea['id']
             params['mon_policy_name'] = trigger_name
             driver = trigger_dict['event_type']['implementation']
             # TODO(Tung Doan) trigger_dict.get('actions') needs to be used
             policy_action = trigger_dict.get('action')
             if len(policy_action) == 0:
                 _log_monitor_events(t_context.get_admin_context(),
-                                    vnf,
+                                    mea,
                                     "Alarm not set: policy action missing")
                 return
             # Other backend policies with the construct (policy, action)
@@ -239,7 +239,7 @@ class VNFAlarmMonitor(object):
             for index, policy_action_name in enumerate(policy_action):
                 filters = {'name': policy_action_name}
                 bkend_policies =\
-                    plugin.get_vnf_policies(context, vnf['id'], filters)
+                    plugin.get_mea_policies(context, mea['id'], filters)
                 if bkend_policies:
                     bkend_policy = bkend_policies[0]
                     if bkend_policy['type'] == constants.POLICY_SCALING:
@@ -254,14 +254,14 @@ class VNFAlarmMonitor(object):
 
             params['mon_policy_action'] = action_name
             alarm_url[trigger_name] =\
-                self.call_alarm_url(driver, vnf, params)
+                self.call_alarm_url(driver, mea, params)
             details = "Alarm URL set successfully: %s" % alarm_url
             _log_monitor_events(t_context.get_admin_context(),
-                                vnf,
+                                mea,
                                 details)
         return alarm_url
 
-    def process_alarm_for_vnf(self, vnf, trigger):
+    def process_alarm_for_mea(self, mea, trigger):
         '''call in plugin'''
         params = trigger['params']
         mon_prop = trigger['trigger']
@@ -270,17 +270,17 @@ class VNFAlarmMonitor(object):
         alarm_dict['status'] = params['data'].get('current')
         trigger_name, trigger_dict = list(mon_prop.items())[0]
         driver = trigger_dict['event_type']['implementation']
-        return self.process_alarm(driver, vnf, alarm_dict)
+        return self.process_alarm(driver, mea, alarm_dict)
 
     def _invoke(self, driver, **kwargs):
         method = inspect.stack()[1][3]
         return self._alarm_monitor_manager.invoke(
             driver, method, **kwargs)
 
-    def call_alarm_url(self, driver, vnf_dict, kwargs):
+    def call_alarm_url(self, driver, mea_dict, kwargs):
         return self._invoke(driver,
-                            vnf=vnf_dict, kwargs=kwargs)
+                            mea=mea_dict, kwargs=kwargs)
 
-    def process_alarm(self, driver, vnf_dict, kwargs):
+    def process_alarm(self, driver, mea_dict, kwargs):
         return self._invoke(driver,
-                            vnf=vnf_dict, kwargs=kwargs)
+                            mea=mea_dict, kwargs=kwargs)

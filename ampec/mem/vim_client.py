@@ -19,10 +19,10 @@ from cryptography import fernet
 from oslo_config import cfg
 from oslo_log import log as logging
 
-from tacker.extensions import nfvo
-from tacker.keymgr import API as KEYMGR_API
-from tacker import manager
-from tacker.plugins.common import constants
+from apmec.extensions import meo
+from apmec.keymgr import API as KEYMGR_API
+from apmec import manager
+from apmec.plugins.common import constants
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
@@ -35,27 +35,27 @@ class VimClient(object):
         Initiate the NFVO plugin, request VIM information for the provided
         VIM id and validate region
         """
-        nfvo_plugin = manager.TackerManager.get_service_plugins().get(
+        meo_plugin = manager.TackerManager.get_service_plugins().get(
             constants.NFVO)
 
         if not vim_id:
             LOG.debug('VIM id not provided. Attempting to find default '
                       'VIM information')
             try:
-                vim_info = nfvo_plugin.get_default_vim(context)
+                vim_info = meo_plugin.get_default_vim(context)
             except Exception as ex:
                 LOG.debug('Fail to get default vim due to %s', ex)
-                raise nfvo.VimDefaultNotDefined()
+                raise meo.VimDefaultNotDefined()
         else:
             try:
-                vim_info = nfvo_plugin.get_vim(context, vim_id,
+                vim_info = meo_plugin.get_vim(context, vim_id,
                                                mask_password=False)
             except Exception:
-                raise nfvo.VimNotFoundException(vim_id=vim_id)
+                raise meo.VimNotFoundException(vim_id=vim_id)
         LOG.debug('VIM info found for vim id %s', vim_id)
         if region_name and not self.region_valid(vim_info['placement_attr']
                                                  ['regions'], region_name):
-            raise nfvo.VimRegionNotFoundException(region_name=region_name)
+            raise meo.VimRegionNotFoundException(region_name=region_name)
 
         vim_auth = self._build_vim_auth(context, vim_info)
         vim_res = {'vim_auth': vim_auth, 'vim_id': vim_info['id'],
@@ -102,7 +102,7 @@ class VimClient(object):
         f = fernet.Fernet(vim_key)
         if not f:
             LOG.warning('Unable to decode VIM auth')
-            raise nfvo.VimNotFoundException(
+            raise meo.VimNotFoundException(
                 'Unable to decode VIM auth key')
         return f.decrypt(cred)
 

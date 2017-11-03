@@ -20,7 +20,7 @@ import six
 class AbstractPolicyAction(object):
     @abc.abstractmethod
     def get_type(self):
-        """Return one of predefined type of the hosting vnf drivers."""
+        """Return one of predefined type of the hosting mea drivers."""
         pass
 
     @abc.abstractmethod
@@ -33,6 +33,6 @@ class AbstractPolicyAction(object):
         pass
 
     @abc.abstractmethod
-    def execute_action(self, plugin, context, vnf_dict, args):
+    def execute_action(self, plugin, context, mea_dict, args):
         """args: policy is enabled to execute with additional arguments."""
         pass

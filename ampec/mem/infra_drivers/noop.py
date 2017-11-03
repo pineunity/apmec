@@ -18,8 +18,8 @@
 from oslo_log import log as logging
 from oslo_utils import uuidutils
 
-from tacker.common import log
-from tacker.vnfm.infra_drivers import abstract_driver
+from apmec.common import log
+from apmec.meam.infra_drivers import abstract_driver
 
 
 LOG = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 
 class DeviceNoop(abstract_driver.DeviceAbstractDriver):
 
-    """Noop driver of hosting vnf for tests."""
+    """Noop driver of hosting mea for tests."""
 
     def __init__(self):
         super(DeviceNoop, self).__init__()
@@ -49,27 +49,27 @@ class DeviceNoop(abstract_driver.DeviceAbstractDriver):
         return instance_id
 
     @log.log
-    def create_wait(self, plugin, context, vnf_dict, vnf_id):
+    def create_wait(self, plugin, context, mea_dict, mea_id):
         pass
 
     @log.log
-    def update(self, plugin, context, vnf_id, vnf_dict, vnf):
-        if vnf_id not in self._instances:
+    def update(self, plugin, context, mea_id, mea_dict, mea):
+        if mea_id not in self._instances:
             LOG.debug('not found')
-            raise ValueError('No instance %s' % vnf_id)
+            raise ValueError('No instance %s' % mea_id)
 
     @log.log
-    def update_wait(self, plugin, context, vnf_id):
+    def update_wait(self, plugin, context, mea_id):
         pass
 
     @log.log
-    def delete(self, plugin, context, vnf_id):
-        self._instances.remove(vnf_id)
+    def delete(self, plugin, context, mea_id):
+        self._instances.remove(mea_id)
 
     @log.log
-    def delete_wait(self, plugin, context, vnf_id):
+    def delete_wait(self, plugin, context, mea_id):
         pass
 
-    def get_resource_info(self, plugin, context, vnf_info, auth_attr,
+    def get_resource_info(self, plugin, context, mea_info, auth_attr,
                           region_name=None):
         return {'noop': {'id': uuidutils.generate_uuid(), 'type': 'noop'}}

@@ -15,9 +15,9 @@
 from oslo_config import cfg
 from oslo_log import log as logging
 
-from tacker.agent.linux import utils as linux_utils
-from tacker.common import log
-from tacker.vnfm.monitor_drivers import abstract_driver
+from apmec.agent.linux import utils as linux_utils
+from apmec.common import log
+from apmec.mem.monitor_drivers import abstract_driver
 
 
 LOG = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ def config_opts():
     return [('monitor_ping', OPTS)]
 
 
-class VNFMonitorPing(abstract_driver.VNFMonitorAbstractDriver):
+class MEAMonitorPing(abstract_driver.MEAMonitorAbstractDriver):
     def get_type(self):
         return 'ping'
 
@@ -44,11 +44,11 @@ class VNFMonitorPing(abstract_driver.VNFMonitorAbstractDriver):
         return 'ping'
 
     def get_description(self):
-        return 'Tacker VNFMonitor Ping Driver'
+        return 'Tacker MEAMonitor Ping Driver'
 
-    def monitor_url(self, plugin, context, vnf):
-        LOG.debug('monitor_url %s', vnf)
-        return vnf.get('monitor_url', '')
+    def monitor_url(self, plugin, context, mea):
+        LOG.debug('monitor_url %s', mea)
+        return mea.get('monitor_url', '')
 
     def _is_pingable(self, mgmt_ip="", count=5, timeout=1, interval='0.2',
                      **kwargs):
@@ -74,7 +74,7 @@ class VNFMonitorPing(abstract_driver.VNFMonitorAbstractDriver):
             return 'failure'
 
     @log.log
-    def monitor_call(self, vnf, kwargs):
+    def monitor_call(self, mea, kwargs):
         if not kwargs['mgmt_ip']:
             return
 

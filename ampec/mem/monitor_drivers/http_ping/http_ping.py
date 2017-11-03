@@ -17,8 +17,8 @@ from oslo_log import log as logging
 import six.moves.urllib.error as urlerr
 import six.moves.urllib.request as urlreq
 
-from tacker.common import log
-from tacker.vnfm.monitor_drivers import abstract_driver
+from apmec.common import log
+from apmec.mem.monitor_drivers import abstract_driver
 
 
 LOG = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ def config_opts():
     return [('monitor_http_ping', OPTS)]
 
 
-class VNFMonitorHTTPPing(abstract_driver.VNFMonitorAbstractDriver):
+class MEAMonitorHTTPPing(abstract_driver.MEAMonitorAbstractDriver):
     def get_type(self):
         return 'http_ping'
 
@@ -45,7 +45,7 @@ class VNFMonitorHTTPPing(abstract_driver.VNFMonitorAbstractDriver):
         return 'HTTP ping'
 
     def get_description(self):
-        return 'Tacker HTTP Ping Driver for VNF'
+        return 'Tacker HTTP Ping Driver for MEA'
 
     def monitor_url(self, plugin, context, vnf):
         LOG.debug('monitor_url %s', vnf)

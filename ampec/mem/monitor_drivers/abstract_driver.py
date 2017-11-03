@@ -17,66 +17,66 @@ import abc
 
 import six
 
-from tacker.api import extensions
+from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)
-class VNFMonitorAbstractDriver(extensions.PluginInterface):
+class MEAMonitorAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def get_type(self):
-        """Return one of predefined type of the hosting vnf drivers."""
+        """Return one of predefined type of the hosting mea drivers."""
         pass
 
     @abc.abstractmethod
     def get_name(self):
-        """Return a symbolic name for the VNF Monitor plugin."""
+        """Return a symbolic name for the MEA Monitor plugin."""
         pass
 
     @abc.abstractmethod
     def get_description(self):
-        """Return description of VNF Monitor plugin."""
+        """Return description of MEA Monitor plugin."""
         pass
 
-    def monitor_get_config(self, plugin, context, vnf):
+    def monitor_get_config(self, plugin, context, mea):
         """Return dict of monitor configuration data.
 
         :param plugin:
         :param context:
-        :param vnf:
+        :param mea:
         :returns: dict
         :returns: dict of monitor configuration data
         """
         return {}
 
     @abc.abstractmethod
-    def monitor_url(self, plugin, context, vnf):
-        """Return the url of vnf to monitor.
+    def monitor_url(self, plugin, context, mea):
+        """Return the url of mea to monitor.
 
         :param plugin:
         :param context:
-        :param vnf:
+        :param mea:
         :returns: string
-        :returns: url of vnf to monitor
+        :returns: url of mea to monitor
         """
         pass
 
     @abc.abstractmethod
-    def monitor_call(self, vnf, kwargs):
+    def monitor_call(self, mea, kwargs):
         """Monitor.
 
-        Return boolean value True if VNF is healthy
+        Return boolean value True if MEA is healthy
         or return an event string like 'failure' or 'calls-capacity-reached'
-        for specific VNF health condition.
+        for specific MEA health condition.
 
-        :param vnf:
+        :param mea:
         :param kwargs:
         :returns: boolean
-        :returns: True if VNF is healthy
+        :returns: True if MEA is healthy
         """
         pass
 
-    def monitor_service_driver(self, plugin, context, vnf,
+    def monitor_service_driver(self, plugin, context, mea,
                                service_instance):
         # use same monitor driver to communicate with service
         return self.get_name()

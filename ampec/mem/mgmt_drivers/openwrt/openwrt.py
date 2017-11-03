@@ -19,11 +19,11 @@ from oslo_log import log as logging
 from oslo_serialization import jsonutils
 import yaml
 
-from tacker.common import cmd_executer
-from tacker.common import exceptions
-from tacker.common import log
-from tacker.vnfm.mgmt_drivers import abstract_driver
-from tacker.vnfm.mgmt_drivers import constants as mgmt_constants
+from apmec.common import cmd_executer
+from apmec.common import exceptions
+from apmec.common import log
+from apmec.mem.mgmt_drivers import abstract_driver
+from apmec.mem.mgmt_drivers import constants as mgmt_constants
 
 
 LOG = logging.getLogger(__name__)
@@ -46,11 +46,11 @@ class DeviceMgmtOpenWRT(abstract_driver.DeviceMGMTAbstractDriver):
         return 'openwrt'
 
     def get_description(self):
-        return 'Tacker VNFMgmt OpenWRT Driver'
+        return 'Tacker MEMgmt OpenWRT Driver'
 
-    def mgmt_url(self, plugin, context, vnf):
-        LOG.debug('mgmt_url %s', vnf)
-        return vnf.get('mgmt_url', '')
+    def mgmt_url(self, plugin, context, mea):
+        LOG.debug('mgmt_url %s', mea)
+        return mea.get('mgmt_url', '')
 
     @log.log
     def _config_service(self, mgmt_ip_address, service, config):
@@ -73,13 +73,13 @@ class DeviceMgmtOpenWRT(abstract_driver.DeviceMGMTAbstractDriver):
             raise exceptions.MgmtDriverException()
 
     @log.log
-    def mgmt_call(self, plugin, context, vnf, kwargs):
+    def mgmt_call(self, plugin, context, mea, kwargs):
         if (kwargs[mgmt_constants.KEY_ACTION] !=
                 mgmt_constants.ACTION_UPDATE_VNF):
             return
-        dev_attrs = vnf.get('attributes', {})
+        dev_attrs = mea.get('attributes', {})
 
-        mgmt_url = jsonutils.loads(vnf.get('mgmt_url', '{}'))
+        mgmt_url = jsonutils.loads(mea.get('mgmt_url', '{}'))
         if not mgmt_url:
             return
 
@@ -97,8 +97,8 @@ class DeviceMgmtOpenWRT(abstract_driver.DeviceMGMTAbstractDriver):
                 mgmt_ip_address = mgmt_url.get(vdu, '')
                 if not mgmt_ip_address:
                     LOG.warning('tried to configure unknown mgmt '
-                                'address on VNF %(vnf)s VDU %(vdu)s',
-                                {'vnf': vnf.get('name'),
+                                'address on VNF %(mea)s VDU %(vdu)s',
+                                {'mea': mea.get('name'),
                                  'vdu': vdu})
                     continue
 

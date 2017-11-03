@@ -29,12 +29,12 @@ from tacker.api.v1 import attributes
 from tacker.common import driver_manager
 from tacker.common import exceptions
 from tacker.common import utils
-from tacker.db.vnfm import vnfm_db
-from tacker.extensions import vnfm
+from tacker.db.mem import mem_db
+from tacker.extensions import mem
 from tacker.plugins.common import constants
-from tacker.vnfm.mgmt_drivers import constants as mgmt_constants
-from tacker.vnfm import monitor
-from tacker.vnfm import vim_client
+from tacker.mem.mgmt_drivers import constants as mgmt_constants
+from tacker.mem import monitor
+from tacker.mem import vim_client
 
 from tacker.tosca import utils as toscautils
 
@@ -43,12 +43,12 @@ CONF = cfg.CONF
 
 
 def config_opts():
-    return [('tacker', VNFMMgmtMixin.OPTS),
-            ('tacker', VNFMPlugin.OPTS_INFRA_DRIVER),
-            ('tacker', VNFMPlugin.OPTS_POLICY_ACTION)]
+    return [('tacker', MEMMgmtMixin.OPTS),
+            ('tacker', MEMPlugin.OPTS_INFRA_DRIVER),
+            ('tacker', MEMPlugin.OPTS_POLICY_ACTION)]
 
 
-class VNFMMgmtMixin(object):
+class MEMMgmtMixin(object):
     OPTS = [
         cfg.ListOpt(
             'mgmt_driver', default=['noop', 'openwrt'],
@@ -61,7 +61,7 @@ class VNFMMgmtMixin(object):
     cfg.CONF.register_opts(OPTS, 'tacker')
 
     def __init__(self):
-        super(VNFMMgmtMixin, self).__init__()
+        super(MEMMgmtMixin, self).__init__()
         self._mgmt_manager = driver_manager.DriverManager(
             'tacker.tacker.mgmt.drivers', cfg.CONF.tacker.mgmt_driver)
 
@@ -108,8 +108,8 @@ class VNFMMgmtMixin(object):
             kwargs=kwargs)
 
 
-class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
-    """VNFMPlugin which supports VNFM framework.
+class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
+    """MEMPlugin which supports MEM framework.
 
     Plugin which supports Tacker framework
     """
@@ -128,20 +128,20 @@ class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
     ]
     cfg.CONF.register_opts(OPTS_POLICY_ACTION, 'tacker')
 
-    supported_extension_aliases = ['vnfm']
+    supported_extension_aliases = ['mem']
 
     def __init__(self):
-        super(VNFMPlugin, self).__init__()
+        super(MEMPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self.boot_wait = cfg.CONF.tacker.boot_wait
         self.vim_client = vim_client.VimClient()
         self._vnf_manager = driver_manager.DriverManager(
-            'tacker.tacker.vnfm.drivers',
+            'tacker.tacker.mem.drivers',
             cfg.CONF.tacker.infra_driver)
         self._vnf_action = driver_manager.DriverManager(
             'tacker.tacker.policy.actions',
             cfg.CONF.tacker.policy_action)
-        self._vnf_monitor = monitor.VNFMonitor(self.boot_wait)
+        self._vnf_monitor = monitor.MEMonitor(self.boot_wait)
         self._vnf_alarm_monitor = monitor.VNFAlarmMonitor()
 
     def spawn_n(self, function, *args, **kwargs):
@@ -167,7 +167,7 @@ class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
         service_types = vnfd_data.get('service_types')
         if not attributes.is_attr_set(service_types):
             LOG.debug('service type must be specified')
-            raise vnfm.ServiceTypesNotSpecified()
+            raise mem.ServiceTypesNotSpecified()
         for service_type in service_types:
             # TODO(yamahata):
             # framework doesn't know what services are valid for now.
@@ -180,7 +180,7 @@ class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
         vnfd['vnfd']['template_source'] = template_source
 
         self._parse_template_input(vnfd)
-        return super(VNFMPlugin, self).create_vnfd(
+        return super(MEMPlugin, self).create_vnfd(
             context, vnfd)
 
     def _parse_template_input(self, vnfd):
@@ -201,7 +201,7 @@ class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
                                   yaml_dict_tpl=inner_vnfd_dict)
         except Exception as e:
             LOG.exception("tosca-parser error: %s", str(e))
-            raise vnfm.ToscaParserFailed(error_msg_details=str(e))
+            raise mem.ToscaParserFailed(error_msg_details=str(e))
 
         if ('description' not in vnfd_dict or
                 vnfd_dict['description'] == ''):
@@ -275,7 +275,7 @@ class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
                 driver_name, 'create_wait', plugin=self, context=context,
                 vnf_dict=vnf_dict, vnf_id=instance_id,
                 auth_attr=auth_attr)
-        except vnfm.VNFCreateWaitFailed as e:
+        except mem.VNFCreateWaitFailed as e:
             LOG.error("VNF Create failed for vnf_id %s", vnf_id)
             create_failed = True
             vnf_dict['status'] = constants.ERROR
@@ -386,7 +386,7 @@ class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
                       '%(infra_driver)s in %(drivers)s',
                       {'infra_driver': infra_driver,
                        'drivers': cfg.CONF.tacker.infra_driver})
-            raise vnfm.InvalidInfraDriver(vim_name=infra_driver)
+            raise mem.InvalidInfraDriver(vim_name=infra_driver)
 
         vnf_dict = self._create_vnf(context, vnf_info, vim_auth, infra_driver)
 
@@ -864,5 +864,5 @@ class VNFMPlugin(vnfm_db.VNFMPluginDb, VNFMMgmtMixin):
             return resources
         # Raise exception when VNF.status != ACTIVE
         else:
-            raise vnfm.VNFInactive(vnf_id=vnf_id,
+            raise mem.VNFInactive(vnf_id=vnf_id,
                                    message=_(' Cannot fetch details'))

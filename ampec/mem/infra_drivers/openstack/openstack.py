@@ -22,13 +22,13 @@ from oslo_log import log as logging
 from oslo_serialization import jsonutils
 import yaml
 
-from tacker.common import log
-from tacker.common import utils
-from tacker.extensions import vnfm
-from tacker.vnfm.infra_drivers import abstract_driver
-from tacker.vnfm.infra_drivers.openstack import heat_client as hc
-from tacker.vnfm.infra_drivers.openstack import translate_template
-from tacker.vnfm.infra_drivers import scale_driver
+from apmec.common import log
+from apmec.common import utils
+from apmec.extensions import mem
+from apmec.mem.infra_drivers import abstract_driver
+from apmec.mem.infra_drivers.openstack import heat_client as hc
+from apmec.mem.infra_drivers.openstack import translate_template
+from apmec.mem.infra_drivers import scale_driver
 
 
 LOG = logging.getLogger(__name__)
@@ -67,8 +67,8 @@ heat_template_version: 2013-05-23
 """
 
 OUTPUT_PREFIX = 'mgmt_ip-'
-ALARMING_POLICY = 'tosca.policies.tacker.Alarming'
-SCALING_POLICY = 'tosca.policies.tacker.Scaling'
+ALARMING_POLICY = 'tosca.policies.apmec.Alarming'
+SCALING_POLICY = 'tosca.policies.apmec.Scaling'
 
 
 def get_scaling_policy_name(action, policy_name):
@@ -77,7 +77,7 @@ def get_scaling_policy_name(action, policy_name):
 
 class OpenStack(abstract_driver.DeviceAbstractDriver,
                 scale_driver.VnfScaleAbstractDriver):
-    """Openstack infra driver for hosting vnfs"""
+    """Openstack infra driver for hosting meas"""
 
     def __init__(self):
         super(OpenStack, self).__init__()
@@ -94,28 +94,28 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
         return 'Openstack infra driver'
 
     @log.log
-    def create(self, plugin, context, vnf, auth_attr):
-        LOG.debug('vnf %s', vnf)
+    def create(self, plugin, context, mea, auth_attr):
+        LOG.debug('mea %s', mea)
 
-        region_name = vnf.get('placement_attr', {}).get('region_name', None)
+        region_name = mea.get('placement_attr', {}).get('region_name', None)
         heatclient = hc.HeatClient(auth_attr, region_name)
 
-        tth = translate_template.TOSCAToHOT(vnf, heatclient)
+        tth = translate_template.TOSCAToHOT(mea, heatclient)
         tth.generate_hot()
-        stack = self._create_stack(heatclient, tth.vnf, tth.fields)
+        stack = self._create_stack(heatclient, tth.mea, tth.fields)
         return stack['stack']['id']
 
     @log.log
-    def _create_stack(self, heatclient, vnf, fields):
+    def _create_stack(self, heatclient, mea, fields):
         if 'stack_name' not in fields:
-            name = __name__ + '_' + self.__class__.__name__ + '-' + vnf['id']
-            if vnf['attributes'].get('failure_count'):
-                name += ('-RESPAWN-%s') % str(vnf['attributes'][
+            name = __name__ + '_' + self.__class__.__name__ + '-' + mea['id']
+            if mea['attributes'].get('failure_count'):
+                name += ('-RESPAWN-%s') % str(mea['attributes'][
                     'failure_count'])
             fields['stack_name'] = name
 
         # service context is ignored
-        LOG.debug('service_context: %s', vnf.get('service_context', []))
+        LOG.debug('service_context: %s', mea.get('service_context', []))
         LOG.debug('fields: %s', fields)
         LOG.debug('template: %s', fields['template'])
         stack = heatclient.create(fields)
@@ -123,24 +123,24 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
         return stack
 
     @log.log
-    def create_wait(self, plugin, context, vnf_dict, vnf_id, auth_attr):
-        region_name = vnf_dict.get('placement_attr', {}).get(
+    def create_wait(self, plugin, context, mea_dict, mea_id, auth_attr):
+        region_name = mea_dict.get('placement_attr', {}).get(
             'region_name', None)
         heatclient = hc.HeatClient(auth_attr, region_name)
 
-        stack = heatclient.get(vnf_id)
+        stack = heatclient.get(mea_id)
         status = stack.stack_status
         stack_retries = self.STACK_RETRIES
         error_reason = None
         while status == 'CREATE_IN_PROGRESS' and stack_retries > 0:
             time.sleep(self.STACK_RETRY_WAIT)
             try:
-                stack = heatclient.get(vnf_id)
+                stack = heatclient.get(mea_id)
             except Exception:
-                LOG.warning("VNF Instance setup may not have "
+                LOG.warning("MEA Instance setup may not have "
                             "happened because Heat API request failed "
                             "while waiting for the stack %(stack)s to be "
-                            "created", {'stack': vnf_id})
+                            "created", {'stack': mea_id})
                 # continue to avoid temporary connection error to target
                 # VIM
             status = stack.stack_status
@@ -155,14 +155,14 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
                            " is not completed").format(
                                wait=(self.STACK_RETRIES *
                                      self.STACK_RETRY_WAIT),
-                               stack=vnf_id)
-            LOG.warning("VNF Creation failed: %(reason)s",
+                               stack=mea_id)
+            LOG.warning("MEA Creation failed: %(reason)s",
                         {'reason': error_reason})
-            raise vnfm.VNFCreateWaitFailed(reason=error_reason)
+            raise mem.MEACreateWaitFailed(reason=error_reason)
 
         elif stack_retries != 0 and status != 'CREATE_COMPLETE':
             error_reason = stack.stack_status_reason
-            raise vnfm.VNFCreateWaitFailed(reason=error_reason)
+            raise mem.MEACreateWaitFailed(reason=error_reason)
 
         def _find_mgmt_ips(outputs):
             LOG.debug('outputs %s', outputs)
@@ -174,29 +174,29 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
             return mgmt_ips
 
         # scaling enabled
-        if vnf_dict['attributes'].get('scaling_group_names'):
+        if mea_dict['attributes'].get('scaling_group_names'):
             group_names = jsonutils.loads(
-                vnf_dict['attributes'].get('scaling_group_names')).values()
+                mea_dict['attributes'].get('scaling_group_names')).values()
             mgmt_ips = self._find_mgmt_ips_from_groups(heatclient,
-                                                       vnf_id,
+                                                       mea_id,
                                                        group_names)
         else:
             mgmt_ips = _find_mgmt_ips(stack.outputs)
 
         if mgmt_ips:
-            vnf_dict['mgmt_url'] = jsonutils.dumps(mgmt_ips)
+            mea_dict['mgmt_url'] = jsonutils.dumps(mgmt_ips)
 
     @log.log
-    def update(self, plugin, context, vnf_id, vnf_dict, vnf,
+    def update(self, plugin, context, mea_id, mea_dict, mea,
                auth_attr):
-        region_name = vnf_dict.get('placement_attr', {}).get(
+        region_name = mea_dict.get('placement_attr', {}).get(
             'region_name', None)
         heatclient = hc.HeatClient(auth_attr, region_name)
-        heatclient.get(vnf_id)
+        heatclient.get(mea_id)
 
         # update config attribute
-        config_yaml = vnf_dict.get('attributes', {}).get('config', '')
-        update_yaml = vnf['vnf'].get('attributes', {}).get('config', '')
+        config_yaml = mea_dict.get('attributes', {}).get('config', '')
+        update_yaml = mea['mea'].get('attributes', {}).get('config', '')
         LOG.debug('yaml orig %(orig)s update %(update)s',
                   {'orig': config_yaml, 'update': update_yaml})
 
@@ -216,60 +216,60 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
         LOG.debug('dict new %(new)s update %(update)s',
                   {'new': config_dict, 'update': update_dict})
         new_yaml = yaml.safe_dump(config_dict)
-        vnf_dict.setdefault('attributes', {})['config'] = new_yaml
+        mea_dict.setdefault('attributes', {})['config'] = new_yaml
 
     @log.log
-    def update_wait(self, plugin, context, vnf_id, auth_attr,
+    def update_wait(self, plugin, context, mea_id, auth_attr,
                     region_name=None):
         # do nothing but checking if the stack exists at the moment
         heatclient = hc.HeatClient(auth_attr, region_name)
-        heatclient.get(vnf_id)
+        heatclient.get(mea_id)
 
     @log.log
-    def delete(self, plugin, context, vnf_id, auth_attr, region_name=None):
+    def delete(self, plugin, context, mea_id, auth_attr, region_name=None):
         heatclient = hc.HeatClient(auth_attr, region_name)
-        heatclient.delete(vnf_id)
+        heatclient.delete(mea_id)
 
     @log.log
-    def delete_wait(self, plugin, context, vnf_id, auth_attr,
+    def delete_wait(self, plugin, context, mea_id, auth_attr,
                     region_name=None):
         heatclient = hc.HeatClient(auth_attr, region_name)
 
-        stack = heatclient.get(vnf_id)
+        stack = heatclient.get(mea_id)
         status = stack.stack_status
         error_reason = None
         stack_retries = self.STACK_RETRIES
         while (status == 'DELETE_IN_PROGRESS' and stack_retries > 0):
             time.sleep(self.STACK_RETRY_WAIT)
             try:
-                stack = heatclient.get(vnf_id)
+                stack = heatclient.get(mea_id)
             except heatException.HTTPNotFound:
                 return
             except Exception:
-                LOG.warning("VNF Instance cleanup may not have "
+                LOG.warning("MEA Instance cleanup may not have "
                             "happened because Heat API request failed "
                             "while waiting for the stack %(stack)s to be "
-                            "deleted", {'stack': vnf_id})
+                            "deleted", {'stack': mea_id})
                 # Just like create wait, ignore the exception to
                 # avoid temporary connection error.
             status = stack.stack_status
             stack_retries = stack_retries - 1
 
         if stack_retries == 0 and status != 'DELETE_COMPLETE':
-            error_reason = _("Resource cleanup for vnf is"
+            error_reason = _("Resource cleanup for mea is"
                              " not completed within {wait} seconds as "
                              "deletion of Stack {stack} is "
-                             "not completed").format(stack=vnf_id,
+                             "not completed").format(stack=mea_id,
                              wait=(self.STACK_RETRIES * self.STACK_RETRY_WAIT))
             LOG.warning(error_reason)
-            raise vnfm.VNFDeleteWaitFailed(reason=error_reason)
+            raise mem.MEADeleteWaitFailed(reason=error_reason)
 
         if stack_retries != 0 and status != 'DELETE_COMPLETE':
-            error_reason = _("vnf {vnf_id} deletion is not completed. "
-                            "{stack_status}").format(vnf_id=vnf_id,
+            error_reason = _("mea {mea_id} deletion is not completed. "
+                            "{stack_status}").format(mea_id=mea_id,
                             stack_status=status)
             LOG.warning(error_reason)
-            raise vnfm.VNFDeleteWaitFailed(reason=error_reason)
+            raise mem.MEADeleteWaitFailed(reason=error_reason)
 
     @classmethod
     def _find_mgmt_ips_from_groups(cls, heat_client, instance_id, group_names):
@@ -336,12 +336,12 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
                     if events[0].resource_status == 'SIGNAL_COMPLETE':
                         break
             except Exception as e:
-                error_reason = _("VNF scaling failed for stack %(stack)s with "
+                error_reason = _("MEA scaling failed for stack %(stack)s with "
                                  "error %(error)s") % {
                                      'stack': policy['instance_id'],
                                      'error': str(e)}
                 LOG.warning(error_reason)
-                raise vnfm.VNFScaleWaitFailed(vnf_id=policy['vnf']['id'],
+                raise mem.MEAScaleWaitFailed(mea_id=policy['mea']['id'],
                                               reason=error_reason)
 
             if stack_retries == 0:
@@ -353,19 +353,19 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
                     LOG.warning(error_reason)
                     break
                 error_reason = _(
-                    "VNF scaling failed to complete within %{wait}s seconds "
+                    "MEA scaling failed to complete within %{wait}s seconds "
                     "while waiting for the stack %(stack)s to be "
                     "scaled.") % {'stack': stack_id,
                                   'wait': self.STACK_RETRIES *
                                   self.STACK_RETRY_WAIT}
                 LOG.warning(error_reason)
-                raise vnfm.VNFScaleWaitFailed(vnf_id=policy['vnf']['id'],
+                raise mem.MEAScaleWaitFailed(mea_id=policy['mea']['id'],
                                               reason=error_reason)
             stack_retries -= 1
 
         def _fill_scaling_group_name():
-            vnf = policy['vnf']
-            scaling_group_names = vnf['attributes']['scaling_group_names']
+            mea = policy['mea']
+            scaling_group_names = mea['attributes']['scaling_group_names']
             policy['group_name'] = jsonutils.loads(
                 scaling_group_names)[policy['name']]
 
@@ -378,9 +378,9 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
         return jsonutils.dumps(mgmt_ips)
 
     @log.log
-    def get_resource_info(self, plugin, context, vnf_info, auth_attr,
+    def get_resource_info(self, plugin, context, mea_info, auth_attr,
                           region_name=None):
-        instance_id = vnf_info['instance_id']
+        instance_id = mea_info['instance_id']
         heatclient = hc.HeatClient(auth_attr, region_name)
         try:
             # nested_depth=2 is used to get VDU resources
@@ -394,4 +394,4 @@ class OpenStack(abstract_driver.DeviceAbstractDriver,
             return details_dict
         # Raise exception when Heat API service is not available
         except Exception:
-            raise vnfm.InfraDriverUnreachable(service="Heat API service")
+            raise mem.InfraDriverUnreachable(service="Heat API service")

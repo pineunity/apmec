@@ -19,6 +19,6 @@ KEY_ACTION = 'action'
 KEY_KWARGS = 'kwargs'
 
 # ACTION type
-ACTION_CREATE_VNF = 'create_vnf'
-ACTION_UPDATE_VNF = 'update_vnf'
-ACTION_DELETE_VNF = 'delete_vnf'
+ACTION_CREATE_MEA = 'create_mea'
+ACTION_UPDATE_MEA = 'update_mea'
+ACTION_DELETE_MEA = 'delete_mea'

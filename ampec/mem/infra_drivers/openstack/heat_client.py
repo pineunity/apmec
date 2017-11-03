@@ -15,8 +15,8 @@ import sys
 from heatclient import exc as heatException
 from oslo_log import log as logging
 
-from tacker.common import clients
-from tacker.extensions import vnfm
+from apmec.common import clients
+from apmec.extensions import mem
 
 LOG = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class HeatClient(object):
             return self.stacks.create(**fields)
         except heatException.HTTPException:
             type_, value, tb = sys.exc_info()
-            raise vnfm.HeatClientException(msg=value)
+            raise mem.HeatClientException(msg=value)
 
     def delete(self, stack_id):
         try:

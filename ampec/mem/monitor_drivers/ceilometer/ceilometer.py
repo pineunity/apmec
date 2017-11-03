@@ -16,8 +16,8 @@ from oslo_config import cfg
 from oslo_log import log as logging
 import random
 import string
-from tacker.common import utils
-from tacker.vnfm.monitor_drivers import abstract_driver
+from apmec.common import utils
+from apmec.meam.monitor_drivers import abstract_driver
 
 
 LOG = logging.getLogger(__name__)
@@ -44,8 +44,8 @@ ALARM_INFO = (
      )
 
 
-class VNFMonitorCeilometer(
-        abstract_driver.VNFMonitorAbstractDriver):
+class MEAMonitorCeilometer(
+        abstract_driver.MEAMonitorAbstractDriver):
     def get_type(self):
         return 'ceilometer'
 
@@ -53,27 +53,27 @@ class VNFMonitorCeilometer(
         return 'ceilometer'
 
     def get_description(self):
-        return 'Tacker VNFMonitor Ceilometer Driver'
+        return 'Tacker MEAMonitor Ceilometer Driver'
 
-    def _create_alarm_url(self, vnf_id, mon_policy_name, mon_policy_action):
-        # alarm_url = 'http://host:port/v1.0/vnfs/vnf-uuid/monitoring-policy
+    def _create_alarm_url(self, mea_id, mon_policy_name, mon_policy_action):
+        # alarm_url = 'http://host:port/v1.0/meas/mea-uuid/monitoring-policy
         # -name/action-name?key=8785'
         host = cfg.CONF.ceilometer.host
         port = cfg.CONF.ceilometer.port
         LOG.info("Tacker in heat listening on %(host)s:%(port)s",
                  {'host': host,
                   'port': port})
-        origin = "http://%(host)s:%(port)s/v1.0/vnfs" % {
+        origin = "http://%(host)s:%(port)s/v1.0/meas" % {
             'host': host, 'port': port}
         access_key = ''.join(
             random.SystemRandom().choice(
                 string.ascii_lowercase + string.digits)
             for _ in range(8))
-        alarm_url = "".join([origin, '/', vnf_id, '/', mon_policy_name, '/',
+        alarm_url = "".join([origin, '/', mea_id, '/', mon_policy_name, '/',
                              mon_policy_action, '/', access_key])
         return alarm_url
 
-    def call_alarm_url(self, vnf, kwargs):
+    def call_alarm_url(self, mea, kwargs):
         '''must be used after call heat-create in plugin'''
         return self._create_alarm_url(**kwargs)
 
@@ -81,12 +81,12 @@ class VNFMonitorCeilometer(
         if alarm_id and status == ALARM:
             return True
 
-    def process_alarm(self, vnf, kwargs):
+    def process_alarm(self, mea, kwargs):
         '''Check alarm state. if available, will be processed'''
         return self._process_alarm(**kwargs)
 
-    def monitor_url(self, plugin, context, vnf):
+    def monitor_url(self, plugin, context, mea):
         pass
 
-    def monitor_call(self, vnf, kwargs):
+    def monitor_call(self, mea, kwargs):
         pass

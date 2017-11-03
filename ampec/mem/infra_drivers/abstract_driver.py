@@ -18,7 +18,7 @@ import abc
 
 import six
 
-from tacker.api import extensions
+from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -26,7 +26,7 @@ class DeviceAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def get_type(self):
-        """Return one of predefined type of the hosting vnf drivers."""
+        """Return one of predefined type of the hosting mea drivers."""
         pass
 
     @abc.abstractmethod
@@ -39,33 +39,33 @@ class DeviceAbstractDriver(extensions.PluginInterface):
         pass
 
     @abc.abstractmethod
-    def create(self, plugin, context, vnf):
-        """Create vnf and return its id."""
+    def create(self, plugin, context, mea):
+        """Create mea and return its id."""
 
     @abc.abstractmethod
-    def create_wait(self, plugin, context, vnf_dict, vnf_id):
-        """wait for vnf creation to complete."""
+    def create_wait(self, plugin, context, mea_dict, mea_id):
+        """wait for mea creation to complete."""
 
     @abc.abstractmethod
-    def update(self, plugin, context, vnf_id, vnf_dict, vnf):
-        # vnf_dict: old vnf_dict to be updated
-        # vnf: update with vnf dict
+    def update(self, plugin, context, mea_id, mea_dict, mea):
+        # mea_dict: old mea_dict to be updated
+        # mea: update with mea dict
         pass
 
     @abc.abstractmethod
-    def update_wait(self, plugin, context, vnf_id):
+    def update_wait(self, plugin, context, mea_id):
         pass
 
     @abc.abstractmethod
-    def delete(self, plugin, context, vnf_id):
+    def delete(self, plugin, context, mea_id):
         pass
 
     @abc.abstractmethod
-    def delete_wait(self, plugin, context, vnf_id):
+    def delete_wait(self, plugin, context, mea_id):
         pass
 
     @abc.abstractmethod
-    def get_resource_info(self, plugin, context, vnf_info, auth_attr,
+    def get_resource_info(self, plugin, context, mea_info, auth_attr,
                           region_name=None):
         '''Fetches optional details of a VNF'''
         pass

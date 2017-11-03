@@ -18,10 +18,10 @@ from toscaparser.utils import yamlparser
 from translator.hot import tosca_translator
 import yaml
 
-from tacker.common import log
-from tacker.extensions import common_services as cs
-from tacker.extensions import vnfm
-from tacker.tosca import utils as toscautils
+from apmec.common import log
+from apmec.extensions import common_services as cs
+from apmec.extensions import mem
+from apmec.tosca import utils as toscautils
 
 
 LOG = logging.getLogger(__name__)
@@ -42,18 +42,18 @@ HEAT_TEMPLATE_BASE = """
 heat_template_version: 2013-05-23
 """
 
-ALARMING_POLICY = 'tosca.policies.tacker.Alarming'
-SCALING_POLICY = 'tosca.policies.tacker.Scaling'
+ALARMING_POLICY = 'tosca.policies.apmec.Alarming'
+SCALING_POLICY = 'tosca.policies.apmec.Scaling'
 
 
 class TOSCAToHOT(object):
     """Convert TOSCA template to HOT template."""
 
-    def __init__(self, vnf, heatclient):
-        self.vnf = vnf
+    def __init__(self, mea, heatclient):
+        self.mea = mea
         self.heatclient = heatclient
         self.attributes = {}
-        self.vnfd_yaml = None
+        self.mead_yaml = None
         self.unsupported_props = {}
         self.heat_template_yaml = None
         self.monitoring_dict = None
@@ -64,30 +64,30 @@ class TOSCAToHOT(object):
     @log.log
     def generate_hot(self):
 
-        self._get_vnfd()
+        self._get_mead()
         dev_attrs = self._update_fields()
 
-        vnfd_dict = yamlparser.simple_ordered_parse(self.vnfd_yaml)
-        LOG.debug('vnfd_dict %s', vnfd_dict)
+        mead_dict = yamlparser.simple_ordered_parse(self.mead_yaml)
+        LOG.debug('mead_dict %s', mead_dict)
         self._get_unsupported_resource_props(self.heatclient)
 
-        self._generate_hot_from_tosca(vnfd_dict, dev_attrs)
+        self._generate_hot_from_tosca(mead_dict, dev_attrs)
         self.fields['template'] = self.heat_template_yaml
-        if not self.vnf['attributes'].get('heat_template'):
-            self.vnf['attributes']['heat_template'] = self.fields['template']
+        if not self.mea['attributes'].get('heat_template'):
+            self.mea['attributes']['heat_template'] = self.fields['template']
         if self.monitoring_dict:
-            self.vnf['attributes']['monitoring_policy'] = jsonutils.dumps(
+            self.mea['attributes']['monitoring_policy'] = jsonutils.dumps(
                 self.monitoring_dict)
 
     @log.log
-    def _get_vnfd(self):
-        self.attributes = self.vnf['vnfd']['attributes'].copy()
-        self.vnfd_yaml = self.attributes.pop('vnfd', None)
-        if self.vnfd_yaml is None:
+    def _get_mead(self):
+        self.attributes = self.mea['mead']['attributes'].copy()
+        self.mead_yaml = self.attributes.pop('mead', None)
+        if self.mead_yaml is None:
             # TODO(kangaraj-manickam) raise user level exception
-            LOG.info("VNFD is not provided, so no vnf is created !!")
+            LOG.info("MEAD is not provided, so no mea is created !!")
             return
-        LOG.debug('vnfd_yaml %s', self.vnfd_yaml)
+        LOG.debug('mead_yaml %s', self.mead_yaml)
 
     @log.log
     def _update_fields(self):
@@ -99,8 +99,8 @@ class TOSCAToHOT(object):
             if key in attributes:
                 fields[key] = jsonutils.loads(attributes.pop(key))
 
-        # overwrite parameters with given dev_attrs for vnf creation
-        dev_attrs = self.vnf['attributes'].copy()
+        # overwrite parameters with given dev_attrs for mea creation
+        dev_attrs = self.mea['attributes'].copy()
         fields.update(dict((key, dev_attrs.pop(key)) for key
                       in ('stack_name', 'template_url', 'template')
                       if key in dev_attrs))
@@ -138,7 +138,7 @@ class TOSCAToHOT(object):
                     self._update_params(value, paramvalues, True)
 
     @log.log
-    def _process_parameterized_input(self, dev_attrs, vnfd_dict):
+    def _process_parameterized_input(self, dev_attrs, mead_dict):
         param_vattrs_yaml = dev_attrs.pop('param_values', None)
         if param_vattrs_yaml:
             try:
@@ -146,10 +146,10 @@ class TOSCAToHOT(object):
                 LOG.debug('param_vattrs_yaml', param_vattrs_dict)
             except Exception as e:
                 LOG.debug("Not Well Formed: %s", str(e))
-                raise vnfm.ParamYAMLNotWellFormed(
+                raise mem.ParamYAMLNotWellFormed(
                     error_msg_details=str(e))
             else:
-                self._update_params(vnfd_dict, param_vattrs_dict)
+                self._update_params(mead_dict, param_vattrs_dict)
         else:
             raise cs.ParamYAMLInputMissing()
 
@@ -164,7 +164,7 @@ class TOSCAToHOT(object):
             if 'addresses' in network_param:
                 ip_list = network_param.pop('addresses', [])
                 if not isinstance(ip_list, list):
-                    raise vnfm.IPAddrInvalidInput()
+                    raise mem.IPAddrInvalidInput()
                 mgmt_flag = network_param.pop('management', False)
                 port, template_dict =\
                     self._handle_port_creation(vdu_id, network_param,
@@ -241,33 +241,33 @@ class TOSCAToHOT(object):
         self.unsupported_props = unsupported_resource_props
 
     @log.log
-    def _generate_hot_from_tosca(self, vnfd_dict, dev_attrs):
+    def _generate_hot_from_tosca(self, mead_dict, dev_attrs):
         parsed_params = {}
         if 'param_values' in dev_attrs and dev_attrs['param_values'] != "":
             try:
                 parsed_params = yaml.safe_load(dev_attrs['param_values'])
             except Exception as e:
                 LOG.debug("Params not Well Formed: %s", str(e))
-                raise vnfm.ParamYAMLNotWellFormed(error_msg_details=str(e))
+                raise mem.ParamYAMLNotWellFormed(error_msg_details=str(e))
 
-        block_storage_details = toscautils.get_block_storage_details(vnfd_dict)
-        toscautils.updateimports(vnfd_dict)
-        if 'substitution_mappings' in str(vnfd_dict):
-            toscautils.check_for_substitution_mappings(vnfd_dict,
+        block_storage_details = toscautils.get_block_storage_details(mead_dict)
+        toscautils.updateimports(mead_dict)
+        if 'substitution_mappings' in str(mead_dict):
+            toscautils.check_for_substitution_mappings(mead_dict,
                 parsed_params)
 
         try:
             tosca = tosca_template.ToscaTemplate(parsed_params=parsed_params,
                                                  a_file=False,
-                                                 yaml_dict_tpl=vnfd_dict)
+                                                 yaml_dict_tpl=mead_dict)
 
         except Exception as e:
             LOG.debug("tosca-parser error: %s", str(e))
-            raise vnfm.ToscaParserFailed(error_msg_details=str(e))
+            raise mem.ToscaParserFailed(error_msg_details=str(e))
 
         metadata = toscautils.get_vdu_metadata(tosca)
         alarm_resources =\
-            toscautils.pre_process_alarm_resources(self.vnf, tosca, metadata)
+            toscautils.pre_process_alarm_resources(self.mea, tosca, metadata)
         monitoring_dict = toscautils.get_vdu_monitoring(tosca)
         mgmt_ports = toscautils.get_mgmt_ports(tosca)
         nested_resource_name = toscautils.get_nested_resources_name(tosca)
@@ -290,21 +290,21 @@ class TOSCAToHOT(object):
 
         except Exception as e:
             LOG.debug("heat-translator error: %s", str(e))
-            raise vnfm.HeatTranslatorFailed(error_msg_details=str(e))
+            raise mem.HeatTranslatorFailed(error_msg_details=str(e))
 
         if self.nested_resources:
             nested_tpl = toscautils.update_nested_scaling_resources(
                 self.nested_resources, mgmt_ports, metadata,
                 res_tpl, self.unsupported_props)
             self.fields['files'] = nested_tpl
-            self.vnf['attributes'][nested_resource_name] =\
+            self.mea['attributes'][nested_resource_name] =\
                 nested_tpl[nested_resource_name]
             mgmt_ports.clear()
 
         if scaling_policy_names:
             scaling_group_dict = toscautils.get_scaling_group_dict(
                 heat_template_yaml, scaling_policy_names)
-            self.vnf['attributes']['scaling_group_names'] =\
+            self.mea['attributes']['scaling_group_names'] =\
                 jsonutils.dumps(scaling_group_dict)
 
         heat_template_yaml = toscautils.post_process_heat_template(
