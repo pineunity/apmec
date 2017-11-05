@@ -25,9 +25,9 @@ from oslo_utils import excutils
 from oslo_utils import importutils
 import six
 
-from tacker._i18n import _
-from tacker.api.v1 import attributes
-from tacker.common import exceptions
+from apmec._i18n import _
+from apmec.api.v1 import attributes
+from apmec.common import exceptions
 
 
 LOG = logging.getLogger(__name__)
@@ -251,12 +251,12 @@ class OwnerCheck(policy.Check):
             # check more general
             # NOTE(ihrachys): if import is put in global, circular
             # import failure occurs
-            manager = importutils.import_module('tacker.manager')
+            manager = importutils.import_module('apmec.manager')
             f = getattr(manager.TackerManager.get_instance().plugin,
                         'get_%s' % parent_res)
-            # f *must* exist, if not found it is better to let tacker
+            # f *must* exist, if not found it is better to let apmec
             # explode. Check will be performed with admin context
-            context = importutils.import_module('tacker.context')
+            context = importutils.import_module('apmec.context')
             try:
                 data = f(context.get_admin_context(),
                          target[parent_foreign_key],
@@ -332,7 +332,7 @@ def check(context, action, target, plugin=None, might_not_exist=False,
           pluralized=None):
     """Verifies that the action is valid on the target in this context.
 
-    :param context: tacker context
+    :param context: apmec context
     :param action: string representing the action to be checked
         this should be colon separated for clarity.
     :param target: dictionary representing the object of the action
@@ -371,7 +371,7 @@ def check(context, action, target, plugin=None, might_not_exist=False,
 def enforce(context, action, target, plugin=None, pluralized=None):
     """Verifies that the action is valid on the target in this context.
 
-    :param context: tacker context
+    :param context: apmec context
     :param action: string representing the action to be checked
         this should be colon separated for clarity.
     :param target: dictionary representing the object of the action

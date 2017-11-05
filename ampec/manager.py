@@ -18,7 +18,7 @@ from oslo_log import log as logging
 import oslo_messaging
 from oslo_service import periodic_task
 
-from tacker.common import utils
+from apmec.common import utils
 
 
 LOG = logging.getLogger(__name__)
@@ -80,7 +80,7 @@ class TackerManager(object):
 
     Tacker's Manager class is responsible for parsing a config file and
     instantiating the correct plugin that concretely implement
-    tacker_plugin_base class.
+    apmec_plugin_base class.
     The caller should make sure that TackerManager is a singleton.
     """
     _instance = None
@@ -139,7 +139,7 @@ class TackerManager(object):
                 continue
             LOG.info("Loading Plugin: %s", provider)
 
-            plugin_inst = self._get_plugin_instance('tacker.service_plugins',
+            plugin_inst = self._get_plugin_instance('apmec.service_plugins',
                                                     provider)
             # only one implementation of svc_type allowed
             # specifying more than one plugin

@@ -1,6 +1,6 @@
-# tacker-rootwrap command filters for the unit test
+# apmec-rootwrap command filters for the unit test
 
-# this file goes with tacker/tests/unit/_test_rootwrap_exec.py.
+# this file goes with apmec/tests/unit/_test_rootwrap_exec.py.
 # See the comments there about how to run that unit tests
 
 # format seems to be

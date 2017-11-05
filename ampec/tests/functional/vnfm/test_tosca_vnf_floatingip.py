@@ -15,12 +15,12 @@
 
 import yaml
 
-from tacker.tests import constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
+from apmec.tests import constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
 
 
-class VnfTestToscaFloatingIp(base.BaseTackerTest):
+class VnfTestToscaFloatingIp(base.BaseApmecTest):
 
     def get_heat_stack_resource(self, stack_id, resource_name):
         resource_types = self.h_client.resources
@@ -70,25 +70,25 @@ class VnfTestToscaFloatingIp(base.BaseTackerTest):
             router_id, {'subnet_id': private_nw_subnet_id})
 
     def test_assign_floatingip_to_vdu(self):
-        vnfd_file = 'sample_tosca_assign_floatingip_to_vdu.yaml'
-        vnf_name = 'Assign Floating IP to VDU'
-        values_str = read_file(vnfd_file)
+        mead_file = 'sample_tosca_assign_floatingip_to_vdu.yaml'
+        mea_name = 'Assign Floating IP to VDU'
+        values_str = read_file(mead_file)
         template = yaml.safe_load(values_str)
-        vnf_arg = {'vnf': {'vnfd_template': template, 'name': vnf_name}}
+        mea_arg = {'mea': {'mead_template': template, 'name': mea_name}}
         self.connect_public_and_private_nw_with_router()
-        vnf_instance = self.client.create_vnf(body=vnf_arg)
-        vnf_id = vnf_instance['vnf']['id']
-        self.addCleanup(self.wait_until_vnf_delete, vnf_id,
-                        constants.VNF_CIRROS_DELETE_TIMEOUT)
-        self.addCleanup(self.client.delete_vnf, vnf_id)
-        self.wait_until_vnf_active(
-            vnf_id,
-            constants.VNF_CIRROS_CREATE_TIMEOUT,
+        mea_instance = self.client.create_mea(body=mea_arg)
+        mea_id = mea_instance['mea']['id']
+        self.addCleanup(self.wait_until_mea_delete, mea_id,
+                        constants.MEA_CIRROS_DELETE_TIMEOUT)
+        self.addCleanup(self.client.delete_mea, mea_id)
+        self.wait_until_mea_active(
+            mea_id,
+            constants.MEA_CIRROS_CREATE_TIMEOUT,
             constants.ACTIVE_SLEEP_TIME)
-        vnf_show_out = self.client.show_vnf(vnf_id)['vnf']
-        self.assertIsNotNone(vnf_show_out['mgmt_url'])
+        mea_show_out = self.client.show_mea(mea_id)['mea']
+        self.assertIsNotNone(mea_show_out['mgmt_url'])
 
-        stack_id = vnf_show_out['instance_id']
+        stack_id = mea_show_out['instance_id']
         fip_res = self.get_heat_stack_resource(stack_id, 'FIP1')
         floating_ip_address = fip_res['attributes']['floating_ip_address']
         self.assertIsNotNone(floating_ip_address)

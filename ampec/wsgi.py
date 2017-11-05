@@ -40,9 +40,9 @@ import six
 import webob.dec
 import webob.exc
 
-from tacker.common import exceptions as exception
-from tacker import context
-from tacker.db import api
+from apmec.common import exceptions as exception
+from apmec import context
+from apmec.db import api
 
 
 socket_opts = [
@@ -370,14 +370,14 @@ class Request(webob.Request):
         """
         if not self.accept_language:
             return None
-        all_languages = i18n.get_available_languages('tacker')
+        all_languages = i18n.get_available_languages('apmec')
         return self.accept_language.best_match(all_languages)
 
     @property
     def context(self):
-        if 'tacker.context' not in self.environ:
-            self.environ['tacker.context'] = context.get_admin_context()
-        return self.environ['tacker.context']
+        if 'apmec.context' not in self.environ:
+            self.environ['apmec.context'] = context.get_admin_context()
+        return self.environ['apmec.context']
 
 
 class ActionDispatcher(object):
@@ -601,7 +601,7 @@ class Application(object):
 
         which would result in a call to the `Wadl` class as
 
-            import tacker.api.fancy_api
+            import apmec.api.fancy_api
             fancy_api.Wadl(latest_version='1.3')
 
         You could of course re-implement the `factory` method in subclasses,

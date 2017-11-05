@@ -17,7 +17,7 @@ import abc
 
 import six
 
-from tacker.api import extensions
+from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)

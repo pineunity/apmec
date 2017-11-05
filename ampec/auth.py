@@ -18,13 +18,13 @@ from oslo_middleware import request_id
 import webob.dec
 import webob.exc
 
-from tacker import context
-from tacker import wsgi
+from apmec import context
+from apmec import wsgi
 
 LOG = logging.getLogger(__name__)
 
 
-class TackerKeystoneContext(wsgi.Middleware):
+class ApmecKeystoneContext(wsgi.Middleware):
     """Make a request context from keystone headers."""
 
     @webob.dec.wsgify
@@ -58,7 +58,7 @@ class TackerKeystoneContext(wsgi.Middleware):
                               request_id=req_id, auth_token=auth_token)
 
         # Inject the context...
-        req.environ['tacker.context'] = ctx
+        req.environ['apmec.context'] = ctx
 
         return self.application
 

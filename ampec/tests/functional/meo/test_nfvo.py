@@ -15,30 +15,30 @@
 import yaml
 
 from oslo_config import cfg
-from tackerclient.common import exceptions
+from apmecclient.common import exceptions
 
-from tacker.plugins.common import constants as evt_constants
-from tacker.tests import constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
+from apmec.plugins.common import constants as evt_constants
+from apmec.tests import constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
 
 import time
 CONF = cfg.CONF
 
 
 class NsdTestCreate(base.BaseTackerTest):
-    def _test_create_tosca_vnfd(self, tosca_vnfd_file, vnfd_name):
-        input_yaml = read_file(tosca_vnfd_file)
+    def _test_create_tosca_mead(self, tosca_mead_file, mead_name):
+        input_yaml = read_file(tosca_mead_file)
         tosca_dict = yaml.safe_load(input_yaml)
-        tosca_arg = {'vnfd': {'name': vnfd_name,
-                              'attributes': {'vnfd': tosca_dict}}}
-        vnfd_instance = self.client.create_vnfd(body=tosca_arg)
-        self.assertEqual(vnfd_instance['vnfd']['name'], vnfd_name)
-        self.assertIsNotNone(vnfd_instance)
+        tosca_arg = {'mead': {'name': mead_name,
+                              'attributes': {'mead': tosca_dict}}}
+        mead_instance = self.client.create_mead(body=tosca_arg)
+        self.assertEqual(mead_instance['mead']['name'], mead_name)
+        self.assertIsNotNone(mead_instance)
 
-        vnfds = self.client.list_vnfds().get('vnfds')
-        self.assertIsNotNone(vnfds, "List of vnfds are Empty after Creation")
-        return vnfd_instance['vnfd']['id']
+        meads = self.client.list_meads().get('meads')
+        self.assertIsNotNone(meads, "List of meads are Empty after Creation")
+        return mead_instance['mead']['id']
 
     def _test_create_nsd(self, tosca_nsd_file, nsd_name):
         input_yaml = read_file(tosca_nsd_file)
@@ -55,20 +55,20 @@ class NsdTestCreate(base.BaseTackerTest):
         except Exception:
                 assert False, "nsd Delete failed"
 
-    def _test_delete_vnfd(self, vnfd_id, timeout=constants.NS_DELETE_TIMEOUT):
+    def _test_delete_mead(self, mead_id, timeout=constants.NS_DELETE_TIMEOUT):
         start_time = int(time.time())
         while True:
             try:
-                self.client.delete_vnfd(vnfd_id)
+                self.client.delete_mead(mead_id)
             except exceptions.Conflict:
                 time.sleep(2)
             except Exception:
-                assert False, "vnfd Delete failed"
+                assert False, "mead Delete failed"
             else:
                 break
             if (int(time.time()) - start_time) > timeout:
-                assert False, "vnfd still in use"
-        self.verify_vnfd_events(vnfd_id, evt_constants.RES_EVT_DELETE,
+                assert False, "mead still in use"
+        self.verify_mead_events(mead_id, evt_constants.RES_EVT_DELETE,
                                 evt_constants.RES_EVT_NA_STATE)
 
     def _wait_until_ns_status(self, ns_id, target_status, timeout,
@@ -103,12 +103,12 @@ class NsdTestCreate(base.BaseTackerTest):
 
     def _test_create_delete_ns(self, nsd_file, ns_name,
                                template_source='onboarded'):
-        vnfd1_id = self._test_create_tosca_vnfd(
-            'test-ns-vnfd1.yaml',
-            'test-ns-vnfd1')
-        vnfd2_id = self._test_create_tosca_vnfd(
-            'test-ns-vnfd2.yaml',
-            'test-ns-vnfd2')
+        mead1_id = self._test_create_tosca_mead(
+            'test-ns-mead1.yaml',
+            'test-ns-mead1')
+        mead2_id = self._test_create_tosca_mead(
+            'test-ns-mead2.yaml',
+            'test-ns-mead2')
 
         if template_source == 'onboarded':
             nsd_id = self._test_create_nsd(
@@ -151,22 +151,22 @@ class NsdTestCreate(base.BaseTackerTest):
         if template_source == 'onboarded':
             self._wait_until_ns_delete(ns_id, constants.NS_DELETE_TIMEOUT)
             self._test_delete_nsd(nsd_id)
-        self._test_delete_vnfd(vnfd1_id)
-        self._test_delete_vnfd(vnfd2_id)
+        self._test_delete_mead(mead1_id)
+        self._test_delete_mead(mead2_id)
 
     def test_create_delete_nsd(self):
-        vnfd1_id = self._test_create_tosca_vnfd(
-            'test-nsd-vnfd1.yaml',
-            'test-nsd-vnfd1')
-        vnfd2_id = self._test_create_tosca_vnfd(
-            'test-nsd-vnfd2.yaml',
-            'test-nsd-vnfd2')
+        mead1_id = self._test_create_tosca_mead(
+            'test-nsd-mead1.yaml',
+            'test-nsd-mead1')
+        mead2_id = self._test_create_tosca_mead(
+            'test-nsd-mead2.yaml',
+            'test-nsd-mead2')
         nsd_id = self._test_create_nsd(
             'test-nsd.yaml',
             'test-nsd')
         self._test_delete_nsd(nsd_id)
-        self._test_delete_vnfd(vnfd1_id)
-        self._test_delete_vnfd(vnfd2_id)
+        self._test_delete_mead(mead1_id)
+        self._test_delete_mead(mead2_id)
 
     def test_create_delete_network_service(self):
         self._test_create_delete_ns('test-ns-nsd.yaml',

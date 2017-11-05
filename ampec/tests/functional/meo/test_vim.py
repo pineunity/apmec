@@ -15,11 +15,11 @@
 import time
 import yaml
 
-from tacker.plugins.common import constants as evt_constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
+from apmec.plugins.common import constants as evt_constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
 
-from tackerclient.common import exceptions
+from apmecclient.common import exceptions
 
 SECRET_PASSWORD = '***'
 

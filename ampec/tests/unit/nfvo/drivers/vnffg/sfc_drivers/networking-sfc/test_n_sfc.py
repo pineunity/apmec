@@ -115,7 +115,7 @@ class TestChainSFC(base.TestCase):
         fake_neutron_client = mock.Mock()
         fake_neutron_client.return_value = self.neutron_client
         self._mock(
-            'tacker.nfvo.drivers.vim.openstack_driver.'
+            'tacker.meo.drivers.vim.openstack_driver.'
             'NeutronClient',
             fake_neutron_client)
 

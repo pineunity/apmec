@@ -17,57 +17,57 @@ import unittest
 
 from oslo_config import cfg
 
-from tacker.plugins.common import constants as evt_constants
-from tacker.tests import constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
+from apmec.plugins.common import constants as evt_constants
+from apmec.tests import constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
 
 
 CONF = cfg.CONF
 
 
-class VnfTestToscaScale(base.BaseTackerTest):
+class MeaTestToscaScale(base.BaseApmecTest):
     @unittest.skip("Skip and wait for releasing Heat Translator")
-    def test_vnf_tosca_scale(self):
+    def test_mea_tosca_scale(self):
         data = dict()
         data['tosca'] = read_file('sample-tosca-scale-all.yaml')
-        vnfd_name = 'test_tosca_vnf_scale_all'
+        mead_name = 'test_tosca_mea_scale_all'
         toscal = data['tosca']
-        tosca_arg = {'vnfd': {'name': vnfd_name,
-                              'attributes': {'vnfd': toscal}}}
+        tosca_arg = {'mead': {'name': mead_name,
+                              'attributes': {'mead': toscal}}}
 
-        # Create vnfd with tosca template
-        vnfd_instance = self.client.create_vnfd(body=tosca_arg)
-        self.assertIsNotNone(vnfd_instance)
+        # Create mead with tosca template
+        mead_instance = self.client.create_mead(body=tosca_arg)
+        self.assertIsNotNone(mead_instance)
 
-        # Create vnf with vnfd_id
-        vnfd_id = vnfd_instance['vnfd']['id']
-        vnf_name = 'test_tosca_vnf_scale_all'
-        vnf_arg = {'vnf': {'vnfd_id': vnfd_id, 'name': vnf_name}}
-        vnf_instance = self.client.create_vnf(body=vnf_arg)
+        # Create mea with mead_id
+        mead_id = mead_instance['mead']['id']
+        mea_name = 'test_tosca_mea_scale_all'
+        mea_arg = {'mea': {'mead_id': mead_id, 'name': mea_name}}
+        mea_instance = self.client.create_mea(body=mea_arg)
 
-        self.validate_vnf_instance(vnfd_instance, vnf_instance)
+        self.validate_mea_instance(mead_instance, mea_instance)
 
-        vnf_id = vnf_instance['vnf']['id']
+        mea_id = mea_instance['mea']['id']
 
         # TODO(kanagaraj-manickam) once load-balancer support is enabled,
         # update this logic to validate the scaling
         def _wait(count):
-            self.wait_until_vnf_active(
-                vnf_id,
-                constants.VNF_CIRROS_CREATE_TIMEOUT,
+            self.wait_until_mea_active(
+                mea_id,
+                constants.MEA_CIRROS_CREATE_TIMEOUT,
                 constants.ACTIVE_SLEEP_TIME)
-            vnf = self.client.show_vnf(vnf_id)['vnf']
+            mea = self.client.show_mea(mea_id)['mea']
 
             # {"VDU1": ["10.0.0.14", "10.0.0.5"]}
-            self.assertEqual(count, len(json.loads(vnf['mgmt_url'])['VDU1']))
+            self.assertEqual(count, len(json.loads(mea['mgmt_url'])['VDU1']))
 
         _wait(2)
-        # Get nested resources when vnf is in active state
-        vnf_details = self.client.list_vnf_resources(vnf_id)['resources']
+        # Get nested resources when mea is in active state
+        mea_details = self.client.list_mea_resources(mea_id)['resources']
         resources_list = list()
-        for vnf_detail in vnf_details:
-            resources_list.append(vnf_detail['name'])
+        for mea_detail in mea_details:
+            resources_list.append(mea_detail['name'])
         self.assertIn('VDU1', resources_list)
 
         self.assertIn('CP1', resources_list)
@@ -75,7 +75,7 @@ class VnfTestToscaScale(base.BaseTackerTest):
 
         def _scale(type, count):
             body = {"scale": {'type': type, 'policy': 'SP1'}}
-            self.client.scale_vnf(vnf_id, body)
+            self.client.scale_mea(mea_id, body)
             _wait(count)
 
         # scale out
@@ -86,22 +86,22 @@ class VnfTestToscaScale(base.BaseTackerTest):
         time.sleep(constants.SCALE_WINDOW_SLEEP_TIME)
         _scale('in', 2)
 
-        # Verifying that as part of SCALE OUT, VNF states  PENDING_SCALE_OUT
-        # and ACTIVE occurs and as part of SCALE IN, VNF states
+        # Verifying that as part of SCALE OUT, MEA states  PENDING_SCALE_OUT
+        # and ACTIVE occurs and as part of SCALE IN, MEA states
         # PENDING_SCALE_IN and ACTIVE occur.
-        self.verify_vnf_crud_events(vnf_id, evt_constants.RES_EVT_SCALE,
+        self.verify_mea_crud_events(mea_id, evt_constants.RES_EVT_SCALE,
                                     evt_constants.ACTIVE, cnt=2)
-        self.verify_vnf_crud_events(vnf_id, evt_constants.RES_EVT_SCALE,
+        self.verify_mea_crud_events(mea_id, evt_constants.RES_EVT_SCALE,
                                     evt_constants.PENDING_SCALE_OUT, cnt=1)
-        self.verify_vnf_crud_events(vnf_id, evt_constants.RES_EVT_SCALE,
+        self.verify_mea_crud_events(mea_id, evt_constants.RES_EVT_SCALE,
                                     evt_constants.PENDING_SCALE_IN, cnt=1)
-        # Delete vnf_instance with vnf_id
+        # Delete mea_instance with mea_id
         try:
-            self.client.delete_vnf(vnf_id)
+            self.client.delete_mea(mea_id)
         except Exception:
-            assert False, "vnf Delete failed"
+            assert False, "mea Delete failed"
 
-        # Delete vnfd_instance
-        self.addCleanup(self.client.delete_vnfd, vnfd_id)
-        self.addCleanup(self.wait_until_vnf_delete, vnf_id,
-                        constants.VNF_CIRROS_DELETE_TIMEOUT)
+        # Delete mead_instance
+        self.addCleanup(self.client.delete_mead, mead_id)
+        self.addCleanup(self.wait_until_mea_delete, mea_id,
+                        constants.MEA_CIRROS_DELETE_TIMEOUT)

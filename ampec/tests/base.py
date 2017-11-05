@@ -96,9 +96,9 @@ class BaseTestCase(testtools.TestCase):
     @staticmethod
     def config_parse(conf=None, args=None):
         """Create the default configurations."""
-        # tacker.conf.test includes rpc_backend which needs to be cleaned up
+        # apmec.conf.test includes rpc_backend which needs to be cleaned up
         if args is None:
-            args = ['--config-file', etcdir('tacker.conf.test')]
+            args = ['--config-file', etcdir('apmec.conf.test')]
         if conf is None:
             config.init(args=args)
         else:

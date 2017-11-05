@@ -26,10 +26,10 @@ from oslo_service import service
 from oslo_utils import excutils
 from oslo_utils import importutils
 
-from tacker.common import config
-from tacker.common import rpc as n_rpc
-from tacker import context
-from tacker import wsgi
+from apmec.common import config
+from apmec.common import rpc as n_rpc
+from apmec import context
+from apmec import wsgi
 
 
 service_opts = [
@@ -87,10 +87,10 @@ class WsgiService(service.ServiceBase):
 
 
 class TackerApiService(WsgiService):
-    """Class for tacker-api service."""
+    """Class for apmec-api service."""
 
     @classmethod
-    def create(cls, app_name='tacker'):
+    def create(cls, app_name='apmec'):
 
         # Setup logging early
         config.setup_logging(cfg.CONF)
@@ -184,7 +184,7 @@ class Service(n_rpc.Service):
 
         :param host: defaults to cfg.CONF.host
         :param binary: defaults to basename of executable
-        :param topic: defaults to bin_name - 'tacker-' part
+        :param topic: defaults to bin_name - 'apmec-' part
         :param manager: defaults to cfg.CONF.<topic>_manager
         :param report_interval: defaults to cfg.CONF.report_interval
         :param periodic_interval: defaults to cfg.CONF.periodic_interval

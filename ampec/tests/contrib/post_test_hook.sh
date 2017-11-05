@@ -16,7 +16,7 @@
 
 set -xe
 
-TACKER_DIR="$BASE/new/tacker"
+TACKER_DIR="$BASE/new/apmec"
 DEVSTACK_DIR="$BASE/new/devstack"
 SCRIPTS_DIR="/usr/os-testr-env/bin/"
 
@@ -53,7 +53,7 @@ function generate_testr_results {
     fi
 }
 
-. ${TACKER_DIR}/tacker/tests/contrib/post_test_hook_lib.sh
+. ${TACKER_DIR}/apmec/tests/contrib/post_test_hook_lib.sh
 
 if [[ "$venv" == dsvm-functional* ]]
 then
@@ -71,7 +71,7 @@ cd $TACKER_DIR
 sudo chown -R $owner:stack $TACKER_DIR
 
 # Run tests
-echo "Running tacker $venv test suite"
+echo "Running apmec $venv test suite"
 set +e
 
 sudo -H -u $owner $sudo_env tox -e $venv

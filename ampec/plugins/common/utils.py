@@ -16,9 +16,9 @@
 Common utilities and helper functions for Openstack Networking Plugins.
 """
 
-from tacker.common import exceptions as n_exc
-from tacker.common import utils
-from tacker.plugins.common import constants
+from apmec.common import exceptions as n_exc
+from apmec.common import utils
+from apmec.plugins.common import constants
 
 
 def verify_vlan_range(vlan_range):

@@ -33,6 +33,7 @@ MEA: Mobile Edge Application
 MEAD: MEA Descriptor
 
 
+Some leftovers: network service (ns, nsd), vnffg
 
 
 Author: Tung Doan

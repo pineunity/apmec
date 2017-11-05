@@ -28,21 +28,21 @@ from neutronclient.v2_0 import client as neutron_client
 from oslo_config import cfg
 from oslo_log import log as logging
 
-from tacker._i18n import _
-from tacker.common import log
-from tacker.extensions import nfvo
-from tacker.keymgr import API as KEYMGR_API
-from tacker.mistral import mistral_client
-from tacker.nfvo.drivers.vim import abstract_vim_driver
-from tacker.nfvo.drivers.vnffg import abstract_vnffg_driver
-from tacker.nfvo.drivers.workflow import workflow_generator
-from tacker.vnfm import keystone
+from apmec._i18n import _
+from apmec.common import log
+from apmec.extensions import meo
+from apmec.keymgr import API as KEYMGR_API
+from apmec.mistral import mistral_client
+from apmec.meo.drivers.vim import abstract_vim_driver
+from apmec.meo.drivers.vnffg import abstract_vnffg_driver
+from apmec.meo.drivers.workflow import workflow_generator
+from apmec.mem import keystone
 
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
 
-OPTS = [cfg.StrOpt('openstack', default='/etc/tacker/vim/fernet_keys',
+OPTS = [cfg.StrOpt('openstack', default='/etc/apmec/vim/fernet_keys',
                    help='Dir.path to store fernet keys.'),
         cfg.BoolOpt('use_barbican', default=False,
                     help=_('Use barbican to encrypt vim password if True, '
@@ -155,7 +155,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
             keystone_version = self.keystone.get_version(auth_url)
         except Exception as e:
             LOG.error('VIM Auth URL invalid')
-            raise nfvo.VimConnectionException(message=str(e))
+            raise meo.VimConnectionException(message=str(e))
         return keystone_version
 
     def _initialize_keystone(self, version, auth):
@@ -187,7 +187,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
             regions_list = self._find_regions(ks_client)
         except (exceptions.Unauthorized, exceptions.BadRequest) as e:
             LOG.warning("Authorization failed for user")
-            raise nfvo.VimUnauthorizedException(message=e.message)
+            raise meo.VimUnauthorizedException(message=e.message)
         vim_obj['placement_attr'] = {'regions': regions_list}
         return vim_obj
 
@@ -282,7 +282,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
                     LOG.debug('VIM auth successfully stored for vim %s',
                               vim_id)
             except IOError:
-                raise nfvo.VimKeyNotFoundException(vim_id=vim_id)
+                raise meo.VimKeyNotFoundException(vim_id=vim_id)
 
     @log.log
     def get_vim_resource_id(self, vim_obj, resource_type, resource_name):
@@ -300,7 +300,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
             filter_attr = res_cmd_map.get('filter_attr')
             vim_res_name = res_cmd_map['vim_res_name']
         else:
-            raise nfvo.VimUnsupportedResourceTypeException(type=resource_type)
+            raise meo.VimUnsupportedResourceTypeException(type=resource_type)
 
         client = self._get_client(vim_obj, client_type)
         cmd_args = {}
@@ -311,14 +311,14 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
             resources = getattr(client, "%s" % cmd)(**cmd_args)[vim_res_name]
             LOG.debug('resources output %s', resources)
         except Exception:
-            raise nfvo.VimGetResourceException(
+            raise meo.VimGetResourceException(
                 cmd=cmd, name=resource_name, type=resource_type)
 
         if len(resources) > 1:
-            raise nfvo.VimGetResourceNameNotUnique(
+            raise meo.VimGetResourceNameNotUnique(
                 cmd=cmd, name=resource_name)
         elif len(resources) < 1:
-            raise nfvo.VimGetResourceNotFoundException(
+            raise meo.VimGetResourceNotFoundException(
                 cmd=cmd, name=resource_name)
 
         return resources[0]['id']
@@ -381,7 +381,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
 
         raise ValueError('empty match field for input flow classifier')
 
-    def create_chain(self, name, fc_id, vnfs, symmetrical=False,
+    def create_chain(self, name, fc_id, meas, symmetrical=False,
                      auth_attr=None):
         if not auth_attr:
             LOG.warning("auth information required for n-sfc driver")
@@ -393,22 +393,22 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
 
         neutronclient_ = NeutronClient(auth_attr)
         port_pair_group_list = []
-        for vnf in vnfs:
+        for mea in meas:
             # TODO(s3wong): once scaling is in place and VNFFG supports it
             # that model needs to be implemented to concatenate all
             # port-pairs into the port-pair-group
             # port pair group could include port-pairs from different VNFs
             port_pair_group = {}
-            port_pair_group['name'] = vnf['name'] + '-port-pair-group'
+            port_pair_group['name'] = mea['name'] + '-port-pair-group'
             port_pair_group['description'] = \
-                'port pair group for %s' % vnf['name']
+                'port pair group for %s' % mea['name']
             port_pair_group['port_pairs'] = []
-            if CONNECTION_POINT not in vnf:
+            if CONNECTION_POINT not in mea:
                 LOG.warning("Chain creation failed due to missing "
                             "connection point info in VNF "
-                            "%(vnfname)s", {'vnfname': vnf['name']})
+                            "%(meaname)s", {'meaname': mea['name']})
                 return None
-            cp_list = vnf[CONNECTION_POINT]
+            cp_list = mea[CONNECTION_POINT]
             num_cps = len(cp_list)
             if num_cps != 1 and num_cps != 2:
                 LOG.warning("Chain creation failed due to wrong number of "
@@ -416,8 +416,8 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
                             "%(cps)d", {'cps': num_cps})
                 return None
             port_pair = {}
-            port_pair['name'] = vnf['name'] + '-connection-points'
-            port_pair['description'] = 'port pair for %s' % vnf['name']
+            port_pair['name'] = mea['name'] + '-connection-points'
+            port_pair['description'] = 'port pair for %s' % mea['name']
             if num_cps == 1:
                 port_pair['ingress'] = cp_list[0]
                 port_pair['egress'] = cp_list[0]
@@ -427,15 +427,15 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
             port_pair_id = neutronclient_.port_pair_create(port_pair)
             if not port_pair_id:
                 LOG.warning("Chain creation failed due to port pair creation"
-                            " failed for vnf %(vnf)s", {'vnf': vnf['name']})
+                            " failed for mea %(mea)s", {'mea': mea['name']})
                 return None
             port_pair_group['port_pairs'].append(port_pair_id)
             port_pair_group_id = \
                 neutronclient_.port_pair_group_create(port_pair_group)
             if not port_pair_group_id:
                 LOG.warning("Chain creation failed due to port pair group "
-                            "creation failed for vnf "
-                            "%(vnf)s", {'vnf': vnf['name']})
+                            "creation failed for mea "
+                            "%(mea)s", {'mea': mea['name']})
                 return None
             port_pair_group_list.append(port_pair_group_id)
 
@@ -447,7 +447,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
         port_chain['flow_classifiers'] = [fc_id]
         return neutronclient_.port_chain_create(port_chain)
 
-    def update_chain(self, chain_id, fc_ids, vnfs,
+    def update_chain(self, chain_id, fc_ids, meas,
                      symmetrical=False, auth_attr=None):
         # TODO(s3wong): chain can be updated either for
         # the list of fc and/or list of port-pair-group
@@ -518,7 +518,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
         wg = workflow_generator.WorkflowGenerator(resource, action)
         wg.task(**kwargs)
         if not wg.get_tasks():
-            raise nfvo.NoTasksException(resource=resource, action=action)
+            raise meo.NoTasksException(resource=resource, action=action)
         definition_yaml = yaml.safe_dump(wg.definition)
         workflow = mistral_client.workflows.create(definition_yaml)
         return {'id': workflow[0].id, 'input': wg.get_input_dict()}

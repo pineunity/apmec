@@ -18,21 +18,21 @@ import abc
 from oslo_log import log as logging
 import six
 
-from tacker.api import extensions
-from tacker.api.v1 import attributes as attr
-from tacker.api.v1 import base
-from tacker.api.v1 import resource_helper
-from tacker.common import exceptions
-from tacker import manager
-from tacker.plugins.common import constants
-from tacker.services import service_base
+from apmec.api import extensions
+from apmec.api.v1 import attributes as attr
+from apmec.api.v1 import base
+from apmec.api.v1 import resource_helper
+from apmec.common import exceptions
+from apmec import manager
+from apmec.plugins.common import constants
+from apmec.services import service_base
 
 
 LOG = logging.getLogger(__name__)
 
 
 class MultipleMGMTDriversSpecified(exceptions.InvalidInput):
-    message = _('More than one MGMT Driver per vnfd is not supported')
+    message = _('More than one MGMT Driver per mead is not supported')
 
 
 class ServiceTypesNotSpecified(exceptions.InvalidInput):
@@ -40,11 +40,11 @@ class ServiceTypesNotSpecified(exceptions.InvalidInput):
 
 
 class VNFDInUse(exceptions.InUse):
-    message = _('VNFD %(vnfd_id)s is still in use')
+    message = _('VNFD %(mead_id)s is still in use')
 
 
 class VNFInUse(exceptions.InUse):
-    message = _('VNF %(vnf_id)s is still in use')
+    message = _('VNF %(mea_id)s is still in use')
 
 
 class InvalidInfraDriver(exceptions.InvalidInput):
@@ -56,7 +56,7 @@ class InvalidServiceType(exceptions.InvalidInput):
 
 
 class VNFCreateFailed(exceptions.TackerException):
-    message = _('creating VNF based on %(vnfd_id)s failed')
+    message = _('creating VNF based on %(mead_id)s failed')
 
 
 class VNFCreateWaitFailed(exceptions.TackerException):
@@ -72,7 +72,7 @@ class VNFDeleteWaitFailed(exceptions.TackerException):
 
 
 class VNFDNotFound(exceptions.NotFound):
-    message = _('VNFD %(vnfd_id)s could not be found')
+    message = _('VNFD %(mead_id)s could not be found')
 
 
 class ServiceTypeNotFound(exceptions.NotFound):
@@ -80,7 +80,7 @@ class ServiceTypeNotFound(exceptions.NotFound):
 
 
 class VNFNotFound(exceptions.NotFound):
-    message = _('VNF %(vnf_id)s could not be found')
+    message = _('VNF %(mea_id)s could not be found')
 
 
 class ParamYAMLNotWellFormed(exceptions.InvalidInput):
@@ -134,7 +134,7 @@ class InfraDriverUnreachable(exceptions.ServiceUnavailable):
 
 
 class VNFInactive(exceptions.InvalidInput):
-    message = _("VNF %(vnf_id)s is not in Active state %(message)s")
+    message = _("VNF %(mea_id)s is not in Active state %(message)s")
 
 
 class MetadataNotMatched(exceptions.InvalidInput):
@@ -182,7 +182,7 @@ attr.validators['type:service_type_list'] = _validate_service_type_list
 
 RESOURCE_ATTRIBUTE_MAP = {
 
-    'vnfds': {
+    'meads': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -244,7 +244,7 @@ RESOURCE_ATTRIBUTE_MAP = {
         },
     },
 
-    'vnfs': {
+    'meas': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -259,7 +259,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'required_by_policy': True,
             'is_visible': True
         },
-        'vnfd_id': {
+        'mead_id': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:uuid': None},
@@ -332,7 +332,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'allow_put': False,
             'is_visible': True,
         },
-        'vnfd_template': {
+        'mead_template': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:dict_or_none': None},
@@ -346,8 +346,8 @@ RESOURCE_ATTRIBUTE_MAP = {
 SUB_RESOURCE_ATTRIBUTE_MAP = {
     'actions': {
         'parent': {
-            'collection_name': 'vnfs',
-            'member_name': 'vnf'
+            'collection_name': 'meas',
+            'member_name': 'mea'
         },
         'members': {
             'scale': {
@@ -377,8 +377,8 @@ SUB_RESOURCE_ATTRIBUTE_MAP = {
     },
     'triggers': {
         'parent': {
-            'collection_name': 'vnfs',
-            'member_name': 'vnf'
+            'collection_name': 'meas',
+            'member_name': 'mea'
         },
         'members': {
             'trigger': {
@@ -414,8 +414,8 @@ SUB_RESOURCE_ATTRIBUTE_MAP = {
     },
     'resources': {
         'parent': {
-            'collection_name': 'vnfs',
-            'member_name': 'vnf'
+            'collection_name': 'meas',
+            'member_name': 'mea'
         },
         'members': {
             'resource': {
@@ -521,52 +521,52 @@ class VNFMPluginBase(service_base.NFVPluginBase):
         return 'Tacker VNF Manager plugin'
 
     @abc.abstractmethod
-    def create_vnfd(self, context, vnfd):
+    def create_mead(self, context, mead):
         pass
 
     @abc.abstractmethod
-    def delete_vnfd(self, context, vnfd_id):
+    def delete_mead(self, context, mead_id):
         pass
 
     @abc.abstractmethod
-    def get_vnfd(self, context, vnfd_id, fields=None):
+    def get_mead(self, context, mead_id, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vnfds(self, context, filters=None, fields=None):
+    def get_meads(self, context, filters=None, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vnfs(self, context, filters=None, fields=None):
+    def get_meas(self, context, filters=None, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vnf(self, context, vnf_id, fields=None):
+    def get_mea(self, context, mea_id, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vnf_resources(self, context, vnf_id, fields=None, filters=None):
+    def get_mea_resources(self, context, mea_id, fields=None, filters=None):
         pass
 
     @abc.abstractmethod
-    def create_vnf(self, context, vnf):
+    def create_mea(self, context, mea):
         pass
 
     @abc.abstractmethod
-    def update_vnf(
-            self, context, vnf_id, vnf):
+    def update_mea(
+            self, context, mea_id, mea):
         pass
 
     @abc.abstractmethod
-    def delete_vnf(self, context, vnf_id):
+    def delete_mea(self, context, mea_id):
         pass
 
     @abc.abstractmethod
-    def create_vnf_scale(
-            self, context, vnf_id, scale):
+    def create_mea_scale(
+            self, context, mea_id, scale):
         pass
 
     @abc.abstractmethod
-    def create_vnf_trigger(
-            self, context, vnf_id, trigger):
+    def create_mea_trigger(
+            self, context, mea_id, trigger):
         pass

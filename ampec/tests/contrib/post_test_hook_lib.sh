@@ -42,7 +42,7 @@ function add_key {
 
 # Adding nova security groups (#1591372).
 function _create_secgrps {
-    openstack security group create --project nfv --description "tacker functest security group" test_secgrp
+    openstack security group create --project nfv --description "apmec functest security group" test_secgrp
     openstack security group rule create --project nfv --ingress --protocol icmp test_secgrp
     openstack security group rule create --project nfv --ingress --protocol tcp --dst-port 22 test_secgrp
 }

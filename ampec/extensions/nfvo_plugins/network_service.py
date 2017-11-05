@@ -13,8 +13,8 @@
 import abc
 import six
 
-from tacker.common import exceptions
-from tacker.services import service_base
+from apmec.common import exceptions
+from apmec.services import service_base
 
 
 @six.add_metaclass(abc.ABCMeta)

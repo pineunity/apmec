@@ -15,50 +15,50 @@ from oslo_config import cfg
 from toscaparser import tosca_template
 import yaml
 
-from tacker.common import utils
-from tacker.plugins.common import constants as evt_constants
-from tacker.tests import constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
-from tacker.tosca import utils as toscautils
+from apmec.common import utils
+from apmec.plugins.common import constants as evt_constants
+from apmec.tests import constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
+from apmec.tosca import utils as toscautils
 
 CONF = cfg.CONF
 
 
 class VnfTestToscaMultipleVDU(base.BaseTackerTest):
-    def test_create_delete_tosca_vnf_with_multiple_vdus(self):
-        input_yaml = read_file('sample-tosca-vnfd-multi-vdu.yaml')
+    def test_create_delete_tosca_mea_with_multiple_vdus(self):
+        input_yaml = read_file('sample-tosca-mead-multi-vdu.yaml')
         tosca_dict = yaml.safe_load(input_yaml)
-        vnfd_name = 'sample-tosca-vnfd-multi-vdu'
-        tosca_arg = {'vnfd': {'name': vnfd_name,
-                              'attributes': {'vnfd': tosca_dict}}}
+        mead_name = 'sample-tosca-mead-multi-vdu'
+        tosca_arg = {'mead': {'name': mead_name,
+                              'attributes': {'mead': tosca_dict}}}
 
-        # Create vnfd with tosca template
-        vnfd_instance = self.client.create_vnfd(body=tosca_arg)
-        self.assertIsNotNone(vnfd_instance)
+        # Create mead with tosca template
+        mead_instance = self.client.create_mead(body=tosca_arg)
+        self.assertIsNotNone(mead_instance)
 
-        # Create vnf with vnfd_id
-        vnfd_id = vnfd_instance['vnfd']['id']
-        vnf_arg = {'vnf': {'vnfd_id': vnfd_id, 'name':
-                           "test_tosca_vnf_with_multiple_vdus"}}
-        vnf_instance = self.client.create_vnf(body=vnf_arg)
+        # Create mea with mead_id
+        mead_id = mead_instance['mead']['id']
+        mea_arg = {'mea': {'mead_id': mead_id, 'name':
+                           "test_tosca_mea_with_multiple_vdus"}}
+        mea_instance = self.client.create_mea(body=mea_arg)
 
-        vnf_id = vnf_instance['vnf']['id']
-        self.wait_until_vnf_active(vnf_id,
-                                   constants.VNF_CIRROS_CREATE_TIMEOUT,
+        mea_id = mea_instance['mea']['id']
+        self.wait_until_mea_active(mea_id,
+                                   constants.MEA_CIRROS_CREATE_TIMEOUT,
                                    constants.ACTIVE_SLEEP_TIME)
         self.assertEqual('ACTIVE',
-                         self.client.show_vnf(vnf_id)['vnf']['status'])
-        self.validate_vnf_instance(vnfd_instance, vnf_instance)
+                         self.client.show_mea(mea_id)['mea']['status'])
+        self.validate_mea_instance(mead_instance, mea_instance)
 
-        self.verify_vnf_crud_events(
-            vnf_id, evt_constants.RES_EVT_CREATE,
+        self.verify_mea_crud_events(
+            mea_id, evt_constants.RES_EVT_CREATE,
             evt_constants.PENDING_CREATE, cnt=2)
-        self.verify_vnf_crud_events(
-            vnf_id, evt_constants.RES_EVT_CREATE, evt_constants.ACTIVE)
+        self.verify_mea_crud_events(
+            mea_id, evt_constants.RES_EVT_CREATE, evt_constants.ACTIVE)
 
         # Validate mgmt_url with input yaml file
-        mgmt_url = self.client.show_vnf(vnf_id)['vnf']['mgmt_url']
+        mgmt_url = self.client.show_mea(mea_id)['mea']['mgmt_url']
         self.assertIsNotNone(mgmt_url)
         mgmt_dict = yaml.safe_load(str(mgmt_url))
 
@@ -75,16 +75,16 @@ class VnfTestToscaMultipleVDU(base.BaseTackerTest):
             self.assertIsNotNone(mgmt_dict[vdu.name])
             self.assertEqual(True, utils.is_valid_ipv4(mgmt_dict[vdu.name]))
 
-        # Delete vnf_instance with vnf_id
+        # Delete mea_instance with mea_id
         try:
-            self.client.delete_vnf(vnf_id)
+            self.client.delete_mea(mea_id)
         except Exception:
-            assert False, "vnf Delete of test_vnf_with_multiple_vdus failed"
+            assert False, "mea Delete of test_mea_with_multiple_vdus failed"
 
-        self.wait_until_vnf_delete(vnf_id,
-                                   constants.VNF_CIRROS_DELETE_TIMEOUT)
-        self.verify_vnf_crud_events(vnf_id, evt_constants.RES_EVT_DELETE,
+        self.wait_until_mea_delete(mea_id,
+                                   constants.MEA_CIRROS_DELETE_TIMEOUT)
+        self.verify_mea_crud_events(mea_id, evt_constants.RES_EVT_DELETE,
                                     evt_constants.PENDING_DELETE, cnt=2)
 
-        # Delete vnfd_instance
-        self.addCleanup(self.client.delete_vnfd, vnfd_id)
+        # Delete mead_instance
+        self.addCleanup(self.client.delete_mead, mead_id)

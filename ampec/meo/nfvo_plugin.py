@@ -66,7 +66,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
     backend based on configured VIM types. Plugin also interacts with VNFM
     extension for providing the specified VIM information
     """
-    supported_extension_aliases = ['nfvo']
+    supported_extension_aliases = ['meo']
 
     OPTS = [
         cfg.ListOpt(
@@ -82,7 +82,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         super(NfvoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self._vim_drivers = driver_manager.DriverManager(
-            'tacker.nfvo.vim.drivers',
+            'tacker.meo.vim.drivers',
             cfg.CONF.nfvo_vim.vim_drivers)
         self.vim_client = vim_client.VimClient()
 

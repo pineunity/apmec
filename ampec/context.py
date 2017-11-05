@@ -21,8 +21,8 @@ import datetime
 from oslo_context import context as oslo_context
 from oslo_db.sqlalchemy import enginefacade
 
-from tacker.db import api as db_api
-from tacker import policy
+from apmec.db import api as db_api
+from apmec import policy
 
 
 class ContextBase(oslo_context.RequestContext):

@@ -17,12 +17,12 @@ import abc
 
 import six
 
-from tacker.api import extensions
-from tacker.api.v1 import attributes as attr
-from tacker.api.v1 import resource_helper
-from tacker.common import exceptions
-from tacker.plugins.common import constants
-from tacker.services import service_base
+from apmec.api import extensions
+from apmec.api.v1 import attributes as attr
+from apmec.api.v1 import resource_helper
+from apmec.common import exceptions
+from apmec.plugins.common import constants
+from apmec.services import service_base
 
 
 class EventCreationFailureException(exceptions.TackerException):

@@ -12,56 +12,56 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from tacker.plugins.common import constants as evt_constants
-from tacker.tests import constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
+from apmec.plugins.common import constants as evt_constants
+from apmec.tests import constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
 
 
-class VnfTestPingMonitor(base.BaseTackerTest):
+class VnfTestPingMonitor(base.BaseApmecTest):
 
-    def _test_vnf_with_monitoring(self, vnfd_file, vnf_name):
+    def _test_mea_with_monitoring(self, mead_file, mea_name):
         data = dict()
-        data['tosca'] = read_file(vnfd_file)
+        data['tosca'] = read_file(mead_file)
         toscal = data['tosca']
-        tosca_arg = {'vnfd': {'name': vnf_name,
-                              'attributes': {'vnfd': toscal}}}
+        tosca_arg = {'mead': {'name': mea_name,
+                              'attributes': {'mead': toscal}}}
 
-        # Create vnfd with tosca template
-        vnfd_instance = self.client.create_vnfd(body=tosca_arg)
-        self.assertIsNotNone(vnfd_instance)
+        # Create mead with tosca template
+        mead_instance = self.client.create_mead(body=tosca_arg)
+        self.assertIsNotNone(mead_instance)
 
-        # Create vnf with vnfd_id
-        vnfd_id = vnfd_instance['vnfd']['id']
-        vnf_arg = {'vnf': {'vnfd_id': vnfd_id, 'name': vnf_name}}
-        vnf_instance = self.client.create_vnf(body=vnf_arg)
+        # Create mea with mead_id
+        mead_id = mead_instance['mead']['id']
+        mea_arg = {'mea': {'mead_id': mead_id, 'name': mea_name}}
+        mea_instance = self.client.create_mea(body=mea_arg)
 
-        # Verify vnf goes from ACTIVE->DEAD->ACTIVE states
-        self.verify_vnf_restart(vnfd_instance, vnf_instance)
+        # Verify mea goes from ACTIVE->DEAD->ACTIVE states
+        self.verify_mea_restart(mead_instance, mea_instance)
 
-        # Delete vnf_instance with vnf_id
-        vnf_id = vnf_instance['vnf']['id']
+        # Delete mea_instance with mea_id
+        mea_id = mea_instance['mea']['id']
         try:
-            self.client.delete_vnf(vnf_id)
+            self.client.delete_mea(mea_id)
         except Exception:
-            assert False, ("Failed to delete vnf %s after the monitor test" %
-                           vnf_id)
+            assert False, ("Failed to delete mea %s after the monitor test" %
+                           mea_id)
 
-        # Verify VNF monitor events captured for states, ACTIVE and DEAD
-        vnf_state_list = [evt_constants.ACTIVE, evt_constants.DEAD]
-        self.verify_vnf_monitor_events(vnf_id, vnf_state_list)
+        # Verify MEA monitor events captured for states, ACTIVE and DEAD
+        mea_state_list = [evt_constants.ACTIVE, evt_constants.DEAD]
+        self.verify_mea_monitor_events(mea_id, mea_state_list)
 
-        # Delete vnfd_instance
-        self.addCleanup(self.client.delete_vnfd, vnfd_id)
-        self.addCleanup(self.wait_until_vnf_delete, vnf_id,
-            constants.VNF_CIRROS_DELETE_TIMEOUT)
+        # Delete mead_instance
+        self.addCleanup(self.client.delete_mead, mead_id)
+        self.addCleanup(self.wait_until_mea_delete, mea_id,
+            constants.MEA_CIRROS_DELETE_TIMEOUT)
 
-    def test_create_delete_vnf_monitoring_tosca_template(self):
-        self._test_vnf_with_monitoring(
-            'sample-tosca-vnfd-monitor.yaml',
-            'ping monitor vnf with tosca template')
+    def test_create_delete_mea_monitoring_tosca_template(self):
+        self._test_mea_with_monitoring(
+            'sample-tosca-mead-monitor.yaml',
+            'ping monitor mea with tosca template')
 
-    def test_create_delete_vnf_multi_vdu_monitoring_tosca_template(self):
-        self._test_vnf_with_monitoring(
-            'sample-tosca-vnfd-multi-vdu-monitoring.yaml',
-            'ping monitor multi vdu vnf with tosca template')
+    def test_create_delete_mea_multi_vdu_monitoring_tosca_template(self):
+        self._test_mea_with_monitoring(
+            'sample-tosca-mead-multi-vdu-monitoring.yaml',
+            'ping monitor multi vdu mea with tosca template')

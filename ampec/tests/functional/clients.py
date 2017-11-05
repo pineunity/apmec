@@ -11,7 +11,7 @@
 # under the License.
 
 from heatclient import client as heatclient
-from tacker.tests.functional import keystone
+from apmec.tests.functional import keystone
 
 
 class OpenstackClients(object):

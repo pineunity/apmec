@@ -16,15 +16,15 @@
 # service type constants:
 CORE = "CORE"
 DUMMY = "DUMMY"
-VNFM = "VNFM"
-NFVO = "NFVO"
+MEM = "MEM"
+MEO = "MEO"
 COMMONSERVICES = "COMMONSERVICES"
 
 COMMON_PREFIXES = {
     CORE: "",
     DUMMY: "/dummy_svc",
-    VNFM: "",
-    NFVO: "",
+    MEM: "",
+    MEO: "",
     COMMONSERVICES: ""
 }
 
@@ -48,17 +48,17 @@ ACTIVE_PENDING_STATUSES = (
     PENDING_UPDATE
 )
 
-POLICY_SCALING = 'tosca.policies.tacker.Scaling'
+POLICY_SCALING = 'tosca.policies.apmec.Scaling'
 POLICY_SCALING_ACTIONS = (ACTION_SCALE_OUT,
                           ACTION_SCALE_IN) = ('out', 'in')
 POLICY_ACTIONS = {POLICY_SCALING: POLICY_SCALING_ACTIONS}
-POLICY_ALARMING = 'tosca.policies.tacker.Alarming'
+POLICY_ALARMING = 'tosca.policies.apmec.Alarming'
 DEFAULT_ALARM_ACTIONS = ['respawn', 'log', 'log_and_kill', 'notify']
 
-RES_TYPE_VNFD = "vnfd"
+RES_TYPE_MEAD = "mead"
 RES_TYPE_NSD = "nsd"
 RES_TYPE_NS = "ns"
-RES_TYPE_VNF = "vnf"
+RES_TYPE_MEA = "mea"
 RES_TYPE_VIM = "vim"
 
 RES_EVT_CREATE = "CREATE"

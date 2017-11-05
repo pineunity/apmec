@@ -15,8 +15,8 @@ from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
 from six.moves.urllib import parse
-from tacker.vnfm.monitor_drivers.token import Token
-from tacker import wsgi
+from apmec.mem.monitor_drivers.token import Token
+from apmec import wsgi
 # check alarm url with db --> move to plugin
 
 
@@ -77,18 +77,18 @@ class AlarmReceiver(wsgi.Middleware):
         LOG.debug('alarm url in receiver: %s', req.url)
 
     def handle_url(self, url):
-        # alarm_url = 'http://host:port/v1.0/vnfs/vnf-uuid/mon-policy-name/action-name/8ef785' # noqa
+        # alarm_url = 'http://host:port/v1.0/meas/mea-uuid/mon-policy-name/action-name/8ef785' # noqa
         parts = parse.urlparse(url)
         p = parts.path.split('/')
         if len(p) != 7:
             return None
 
-        if any((p[0] != '', p[2] != 'vnfs')):
+        if any((p[0] != '', p[2] != 'meas')):
             return None
         # decode action name: respawn%25log
         p[5] = parse.unquote(p[5])
         qs = parse.parse_qs(parts.query)
         params = dict((k, v[0]) for k, v in qs.items())
-        prefix_url = '/%(collec)s/%(vnf_uuid)s/' % {'collec': p[2],
-                                                    'vnf_uuid': p[3]}
+        prefix_url = '/%(collec)s/%(mea_uuid)s/' % {'collec': p[2],
+                                                    'mea_uuid': p[3]}
         return prefix_url, p, params

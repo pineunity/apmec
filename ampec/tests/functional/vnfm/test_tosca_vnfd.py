@@ -17,49 +17,49 @@ import time
 from oslo_config import cfg
 import yaml
 
-from tacker.plugins.common import constants as evt_constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
+from apmec.plugins.common import constants as evt_constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
 
 CONF = cfg.CONF
 
 
-class VnfdTestCreate(base.BaseTackerTest):
-    def _test_create_list_delete_tosca_vnfd(self, tosca_vnfd_file, vnfd_name):
-        input_yaml = read_file(tosca_vnfd_file)
+class MeadTestCreate(base.BaseApmecTest):
+    def _test_create_list_delete_tosca_mead(self, tosca_mead_file, mead_name):
+        input_yaml = read_file(tosca_mead_file)
         tosca_dict = yaml.safe_load(input_yaml)
-        tosca_arg = {'vnfd': {'name': vnfd_name,
-                              'attributes': {'vnfd': tosca_dict}}}
-        vnfd_instance = self.client.create_vnfd(body=tosca_arg)
-        self.assertIsNotNone(vnfd_instance)
+        tosca_arg = {'mead': {'name': mead_name,
+                              'attributes': {'mead': tosca_dict}}}
+        mead_instance = self.client.create_mead(body=tosca_arg)
+        self.assertIsNotNone(mead_instance)
 
-        vnfds = self.client.list_vnfds().get('vnfds')
-        self.assertIsNotNone(vnfds, "List of vnfds are Empty after Creation")
+        meads = self.client.list_meads().get('meads')
+        self.assertIsNotNone(meads, "List of meads are Empty after Creation")
 
-        vnfd_id = vnfd_instance['vnfd']['id']
-        self.verify_vnfd_events(
-            vnfd_id, evt_constants.RES_EVT_CREATE,
+        mead_id = mead_instance['mead']['id']
+        self.verify_mead_events(
+            mead_id, evt_constants.RES_EVT_CREATE,
             evt_constants.RES_EVT_ONBOARDED)
 
         try:
-            self.client.delete_vnfd(vnfd_id)
+            self.client.delete_mead(mead_id)
         except Exception:
-            assert False, "vnfd Delete failed"
-        self.verify_vnfd_events(vnfd_id, evt_constants.RES_EVT_DELETE,
+            assert False, "mead Delete failed"
+        self.verify_mead_events(mead_id, evt_constants.RES_EVT_DELETE,
                                 evt_constants.RES_EVT_NA_STATE)
 
-    def test_tosca_vnfd(self):
-        self._test_create_list_delete_tosca_vnfd('sample-tosca-vnfd.yaml',
-                                                 'sample-tosca-vnfd-template')
+    def test_tosca_mead(self):
+        self._test_create_list_delete_tosca_mead('sample-tosca-mead.yaml',
+                                                 'sample-tosca-mead-template')
 
-    def test_tosca_large_vnfd(self):
-        self._test_create_list_delete_tosca_vnfd(
-            'sample-tosca-vnfd-large-template.yaml',
-            'sample-tosca-vnfd-large-template')
+    def test_tosca_large_mead(self):
+        self._test_create_list_delete_tosca_mead(
+            'sample-tosca-mead-large-template.yaml',
+            'sample-tosca-mead-large-template')
 
-    def test_tosca_re_create_delete_vnfd(self):
-        self._test_create_list_delete_tosca_vnfd('sample-tosca-vnfd.yaml',
-                                                 'test_vnfd')
+    def test_tosca_re_create_delete_mead(self):
+        self._test_create_list_delete_tosca_mead('sample-tosca-mead.yaml',
+                                                 'test_mead')
         time.sleep(1)
-        self._test_create_list_delete_tosca_vnfd('sample-tosca-vnfd.yaml',
-                                                 'test_vnfd')
+        self._test_create_list_delete_tosca_mead('sample-tosca-mead.yaml',
+                                                 'test_mead')

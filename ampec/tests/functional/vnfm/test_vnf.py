@@ -14,93 +14,93 @@
 
 from oslo_config import cfg
 
-from tacker.plugins.common import constants as evt_constants
-from tacker.tests import constants
-from tacker.tests.functional import base
-from tacker.tests.utils import read_file
+from apmec.plugins.common import constants as evt_constants
+from apmec.tests import constants
+from apmec.tests.functional import base
+from apmec.tests.utils import read_file
 
 CONF = cfg.CONF
-VNF_CIRROS_CREATE_TIMEOUT = 120
+MEA_CIRROS_CREATE_TIMEOUT = 120
 
 
-class VnfTestCreate(base.BaseTackerTest):
-    def _test_create_delete_vnf(self, vnf_name, vnfd_name, vim_id=None):
+class MeaTestCreate(base.BaseApmecTest):
+    def _test_create_delete_mea(self, mea_name, mead_name, vim_id=None):
         data = dict()
-        data['tosca'] = read_file('sample-tosca-vnfd-no-monitor.yaml')
+        data['tosca'] = read_file('sample-tosca-mead-no-monitor.yaml')
         toscal = data['tosca']
-        tosca_arg = {'vnfd': {'name': vnfd_name,
-                     'attributes': {'vnfd': toscal}}}
+        tosca_arg = {'mead': {'name': mead_name,
+                     'attributes': {'mead': toscal}}}
 
-        # Create vnfd with tosca template
-        vnfd_instance = self.client.create_vnfd(body=tosca_arg)
-        self.assertIsNotNone(vnfd_instance)
+        # Create mead with tosca template
+        mead_instance = self.client.create_mead(body=tosca_arg)
+        self.assertIsNotNone(mead_instance)
 
-        # Create vnf with vnfd_id
-        vnfd_id = vnfd_instance['vnfd']['id']
-        vnf_arg = {'vnf': {'vnfd_id': vnfd_id, 'name': vnf_name}}
+        # Create mea with mead_id
+        mead_id = mead_instance['mead']['id']
+        mea_arg = {'mea': {'mead_id': mead_id, 'name': mea_name}}
         if vim_id:
-            vnf_arg['vnf']['vim_id'] = vim_id
-        vnf_instance = self.client.create_vnf(body=vnf_arg)
-        self.validate_vnf_instance(vnfd_instance, vnf_instance)
+            mea_arg['mea']['vim_id'] = vim_id
+        mea_instance = self.client.create_mea(body=mea_arg)
+        self.validate_mea_instance(mead_instance, mea_instance)
 
-        vnf_id = vnf_instance['vnf']['id']
-        self.wait_until_vnf_active(
-            vnf_id,
-            constants.VNF_CIRROS_CREATE_TIMEOUT,
+        mea_id = mea_instance['mea']['id']
+        self.wait_until_mea_active(
+            mea_id,
+            constants.MEA_CIRROS_CREATE_TIMEOUT,
             constants.ACTIVE_SLEEP_TIME)
-        self.assertIsNotNone(self.client.show_vnf(vnf_id)['vnf']['mgmt_url'])
+        self.assertIsNotNone(self.client.show_mea(mea_id)['mea']['mgmt_url'])
         if vim_id:
-            self.assertEqual(vim_id, vnf_instance['vnf']['vim_id'])
+            self.assertEqual(vim_id, mea_instance['mea']['vim_id'])
 
-        # Get vnf details when vnf is in active state
-        vnf_details = self.client.list_vnf_resources(vnf_id)['resources'][0]
-        self.assertIn('name', vnf_details)
-        self.assertIn('id', vnf_details)
-        self.assertIn('type', vnf_details)
+        # Get mea details when mea is in active state
+        mea_details = self.client.list_mea_resources(mea_id)['resources'][0]
+        self.assertIn('name', mea_details)
+        self.assertIn('id', mea_details)
+        self.assertIn('type', mea_details)
 
-        self.verify_vnf_crud_events(
-            vnf_id, evt_constants.RES_EVT_CREATE,
+        self.verify_mea_crud_events(
+            mea_id, evt_constants.RES_EVT_CREATE,
             evt_constants.PENDING_CREATE, cnt=2)
-        self.verify_vnf_crud_events(
-            vnf_id, evt_constants.RES_EVT_CREATE, evt_constants.ACTIVE)
+        self.verify_mea_crud_events(
+            mea_id, evt_constants.RES_EVT_CREATE, evt_constants.ACTIVE)
 
-        # update VIM name when VNFs are active.
+        # update VIM name when MEAs are active.
         # check for exception.
-        vim0_id = vnf_instance['vnf']['vim_id']
-        msg = "VIM %s is still in use by VNF" % vim0_id
+        vim0_id = mea_instance['mea']['vim_id']
+        msg = "VIM %s is still in use by MEA" % vim0_id
         try:
-            update_arg = {'vim': {'name': "vnf_vim"}}
+            update_arg = {'vim': {'name': "mea_vim"}}
             self.client.update_vim(vim0_id, update_arg)
         except Exception as err:
             self.assertEqual(err.message, msg)
         else:
             self.assertTrue(
                 False,
-                "Name of vim(s) with active vnf(s) should not be changed!")
+                "Name of vim(s) with active mea(s) should not be changed!")
 
-        # Delete vnf_instance with vnf_id
+        # Delete mea_instance with mea_id
         try:
-            self.client.delete_vnf(vnf_id)
+            self.client.delete_mea(mea_id)
         except Exception:
-            assert False, "vnf Delete failed"
+            assert False, "mea Delete failed"
 
-        self.wait_until_vnf_delete(vnf_id,
-                                   constants.VNF_CIRROS_DELETE_TIMEOUT)
-        self.verify_vnf_crud_events(vnf_id, evt_constants.RES_EVT_DELETE,
+        self.wait_until_mea_delete(mea_id,
+                                   constants.MEA_CIRROS_DELETE_TIMEOUT)
+        self.verify_mea_crud_events(mea_id, evt_constants.RES_EVT_DELETE,
                                     evt_constants.PENDING_DELETE, cnt=2)
 
-        # Delete vnfd_instance
-        self.addCleanup(self.client.delete_vnfd, vnfd_id)
+        # Delete mead_instance
+        self.addCleanup(self.client.delete_mead, mead_id)
 
-    def test_create_delete_vnf_with_default_vim(self):
-        self._test_create_delete_vnf(
-            vnf_name='test_vnf_with_cirros_no_monitoring_default_vim',
-            vnfd_name='sample_cirros_vnf_no_monitoring_default_vim')
+    def test_create_delete_mea_with_default_vim(self):
+        self._test_create_delete_mea(
+            mea_name='test_mea_with_cirros_no_monitoring_default_vim',
+            mead_name='sample_cirros_mea_no_monitoring_default_vim')
 
-    def test_create_delete_vnf_with_vim_id(self):
+    def test_create_delete_mea_with_vim_id(self):
         vim_list = self.client.list_vims()
         vim0_id = self.get_vim(vim_list, 'VIM0')['id']
-        self._test_create_delete_vnf(
+        self._test_create_delete_mea(
             vim_id=vim0_id,
-            vnf_name='test_vnf_with_cirros_vim_id',
-            vnfd_name='sample_cirros_vnf_no_monitoring_vim_id')
+            mea_name='test_mea_with_cirros_vim_id',
+            mead_name='sample_cirros_mea_no_monitoring_vim_id')

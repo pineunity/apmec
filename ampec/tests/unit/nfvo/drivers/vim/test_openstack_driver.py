@@ -150,8 +150,8 @@ class TestOpenstack_Driver(base.TestCase):
         mock_fernet_obj.encrypt.assert_called_once_with(mock.ANY)
         file_mock().write.assert_called_once_with('test_fernet_key')
 
-    @mock.patch('tacker.nfvo.drivers.vim.openstack_driver.os.remove')
-    @mock.patch('tacker.nfvo.drivers.vim.openstack_driver.os.path'
+    @mock.patch('tacker.meo.drivers.vim.openstack_driver.os.remove')
+    @mock.patch('tacker.meo.drivers.vim.openstack_driver.os.path'
                 '.join')
     def test_deregister_vim(self, mock_os_path, mock_os_remove):
         vim_obj = self.get_vim_obj()

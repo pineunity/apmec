@@ -197,7 +197,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         self.addCleanup(mock.patch.stopall)
         self.context = context.get_admin_context()
         self._mock_driver_manager()
-        mock.patch('tacker.nfvo.nfvo_plugin.NfvoPlugin._get_vim_from_vnf',
+        mock.patch('tacker.meo.nfvo_plugin.NfvoPlugin._get_vim_from_vnf',
                    side_effect=dummy_get_vim).start()
         self.nfvo_plugin = nfvo_plugin.NfvoPlugin()
         mock.patch('tacker.db.common_services.common_services_db_plugin.'
@@ -546,7 +546,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            symmetrical=mock.ANY
                                                            )
 
-    @mock.patch('tacker.nfvo.nfvo_plugin.NfvoPlugin.create_vnffgd')
+    @mock.patch('tacker.meo.nfvo_plugin.NfvoPlugin.create_vnffgd')
     def test_create_vnffg_abstract_types_inline(self, mock_create_vnffgd):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
@@ -857,7 +857,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('status', result)
             self.assertIn('tenant_id', result)
 
-    @mock.patch('tacker.nfvo.nfvo_plugin.NfvoPlugin.create_nsd')
+    @mock.patch('tacker.meo.nfvo_plugin.NfvoPlugin.create_nsd')
     @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
     @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
@@ -937,7 +937,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
     @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
-    @mock.patch("tacker.db.nfvo.ns_db.NSPluginDb.delete_ns_post")
+    @mock.patch("tacker.db.meo.ns_db.NSPluginDb.delete_ns_post")
     def test_delete_ns_no_task_exception(
             self, mock_delete_ns_post, mock_get_by_name, mock_get_vim,
             mock_auth_dict):
