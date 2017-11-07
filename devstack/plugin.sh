@@ -1,55 +1,55 @@
-# plugin.sh - Devstack extras script to install tacker
+# plugin.sh - Devstack extras script to install apmec
 
 # Save trace setting
 XTRACE=$(set +o | grep xtrace)
 set -o xtrace
 
-echo_summary "tacker's plugin.sh was called..."
-. $DEST/tacker/devstack/lib/tacker
+echo_summary "apmec's plugin.sh was called..."
+. $DEST/apmec/devstack/lib/apmec
 (set -o posix; set)
 
 # check for service enabled
-if is_service_enabled tacker; then
+if is_service_enabled apmec; then
     if [[ "$1" == "stack" && "$2" == "install" ]]; then
         # Perform installation of service source
         echo_summary "Installing Tacker"
-        install_tacker
+        install_apmec
 
     elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
         # Configure after the other layer 1 and 2 services have been configured
         echo_summary "Configuring Tacker"
-        configure_tacker
-        create_tacker_accounts
+        configure_apmec
+        create_apmec_accounts
 
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
-        # Initialize and start the tacker service
+        # Initialize and start the apmec service
         echo_summary "Initializing Tacker"
-        init_tacker
+        init_apmec
         echo_summary "Starting Tacker API and conductor"
-        start_tacker
-        echo_summary "Installing tacker horizon"
-        tacker_horizon_install
+        start_apmec
+        echo_summary "Installing apmec horizon"
+        apmec_horizon_install
         if [[ "${TACKER_MODE}" == "all" ]]; then
             echo_summary "Modifying Heat policy.json file"
             modify_heat_flavor_policy_rule
-            echo_summary "Setup initial tacker network"
-            tacker_create_initial_network
-            echo_summary "Check and download images for tacker initial"
-            tacker_check_and_download_images
+            echo_summary "Setup initial apmec network"
+            apmec_create_initial_network
+            echo_summary "Check and download images for apmec initial"
+            apmec_check_and_download_images
             echo_summary "Registering default VIM"
-            tacker_register_default_vim
+            apmec_register_default_vim
         fi
     fi
 
     if [[ "$1" == "unstack" ]]; then
-        # Shut down tacker services
-	stop_tacker
+        # Shut down apmec services
+	stop_apmec
     fi
 
     if [[ "$1" == "clean" ]]; then
         # Remove state and transient data
         # Remember clean.sh first calls unstack.sh
-        cleanup_tacker
+        cleanup_apmec
     fi
 fi
 
