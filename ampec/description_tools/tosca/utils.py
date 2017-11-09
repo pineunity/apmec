@@ -23,7 +23,7 @@ from toscaparser.utils import yamlparser
 
 from apmec.common import log
 from apmec.common import utils
-from apmec.extensions import vnfm
+from apmec.extensions import mem
 
 from collections import OrderedDict
 
@@ -117,16 +117,16 @@ def check_for_substitution_mappings(template, params):
     # Check if substitution_mappings and requirements are empty in params but
     # not in template. If True raise exception
     if (not sm_dict or not requirements) and req_dict_tpl:
-        raise vnfm.InvalidParamsForSM()
+        raise mem.InvalidParamsForSM()
     # Check if requirements are present for SM in template, if True then return
     elif (not sm_dict or not requirements) and not req_dict_tpl:
         return
     del params['substitution_mappings']
     for req_name, req_val in (req_dict_tpl).items():
         if req_name not in requirements:
-            raise vnfm.SMRequirementMissing(requirement=req_name)
+            raise mem.SMRequirementMissing(requirement=req_name)
         if not isinstance(req_val, list):
-            raise vnfm.InvalidSubstitutionMapping(requirement=req_name)
+            raise mem.InvalidSubstitutionMapping(requirement=req_name)
         try:
             node_name = req_val[0]
             node_req = req_val[1]
@@ -139,7 +139,7 @@ def check_for_substitution_mappings(template, params):
             node_tpl[requirements[req_name]] = \
                 sm_dict[requirements[req_name]]
         except Exception:
-            raise vnfm.InvalidSubstitutionMapping(requirement=req_name)
+            raise mem.InvalidSubstitutionMapping(requirement=req_name)
 
 
 @log.log
@@ -193,14 +193,14 @@ def _process_matching_metadata(metadata, policy):
     triggers = policy.entity_tpl['triggers']
     for trigger_name, trigger_dict in triggers.items():
         if not (trigger_dict.get('metadata') and metadata):
-            raise vnfm.MetadataNotMatched()
+            raise mem.MetadataNotMatched()
         is_matched = False
         for vdu_name, metadata_dict in metadata['vdus'].items():
             if trigger_dict['metadata'] ==\
                     metadata_dict['metering.vnf']:
                 is_matched = True
         if not is_matched:
-            raise vnfm.MetadataNotMatched()
+            raise mem.MetadataNotMatched()
         matching_mtdata[trigger_name] = dict()
         matching_mtdata[trigger_name]['metadata.user_metadata.vnf'] =\
             trigger_dict['metadata']
@@ -495,7 +495,7 @@ def get_mgmt_driver(template):
         if nt.type_definition.is_derived_from(TACKERVDU):
             if (mgmt_driver and nt.get_property_value('mgmt_driver') !=
                     mgmt_driver):
-                raise vnfm.MultipleMGMTDriversSpecified()
+                raise mem.MultipleMGMTDriversSpecified()
             else:
                 mgmt_driver = nt.get_property_value('mgmt_driver')
 
@@ -543,7 +543,7 @@ def populate_flavor_extra_specs(es_dict, properties, flavor_extra_input):
         if str(mval).isdigit():
             mval = mval * 1024
         elif mval not in ('small', 'large', 'any'):
-            raise vnfm.HugePageSizeInvalidInput(
+            raise mem.HugePageSizeInvalidInput(
                 error_msg_details=(mval + ":Invalid Input"))
         es_dict['hw:mem_page_size'] = mval
     if 'numa_nodes' in properties and 'numa_node_count' in properties:
@@ -560,7 +560,7 @@ def populate_flavor_extra_specs(es_dict, properties, flavor_extra_input):
         for ndict in dval:
             invalid_input = set(ndict.keys()) - {'id', 'vcpus', 'mem_size'}
             if invalid_input:
-                raise vnfm.NumaNodesInvalidKeys(
+                raise mem.NumaNodesInvalidKeys(
                     error_msg_details=(', '.join(invalid_input)),
                     valid_keys="id, vcpus and mem_size")
             if 'id' in ndict and 'vcpus' in ndict:
@@ -576,7 +576,7 @@ def populate_flavor_extra_specs(es_dict, properties, flavor_extra_input):
         cpu_dict = dict(properties['cpu_allocation'].value)
         invalid_input = set(cpu_dict.keys()) - CPU_PROP_KEY_SET
         if invalid_input:
-            raise vnfm.CpuAllocationInvalidKeys(
+            raise mem.CpuAllocationInvalidKeys(
                 error_msg_details=(', '.join(invalid_input)),
                 valid_keys=(', '.join(CPU_PROP_KEY_SET)))
         for(k, v) in CPU_PROP_MAP:
@@ -597,7 +597,7 @@ def get_image_dict(template):
             if ('type' in artifact.keys() and
                artifact["type"] == IMAGE):
                 if 'file' not in artifact.keys():
-                    raise vnfm.FilePathMissing()
+                    raise mem.FilePathMissing()
                 image_dict[vdu.name] = {
                     "location": artifact["file"],
                     "container_format": "bare",

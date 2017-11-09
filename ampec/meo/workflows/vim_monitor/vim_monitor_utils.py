@@ -19,7 +19,7 @@ from apmec.common import rpc
 from apmec.mistral.actionrpc import kill_action as killaction
 from apmec.mistral import mistral_client
 from apmec.nfvo.workflows.vim_monitor import workflow_generator
-from apmec.vnfm import keystone
+from apmec.mem import keystone
 
 
 LOG = logging.getLogger(__name__)

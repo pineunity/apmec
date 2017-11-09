@@ -20,10 +20,10 @@ import os
 import yaml
 
 from apmec import context
-from apmec.extensions import vnfm
+from apmec.extensions import mem
 from apmec.tests.unit import base
 from apmec.tests.unit.db import utils
-from apmec.vnfm.infra_drivers.openstack import openstack
+from apmec.mem.infra_drivers.openstack import openstack
 
 
 class FakeHeatClient(mock.Mock):
@@ -66,7 +66,7 @@ class TestOpenStack(base.TestCase):
         fake_heat_client = mock.Mock()
         fake_heat_client.return_value = self.heat_client
         self._mock(
-            'apmec.vnfm.infra_drivers.openstack.heat_client.HeatClient',
+            'apmec.mem.infra_drivers.openstack.heat_client.HeatClient',
             fake_heat_client)
 
     def _mock(self, target, new=mock.DEFAULT):
@@ -87,19 +87,19 @@ class TestOpenStack(base.TestCase):
 
     def _get_expected_fields(self):
         return {'stack_name':
-                'apmec.vnfm.infra_drivers.openstack.openstack_OpenStack'
+                'apmec.mem.infra_drivers.openstack.openstack_OpenStack'
                 '-eb84260e-5ff7-4332-b032-50a14d6c1123', 'template':
                 self.hot_template}
 
     def _get_expected_fields_user_data(self):
         return {'stack_name':
-                'apmec.vnfm.infra_drivers.openstack.openstack_OpenStack'
+                'apmec.mem.infra_drivers.openstack.openstack_OpenStack'
                 '-18685f68-2b2a-4185-8566-74f54e548811',
                 'template': self.hot_param_template}
 
     def _get_expected_fields_ipaddr_data(self):
         return {'stack_name':
-                'apmec.vnfm.infra_drivers.openstack.openstack_OpenStack'
+                'apmec.mem.infra_drivers.openstack.openstack_OpenStack'
                 '-d1337add-d5a1-4fd4-9447-bb9243c8460b',
                 'template': self.hot_ipparam_template}
 
@@ -187,7 +187,7 @@ class TestOpenStack(base.TestCase):
 
     def _get_expected_fields_tosca(self, template):
         return {'stack_name':
-                'apmec.vnfm.infra_drivers.openstack.openstack_OpenStack'
+                'apmec.mem.infra_drivers.openstack.openstack_OpenStack'
                 '-eb84260e'
                 '-5ff7-4332-b032-50a14d6c1123',
                 'template': _get_template(template)}
@@ -408,7 +408,7 @@ class TestOpenStack(base.TestCase):
 
     def test_get_resource_info(self):
         vnf_obj = self._get_expected_active_vnf()
-        self.assertRaises(vnfm.InfraDriverUnreachable,
+        self.assertRaises(mem.InfraDriverUnreachable,
                           self.infra_driver.get_resource_info,
                           plugin=None, context=self.context, vnf_info=vnf_obj,
                           auth_attr=utils.get_vim_auth_obj(),
@@ -448,7 +448,7 @@ class TestOpenStack(base.TestCase):
         )
 
     def test_create_tosca_with_alarm_monitoring_not_matched(self):
-        self.assertRaises(vnfm.MetadataNotMatched,
+        self.assertRaises(mem.MetadataNotMatched,
                           self._test_assert_equal_for_tosca_templates,
                           'tosca_alarm_metadata.yaml',
                           'hot_tosca_alarm_metadata.yaml',

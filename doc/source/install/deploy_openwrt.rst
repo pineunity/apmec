@@ -145,7 +145,7 @@ vnfd/tosca-config-openwrt-with-firewall.yaml>`_.
 In this template file, we specify the **mgmt_driver: openwrt** which means
 this VNFD is managed by `openwrt driver
 <https://github.com/openstack/apmec/blob/master/apmec/
-vnfm/mgmt_drivers/openwrt/openwrt.py>`_. This driver can inject firewall rules
+mem/mgmt_drivers/openwrt/openwrt.py>`_. This driver can inject firewall rules
 which defined in VNFD into OpenWRT instance by using SSH protocol. We can
 run **cat /etc/config/firewall** to confirm the firewall rules if inject
 succeed.

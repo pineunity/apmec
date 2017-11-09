@@ -32,7 +32,7 @@ from apmec.nfvo import nfvo_plugin
 from apmec.plugins.common import constants
 from apmec.tests.unit.db import base as db_base
 from apmec.tests.unit.db import utils
-from apmec.vnfm import vim_client
+from apmec.mem import vim_client
 
 SECRET_PASSWORD = '***'
 DUMMY_NS_2 = 'ba6bf017-f6f7-45f1-a280-57b073bf78ef'

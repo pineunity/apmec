@@ -34,7 +34,7 @@ from apmec.db import db_base
 from apmec.db import model_base
 from apmec.db import models_v1
 from apmec.db import types
-from apmec.extensions import vnfm
+from apmec.extensions import mem
 from apmec import manager
 from apmec.plugins.common import constants
 
@@ -163,7 +163,7 @@ class VNFAttribute(model_base.BASE, models_v1.HasId):
     value = sa.Column(sa.TEXT(65535), nullable=True)
 
 
-class VNFMPluginDb(vnfm.VNFMPluginBase, db_base.CommonDbMixin):
+class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
 
     @property
     def _core_plugin(self):
@@ -184,11 +184,11 @@ class VNFMPluginDb(vnfm.VNFMPluginBase, db_base.CommonDbMixin):
             return self._get_by_name(context, model, id)
         except orm_exc.NoResultFound:
             if issubclass(model, VNFD):
-                raise vnfm.VNFDNotFound(vnfd_id=id)
+                raise mem.VNFDNotFound(vnfd_id=id)
             elif issubclass(model, ServiceType):
-                raise vnfm.ServiceTypeNotFound(service_type_id=id)
+                raise mem.ServiceTypeNotFound(service_type_id=id)
             if issubclass(model, VNF):
-                raise vnfm.VNFNotFound(vnf_id=id)
+                raise mem.VNFNotFound(vnf_id=id)
             else:
                 raise
 
@@ -246,7 +246,7 @@ class VNFMPluginDb(vnfm.VNFMPluginBase, db_base.CommonDbMixin):
 
         if (not attributes.is_attr_set(service_types)):
             LOG.debug('service types unspecified')
-            raise vnfm.ServiceTypesNotSpecified()
+            raise mem.ServiceTypesNotSpecified()
 
         try:
             with context.session.begin(subtransactions=True):
@@ -318,7 +318,7 @@ class VNFMPluginDb(vnfm.VNFMPluginBase, db_base.CommonDbMixin):
             vnfs_db = context.session.query(VNF).filter_by(
                 vnfd_id=vnfd_id).first()
             if vnfs_db is not None and vnfs_db.deleted_at is None:
-                raise vnfm.VNFDInUse(vnfd_id=vnfd_id)
+                raise mem.VNFDInUse(vnfd_id=vnfd_id)
             vnfd_db = self._get_resource(context, VNFD,
                                          vnfd_id)
             if soft_delete:
@@ -479,9 +479,9 @@ class VNFMPluginDb(vnfm.VNFMPluginBase, db_base.CommonDbMixin):
                 filter(VNF.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise vnfm.VNFNotFound(vnf_id=vnf_id)
+            raise mem.VNFNotFound(vnf_id=vnf_id)
         if vnf_db.status == constants.PENDING_UPDATE:
-            raise vnfm.VNFInUse(vnf_id=vnf_id)
+            raise mem.VNFInUse(vnf_id=vnf_id)
         vnf_db.update({'status': new_status})
         return vnf_db
 

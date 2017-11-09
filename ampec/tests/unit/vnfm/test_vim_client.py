@@ -16,7 +16,7 @@ from sqlalchemy.orm import exc as orm_exc
 from apmec.extensions import nfvo
 from apmec import manager
 from apmec.tests.unit import base
-from apmec.vnfm import vim_client
+from apmec.mem import vim_client
 
 
 class TestVIMClient(base.TestCase):

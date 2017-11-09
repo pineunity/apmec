@@ -198,8 +198,8 @@ Tacker users could use CLI:
     +--------------------------------------+-----------+--------------------------------------------------------------------------------------------------------------------------------------+-------------------+----------+---------+
     | alarm_id                             | type      | name                                                                                                                                 | state             | severity | enabled |
     +--------------------------------------+-----------+--------------------------------------------------------------------------------------------------------------------------------------+-------------------+----------+---------+
-    | 6f2336b9-e0a2-4e33-88be-bc036192b42b | threshold | apmec.vnfm.infra_drivers.openstack.openstack_OpenStack-a0f60b00-ad3d-4769-92ef-e8d9518da2c8-vdu_lcpu_scaling_in-smgctfnc3ql5        | insufficient data | low      | True    |
-    | e049f0d3-09a8-46c0-9b88-e61f1f524aab | threshold | apmec.vnfm.infra_drivers.openstack.openstack_OpenStack-a0f60b00-ad3d-4769-92ef-e8d9518da2c8-vdu_hcpu_usage_scaling_out-lubylov5g6xb | insufficient data | low      | True    |
+    | 6f2336b9-e0a2-4e33-88be-bc036192b42b | threshold | apmec.mem.infra_drivers.openstack.openstack_OpenStack-a0f60b00-ad3d-4769-92ef-e8d9518da2c8-vdu_lcpu_scaling_in-smgctfnc3ql5        | insufficient data | low      | True    |
+    | e049f0d3-09a8-46c0-9b88-e61f1f524aab | threshold | apmec.mem.infra_drivers.openstack.openstack_OpenStack-a0f60b00-ad3d-4769-92ef-e8d9518da2c8-vdu_hcpu_usage_scaling_out-lubylov5g6xb | insufficient data | low      | True    |
     +--------------------------------------+-----------+--------------------------------------------------------------------------------------------------------------------------------------+-------------------+----------+---------+
 
 .. code-block:: console
@@ -218,7 +218,7 @@ Tacker users could use CLI:
     | exclude_outliers          | False                                                                                                                         |
     | insufficient_data_actions | None                                                                                                                          |
     | meter_name                | cpu_util                                                                                                                      |
-    | name                      | apmec.vnfm.infra_drivers.openstack.openstack_OpenStack-a0f60b00-ad3d-4769-92ef-e8d9518da2c8-vdu_lcpu_scaling_in-smgctfnc3ql5 |
+    | name                      | apmec.mem.infra_drivers.openstack.openstack_OpenStack-a0f60b00-ad3d-4769-92ef-e8d9518da2c8-vdu_lcpu_scaling_in-smgctfnc3ql5 |
     | ok_actions                | None                                                                                                                          |
     | period                    | 600                                                                                                                           |
     | project_id                | 3db801789c9e4b61b14ce448c9e7fb6d                                                                                              |

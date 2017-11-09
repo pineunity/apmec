@@ -51,7 +51,7 @@ class TestAlarmReceiver(base.TestCase):
         self.assertEqual(self.alarm_url['03_monitoring_policy_name'], p[4])
         self.assertEqual(self.alarm_url['04_action_name'], p[5])
 
-    @mock.patch('apmec.vnfm.monitor_drivers.token.Token.create_token')
+    @mock.patch('apmec.mem.monitor_drivers.token.Token.create_token')
     def test_process_request(self, mock_token):
         req = Request.blank(self.ordered_url)
         req.method = 'POST'

@@ -15,27 +15,27 @@
 
 import mock
 
-from apmec.extensions import vnfm
+from apmec.extensions import mem
 from apmec.tests.unit import base
-from apmec.vnfm.infra_drivers.openstack import openstack
+from apmec.mem.infra_drivers.openstack import openstack
 
 
 class TestOpenStack(base.TestCase):
 
-    @mock.patch("apmec.vnfm.infra_drivers.openstack.heat_client.HeatClient")
+    @mock.patch("apmec.mem.infra_drivers.openstack.heat_client.HeatClient")
     def test_create_wait_with_heat_connection_exception(self, mocked_hc):
         stack = {"stack_status", "CREATE_IN_PROGRESS"}
         mocked_hc.get.side_effect = [stack, Exception("any stuff")]
         openstack_driver = openstack.OpenStack()
-        self.assertRaises(vnfm.VNFCreateWaitFailed,
+        self.assertRaises(mem.VNFCreateWaitFailed,
                           openstack_driver.create_wait,
                           None, None, {}, 'vnf_id', None)
 
-    @mock.patch("apmec.vnfm.infra_drivers.openstack.heat_client.HeatClient")
+    @mock.patch("apmec.mem.infra_drivers.openstack.heat_client.HeatClient")
     def test_delete_wait_with_heat_connection_exception(self, mocked_hc):
         stack = {"stack_status", "DELETE_IN_PROGRESS"}
         mocked_hc.get.side_effect = [stack, Exception("any stuff")]
         openstack_driver = openstack.OpenStack()
-        self.assertRaises(vnfm.VNFDeleteWaitFailed,
+        self.assertRaises(mem.VNFDeleteWaitFailed,
                           openstack_driver.delete_wait,
                           None, None, 'vnf_id', None, None)

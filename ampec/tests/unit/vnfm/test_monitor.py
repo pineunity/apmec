@@ -20,7 +20,7 @@ import testtools
 
 from apmec.db.common_services import common_services_db_plugin
 from apmec.plugins.common import constants
-from apmec.vnfm import monitor
+from apmec.mem import monitor
 
 MOCK_DEVICE_ID = 'a737497c-761c-11e5-89c3-9cb6541d805d'
 MOCK_VNF_DEVICE = {
@@ -86,7 +86,7 @@ class TestVNFMonitor(testtools.TestCase):
                                                 action_cb)
         self.assertEqual(expected_output, output_dict)
 
-    @mock.patch('apmec.vnfm.monitor.VNFMonitor.__run__')
+    @mock.patch('apmec.mem.monitor.VNFMonitor.__run__')
     def test_add_hosting_vnf(self, mock_monitor_run):
         test_device_dict = {
             'id': MOCK_DEVICE_ID,
@@ -99,17 +99,17 @@ class TestVNFMonitor(testtools.TestCase):
         }
         action_cb = mock.MagicMock()
         test_boot_wait = 30
-        test_vnfmonitor = monitor.VNFMonitor(test_boot_wait)
-        new_dict = test_vnfmonitor.to_hosting_vnf(test_device_dict, action_cb)
-        test_vnfmonitor.add_hosting_vnf(new_dict)
-        test_device_id = list(test_vnfmonitor._hosting_vnfs.keys())[0]
+        test_memonitor = monitor.VNFMonitor(test_boot_wait)
+        new_dict = test_memonitor.to_hosting_vnf(test_device_dict, action_cb)
+        test_memonitor.add_hosting_vnf(new_dict)
+        test_device_id = list(test_memonitor._hosting_vnfs.keys())[0]
         self.assertEqual(MOCK_DEVICE_ID, test_device_id)
         self._cos_db_plugin.create_event.assert_called_with(
             mock.ANY, res_id=mock.ANY, res_type=constants.RES_TYPE_VNF,
             res_state=mock.ANY, evt_type=constants.RES_EVT_MONITOR,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('apmec.vnfm.monitor.VNFMonitor.__run__')
+    @mock.patch('apmec.mem.monitor.VNFMonitor.__run__')
     def test_run_monitor(self, mock_monitor_run):
         test_hosting_vnf = MOCK_VNF_DEVICE
         test_hosting_vnf['vnf'] = {}
@@ -121,10 +121,10 @@ class TestVNFMonitor(testtools.TestCase):
             'mgmt_ip': 'a.b.c.d',
             'timeout': 2
         }
-        test_vnfmonitor = monitor.VNFMonitor(test_boot_wait)
+        test_memonitor = monitor.VNFMonitor(test_boot_wait)
         self.mock_monitor_manager.invoke = mock.MagicMock()
-        test_vnfmonitor._monitor_manager = self.mock_monitor_manager
-        test_vnfmonitor.run_monitor(test_hosting_vnf)
+        test_memonitor._monitor_manager = self.mock_monitor_manager
+        test_memonitor.run_monitor(test_hosting_vnf)
         self.mock_monitor_manager\
             .invoke.assert_called_once_with('ping', 'monitor_call', vnf={},
                                             kwargs=mock_kwargs)

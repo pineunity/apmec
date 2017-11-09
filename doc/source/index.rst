@@ -85,7 +85,7 @@ User Guide
 .. toctree::
    :maxdepth: 1
 
-   user/vnfm_usage_guide.rst
+   user/mem_usage_guide.rst
    user/multisite_vim_usage_guide.rst
    user/scale_usage_guide.rst
    user/alarm_monitoring_usage_guide.rst

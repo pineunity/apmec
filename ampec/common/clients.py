@@ -11,7 +11,7 @@
 # under the License.
 
 from heatclient import client as heatclient
-from apmec.vnfm import keystone
+from apmec.mem import keystone
 
 
 class OpenstackClients(object):

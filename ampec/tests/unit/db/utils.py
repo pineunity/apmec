@@ -25,7 +25,7 @@ DUMMY_NS_2_NAME = 'dummy_ns_2'
 def _get_template(name):
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        "../vnfm/infra_drivers/openstack/data/", name)
+        "../mem/infra_drivers/openstack/data/", name)
     f = codecs.open(filename, encoding='utf-8', errors='strict')
     return f.read()
 

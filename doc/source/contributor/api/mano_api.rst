@@ -4,7 +4,7 @@ Tacker API Overview
 
 Tacker API provides REST API end-points based on `ETSI NFV MANO standards`_.
 The two new resources introduced are 'vnfd' and 'vnf' for
-describing the 'vnfm' extension. The resources request and response formats are
+describing the 'mem' extension. The resources request and response formats are
 described in below sections.
 
 .. _ETSI NFV MANO standards: http://www.etsi.org/deliver/etsi_gs/NFV-MAN/001_099/001/01.01.01_60/gs_nfv-man001v010101p.pdf

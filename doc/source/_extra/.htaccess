@@ -14,7 +14,7 @@ redirectmatch 301 ^/apmec/([^/]+)/devref/apmec_functional_test.html$ ^/apmec/$1/
 redirectmatch 301 ^/apmec/([^/]+)/devref/apmec_vim_monitoring.html$ ^/apmec/$1/contributor/apmec_vim_monitoring.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/vnfd_template_parameterization.html$ ^/apmec/$1/contributor/vnfd_template_parameterization.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/vnffgd_template_description.html$ ^/apmec/$1/contributor/vnffgd_template_description.html
-redirectmatch 301 ^/apmec/([^/]+)/devref/vnfm_usage_guide.html$ ^/apmec/$1/user/vnfm_usage_guide.html
+redirectmatch 301 ^/apmec/([^/]+)/devref/mem_usage_guide.html$ ^/apmec/$1/user/mem_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/policies/dev-process.html$ ^/apmec/$1/contributor/dev-process.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/mistral_workflows_usage_guide.html$ ^/apmec/$1/reference/mistral_workflows_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/alarm_monitoring_usage_guide.html$ ^/apmec/$1/user/alarm_monitoring_usage_guide.html

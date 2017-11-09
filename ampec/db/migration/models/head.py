@@ -25,7 +25,7 @@ from apmec.db import model_base
 from apmec.db.nfvo import nfvo_db  # noqa
 from apmec.db.nfvo import ns_db  # noqa
 from apmec.db.nfvo import vnffg_db  # noqa
-from apmec.db.vnfm import vnfm_db  # noqa
+from apmec.db.mem import mem_db  # noqa
 
 
 def get_metadata():

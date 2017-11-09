@@ -22,16 +22,16 @@ How to write a new policy action
 
 A policy action for apmec is a python module which contains a class that
 inherits from
-"apmec.vnfm.policy_actions.abstract_action.AbstractPolicyAction". If the
+"apmec.mem.policy_actions.abstract_action.AbstractPolicyAction". If the
 driver depends/imports more than one module, then create a new python package
-under apmec/vnfm/policy_actions folder. After this we have to mention our
+under apmec/mem/policy_actions folder. After this we have to mention our
 driver path in setup.cfg file in root directory.
 
 For example:
 ::
 
   apmec.apmec.policy.actions =
-    respawn = apmec.vnfm.policy_actions.respawn.respawn:VNFActionRespawn
+    respawn = apmec.mem.policy_actions.respawn.respawn:VNFActionRespawn
 
 Following methods need to be overridden in the new action:
 

@@ -23,12 +23,12 @@ import yaml
 from apmec import context
 from apmec.db.common_services import common_services_db_plugin
 from apmec.db.nfvo import nfvo_db
-from apmec.db.vnfm import vnfm_db
-from apmec.extensions import vnfm
+from apmec.db.mem import mem_db
+from apmec.extensions import mem
 from apmec.plugins.common import constants
 from apmec.tests.unit.db import base as db_base
 from apmec.tests.unit.db import utils
-from apmec.vnfm import plugin
+from apmec.mem import plugin
 
 
 class FakeDriverManager(mock.Mock):
@@ -66,7 +66,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._mock_vnf_alarm_monitor()
         self._mock_green_pool()
         self._insert_dummy_vim()
-        self.vnfm_plugin = plugin.VNFMPlugin()
+        self.mem_plugin = plugin.VNFMPlugin()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
@@ -87,7 +87,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         fake_vim_client = mock.Mock()
         fake_vim_client.return_value = self.vim_client
         self._mock(
-            'apmec.vnfm.vim_client.VimClient', fake_vim_client)
+            'apmec.mem.vim_client.VimClient', fake_vim_client)
 
     def _stub_get_vim(self):
         vim_obj = {'vim_id': '6261579e-d6f3-49ad-8bc3-a9cb974778ff',
@@ -109,18 +109,18 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         fake_vnf_monitor = mock.Mock()
         fake_vnf_monitor.return_value = self._vnf_monitor
         self._mock(
-            'apmec.vnfm.monitor.VNFMonitor', fake_vnf_monitor)
+            'apmec.mem.monitor.VNFMonitor', fake_vnf_monitor)
 
     def _mock_vnf_alarm_monitor(self):
         self._vnf_alarm_monitor = mock.Mock(wraps=FakeVNFMonitor())
         fake_vnf_alarm_monitor = mock.Mock()
         fake_vnf_alarm_monitor.return_value = self._vnf_alarm_monitor
         self._mock(
-            'apmec.vnfm.monitor.VNFAlarmMonitor', fake_vnf_alarm_monitor)
+            'apmec.mem.monitor.VNFAlarmMonitor', fake_vnf_alarm_monitor)
 
     def _insert_dummy_device_template(self):
         session = self.context.session
-        device_template = vnfm_db.VNFD(
+        device_template = mem_db.VNFD(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
@@ -133,7 +133,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_device_template_inline(self):
         session = self.context.session
-        device_template = vnfm_db.VNFD(
+        device_template = mem_db.VNFD(
             id='d58bcc4e-d0cf-11e6-bf26-cec0c932ce01',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='tmpl-koeak4tqgoqo8cr4-dummy_inline_vnf',
@@ -146,7 +146,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_vnfd_attributes(self, template):
         session = self.context.session
-        vnfd_attr = vnfm_db.VNFDAttribute(
+        vnfd_attr = mem_db.VNFDAttribute(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             vnfd_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             key='vnfd',
@@ -157,7 +157,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_device(self):
         session = self.context.session
-        device_db = vnfm_db.VNF(
+        device_db = mem_db.VNF(
             id='6261579e-d6f3-49ad-8bc3-a9cb974778fe',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_device',
@@ -174,7 +174,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_scaling_attributes_vnf(self):
         session = self.context.session
-        vnf_attributes = vnfm_db.VNFAttribute(
+        vnf_attributes = mem_db.VNFAttribute(
             id='7800cb81-7ed1-4cf6-8387-746468522651',
             vnf_id='6261579e-d6f3-49ad-8bc3-a9cb974778fe',
             key='scaling_group_names',
@@ -186,7 +186,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_scaling_attributes_vnfd(self):
         session = self.context.session
-        vnfd_attributes = vnfm_db.VNFDAttribute(
+        vnfd_attributes = mem_db.VNFDAttribute(
             id='7800cb81-7ed1-4cf6-8387-746468522650',
             vnfd_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             key='vnfd',
@@ -218,16 +218,16 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         session.add(vim_auth_db)
         session.flush()
 
-    @mock.patch('apmec.vnfm.plugin.toscautils.updateimports')
-    @mock.patch('apmec.vnfm.plugin.ToscaTemplate')
-    @mock.patch('apmec.vnfm.plugin.toscautils.get_mgmt_driver')
+    @mock.patch('apmec.mem.plugin.toscautils.updateimports')
+    @mock.patch('apmec.mem.plugin.ToscaTemplate')
+    @mock.patch('apmec.mem.plugin.toscautils.get_mgmt_driver')
     def test_create_vnfd(self, mock_get_mgmt_driver, mock_tosca_template,
                         mock_update_imports):
         mock_get_mgmt_driver.return_value = 'dummy_mgmt_driver'
         mock_tosca_template.return_value = mock.ANY
 
         vnfd_obj = utils.get_dummy_vnfd_obj()
-        result = self.vnfm_plugin.create_vnfd(self.context, vnfd_obj)
+        result = self.mem_plugin.create_vnfd(self.context, vnfd_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertEqual('dummy_vnfd', result['name'])
@@ -251,14 +251,14 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     def test_create_vnfd_no_service_types(self):
         vnfd_obj = utils.get_dummy_vnfd_obj()
         vnfd_obj['vnfd'].pop('service_types')
-        self.assertRaises(vnfm.ServiceTypesNotSpecified,
-                          self.vnfm_plugin.create_vnfd,
+        self.assertRaises(mem.ServiceTypesNotSpecified,
+                          self.mem_plugin.create_vnfd,
                           self.context, vnfd_obj)
 
     def test_create_vnf_with_vnfd(self):
         self._insert_dummy_device_template()
         vnf_obj = utils.get_dummy_vnf_obj()
-        result = self.vnfm_plugin.create_vnf(self.context, vnf_obj)
+        result = self.mem_plugin.create_vnf(self.context, vnf_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('instance_id', result)
@@ -279,13 +279,13 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('apmec.vnfm.plugin.VNFMPlugin.create_vnfd')
+    @mock.patch('apmec.mem.plugin.VNFMPlugin.create_vnfd')
     def test_create_vnf_from_template(self, mock_create_vnfd):
         self._insert_dummy_device_template_inline()
         mock_create_vnfd.return_value = {'id':
                 'd58bcc4e-d0cf-11e6-bf26-cec0c932ce01'}
         vnf_obj = utils.get_dummy_inline_vnf_obj()
-        result = self.vnfm_plugin.create_vnf(self.context, vnf_obj)
+        result = self.mem_plugin.create_vnf(self.context, vnf_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('instance_id', result)
@@ -311,14 +311,14 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     def test_show_vnf_details_vnf_inactive(self):
         self._insert_dummy_device_template()
         vnf_obj = utils.get_dummy_vnf_obj()
-        result = self.vnfm_plugin.create_vnf(self.context, vnf_obj)
-        self.assertRaises(vnfm.VNFInactive, self.vnfm_plugin.get_vnf_resources,
+        result = self.mem_plugin.create_vnf(self.context, vnf_obj)
+        self.assertRaises(mem.VNFInactive, self.mem_plugin.get_vnf_resources,
                           self.context, result['id'])
 
     def test_show_vnf_details_vnf_active(self):
         self._insert_dummy_device_template()
         active_vnf = self._insert_dummy_device()
-        resources = self.vnfm_plugin.get_vnf_resources(self.context,
+        resources = self.mem_plugin.get_vnf_resources(self.context,
                                                        active_vnf['id'])[0]
         self.assertIn('name', resources)
         self.assertIn('type', resources)
@@ -327,7 +327,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     def test_delete_vnf(self):
         self._insert_dummy_device_template()
         dummy_device_obj = self._insert_dummy_device()
-        self.vnfm_plugin.delete_vnf(self.context, dummy_device_obj[
+        self.mem_plugin.delete_vnf(self.context, dummy_device_obj[
             'id'])
         self._device_manager.invoke.assert_called_with('test_vim', 'delete',
                                                        plugin=mock.ANY,
@@ -348,7 +348,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._insert_dummy_device_template()
         dummy_device_obj = self._insert_dummy_device()
         vnf_config_obj = utils.get_dummy_vnf_config_obj()
-        result = self.vnfm_plugin.update_vnf(self.context, dummy_device_obj[
+        result = self.mem_plugin.update_vnf(self.context, dummy_device_obj[
             'id'], vnf_config_obj)
         self.assertIsNotNone(result)
         self.assertEqual(dummy_device_obj['id'], result['id'])
@@ -383,7 +383,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
         # scale vnf
         vnf_scale = self._get_dummy_scaling_policy(type)
-        self.vnfm_plugin.create_vnf_scale(
+        self.mem_plugin.create_vnf_scale(
             self.context,
             dummy_device_obj['id'],
             vnf_scale)
@@ -435,11 +435,11 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             "alarm_id": "b7fa9ffd-0a4f-4165-954b-5a8d0672a35f"}},
             "policy_name": policy_name}
         self._vnf_alarm_monitor.process_alarm_for_vnf.return_value = True
-        trigger_result = self.vnfm_plugin.create_vnf_trigger(
+        trigger_result = self.mem_plugin.create_vnf_trigger(
             self.context, vnf_id, trigger_request)
         self.assertEqual(expected_result, trigger_result)
 
-    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_respawn(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
             utils.vnfd_alarm_respawn_tosca_template)
@@ -447,7 +447,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_respawning",
                                       action_value="respawn")
 
-    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_scale(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
             utils.vnfd_alarm_scale_tosca_template)
@@ -455,7 +455,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_scaling_out",
                                       action_value="SP1-out")
 
-    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_multi_actions(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
             utils.vnfd_alarm_multi_actions_tosca_template)
@@ -463,12 +463,12 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_vnf_trigger(policy_name="mon_policy_multi_actions",
                                       action_value="respawn&log")
 
-    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
     def test_get_vnf_policies(self, mock_get_vnf):
         vnf_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
         dummy_vnf = self._get_dummy_active_vnf(
             utils.vnfd_alarm_respawn_tosca_template)
         mock_get_vnf.return_value = dummy_vnf
-        policies = self.vnfm_plugin.get_vnf_policies(self.context, vnf_id,
+        policies = self.mem_plugin.get_vnf_policies(self.context, vnf_id,
             filters={'name': 'vdu1_cpu_usage_monitoring_policy'})
         self.assertEqual(1, len(policies))

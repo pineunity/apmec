@@ -74,7 +74,7 @@ class TestOpenstack_Driver(base.TestCase):
         fake_keystone = mock.Mock()
         fake_keystone.return_value = self.keystone
         self._mock(
-            'apmec.vnfm.keystone.Keystone', fake_keystone)
+            'apmec.mem.keystone.Keystone', fake_keystone)
 
     def _mock_keymgr(self):
         self.keymgr = mock.Mock(wraps=FakeKeymgrAPI())

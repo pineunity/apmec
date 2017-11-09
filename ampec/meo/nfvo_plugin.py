@@ -42,7 +42,7 @@ from apmec.keymgr import API as KEYMGR_API
 from apmec import manager
 from apmec.nfvo.workflows.vim_monitor import vim_monitor_utils
 from apmec.plugins.common import constants
-from apmec.vnfm import vim_client
+from apmec.mem import vim_client
 
 from apmec.tosca import utils as toscautils
 from toscaparser import tosca_template
@@ -441,8 +441,8 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         :param vnf_id: VNF ID
         :return: VIM or VIM properties if fields are provided
         """
-        vnfm_plugin = manager.TackerManager.get_service_plugins()['VNFM']
-        vim_id = vnfm_plugin.get_vnf(context, vnf_id, fields=['vim_id'])
+        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        vim_id = mem_plugin.get_vnf(context, vnf_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
             raise nfvo.VimFromVnfNotFoundException(vnf_id=vnf_id)
@@ -539,12 +539,12 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         nsd['vnfds'] = dict()
         LOG.debug('nsd_dict: %s', inner_nsd_dict)
 
-        vnfm_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
         vnfd_imports = inner_nsd_dict['imports']
         inner_nsd_dict['imports'] = []
         new_files = []
         for vnfd_name in vnfd_imports:
-            vnfd = vnfm_plugin.get_vnfd(context, vnfd_name)
+            vnfd = mem_plugin.get_vnfd(context, vnfd_name)
             # Copy VNF types and VNF names
             sm_dict = yaml.safe_load(vnfd['attributes']['vnfd'])[
                 'topology_template'][
@@ -617,8 +617,8 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
 
         nsd = self.get_nsd(context, ns['ns']['nsd_id'])
         nsd_dict = yaml.safe_load(nsd['attributes']['nsd'])
-        vnfm_plugin = manager.TackerManager.get_service_plugins()['VNFM']
-        onboarded_vnfds = vnfm_plugin.get_vnfds(context, [])
+        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        onboarded_vnfds = mem_plugin.get_vnfds(context, [])
         region_name = ns.setdefault('placement_attr', {}).get(
             'region_name', None)
         vim_res = self.vim_client.get_vim(context, ns['ns']['vim_id'],

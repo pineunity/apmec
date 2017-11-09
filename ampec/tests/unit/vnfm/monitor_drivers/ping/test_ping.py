@@ -15,7 +15,7 @@
 import mock
 import testtools
 
-from apmec.vnfm.monitor_drivers.ping import ping
+from apmec.mem.monitor_drivers.ping import ping
 
 
 class TestVNFMonitorPing(testtools.TestCase):

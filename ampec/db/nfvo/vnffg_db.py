@@ -444,7 +444,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         """
         chain_list = []
         prev_forwarder = None
-        vnfm_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
         # Build the list of logical chain representation
         logical_chain = self._get_nfp_attribute(template_db.template,
                                                 nfp_name, 'path')
@@ -456,11 +456,11 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                                                          mapping=vnf_mapping)
             # TODO(trozet): validate CP in VNFD has forwarding capability
             # Find VNF resources
-            vnf = vnfm_plugin.get_vnf_resources(context,
+            vnf = mem_plugin.get_vnf_resources(context,
                                                 vnf_mapping[element[
                                                     'forwarder']]
                                                 )
-            vnf_info = vnfm_plugin.get_vnf(context,
+            vnf_info = mem_plugin.get_vnf(context,
                                            vnf_mapping[element['forwarder']])
             vnf_cp = None
             for resource in vnf:
@@ -536,13 +536,13 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         :param vnf_members: list of constituent VNFs from a VNFFG
         :return: dict of VNFD:VNF_ID mappings
         """
-        vnfm_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
         new_mapping = dict()
 
         for vnfd in vnf_members:
             # there should only be one ID returned for a unique name
             try:
-                vnfd_id = vnfm_plugin.get_vnfds(context, {'name': [vnfd]},
+                vnfd_id = mem_plugin.get_vnfds(context, {'name': [vnfd]},
                                                 fields=['id']).pop()['id']
             except Exception:
                 raise nfvo.VnffgdVnfdNotFoundException(vnfd_name=vnfd)
@@ -554,7 +554,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 if vnf_mapping is None or vnfd not in vnf_mapping.keys():
                     # find suitable VNFs from vnfd_id
                     LOG.debug('Searching VNFS with id %s', vnfd_id)
-                    vnf_list = vnfm_plugin.get_vnfs(context,
+                    vnf_list = mem_plugin.get_vnfs(context,
                                                     {'vnfd_id': [vnfd_id]},
                                                     fields=['id'])
                     if len(vnf_list) == 0:
@@ -568,7 +568,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                         new_mapping[vnfd] = vnf_list[0]
                 # if VNF mapping, validate instances exist and match the VNFD
                 else:
-                    vnf_vnfd = vnfm_plugin.get_vnf(context, vnf_mapping[vnfd],
+                    vnf_vnfd = mem_plugin.get_vnf(context, vnf_mapping[vnfd],
                                                    fields=['vnfd_id'])
                     if vnf_vnfd is not None:
                         vnf_vnfd_id = vnf_vnfd['vnfd_id']
@@ -589,10 +589,10 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         :return: None
         """
         LOG.debug('validating vim for vnfs %s', vnfs)
-        vnfm_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
         vim_id = None
         for vnf in vnfs:
-            vnf_dict = vnfm_plugin.get_vnf(context, vnf)
+            vnf_dict = mem_plugin.get_vnf(context, vnf)
             if vim_id is None:
                 vim_id = vnf_dict['vim_id']
             elif vnf_dict['vim_id'] != vim_id:
