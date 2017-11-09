@@ -3,7 +3,7 @@ Apmec API Overview
 *******************
 
 Apmec API provides REST API end-points based on `ETSI NFV MANO standards`_.
-The two new resources introduced are 'vnfd' and 'vnf' for
+The two new resources introduced are 'mead' and 'vnf' for
 describing the 'mem' extension. The resources request and response formats are
 described in below sections.
 
@@ -39,19 +39,19 @@ List API versions - Lists information about Apmec API version.
 Vnfds
 =====
 
-**GET /v1.0/vnfds**
+**GET /v1.0/meads**
 
-List vnfds - List vnfds stored in the VNF catalog.
+List meads - List meads stored in the VNF catalog.
 
 ::
 
     Response:
     {
-        "vnfds": [
+        "meads": [
             {
                 "service_types": [
                     {
-                        "service_type": "vnfd",
+                        "service_type": "mead",
                         "id": "378b774d-89f5-4634-9c65-9c49ed6f00ce"
                     }
                 ],
@@ -60,8 +60,8 @@ List vnfds - List vnfds stored in the VNF catalog.
                 "mgmt_driver": "openwrt",
                 "infra_driver": "",
                 "attributes": {
-                    "vnfd": "template_name: OpenWRT\r\ndescription:
-                    template_description <sample_vnfd_template>"
+                    "mead": "template_name: OpenWRT\r\ndescription:
+                    template_description <sample_mead_template>"
                 },
                 "id": "247b045e-d64f-4ae0-a3b4-8441b9e5892c",
                 "name": "openwrt_services"
@@ -69,18 +69,18 @@ List vnfds - List vnfds stored in the VNF catalog.
         ]
     }
 
-**GET /v1.0/vnfds/{vnfd_id}**
+**GET /v1.0/meads/{mead_id}**
 
-Show vnfd - Show information for a specified vnfd id.
+Show mead - Show information for a specified mead id.
 
 ::
 
     Response:
     {
-        "vnfd": {
+        "mead": {
             "service_types": [
                 {
-                    "service_type": "vnfd",
+                    "service_type": "mead",
                     "id": "378b774d-89f5-4634-9c65-9c49ed6f00ce"
                 }
             ],
@@ -89,17 +89,17 @@ Show vnfd - Show information for a specified vnfd id.
             "mgmt_driver": "openwrt",
             "infra_driver": "",
             "attributes": {
-                "vnfd": "template_name: OpenWRT\r\ndescription:
-                template_description <sample_vnfd_template>"
+                "mead": "template_name: OpenWRT\r\ndescription:
+                template_description <sample_mead_template>"
             },
             "id": "247b045e-d64f-4ae0-a3b4-8441b9e5892c",
             "name": "openwrt_services"
         }
     }
 
-**POST /v1.0/vnfds**
+**POST /v1.0/meads**
 
-Create vnfd - Create a vnfd entry based on the vnfd template.
+Create mead - Create a mead entry based on the mead template.
 
 ::
 
@@ -112,12 +112,12 @@ Create vnfd - Create a vnfd entry based on the vnfd template.
                 "password": "devstack"
             }
         },
-        "vnfd": {
-            "service_types": [{"service_type": "vnfd"}],
+        "mead": {
+            "service_types": [{"service_type": "mead"}],
             "tenant_id": "bb6a3be1021a4746ab727a6c9296e797",
             "description": "OpenWRT router",
             "attributes": {
-                "vnfd": "description: OpenWRT with services\nmetadata: {template_name: OpenWRT}\ntopology_template:\n  node_templates:\n    CP1:\n      properties: {anti_spoofing_protection: false, management: true, order: 0}\n      requirements:\n      - virtualLink: {node: VL1}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    CP2:\n      properties: {anti_spoofing_protection: false, order: 1}\n      requirements:\n      - virtualLink: {node: VL2}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    CP3:\n      properties: {anti_spoofing_protection: false, order: 2}\n      requirements:\n      - virtualLink: {node: VL3}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    VDU1:\n      capabilities:\n        nfv_compute:\n          properties: {disk_size: 1 GB, mem_size: 512 MB, num_cpus: 1}\n      properties:\n        config: 'param0: key1\n\n          param1: key2\n\n          '\n        image: OpenWRT\n        mgmt_driver: openwrt\n        monitoring_policy:\n          actions: {failure: respawn}\n          name: ping\n          parameters: {count: 3, interval: 10}\n      type: tosca.nodes.nfv.VDU.Apmec\n    VL1:\n      properties: {network_name: net_mgmt, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\n    VL2:\n      properties: {network_name: net0, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\n    VL3:\n      properties: {network_name: net1, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\ntosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n"
+                "mead": "description: OpenWRT with services\nmetadata: {template_name: OpenWRT}\ntopology_template:\n  node_templates:\n    CP1:\n      properties: {anti_spoofing_protection: false, management: true, order: 0}\n      requirements:\n      - virtualLink: {node: VL1}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    CP2:\n      properties: {anti_spoofing_protection: false, order: 1}\n      requirements:\n      - virtualLink: {node: VL2}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    CP3:\n      properties: {anti_spoofing_protection: false, order: 2}\n      requirements:\n      - virtualLink: {node: VL3}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    VDU1:\n      capabilities:\n        nfv_compute:\n          properties: {disk_size: 1 GB, mem_size: 512 MB, num_cpus: 1}\n      properties:\n        config: 'param0: key1\n\n          param1: key2\n\n          '\n        image: OpenWRT\n        mgmt_driver: openwrt\n        monitoring_policy:\n          actions: {failure: respawn}\n          name: ping\n          parameters: {count: 3, interval: 10}\n      type: tosca.nodes.nfv.VDU.Apmec\n    VL1:\n      properties: {network_name: net_mgmt, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\n    VL2:\n      properties: {network_name: net0, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\n    VL3:\n      properties: {network_name: net1, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\ntosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n"
             },
             "name": "OpenWRT"
         }
@@ -127,10 +127,10 @@ Create vnfd - Create a vnfd entry based on the vnfd template.
 
     Response:
     {
-       "vnfd": {
+       "mead": {
            "service_types": [
                {
-                   "service_type": "vnfd",
+                   "service_type": "mead",
                    "id": "336fe422-9fba-47c7-87fb-d48475c3e0ce"
                }
            ],
@@ -139,17 +139,17 @@ Create vnfd - Create a vnfd entry based on the vnfd template.
            "mgmt_driver": "noop",
            "infra_driver": "",
            "attributes": {
-               "vnfd": "template_name: OpenWRT \r\ndescription:
-               template_description <sample_vnfd_template>"
+               "mead": "template_name: OpenWRT \r\ndescription:
+               template_description <sample_mead_template>"
            },
            "id": "ab10a543-22ee-43af-a441-05a9d32a57da",
            "name": "OpenWRT"
        }
     }
 
-**DELETE /v1.0/vnfds/{vnfd_id}**
+**DELETE /v1.0/meads/{mead_id}**
 
-Delete vnfd - Deletes a specified vnfd_id from the VNF catalog.
+Delete mead - Deletes a specified mead_id from the VNF catalog.
 
 This operation does not accept a request body and does not return a response
 body.
@@ -216,7 +216,7 @@ Show vnf - Show information for a specified vnf_id.
 
 **POST /v1.0/vnfs**
 
-Create vnf - Create a vnf based on the vnfd template id.
+Create vnf - Create a vnf based on the mead template id.
 
 ::
 
@@ -233,7 +233,7 @@ Create vnf - Create a vnf based on the vnfd template id.
             "attributes": {},
             "vim_id": "",
             "description": "demo-example",
-            "vnfd_id": "ad0c2c7c-825e-43c5-a402-b5710902b408",
+            "mead_id": "ad0c2c7c-825e-43c5-a402-b5710902b408",
             "name": "demo-vnf"
         }
     }
@@ -262,7 +262,7 @@ Create vnf - Create a vnf based on the vnfd template id.
                 "failure_policy": "noop"
             },
             "id": "e3158513-92f4-4587-b949-70ad0bcbb2dd",
-            "vnfd_id": "247b045e-d64f-4ae0-a3b4-8441b9e5892c"
+            "mead_id": "247b045e-d64f-4ae0-a3b4-8441b9e5892c"
         }
     }
 

@@ -144,16 +144,16 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         session.flush()
         return device_template
 
-    def _insert_dummy_vnfd_attributes(self, template):
+    def _insert_dummy_mead_attributes(self, template):
         session = self.context.session
-        vnfd_attr = mem_db.VNFDAttribute(
+        mead_attr = mem_db.VNFDAttribute(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
-            vnfd_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
-            key='vnfd',
+            mead_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
+            key='mead',
             value=template)
-        session.add(vnfd_attr)
+        session.add(mead_attr)
         session.flush()
-        return vnfd_attr
+        return mead_attr
 
     def _insert_dummy_device(self):
         session = self.context.session
@@ -163,7 +163,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             name='fake_device',
             description='fake_device_description',
             instance_id='da85ea1a-4ec4-4201-bbb2-8d9249eca7ec',
-            vnfd_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
+            mead_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             vim_id='6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             placement_attr={'region': 'RegionOne'},
             status='ACTIVE',
@@ -184,17 +184,17 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         session.flush()
         return vnf_attributes
 
-    def _insert_scaling_attributes_vnfd(self):
+    def _insert_scaling_attributes_mead(self):
         session = self.context.session
-        vnfd_attributes = mem_db.VNFDAttribute(
+        mead_attributes = mem_db.VNFDAttribute(
             id='7800cb81-7ed1-4cf6-8387-746468522650',
-            vnfd_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
-            key='vnfd',
-            value=utils.vnfd_scale_tosca_template
+            mead_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
+            key='mead',
+            value=utils.mead_scale_tosca_template
         )
-        session.add(vnfd_attributes)
+        session.add(mead_attributes)
         session.flush()
-        return vnfd_attributes
+        return mead_attributes
 
     def _insert_dummy_vim(self):
         session = self.context.session
@@ -221,24 +221,24 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     @mock.patch('apmec.mem.plugin.toscautils.updateimports')
     @mock.patch('apmec.mem.plugin.ToscaTemplate')
     @mock.patch('apmec.mem.plugin.toscautils.get_mgmt_driver')
-    def test_create_vnfd(self, mock_get_mgmt_driver, mock_tosca_template,
+    def test_create_mead(self, mock_get_mgmt_driver, mock_tosca_template,
                         mock_update_imports):
         mock_get_mgmt_driver.return_value = 'dummy_mgmt_driver'
         mock_tosca_template.return_value = mock.ANY
 
-        vnfd_obj = utils.get_dummy_vnfd_obj()
-        result = self.mem_plugin.create_vnfd(self.context, vnfd_obj)
+        mead_obj = utils.get_dummy_mead_obj()
+        result = self.mem_plugin.create_mead(self.context, mead_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
-        self.assertEqual('dummy_vnfd', result['name'])
-        self.assertEqual('dummy_vnfd_description', result['description'])
+        self.assertEqual('dummy_mead', result['name'])
+        self.assertEqual('dummy_mead_description', result['description'])
         self.assertEqual('dummy_mgmt_driver', result['mgmt_driver'])
         self.assertIn('service_types', result)
         self.assertIn('attributes', result)
         self.assertIn('created_at', result)
         self.assertIn('updated_at', result)
         self.assertIn('template_source', result)
-        yaml_dict = yaml.safe_load(utils.tosca_vnfd_openwrt)
+        yaml_dict = yaml.safe_load(utils.tosca_mead_openwrt)
         mock_tosca_template.assert_called_once_with(
             a_file=False, yaml_dict_tpl=yaml_dict)
         mock_get_mgmt_driver.assert_called_once_with(mock.ANY)
@@ -248,14 +248,14 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             res_state=constants.RES_EVT_ONBOARDED,
             res_type=constants.RES_TYPE_VNFD, tstamp=mock.ANY)
 
-    def test_create_vnfd_no_service_types(self):
-        vnfd_obj = utils.get_dummy_vnfd_obj()
-        vnfd_obj['vnfd'].pop('service_types')
+    def test_create_mead_no_service_types(self):
+        mead_obj = utils.get_dummy_mead_obj()
+        mead_obj['mead'].pop('service_types')
         self.assertRaises(mem.ServiceTypesNotSpecified,
-                          self.mem_plugin.create_vnfd,
-                          self.context, vnfd_obj)
+                          self.mem_plugin.create_mead,
+                          self.context, mead_obj)
 
-    def test_create_vnf_with_vnfd(self):
+    def test_create_vnf_with_mead(self):
         self._insert_dummy_device_template()
         vnf_obj = utils.get_dummy_vnf_obj()
         result = self.mem_plugin.create_vnf(self.context, vnf_obj)
@@ -279,10 +279,10 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('apmec.mem.plugin.VNFMPlugin.create_vnfd')
-    def test_create_vnf_from_template(self, mock_create_vnfd):
+    @mock.patch('apmec.mem.plugin.VNFMPlugin.create_mead')
+    def test_create_vnf_from_template(self, mock_create_mead):
         self._insert_dummy_device_template_inline()
-        mock_create_vnfd.return_value = {'id':
+        mock_create_mead.return_value = {'id':
                 'd58bcc4e-d0cf-11e6-bf26-cec0c932ce01'}
         vnf_obj = utils.get_dummy_inline_vnf_obj()
         result = self.mem_plugin.create_vnf(self.context, vnf_obj)
@@ -294,7 +294,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self.assertIn('mgmt_url', result)
         self.assertIn('created_at', result)
         self.assertIn('updated_at', result)
-        mock_create_vnfd.assert_called_once_with(mock.ANY, mock.ANY)
+        mock_create_mead.assert_called_once_with(mock.ANY, mock.ANY)
         self._device_manager.invoke.assert_called_with('test_vim',
                                                        'create',
                                                        plugin=mock.ANY,
@@ -373,9 +373,9 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         return vnf_scale
 
     def _test_scale_vnf(self, type, scale_state):
-        # create vnfd
+        # create mead
         self._insert_dummy_device_template()
-        self._insert_scaling_attributes_vnfd()
+        self._insert_scaling_attributes_mead()
 
         # create vnf
         dummy_device_obj = self._insert_dummy_device()
@@ -415,9 +415,9 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     def test_scale_vnf_in(self):
         self._test_scale_vnf('in', constants.PENDING_SCALE_IN)
 
-    def _get_dummy_active_vnf(self, vnfd_template):
+    def _get_dummy_active_vnf(self, mead_template):
         dummy_vnf = utils.get_dummy_device_obj()
-        dummy_vnf['vnfd']['attributes']['vnfd'] = vnfd_template
+        dummy_vnf['mead']['attributes']['mead'] = mead_template
         dummy_vnf['status'] = 'ACTIVE'
         dummy_vnf['instance_id'] = '4c00108e-c69d-4624-842d-389c77311c1d'
         dummy_vnf['vim_id'] = '437ac8ef-a8fb-4b6e-8d8a-a5e86a376e8b'
@@ -442,7 +442,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_respawn(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
-            utils.vnfd_alarm_respawn_tosca_template)
+            utils.mead_alarm_respawn_tosca_template)
         mock_get_vnf.return_value = dummy_vnf
         self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_respawning",
                                       action_value="respawn")
@@ -450,7 +450,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_scale(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
-            utils.vnfd_alarm_scale_tosca_template)
+            utils.mead_alarm_scale_tosca_template)
         mock_get_vnf.return_value = dummy_vnf
         self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_scaling_out",
                                       action_value="SP1-out")
@@ -458,7 +458,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_multi_actions(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
-            utils.vnfd_alarm_multi_actions_tosca_template)
+            utils.mead_alarm_multi_actions_tosca_template)
         mock_get_vnf.return_value = dummy_vnf
         self._test_create_vnf_trigger(policy_name="mon_policy_multi_actions",
                                       action_value="respawn&log")
@@ -467,7 +467,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
     def test_get_vnf_policies(self, mock_get_vnf):
         vnf_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
         dummy_vnf = self._get_dummy_active_vnf(
-            utils.vnfd_alarm_respawn_tosca_template)
+            utils.mead_alarm_respawn_tosca_template)
         mock_get_vnf.return_value = dummy_vnf
         policies = self.mem_plugin.get_vnf_policies(self.context, vnf_id,
             filters={'name': 'vdu1_cpu_usage_monitoring_policy'})

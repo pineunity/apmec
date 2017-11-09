@@ -37,7 +37,7 @@ And upload this image into Glance by using the command specified below:
                                   --public
 ..
 
-2. Create a yaml template named tosca-vnfd-openwrt-with-firewall-rules.yaml
+2. Create a yaml template named tosca-mead-openwrt-with-firewall-rules.yaml
 which contains basic configuration of OpenWRT and some firewall rules of
 OpenWRT. All contents of the template file shows below:
 
@@ -136,12 +136,12 @@ OpenWRT. All contents of the template file shows below:
 
 ..
 
-The above template file comes from two files. One is `tosca-vnfd-openwrt.yaml
+The above template file comes from two files. One is `tosca-mead-openwrt.yaml
 <https://github.com/openstack/apmec/blob/master/samples/tosca-templates/
-vnfd/tosca-vnfd-openwrt.yaml>`_ and other one is
+mead/tosca-mead-openwrt.yaml>`_ and other one is
 `tosca-config-openwrt-with-firewall.yaml
 <https://github.com/openstack/apmec/blob/master/samples/tosca-templates/
-vnfd/tosca-config-openwrt-with-firewall.yaml>`_.
+mead/tosca-config-openwrt-with-firewall.yaml>`_.
 In this template file, we specify the **mgmt_driver: openwrt** which means
 this VNFD is managed by `openwrt driver
 <https://github.com/openstack/apmec/blob/master/apmec/
@@ -150,12 +150,12 @@ which defined in VNFD into OpenWRT instance by using SSH protocol. We can
 run **cat /etc/config/firewall** to confirm the firewall rules if inject
 succeed.
 
-3.Create a sample vnfd:
+3.Create a sample mead:
 
 .. code-block:: console
 
-    apmec vnfd-create \
-                       --vnfd-file tosca-vnfd-openwrt-with-firewall-rules.yaml \
+    apmec mead-create \
+                       --mead-file tosca-mead-openwrt-with-firewall-rules.yaml \
                        <VNFD_NAME>
 ..
 
@@ -163,7 +163,7 @@ succeed.
 
 .. code-block:: console
 
-    apmec vnf-create --vnfd-name <VNFD_NAME> <NAME>
+    apmec vnf-create --mead-name <VNFD_NAME> <NAME>
 ..
 
 This VNF will contains all the firewall rules that VNFD contains

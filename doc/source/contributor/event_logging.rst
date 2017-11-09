@@ -52,7 +52,7 @@ Apmec supports display of events to an end user via
     - events-list: Lists all events for all resources.
     - vim-events-list: List events that belong to a given VIM.
     - vnf-events-list: List events that belong to a given VNF.
-    - vnfd-events-list: List events that belong to a given VNFD.
+    - mead-events-list: List events that belong to a given VNFD.
 
 NOTE: For more details on the syntax of these CLIs, refer to
 `Apmec CLI reference guide <http://docs.openstack.org/cli-reference/apmec.html>`_
@@ -132,7 +132,7 @@ Miscellaneous events command examples:
   |  2 | vim           | c89e5d9d-6d55-4 | REACHABLE      | MONITOR    | 2016-09-10      |                 |
   |    |               | db1-bd67-30982f |                |            | 20:32:46        |                 |
   |    |               | 01133e          |                |            |                 |                 |
-  |  3 | vnfd          | afc0c662-5117-4 | Not Applicable | CREATE     | 2016-09-14      |                 |
+  |  3 | mead          | afc0c662-5117-4 | Not Applicable | CREATE     | 2016-09-14      |                 |
   |    |               | 7a7-8088-02e9f8 |                |            | 05:17:30        |                 |
   |    |               | a3532b          |                |            |                 |                 |
   |  4 | vnf           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | VNF UUID        |
@@ -163,7 +163,7 @@ Miscellaneous events command examples:
   |  1 | vim           | c89e5d9d-6d55-4 | PENDING        | CREATE     | 2016-09-10      |                 |
   |    |               | db1-bd67-30982f |                |            | 20:32:46        |                 |
   |    |               | 01133e          |                |            |                 |                 |
-  |  3 | vnfd          | afc0c662-5117-4 | ACTIVE         | CREATE     | 2016-09-14      |                 |
+  |  3 | mead          | afc0c662-5117-4 | ACTIVE         | CREATE     | 2016-09-14      |                 |
   |    |               | 7a7-8088-02e9f8 |                |            | 05:17:30        |                 |
   |    |               | a3532b          |                |            |                 |                 |
   |  4 | vnf           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | VNF UUID        |

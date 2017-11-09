@@ -33,7 +33,7 @@ class TestSamples(testtools.TestCase):
     def _get_list_of_sample(self, tosca_files):
         if tosca_files:
             base_path = (os.path.dirname(os.path.abspath(__file__)) +
-                         '/../../../samples/tosca-templates/vnfd/')
+                         '/../../../samples/tosca-templates/mead/')
             if isinstance(tosca_files, list):
                 list_of_samples = []
                 for tosca_file in tosca_files:
@@ -79,13 +79,13 @@ class TestSamples(testtools.TestCase):
                         hot,
                         "Heat-translator failed to translate %s" % f)
 
-    def test_scale_sample(self, tosca_file=['tosca-vnfd-scale.yaml']):
+    def test_scale_sample(self, tosca_file=['tosca-mead-scale.yaml']):
         self._test_samples(tosca_file)
 
-    def test_alarm_sample(self, tosca_file=['tosca-vnfd-alarm-scale.yaml']):
+    def test_alarm_sample(self, tosca_file=['tosca-mead-alarm-scale.yaml']):
         self._test_samples(tosca_file)
 
     def test_list_samples(self,
-                          files=['tosca-vnfd-scale.yaml',
-                                 'tosca-vnfd-alarm-scale.yaml']):
+                          files=['tosca-mead-scale.yaml',
+                                 'tosca-mead-alarm-scale.yaml']):
         self._test_samples(files)

@@ -451,7 +451,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         # Build physical port chain
         for element in logical_chain:
             if element['forwarder'] not in vnf_mapping.keys():
-                raise meo.NfpForwarderNotFoundException(vnfd=element[
+                raise meo.NfpForwarderNotFoundException(mead=element[
                                                          'forwarder'],
                                                          mapping=vnf_mapping)
             # TODO(trozet): validate CP in VNFD has forwarding capability
@@ -478,7 +478,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             # Must be an egress CP
             else:
                 if len(chain_list[-1][CP]) > 1:
-                    raise meo.NfpRequirementsException(vnfd=element[
+                    raise meo.NfpRequirementsException(mead=element[
                         'forwarder'])
                 else:
                     chain_list[-1][CP].append(vnf_cp)
@@ -539,45 +539,45 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         new_mapping = dict()
 
-        for vnfd in vnf_members:
+        for mead in vnf_members:
             # there should only be one ID returned for a unique name
             try:
-                vnfd_id = mem_plugin.get_vnfds(context, {'name': [vnfd]},
+                mead_id = mem_plugin.get_meads(context, {'name': [mead]},
                                                 fields=['id']).pop()['id']
             except Exception:
-                raise meo.VnffgdVnfdNotFoundException(vnfd_name=vnfd)
-            if vnfd_id is None:
-                raise meo.VnffgdVnfdNotFoundException(vnfd_name=vnfd)
+                raise meo.VnffgdVnfdNotFoundException(mead_name=mead)
+            if mead_id is None:
+                raise meo.VnffgdVnfdNotFoundException(mead_name=mead)
             else:
                 # if no VNF mapping, we need to abstractly look for instances
                 # that match VNFD
-                if vnf_mapping is None or vnfd not in vnf_mapping.keys():
-                    # find suitable VNFs from vnfd_id
-                    LOG.debug('Searching VNFS with id %s', vnfd_id)
+                if vnf_mapping is None or mead not in vnf_mapping.keys():
+                    # find suitable VNFs from mead_id
+                    LOG.debug('Searching VNFS with id %s', mead_id)
                     vnf_list = mem_plugin.get_vnfs(context,
-                                                    {'vnfd_id': [vnfd_id]},
+                                                    {'mead_id': [mead_id]},
                                                     fields=['id'])
                     if len(vnf_list) == 0:
-                        raise meo.VnffgInvalidMappingException(vnfd_name=vnfd)
+                        raise meo.VnffgInvalidMappingException(mead_name=mead)
                     else:
                         LOG.debug('Matching VNFs found %s', vnf_list)
                         vnf_list = [vnf['id'] for vnf in vnf_list]
                     if len(vnf_list) > 1:
-                        new_mapping[vnfd] = random.choice(vnf_list)
+                        new_mapping[mead] = random.choice(vnf_list)
                     else:
-                        new_mapping[vnfd] = vnf_list[0]
+                        new_mapping[mead] = vnf_list[0]
                 # if VNF mapping, validate instances exist and match the VNFD
                 else:
-                    vnf_vnfd = mem_plugin.get_vnf(context, vnf_mapping[vnfd],
-                                                   fields=['vnfd_id'])
-                    if vnf_vnfd is not None:
-                        vnf_vnfd_id = vnf_vnfd['vnfd_id']
+                    vnf_mead = mem_plugin.get_vnf(context, vnf_mapping[mead],
+                                                   fields=['mead_id'])
+                    if vnf_mead is not None:
+                        vnf_mead_id = vnf_mead['mead_id']
                     else:
-                        raise meo.VnffgInvalidMappingException(vnfd_name=vnfd)
-                    if vnfd_id != vnf_vnfd_id:
-                        raise meo.VnffgInvalidMappingException(vnfd_name=vnfd)
+                        raise meo.VnffgInvalidMappingException(mead_name=mead)
+                    if mead_id != vnf_mead_id:
+                        raise meo.VnffgInvalidMappingException(mead_name=mead)
                     else:
-                        new_mapping[vnfd] = vnf_mapping.pop(vnfd)
+                        new_mapping[mead] = vnf_mapping.pop(mead)
         self._validate_vim(context, new_mapping.values())
         return new_mapping
 

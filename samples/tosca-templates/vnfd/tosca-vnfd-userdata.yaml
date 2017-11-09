@@ -3,7 +3,7 @@ tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 description: Demo with user-data
 
 metadata:
-  template_name: sample-vnfd-userdata
+  template_name: sample-mead-userdata
 
 topology_template:
   node_templates:

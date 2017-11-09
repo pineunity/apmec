@@ -51,7 +51,7 @@ class TestOpenStack(base.TestCase):
     hot_template = _get_template('hot_openwrt.yaml')
     hot_param_template = _get_template('hot_openwrt_params.yaml')
     hot_ipparam_template = _get_template('hot_openwrt_ipparams.yaml')
-    tosca_vnfd_openwrt = _get_template('test_tosca_openwrt.yaml')
+    tosca_mead_openwrt = _get_template('test_tosca_openwrt.yaml')
     config_data = _get_template('config_data.yaml')
 
     def setUp(self):
@@ -73,14 +73,14 @@ class TestOpenStack(base.TestCase):
         patcher = mock.patch(target, new)
         return patcher.start()
 
-    def _get_vnfd(self, template):
-        return {'vnfd': {'attributes': {'vnfd': template}}}
+    def _get_mead(self, template):
+        return {'mead': {'attributes': {'mead': template}}}
 
-    def _get_expected_vnfd(self, template):
-        return {'attributes': {'vnfd': template},
+    def _get_expected_mead(self, template):
+        return {'attributes': {'mead': template},
                 'description': 'OpenWRT with services',
                 'mgmt_driver': 'openwrt', 'name': 'OpenWRT',
-                'service_types': [{'service_type': 'vnfd',
+                'service_types': [{'service_type': 'mead',
                 'id': '4a4c2d44-8a52-4895-9a75-9d1c76c3e738'}],
                 'tenant_id': 'ad7ebc56538745a08ef7c5e97f8bd437',
                 'id': 'fb048660-dc1b-4f0f-bd89-b023666650ec'}
@@ -108,15 +108,15 @@ class TestOpenStack(base.TestCase):
                 'instance_id': None,
                 'name': u'test_openwrt',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                'vnfd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-                'vnfd': {
+                'mead_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+                'mead': {
                     'service_types': [{
-                        'service_type': u'vnfd',
+                        'service_type': u'mead',
                         'id': u'4a4c2d44-8a52-4895-9a75-9d1c76c3e738'}],
                     'description': u'OpenWRT with services',
                     'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
                     'mgmt_driver': u'openwrt',
-                    'attributes': {u'vnfd': self.tosca_vnfd_openwrt},
+                    'attributes': {u'mead': self.tosca_mead_openwrt},
                     'id': u'fb048660-dc1b-4f0f-bd89-b023666650ec',
                     'name': u'OpenWRT'},
                 'mgmt_url': '{"vdu1": "192.168.120.31"}',
@@ -128,13 +128,13 @@ class TestOpenStack(base.TestCase):
     def _get_expected_vnf_update_obj(self):
         return {'status': 'PENDING_CREATE', 'instance_id': None, 'name':
             u'test_openwrt', 'tenant_id':
-        u'ad7ebc56538745a08ef7c5e97f8bd437', 'vnfd_id':
-        u'eb094833-995e-49f0-a047-dfb56aaf7c4e', 'vnfd': {
-            'service_types': [{'service_type': u'vnfd', 'id':
+        u'ad7ebc56538745a08ef7c5e97f8bd437', 'mead_id':
+        u'eb094833-995e-49f0-a047-dfb56aaf7c4e', 'mead': {
+            'service_types': [{'service_type': u'mead', 'id':
             u'4a4c2d44-8a52-4895-9a75-9d1c76c3e738'}], 'description':
             u'OpenWRT with services', 'tenant_id':
             u'ad7ebc56538745a08ef7c5e97f8bd437', 'mgmt_driver': u'openwrt',
-            'attributes': {u'vnfd': self.tosca_vnfd_openwrt},
+            'attributes': {u'mead': self.tosca_mead_openwrt},
             'id': u'fb048660-dc1b-4f0f-bd89-b023666650ec', 'name':
             u'openwrt_services'}, 'mgmt_url': None, 'service_context': [],
             'attributes': {'config': utils.update_config_data},
@@ -146,16 +146,16 @@ class TestOpenStack(base.TestCase):
                 'instance_id': None,
                 'name': u'test_openwrt',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                'vnfd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-                'vnfd': {
+                'mead_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+                'mead': {
                     'service_types': [{
-                        'service_type': u'vnfd',
+                        'service_type': u'mead',
                         'id': u'4a4c2d44-8a52-4895-9a75-9d1c76c3e738'}],
                     'description': u'OpenWRT with services',
                     'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
                     'mgmt_driver': u'openwrt',
                     'infra_driver': u'heat',
-                    'attributes': {u'vnfd': self.tosca_vnfd_openwrt},
+                    'attributes': {u'mead': self.tosca_mead_openwrt},
                     'id': u'fb048660-dc1b-4f0f-bd89-b023666650ec',
                     'name': u'openwrt_services'},
                 'mgmt_url': '{"vdu1": "192.168.120.31"}',
@@ -199,10 +199,10 @@ class TestOpenStack(base.TestCase):
                                 is_monitor=True,
                                 multi_vdus=False):
         tosca_tpl = _get_template(tosca_tpl_name)
-        exp_tmpl = self._get_expected_vnfd(tosca_tpl)
+        exp_tmpl = self._get_expected_mead(tosca_tpl)
         tosca_hw_dict = yaml.safe_load(_get_template(hot_tpl_name))
         dvc = {
-            'vnfd': exp_tmpl,
+            'mead': exp_tmpl,
             'description': u'OpenWRT with services',
             'attributes': {
                 'heat_template': tosca_hw_dict,
@@ -214,7 +214,7 @@ class TestOpenStack(base.TestCase):
             'name': u'test_openwrt',
             'service_context': [],
             'status': 'PENDING_CREATE',
-            'vnfd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+            'mead_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
             'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437'
         }
         # Add monitoring attributes for those yaml, which are having it
@@ -251,9 +251,9 @@ class TestOpenStack(base.TestCase):
 
         tosca_template = _get_template(template)
         vnf = utils.get_dummy_device_obj()
-        dtemplate = self._get_expected_vnfd(tosca_template)
+        dtemplate = self._get_expected_mead(tosca_template)
 
-        vnf['vnfd'] = dtemplate
+        vnf['mead'] = dtemplate
         vnf['attributes'] = {}
         vnf['attributes']['param_values'] = input_params
         return vnf
@@ -393,8 +393,8 @@ class TestOpenStack(base.TestCase):
     def test_tosca_params(self):
         input_params = 'image: cirros\nflavor: m1.large'
         self._test_assert_equal_for_tosca_templates(
-            'tosca_generic_vnfd_params.yaml',
-            'hot_tosca_generic_vnfd_params.yaml',
+            'tosca_generic_mead_params.yaml',
+            'hot_tosca_generic_mead_params.yaml',
             input_params
         )
 

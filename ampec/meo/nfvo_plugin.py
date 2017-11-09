@@ -536,26 +536,26 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         nsd_dict = nsd['nsd']
         nsd_yaml = nsd_dict['attributes'].get('nsd')
         inner_nsd_dict = yaml.safe_load(nsd_yaml)
-        nsd['vnfds'] = dict()
+        nsd['meads'] = dict()
         LOG.debug('nsd_dict: %s', inner_nsd_dict)
 
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
-        vnfd_imports = inner_nsd_dict['imports']
+        mead_imports = inner_nsd_dict['imports']
         inner_nsd_dict['imports'] = []
         new_files = []
-        for vnfd_name in vnfd_imports:
-            vnfd = mem_plugin.get_vnfd(context, vnfd_name)
+        for mead_name in mead_imports:
+            mead = mem_plugin.get_mead(context, mead_name)
             # Copy VNF types and VNF names
-            sm_dict = yaml.safe_load(vnfd['attributes']['vnfd'])[
+            sm_dict = yaml.safe_load(mead['attributes']['mead'])[
                 'topology_template'][
                 'substitution_mappings']
-            nsd['vnfds'][sm_dict['node_type']] = vnfd['name']
+            nsd['meads'][sm_dict['node_type']] = mead['name']
             # Ugly Hack to validate the child templates
             # TODO(tbh): add support in tosca-parser to pass child
             # templates as dict
             fd, temp_path = mkstemp()
             with open(temp_path, 'w') as fp:
-                fp.write(vnfd['attributes']['vnfd'])
+                fp.write(mead['attributes']['mead'])
             os.close(fd)
             new_files.append(temp_path)
             inner_nsd_dict['imports'].append(temp_path)
@@ -572,7 +572,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         finally:
             for file_path in new_files:
                 os.remove(file_path)
-            inner_nsd_dict['imports'] = vnfd_imports
+            inner_nsd_dict['imports'] = mead_imports
 
         if ('description' not in nsd_dict or
                 nsd_dict['description'] == ''):
@@ -586,10 +586,10 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
 
         LOG.debug('nsd %s', nsd)
 
-    def _get_vnfd_id(self, vnfd_name, onboarded_vnfds):
-        for vnfd in onboarded_vnfds:
-            if vnfd_name == vnfd['name']:
-                return vnfd['id']
+    def _get_mead_id(self, mead_name, onboarded_meads):
+        for mead in onboarded_meads:
+            if mead_name == mead['name']:
+                return mead['id']
 
     @log.log
     def create_ns(self, context, ns):
@@ -618,7 +618,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         nsd = self.get_nsd(context, ns['ns']['nsd_id'])
         nsd_dict = yaml.safe_load(nsd['attributes']['nsd'])
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
-        onboarded_vnfds = mem_plugin.get_vnfds(context, [])
+        onboarded_meads = mem_plugin.get_meads(context, [])
         region_name = ns.setdefault('placement_attr', {}).get(
             'region_name', None)
         vim_res = self.vim_client.get_vim(context, ns['ns']['vim_id'],
@@ -633,26 +633,26 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             self._process_parameterized_input(ns['ns']['attributes'],
                                               nsd_dict)
         # Step-2
-        vnfds = nsd['vnfds']
-        # vnfd_dict is used while generating workflow
-        vnfd_dict = dict()
+        meads = nsd['meads']
+        # mead_dict is used while generating workflow
+        mead_dict = dict()
         for node_name, node_val in \
                 (nsd_dict['topology_template']['node_templates']).items():
-            if node_val.get('type') not in vnfds.keys():
+            if node_val.get('type') not in meads.keys():
                 continue
-            vnfd_name = vnfds[node_val.get('type')]
-            if not vnfd_dict.get(vnfd_name):
-                vnfd_dict[vnfd_name] = {
-                    'id': self._get_vnfd_id(vnfd_name, onboarded_vnfds),
+            mead_name = meads[node_val.get('type')]
+            if not mead_dict.get(mead_name):
+                mead_dict[mead_name] = {
+                    'id': self._get_mead_id(mead_name, onboarded_meads),
                     'instances': [node_name]
                 }
             else:
-                vnfd_dict[vnfd_name]['instances'].append(node_name)
+                mead_dict[mead_name]['instances'].append(node_name)
             if not node_val.get('requirements'):
                 continue
-            if not param_values.get(vnfd_name):
-                param_values[vnfd_name] = {}
-            param_values[vnfd_name]['substitution_mappings'] = dict()
+            if not param_values.get(mead_name):
+                param_values[mead_name] = {}
+            param_values[mead_name]['substitution_mappings'] = dict()
             req_dict = dict()
             requirements = node_val.get('requirements')
             for requirement in requirements:
@@ -661,13 +661,13 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                 res_name = req_val + ns['ns']['nsd_id'][:11]
                 req_dict[req_name] = res_name
                 if req_val in nsd_dict['topology_template']['node_templates']:
-                    param_values[vnfd_name]['substitution_mappings'][
+                    param_values[mead_name]['substitution_mappings'][
                         res_name] = nsd_dict['topology_template'][
                             'node_templates'][req_val]
 
-            param_values[vnfd_name]['substitution_mappings'][
+            param_values[mead_name]['substitution_mappings'][
                 'requirements'] = req_dict
-        ns['vnfd_details'] = vnfd_dict
+        ns['mead_details'] = mead_dict
         # Step-3
         kwargs = {'ns': ns, 'params': param_values}
 
@@ -730,7 +730,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
             super(NfvoPlugin, self).create_ns_post(context, ns_id, exec_obj,
-                                                   vnfd_dict, error_reason)
+                                                   mead_dict, error_reason)
 
         self.spawn_n(_create_ns_wait, self, ns_dict['id'],
                      mistral_execution.id)

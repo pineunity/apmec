@@ -11,7 +11,7 @@
   License for the specific language governing permissions and limitations
   under the License.
 
-.. _ref-vnfd:
+.. _ref-mead:
 
 =========================================
 Orchestrating VNFs with attached Volumes
@@ -71,7 +71,7 @@ With these additions, the new VNFD looks like below:
   description: Demo example
 
   metadata:
-    template_name: sample-tosca-vnfd
+    template_name: sample-tosca-mead
 
   topology_template:
     node_templates:

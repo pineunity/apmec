@@ -29,4 +29,4 @@ from alembic import op
 
 
 def upgrade(active_plugins=None, options=None):
-    op.drop_column('vnfd', 'infra_driver')
+    op.drop_column('mead', 'infra_driver')

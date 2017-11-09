@@ -37,9 +37,9 @@ reference section.
 
 ::
 
-  apmec vnfd-create --vnfd-file vnfd1.yaml VNFD1
+  apmec mead-create --mead-file mead1.yaml VNFD1
 
-  apmec vnfd-create --vnfd-file vnfd2.yaml VNFD2
+  apmec mead-create --mead-file mead2.yaml VNFD2
 
 The following code represents sample NSD which instantiates the above VNFs
 
@@ -98,7 +98,7 @@ following CLI command:
 Reference
 ~~~~~~~~~
 
-VNF1 sample template for nsd named vnfd1.yaml:
+VNF1 sample template for nsd named mead1.yaml:
 
 ::
 
@@ -187,7 +187,7 @@ VNF1 sample template for nsd named vnfd1.yaml:
          network_name: net0
          vendor: Apmec
 
-VNF2 sample template for nsd named vnfd2.yaml:
+VNF2 sample template for nsd named mead2.yaml:
 
 ::
 

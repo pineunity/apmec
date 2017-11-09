@@ -142,7 +142,7 @@ def add_command_parsers(subparsers):
     # positional parameter
     parser.add_argument(
         'resource',
-        choices=['all', 'events', 'vnf', 'vnfd', 'vims'],
+        choices=['all', 'events', 'vnf', 'mead', 'vims'],
         help=_('Resource name for which deleted entries are to be purged.'))
     # optional parameter, can be skipped. default='90'
     parser.add_argument('-a', '--age', nargs='?', default='90',

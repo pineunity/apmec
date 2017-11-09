@@ -1,4 +1,4 @@
-redirectmatch 301 ^/apmec/([^/]+)/devref/vnfd_template_description.html$ ^/apmec/$1/contributor/vnfd_template_description.html
+redirectmatch 301 ^/apmec/([^/]+)/devref/mead_template_description.html$ ^/apmec/$1/contributor/mead_template_description.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/vnffg_usage_guide.html$  ^/apmec/$1/user/vnffg_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/api_extensions.html$ ^/apmec/$1/contributor/api/api_extensions.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/api_layer.html$ ^/apmec/$1/contributor/api/api_layer.html
@@ -12,7 +12,7 @@ redirectmatch 301 ^/apmec/([^/]+)/devref/policy_actions_framework.html$ ^/apmec/
 redirectmatch 301 ^/apmec/([^/]+)/devref/apmec_conductor.html$ ^/apmec/$1/contributor/apmec_conductor.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/apmec_functional_test.html$ ^/apmec/$1/contributor/apmec_functional_test.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/apmec_vim_monitoring.html$ ^/apmec/$1/contributor/apmec_vim_monitoring.html
-redirectmatch 301 ^/apmec/([^/]+)/devref/vnfd_template_parameterization.html$ ^/apmec/$1/contributor/vnfd_template_parameterization.html
+redirectmatch 301 ^/apmec/([^/]+)/devref/mead_template_parameterization.html$ ^/apmec/$1/contributor/mead_template_parameterization.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/vnffgd_template_description.html$ ^/apmec/$1/contributor/vnffgd_template_description.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/mem_usage_guide.html$ ^/apmec/$1/user/mem_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/policies/dev-process.html$ ^/apmec/$1/contributor/dev-process.html

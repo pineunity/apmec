@@ -5,7 +5,7 @@ description: |
    The VCP is used to grab an IP which will be used as an virtual IP as CP1 and CP2.
 
 metadata:
-  template_name: sample-tosca-vnfd-vip
+  template_name: sample-tosca-mead-vip
 
 topology_template:
   node_templates:

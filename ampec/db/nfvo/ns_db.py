@@ -53,7 +53,7 @@ class NSD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     # Descriptive name
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text)
-    vnfds = sa.Column(types.Json, nullable=True)
+    meads = sa.Column(types.Json, nullable=True)
 
     # Nsd template source - onboarded
     template_source = sa.Column(sa.String(255), server_default='onboarded')
@@ -150,7 +150,7 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
             'attributes': self._make_attributes_dict(nsd['attributes']),
         }
         key_list = ('id', 'tenant_id', 'name', 'description',
-                    'created_at', 'updated_at', 'vnfds', 'template_source')
+                    'created_at', 'updated_at', 'meads', 'template_source')
         res.update((key, nsd[key]) for key in key_list)
         return self._fields(res, fields)
 
@@ -167,7 +167,7 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
         return self._fields(res, fields)
 
     def create_nsd(self, context, nsd):
-        vnfds = nsd['vnfds']
+        meads = nsd['meads']
         nsd = nsd['nsd']
         LOG.debug('nsd %s', nsd)
         tenant_id = self._get_tenant_id_for_create(context, nsd)
@@ -180,7 +180,7 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
                     id=nsd_id,
                     tenant_id=tenant_id,
                     name=nsd.get('name'),
-                    vnfds=vnfds,
+                    meads=meads,
                     description=nsd.get('description'),
                     deleted_at=datetime.min,
                     template_source=template_source)
@@ -286,14 +286,14 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
         return self._make_ns_dict(ns_db)
 
     def create_ns_post(self, context, ns_id, mistral_obj,
-            vnfd_dict, error_reason):
+            mead_dict, error_reason):
         LOG.debug('ns ID %s', ns_id)
         output = ast.literal_eval(mistral_obj.output)
         mgmt_urls = dict()
         vnf_ids = dict()
         if len(output) > 0:
-            for vnfd_name, vnfd_val in iteritems(vnfd_dict):
-                for instance in vnfd_val['instances']:
+            for mead_name, mead_val in iteritems(mead_dict):
+                for instance in mead_val['instances']:
                     if 'mgmt_url_' + instance in output:
                         mgmt_urls[instance] = ast.literal_eval(
                             output['mgmt_url_' + instance].strip())

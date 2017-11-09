@@ -15,7 +15,7 @@ apmec/tests/functional.
 
 Writing a testcase:A testcase is written by declaring a class name derived from
 class base.BaseApmecTest. BaseApmecTest is class declared in
-apmec/tests/functional/vnfd/base.py.
+apmec/tests/functional/mead/base.py.
 
 A testcase body typically looks as below:
 
@@ -38,7 +38,7 @@ base.BaseApmecTest. Testcases typically has sections to setup, test, validate
 results and finally cleanup.
 
 Input yaml files: These are input files used in testcases for operations like
-create vnfd or create vnf. The location of files is apmec/tests/etc/samples/.
+create mead or create vnf. The location of files is apmec/tests/etc/samples/.
 
 requirements.txt and test-requirements.txt : The file requirements.txt and
 test-requirements.txt lists all the packages needed for functional test.
@@ -52,7 +52,7 @@ testcase.
 Eg: assertIsNotNone, assertEqual
 
 Apmec-client: In base.py we instantiate apmecclient object which has apis to
-create/delete/list vnfd/vnf once given the necessary parameters.
+create/delete/list mead/vnf once given the necessary parameters.
 Verify apmecclient/v1_0/client.py for all the apmec related apis supported.
 
 

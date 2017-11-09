@@ -31,7 +31,7 @@ Here is the sample template:
    description: VNF TOSCA template with input parameters
 
    metadata:
-     template_name: sample-tosca-vnfd
+     template_name: sample-tosca-mead
 
    topology_template:
 
@@ -130,7 +130,7 @@ Here is the sample template:
    description: VNF TOSCA template with input parameters
 
    metadata:
-     template_name: sample-tosca-vnfd
+     template_name: sample-tosca-mead
 
    topology_template:
      inputs:
@@ -269,9 +269,9 @@ Key Summary
 
    .. code-block:: console
 
-      apmec vnf-create --vnfd-name <vnfd_name> --param-file <param_yaml_file> <vnf_name>
+      apmec vnf-create --mead-name <mead_name> --param-file <param_yaml_file> <vnf_name>
 
 #. Specifying a parameter values file during VNF creation is also supported in
    Horizon UI.
 #. Sample VNFD parameterized templates and parameter values files can be found
-   at https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd.
+   at https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead.

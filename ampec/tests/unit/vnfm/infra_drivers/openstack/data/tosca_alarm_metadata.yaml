@@ -5,7 +5,7 @@ description: >
   VDU properties).
 
 metadata:
- template_name: sample-tosca-vnfd
+ template_name: sample-tosca-mead
 
 topology_template:
   node_templates:

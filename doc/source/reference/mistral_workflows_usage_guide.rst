@@ -48,7 +48,7 @@ Validate workflow definition files before registering with Mistral.
   | Error | None  |
   +-------+-------+
 
-  $ mistral workflow-validate create_vnfd.yaml
+  $ mistral workflow-validate create_mead.yaml
 
   +-------+-------+
   | Field | Value |
@@ -66,7 +66,7 @@ Validate workflow definition files before registering with Mistral.
   | Error | None  |
   +-------+-------+
 
-  $ mistral workflow-validate delete_vnfd.yaml
+  $ mistral workflow-validate delete_mead.yaml
 
   +-------+-------+
   | Field | Value |
@@ -78,7 +78,7 @@ Validate workflow definition files before registering with Mistral.
 Registering Apmec workflows with Mistral
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To create std.create_vnf, std.create_vnfd, std.delete_vnfd and
+To create std.create_vnf, std.create_mead, std.delete_mead and
 std.delete_vnf workflows in Mistral.
 
 ::
@@ -95,20 +95,20 @@ std.delete_vnf workflows in Mistral.
   | 445e165a-3654-4996-aad4-c6fea65e95d5 | std.create_vnf | bde60e557de840a8a837733aaa96e42e | <none> | body  | 2016-07-29 15:08:45.585192 | None       |
   +--------------------------------------+----------------+----------------------------------+--------+-------+----------------------------+------------+
 
-  $ mistral workflow-create create_vnfd.yaml --public
+  $ mistral workflow-create create_mead.yaml --public
 
   +--------------------------------------+-----------------+----------------------------------+--------+-------+----------------------------+------------+
   | ID                                   | Name            | Project ID                       | Tags   | Input | Created at                 | Updated at |
   +--------------------------------------+-----------------+----------------------------------+--------+-------+----------------------------+------------+
-  | 926caa3e-ee59-4ca0-ac1b-cae03538e389 | std.create_vnfd | bde60e557de840a8a837733aaa96e42e | <none> | body  | 2016-07-29 15:08:54.933874 | None       |
+  | 926caa3e-ee59-4ca0-ac1b-cae03538e389 | std.create_mead | bde60e557de840a8a837733aaa96e42e | <none> | body  | 2016-07-29 15:08:54.933874 | None       |
   +--------------------------------------+-----------------+----------------------------------+--------+-------+----------------------------+------------+
 
-  $ mistral workflow-create delete_vnfd.yaml --public
+  $ mistral workflow-create delete_mead.yaml --public
 
   +--------------------------------------+-----------------+----------------------------------+--------+---------+----------------------------+------------+
   | ID                                   | Name            | Project ID                       | Tags   | Input   | Created at                 | Updated at |
   +--------------------------------------+-----------------+----------------------------------+--------+---------+----------------------------+------------+
-  | f15b7402-ce31-4369-98d4-818125191564 | std.delete_vnfd | bde60e557de840a8a837733aaa96e42e | <none> | vnfd_id | 2016-08-14 20:01:00.135104 | None       |
+  | f15b7402-ce31-4369-98d4-818125191564 | std.delete_mead | bde60e557de840a8a837733aaa96e42e | <none> | mead_id | 2016-08-14 20:01:00.135104 | None       |
   +--------------------------------------+-----------------+----------------------------------+--------+---------+----------------------------+------------+
 
   $ mistral workflow-create delete_vnf.yaml --public
@@ -120,7 +120,7 @@ std.delete_vnf workflows in Mistral.
 
 
 
-VNFD resource creation with std.create_vnfd workflow
+VNFD resource creation with std.create_mead workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 To create VNFD apmec resource based on the VNFD workflow input file.
 
@@ -132,14 +132,14 @@ Create new execution for VNFD creation.
 
 ::
 
-  $ mistral execution-create std.create_vnfd create_vnfd.json
+  $ mistral execution-create std.create_mead create_mead.json
 
   +-------------------+--------------------------------------+
   | Field             | Value                                |
   +-------------------+--------------------------------------+
   | ID                | 31f086aa-a3c9-4f44-b8b2-bec560e32653 |
   | Workflow ID       | 926caa3e-ee59-4ca0-ac1b-cae03538e389 |
-  | Workflow name     | std.create_vnfd                      |
+  | Workflow name     | std.create_mead                      |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | RUNNING                              |
@@ -163,7 +163,7 @@ Gather execution details based on execution id.
   +-------------------+--------------------------------------+
   | ID                | 31f086aa-a3c9-4f44-b8b2-bec560e32653 |
   | Workflow ID       | 926caa3e-ee59-4ca0-ac1b-cae03538e389 |
-  | Workflow name     | std.create_vnfd                      |
+  | Workflow name     | std.create_mead                      |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | SUCCESS                              |
@@ -187,7 +187,7 @@ Gather VNFD ID from execution output data.
   Response:
 
   {
-    "vnfd_id": "fb164b77-5e24-402d-b5f4-c6596352cabe"
+    "mead_id": "fb164b77-5e24-402d-b5f4-c6596352cabe"
   }
 
 Verify VNFD details using apmec CLI
@@ -195,13 +195,13 @@ Verify VNFD details using apmec CLI
 
 ::
 
-  $ apmec vnfd-show "fb164b77-5e24-402d-b5f4-c6596352cabe"
+  $ apmec mead-show "fb164b77-5e24-402d-b5f4-c6596352cabe"
 
   +---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
   | Field         | Value                                                                                                                                                                     |
   +---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-  | attributes    | {"vnfd": "tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n\ndescription: Demo example\n\nmetadata:\n  template_name: sample-tosca-                         |
-  |               | vnfd\n\ntopology_template:\n  node_templates:\n    VDU1:\n      type: tosca.nodes.nfv.VDU.Apmec\n      properties:\n        image: cirros-0.3.5-x86_64-disk\n             |
+  | attributes    | {"mead": "tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n\ndescription: Demo example\n\nmetadata:\n  template_name: sample-tosca-                         |
+  |               | mead\n\ntopology_template:\n  node_templates:\n    VDU1:\n      type: tosca.nodes.nfv.VDU.Apmec\n      properties:\n        image: cirros-0.3.5-x86_64-disk\n             |
   |               | flavor: m1.tiny\n        availability_zone: nova\n        mgmt_driver: noop\n        config: |\n          param0: key1\n          param1: key2\n\n    CP1:\n      type:   |
   |               | tosca.nodes.nfv.CP.Apmec\n      properties:\n        management: true\n        anti_spoofing_protection: false\n      requirements:\n        - virtualLink:\n            |
   |               | node: VL1\n        - virtualBinding:\n            node: VDU1\n\n    CP2:\n      type: tosca.nodes.nfv.CP.Apmec\n      properties:\n        anti_spoofing_protection:     |
@@ -214,14 +214,14 @@ Verify VNFD details using apmec CLI
   | id            | fb164b77-5e24-402d-b5f4-c6596352cabe                                                                                                                                      |
   | infra_driver  | openstack                                                                                                                                                                      |
   | mgmt_driver   | noop                                                                                                                                                                      |
-  | name          | apmec-create-vnfd                                                                                                                                                        |
-  | service_types | {"service_type": "vnfd", "id": "db7c5077-7bbf-4bd3-87d5-e3c52daba255"}                                                                                                    |
+  | name          | apmec-create-mead                                                                                                                                                        |
+  | service_types | {"service_type": "mead", "id": "db7c5077-7bbf-4bd3-87d5-e3c52daba255"}                                                                                                    |
   | tenant_id     | bde60e557de840a8a837733aaa96e42e                                                                                                                                          |
   +---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 VNF resource creation with std.create_vnf workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Update the vnfd_id from the output of above execution in create_vnf.json
+Update the mead_id from the output of above execution in create_vnf.json
 
 Create new execution for VNF creation.
 
@@ -404,22 +404,22 @@ Gather execution output data from execution id.
   }
 
 
-VNFD resource deletion with std.delete_vnfd workflow
+VNFD resource deletion with std.delete_mead workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Update the vnfd_id from the output of above execution in delete_vnfd.json
+Update the mead_id from the output of above execution in delete_mead.json
 
 Create new execution for VNF deletion.
 
 ::
 
-  $ mistral execution-create std.delete_vnfd delete_vnfd.json
+  $ mistral execution-create std.delete_mead delete_mead.json
 
   +-------------------+--------------------------------------+
   | Field             | Value                                |
   +-------------------+--------------------------------------+
   | ID                | 1e0340c0-bee8-4ca4-8150-ac6e5eb58c99 |
   | Workflow ID       | f15b7402-ce31-4369-98d4-818125191564 |
-  | Workflow name     | std.delete_vnfd                      |
+  | Workflow name     | std.delete_mead                      |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | RUNNING                              |
@@ -439,7 +439,7 @@ Gather execution details based on execution id.
   +-------------------+--------------------------------------+
   | ID                | 1e0340c0-bee8-4ca4-8150-ac6e5eb58c99 |
   | Workflow ID       | f15b7402-ce31-4369-98d4-818125191564 |
-  | Workflow name     | std.delete_vnfd                      |
+  | Workflow name     | std.delete_mead                      |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | SUCCESS                              |
@@ -474,31 +474,31 @@ Gather execution output data from execution id.
         "project_id": "bde60e557de840a8a837733aaa96e42e",
         "user_name": "demo"
       },
-      "vnfd_id": "fb164b77-5e24-402d-b5f4-c6596352cabe",
+      "mead_id": "fb164b77-5e24-402d-b5f4-c6596352cabe",
       "__env": {},
       "__execution": {
         "input": {
-            "vnfd_id": "fb164b77-5e24-402d-b5f4-c6596352cabe"
+            "mead_id": "fb164b77-5e24-402d-b5f4-c6596352cabe"
         },
         "params": {},
         "id": "1e0340c0-bee8-4ca4-8150-ac6e5eb58c99",
         "spec": {
             "tasks": {
-                "delete_vnfd": {
-                    "action": "apmec.delete_vnfd vnfd=<% $.vnfd_id %>",
+                "delete_mead": {
+                    "action": "apmec.delete_mead mead=<% $.mead_id %>",
                     "version": "2.0",
                     "type": "direct",
                     "description": "Request to delete a VNFD.",
-                    "name": "delete_vnfd"
+                    "name": "delete_mead"
                 }
             },
             "description": "Delete a VNFD.\n",
             "version": "2.0",
             "input": [
-                "vnfd_id"
+                "mead_id"
             ],
             "type": "direct",
-            "name": "std.delete_vnfd"
+            "name": "std.delete_mead"
           }
       }
   }

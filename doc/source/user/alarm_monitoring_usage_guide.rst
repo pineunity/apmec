@@ -60,7 +60,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
     description: Demo example
 
     metadata:
-     template_name: sample-tosca-vnfd
+     template_name: sample-tosca-mead
 
     topology_template:
       node_templates:
@@ -186,7 +186,7 @@ How to monitor VNFs via alarm triggers
 How to setup alarm configuration
 ================================
 
-Firstly, vnfd and vnf need to be created successfully using pre-defined TOSCA
+Firstly, mead and vnf need to be created successfully using pre-defined TOSCA
 template for alarm monitoring. Then, in order to know whether alarm
 configuration defined in Apmec is successfully passed to Ceilometer,
 Apmec users could use CLI:

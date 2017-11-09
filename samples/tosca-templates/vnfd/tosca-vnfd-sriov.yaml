@@ -3,7 +3,7 @@ tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 description: SR-IOV example
 
 metadata:
-  template_name: sample-tosca-vnfd-sriov
+  template_name: sample-tosca-mead-sriov
 
 topology_template:
   node_templates:

@@ -616,10 +616,10 @@ msgstr "Cuerpo de solicitud formado incorrectamente: %(reason)s"
 
 #, python-format
 msgid ""
-"Matching VNF Instance for VNFD %(vnfd_name)s could not be found. Please "
+"Matching VNF Instance for VNFD %(mead_name)s could not be found. Please "
 "create an instance of this VNFD before creating/updating VNFFG."
 msgstr ""
-"Instancia VNF correspondiente a VNFD %(vnfd_name)s no ha sido encontrada. "
+"Instancia VNF correspondiente a VNFD %(mead_name)s no ha sido encontrada. "
 "Por favor crea una instancia de este VNFD antes de crear/actualizar el VNFFG."
 
 msgid "Max header line to accommodate large tokens"
@@ -635,8 +635,8 @@ msgstr ""
 "Driver de monitor para comunicar con la instancia Hosting VNF/servicio "
 "logico que apmec plugin usara"
 
-msgid "More than one MGMT Driver per vnfd is not supported"
-msgstr "Más de un Driver MGMT por vnfd no está soportado"
+msgid "More than one MGMT Driver per mead is not supported"
+msgstr "Más de un Driver MGMT por mead no está soportado"
 
 msgid "More than one external network exists"
 msgstr "Existe más de una red externa"
@@ -831,18 +831,18 @@ msgstr "CP especificado %(cp_id)s no ha sido encontrado en VNF %(vnf_id)s."
 
 #, python-format
 msgid ""
-"Specified CP %(cp_id)s could not be found in VNFD %(vnfd_name)s. Please "
+"Specified CP %(cp_id)s could not be found in VNFD %(mead_name)s. Please "
 "check VNFD for correct Connection Point."
 msgstr ""
-"CP especificado %(cp_id)s no ha sido encontrado en VNFD %(vnfd_name)s. Por "
+"CP especificado %(cp_id)s no ha sido encontrado en VNFD %(mead_name)s. Por "
 "favor comprueba VNFD para el correcto Punto de Conexión."
 
 #, python-format
 msgid ""
-"Specified CP %(cp_id)s in VNFD %(vnfd_name)s does not have forwarding "
+"Specified CP %(cp_id)s in VNFD %(mead_name)s does not have forwarding "
 "capability, which is required to be included in forwarding path"
 msgstr ""
-"CP %(cp_id)s especificado en VNFD %(vnfd_name)s no tiene capacidad de "
+"CP %(cp_id)s especificado en VNFD %(mead_name)s no tiene capacidad de "
 "reenvío, que es requerida para ser incluido en el forwarding path"
 
 #, python-format
@@ -867,10 +867,10 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Specified VNFD %(vnfd_name)s in VNFFGD does not exist. Please create VNFDs "
+"Specified VNFD %(mead_name)s in VNFFGD does not exist. Please create VNFDs "
 "before creating VNFFG"
 msgstr ""
-"VNFD especificado %(vnfd_name)s en VNFFGD no existe. Por favor crea VNFDs "
+"VNFD especificado %(mead_name)s en VNFFGD no existe. Por favor crea VNFDs "
 "antes de crear VNFFG"
 
 msgid "Specified model is invalid, only Event model supported"
@@ -1123,16 +1123,16 @@ msgstr ""
 "a que la pila %(stack)s escalara."
 
 #, python-format
-msgid "VNFD %(vnfd_id)s could not be found"
-msgstr "VNFD %(vnfd_id)s no ha sido encontrado"
+msgid "VNFD %(mead_id)s could not be found"
+msgstr "VNFD %(mead_id)s no ha sido encontrado"
 
 #, python-format
-msgid "VNFD %(vnfd_id)s is still in use"
-msgstr "VNFD %(vnfd_id)s sigue en uso"
+msgid "VNFD %(mead_id)s is still in use"
+msgstr "VNFD %(mead_id)s sigue en uso"
 
 #, python-format
-msgid "VNFD Forwarder %(vnfd)s not found in VNF Mapping %(mapping)s"
-msgstr "VNFD Forwarder %(vnfd)s no encontrado en VNF Mapping %(mapping)s"
+msgid "VNFD Forwarder %(mead)s not found in VNF Mapping %(mapping)s"
+msgstr "VNFD Forwarder %(mead)s no encontrado en VNF Mapping %(mapping)s"
 
 #, python-format
 msgid "VNFFG %(vnffg_id)s could not be found"
@@ -1217,8 +1217,8 @@ msgstr ""
 "o Context."
 
 #, python-format
-msgid "creating VNF based on %(vnfd_id)s failed"
-msgstr "Fallo en la creación de VNF basado en %(vnfd_id)s"
+msgid "creating VNF based on %(mead_id)s failed"
+msgstr "Fallo en la creación de VNF basado en %(mead_id)s"
 
 #, python-format
 msgid ""

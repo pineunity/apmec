@@ -36,7 +36,7 @@ Request Parameters
 
   - vnf: vnf
   - tenant_id: tenant_id_opt
-  - vnfd_id: vnfd_id
+  - mead_id: mead_id
   - vim_id: vim_id_opt
   - name: name
   - description: description_opt
@@ -44,7 +44,7 @@ Request Parameters
   - config: vnf_config_opt
   - param_values: vnf_param_values_opt
   - placement_attr: vnf_placement_attr_opt
-  - vnfd_template: vnfd_template
+  - mead_template: mead_template
 
 Request Example
 ---------------
@@ -60,7 +60,7 @@ Response Parameters
   - vnf: vnf
   - status: vnf_status
   - description: description
-  - vnfd_id: vnfd_id
+  - mead_id: mead_id
   - tenant_id: tenant_id
   - created_at: vnf_created_at
   - updated_at: vnf_updated_at
@@ -110,7 +110,7 @@ Response Parameters
   - vnfs: vnfs
   - status: vnf_status
   - description: description
-  - vnfd_id: vnfd_id
+  - mead_id: mead_id
   - tenant_id: tenant_id
   - created_at: vnf_created_at
   - updated_at: vnf_updated_at
@@ -168,7 +168,7 @@ Response Parameters
   - vnf: vnf
   - status: vnf_status
   - description: description
-  - vnfd_id: vnfd_id
+  - mead_id: mead_id
   - tenant_id: tenant_id
   - created_at: vnf_created_at
   - updated_at: vnf_updated_at
@@ -236,7 +236,7 @@ Response Parameters
   - vnf: vnf
   - status: vnf_status
   - description: description
-  - vnfd_id: vnfd_id
+  - mead_id: mead_id
   - tenant_id: tenant_id
   - created_at: vnf_created_at
   - updated_at: vnf_updated_at

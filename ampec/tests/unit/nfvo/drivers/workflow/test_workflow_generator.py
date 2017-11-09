@@ -24,7 +24,7 @@ def get_dummy_ns():
                     'vnf_ids': '', u'attributes': {},
                     u'nsd_id': u'b8587afb-6099-4f56-abce-572c62e3d61d',
                     u'name': u'test_create_ns'},
-            'vnfd_details': {u'vnf1': {'instances': ['VNF1'],
+            'mead_details': {u'vnf1': {'instances': ['VNF1'],
                              'id': u'dec09ed4-f355-4ec8-a00b-8548f6575a80'},
             u'vnf2': {'instances': ['VNF2'],
                       'id': u'9f8f2af7-6407-4f79-a6fe-302c56172231'}},

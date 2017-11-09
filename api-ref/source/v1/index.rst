@@ -8,7 +8,7 @@ NFV Orchestration API v1.0
 
 .. include:: versions.inc
 .. include:: extensions.inc
-.. include:: vnfds.inc
+.. include:: meads.inc
 .. include:: vnfs.inc
 .. include:: vims.inc
 .. include:: events.inc

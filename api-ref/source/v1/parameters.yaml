@@ -55,7 +55,7 @@ vnf_id_path:
   in: path
   required: true
   type: string
-vnfd_id_path:
+mead_id_path:
   description: |
     The UUID of the VNFD.
   in: path
@@ -713,7 +713,7 @@ vnf_param_values:
     VNF parameter object. These parameters will be substituted for VNF
     if the VNFD template is appropriately parameterized.
     See `VNFD Template Parameterization
-    <https://docs.openstack.org/apmec/latest/contributor/vnfd_template_parameterization.html>`_
+    <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_
     for more information.
   in: body
   required: true
@@ -723,7 +723,7 @@ vnf_param_values_opt:
     VNF parameter object. These parameters will be substituted for VNF
     if the VNFD template is appropriately parameterized.
     See `VNFD Template Parameterization
-    <https://docs.openstack.org/apmec/latest/contributor/vnfd_template_parameterization.html>`_
+    <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_
     for more information.
   in: body
   required: false
@@ -775,7 +775,7 @@ vnf_scale_policy:
   description: |
     Scaling policy defined in VNFD template. For more information, see
     `VNFD scaling
-    <https://docs.openstack.org/apmec/latest/contributor/vnfd_template_parameterization.html>`_.
+    <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_.
   in: body
   required: true
   type: string
@@ -799,39 +799,39 @@ vnf_updated_at:
   in: body
   required: true
   type: string
-vnfd:
+mead:
   description: |
-    A ``vnfd`` object.
+    A ``mead`` object.
   in: body
   required: true
   type: object
-vnfd_attributes:
+mead_attributes:
   description: |
     Attributes necessary for spinning up VNF.
   in: body
   required: true
   type: object
-vnfd_id:
+mead_id:
   description: |
     The UUID of the VNFD.
   in: body
   required: false
   type: string
-vnfd_template:
+mead_template:
   description: |
     Template to create VNF.
   in: body
   required: false
   type: object
-vnfd_template_source:
+mead_template_source:
   description: |
     Source of VNFD.
   in: body
   required: false
   type: string
-vnfds:
+meads:
   description: |
-    A list of ``vnfd`` objects.
+    A list of ``mead`` objects.
   in: body
   required: true
   type: array

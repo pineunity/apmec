@@ -30,7 +30,7 @@ from datetime import datetime
 
 
 def upgrade(active_plugins=None, options=None):
-    op.execute(("UPDATE vnfd set deleted_at='%s'"
+    op.execute(("UPDATE mead set deleted_at='%s'"
        " WHERE deleted_at is NULL") % datetime.min)
 
     op.execute(("UPDATE vnf set deleted_at='%s'"

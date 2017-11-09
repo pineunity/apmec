@@ -53,7 +53,7 @@ class VNFD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
            models_v1.Audit):
     """Represents VNFD to create VNF."""
 
-    __tablename__ = 'vnfd'
+    __tablename__ = 'mead'
     # Descriptive name
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text)
@@ -61,16 +61,16 @@ class VNFD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     # service type that this service vm provides.
     # At first phase, this includes only single service
     # In future, single service VM may accommodate multiple services.
-    service_types = orm.relationship('ServiceType', backref='vnfd')
+    service_types = orm.relationship('ServiceType', backref='mead')
 
     # driver to communicate with service management
     mgmt_driver = sa.Column(sa.String(255))
 
     # (key, value) pair to spin up
     attributes = orm.relationship('VNFDAttribute',
-                                  backref='vnfd')
+                                  backref='mead')
 
-    # vnfd template source - inline or onboarded
+    # mead template source - inline or onboarded
     template_source = sa.Column(sa.String(255), server_default='onboarded')
 
     __table_args__ = (
@@ -78,7 +78,7 @@ class VNFD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
             "tenant_id",
             "name",
             "deleted_at",
-            name="uniq_vnfd0tenant_id0name0deleted_at"),
+            name="uniq_mead0tenant_id0name0deleted_at"),
     )
 
 
@@ -88,7 +88,7 @@ class ServiceType(model_base.BASE, models_v1.HasId, models_v1.HasTenant):
     Since a vnf may provide many services, This is one-to-many
     relationship.
     """
-    vnfd_id = sa.Column(types.Uuid, sa.ForeignKey('vnfd.id'),
+    mead_id = sa.Column(types.Uuid, sa.ForeignKey('mead.id'),
                         nullable=False)
     service_type = sa.Column(sa.String(64), nullable=False)
 
@@ -100,8 +100,8 @@ class VNFDAttribute(model_base.BASE, models_v1.HasId):
     The interpretation is up to actual driver of hosting vnf.
     """
 
-    __tablename__ = 'vnfd_attribute'
-    vnfd_id = sa.Column(types.Uuid, sa.ForeignKey('vnfd.id'),
+    __tablename__ = 'mead_attribute'
+    mead_id = sa.Column(types.Uuid, sa.ForeignKey('mead.id'),
                         nullable=False)
     key = sa.Column(sa.String(255), nullable=False)
     value = sa.Column(sa.TEXT(65535), nullable=True)
@@ -116,8 +116,8 @@ class VNF(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     """
 
     __tablename__ = 'vnf'
-    vnfd_id = sa.Column(types.Uuid, sa.ForeignKey('vnfd.id'))
-    vnfd = orm.relationship('VNFD')
+    mead_id = sa.Column(types.Uuid, sa.ForeignKey('mead.id'))
+    mead = orm.relationship('VNFD')
 
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text, nullable=True)
@@ -184,7 +184,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
             return self._get_by_name(context, model, id)
         except orm_exc.NoResultFound:
             if issubclass(model, VNFD):
-                raise mem.VNFDNotFound(vnfd_id=id)
+                raise mem.VNFDNotFound(mead_id=id)
             elif issubclass(model, ServiceType):
                 raise mem.ServiceTypeNotFound(service_type_id=id)
             if issubclass(model, VNF):
@@ -199,16 +199,16 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         return [service_type.service_type
                 for service_type in service_types]
 
-    def _make_vnfd_dict(self, vnfd, fields=None):
+    def _make_mead_dict(self, mead, fields=None):
         res = {
-            'attributes': self._make_attributes_dict(vnfd['attributes']),
+            'attributes': self._make_attributes_dict(mead['attributes']),
             'service_types': self._make_service_types_list(
-                vnfd.service_types)
+                mead.service_types)
         }
         key_list = ('id', 'tenant_id', 'name', 'description',
                     'mgmt_driver', 'created_at', 'updated_at',
                     'template_source')
-        res.update((key, vnfd[key]) for key in key_list)
+        res.update((key, mead[key]) for key in key_list)
         return self._fields(res, fields)
 
     def _make_dev_attrs_dict(self, dev_attrs_db):
@@ -218,31 +218,31 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         LOG.debug('vnf_db %s', vnf_db)
         LOG.debug('vnf_db attributes %s', vnf_db.attributes)
         res = {
-            'vnfd':
-            self._make_vnfd_dict(vnf_db.vnfd),
+            'mead':
+            self._make_mead_dict(vnf_db.mead),
             'attributes': self._make_dev_attrs_dict(vnf_db.attributes),
         }
         key_list = ('id', 'tenant_id', 'name', 'description', 'instance_id',
-                    'vim_id', 'placement_attr', 'vnfd_id', 'status',
+                    'vim_id', 'placement_attr', 'mead_id', 'status',
                     'mgmt_url', 'error_reason', 'created_at', 'updated_at')
         res.update((key, vnf_db[key]) for key in key_list)
         return self._fields(res, fields)
 
     @staticmethod
     def _mgmt_driver_name(vnf_dict):
-        return vnf_dict['vnfd']['mgmt_driver']
+        return vnf_dict['mead']['mgmt_driver']
 
     @staticmethod
     def _instance_id(vnf_dict):
         return vnf_dict['instance_id']
 
-    def create_vnfd(self, context, vnfd):
-        vnfd = vnfd['vnfd']
-        LOG.debug('vnfd %s', vnfd)
-        tenant_id = self._get_tenant_id_for_create(context, vnfd)
-        service_types = vnfd.get('service_types')
-        mgmt_driver = vnfd.get('mgmt_driver')
-        template_source = vnfd.get("template_source")
+    def create_mead(self, context, mead):
+        mead = mead['mead']
+        LOG.debug('mead %s', mead)
+        tenant_id = self._get_tenant_id_for_create(context, mead)
+        service_types = mead.get('service_types')
+        mgmt_driver = mead.get('mgmt_driver')
+        template_source = mead.get("template_source")
 
         if (not attributes.is_attr_set(service_types)):
             LOG.debug('service types unspecified')
@@ -250,105 +250,105 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
 
         try:
             with context.session.begin(subtransactions=True):
-                vnfd_id = uuidutils.generate_uuid()
-                vnfd_db = VNFD(
-                    id=vnfd_id,
+                mead_id = uuidutils.generate_uuid()
+                mead_db = VNFD(
+                    id=mead_id,
                     tenant_id=tenant_id,
-                    name=vnfd.get('name'),
-                    description=vnfd.get('description'),
+                    name=mead.get('name'),
+                    description=mead.get('description'),
                     mgmt_driver=mgmt_driver,
                     template_source=template_source,
                     deleted_at=datetime.min)
-                context.session.add(vnfd_db)
-                for (key, value) in vnfd.get('attributes', {}).items():
+                context.session.add(mead_db)
+                for (key, value) in mead.get('attributes', {}).items():
                     attribute_db = VNFDAttribute(
                         id=uuidutils.generate_uuid(),
-                        vnfd_id=vnfd_id,
+                        mead_id=mead_id,
                         key=key,
                         value=value)
                     context.session.add(attribute_db)
                 for service_type in (item['service_type']
-                                     for item in vnfd['service_types']):
+                                     for item in mead['service_types']):
                     service_type_db = ServiceType(
                         id=uuidutils.generate_uuid(),
                         tenant_id=tenant_id,
-                        vnfd_id=vnfd_id,
+                        mead_id=mead_id,
                         service_type=service_type)
                     context.session.add(service_type_db)
         except DBDuplicateEntry as e:
             raise exceptions.DuplicateEntity(
-                _type="vnfd",
+                _type="mead",
                 entry=e.columns)
-        LOG.debug('vnfd_db %(vnfd_db)s %(attributes)s ',
-                  {'vnfd_db': vnfd_db,
-                   'attributes': vnfd_db.attributes})
-        vnfd_dict = self._make_vnfd_dict(vnfd_db)
-        LOG.debug('vnfd_dict %s', vnfd_dict)
+        LOG.debug('mead_db %(mead_db)s %(attributes)s ',
+                  {'mead_db': mead_db,
+                   'attributes': mead_db.attributes})
+        mead_dict = self._make_mead_dict(mead_db)
+        LOG.debug('mead_dict %s', mead_dict)
         self._cos_db_plg.create_event(
-            context, res_id=vnfd_dict['id'],
+            context, res_id=mead_dict['id'],
             res_type=constants.RES_TYPE_VNFD,
             res_state=constants.RES_EVT_ONBOARDED,
             evt_type=constants.RES_EVT_CREATE,
-            tstamp=vnfd_dict[constants.RES_EVT_CREATED_FLD])
-        return vnfd_dict
+            tstamp=mead_dict[constants.RES_EVT_CREATED_FLD])
+        return mead_dict
 
-    def update_vnfd(self, context, vnfd_id,
-                    vnfd):
+    def update_mead(self, context, mead_id,
+                    mead):
         with context.session.begin(subtransactions=True):
-            vnfd_db = self._get_resource(context, VNFD,
-                                         vnfd_id)
-            vnfd_db.update(vnfd['vnfd'])
-            vnfd_db.update({'updated_at': timeutils.utcnow()})
-            vnfd_dict = self._make_vnfd_dict(vnfd_db)
+            mead_db = self._get_resource(context, VNFD,
+                                         mead_id)
+            mead_db.update(mead['mead'])
+            mead_db.update({'updated_at': timeutils.utcnow()})
+            mead_dict = self._make_mead_dict(mead_db)
             self._cos_db_plg.create_event(
-                context, res_id=vnfd_dict['id'],
+                context, res_id=mead_dict['id'],
                 res_type=constants.RES_TYPE_VNFD,
                 res_state=constants.RES_EVT_NA_STATE,
                 evt_type=constants.RES_EVT_UPDATE,
-                tstamp=vnfd_dict[constants.RES_EVT_UPDATED_FLD])
-        return vnfd_dict
+                tstamp=mead_dict[constants.RES_EVT_UPDATED_FLD])
+        return mead_dict
 
-    def delete_vnfd(self,
+    def delete_mead(self,
                     context,
-                    vnfd_id,
+                    mead_id,
                     soft_delete=True):
         with context.session.begin(subtransactions=True):
             # TODO(yamahata): race. prevent from newly inserting hosting vnf
-            #                 that refers to this vnfd
+            #                 that refers to this mead
             vnfs_db = context.session.query(VNF).filter_by(
-                vnfd_id=vnfd_id).first()
+                mead_id=mead_id).first()
             if vnfs_db is not None and vnfs_db.deleted_at is None:
-                raise mem.VNFDInUse(vnfd_id=vnfd_id)
-            vnfd_db = self._get_resource(context, VNFD,
-                                         vnfd_id)
+                raise mem.VNFDInUse(mead_id=mead_id)
+            mead_db = self._get_resource(context, VNFD,
+                                         mead_id)
             if soft_delete:
-                vnfd_db.update({'deleted_at': timeutils.utcnow()})
+                mead_db.update({'deleted_at': timeutils.utcnow()})
                 self._cos_db_plg.create_event(
-                    context, res_id=vnfd_db['id'],
+                    context, res_id=mead_db['id'],
                     res_type=constants.RES_TYPE_VNFD,
                     res_state=constants.RES_EVT_NA_STATE,
                     evt_type=constants.RES_EVT_DELETE,
-                    tstamp=vnfd_db[constants.RES_EVT_DELETED_FLD])
+                    tstamp=mead_db[constants.RES_EVT_DELETED_FLD])
             else:
                 context.session.query(ServiceType).filter_by(
-                    vnfd_id=vnfd_id).delete()
+                    mead_id=mead_id).delete()
                 context.session.query(VNFDAttribute).filter_by(
-                    vnfd_id=vnfd_id).delete()
-                context.session.delete(vnfd_db)
+                    mead_id=mead_id).delete()
+                context.session.delete(mead_db)
 
-    def get_vnfd(self, context, vnfd_id, fields=None):
-        vnfd_db = self._get_resource(context, VNFD, vnfd_id)
-        return self._make_vnfd_dict(vnfd_db)
+    def get_mead(self, context, mead_id, fields=None):
+        mead_db = self._get_resource(context, VNFD, mead_id)
+        return self._make_mead_dict(mead_db)
 
-    def get_vnfds(self, context, filters, fields=None):
+    def get_meads(self, context, filters, fields=None):
         if 'template_source' in filters and \
            filters['template_source'][0] == 'all':
                 filters.pop('template_source')
         return self._get_collection(context, VNFD,
-                                    self._make_vnfd_dict,
+                                    self._make_mead_dict,
                                     filters=filters, fields=fields)
 
-    def choose_vnfd(self, context, service_type,
+    def choose_mead(self, context, service_type,
                     required_attributes=None):
         required_attributes = required_attributes or []
         LOG.debug('required_attributes %s', required_attributes)
@@ -358,19 +358,19 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                 filter(
                     sa.exists().
                     where(sa.and_(
-                        VNFD.id == ServiceType.vnfd_id,
+                        VNFD.id == ServiceType.mead_id,
                         ServiceType.service_type == service_type))))
             for key in required_attributes:
                 query = query.filter(
                     sa.exists().
                     where(sa.and_(
                         VNFD.id ==
-                        VNFDAttribute.vnfd_id,
+                        VNFDAttribute.mead_id,
                         VNFDAttribute.key == key)))
             LOG.debug('statements %s', query)
-            vnfd_db = query.first()
-            if vnfd_db:
-                return self._make_vnfd_dict(vnfd_db)
+            mead_db = query.first()
+            if mead_db:
+                return self._make_mead_dict(mead_db)
 
     def _vnf_attribute_update_or_create(
             self, context, vnf_id, key, value):
@@ -389,7 +389,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
     def _create_vnf_pre(self, context, vnf):
         LOG.debug('vnf %s', vnf)
         tenant_id = self._get_tenant_id_for_create(context, vnf)
-        vnfd_id = vnf['vnfd_id']
+        mead_id = vnf['mead_id']
         name = vnf.get('name')
         vnf_id = uuidutils.generate_uuid()
         attributes = vnf.get('attributes', {})
@@ -397,14 +397,14 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         placement_attr = vnf.get('placement_attr', {})
         try:
             with context.session.begin(subtransactions=True):
-                vnfd_db = self._get_resource(context, VNFD,
-                                             vnfd_id)
+                mead_db = self._get_resource(context, VNFD,
+                                             mead_id)
                 vnf_db = VNF(id=vnf_id,
                              tenant_id=tenant_id,
                              name=name,
-                             description=vnfd_db.description,
+                             description=mead_db.description,
                              instance_id=None,
-                             vnfd_id=vnfd_id,
+                             mead_id=mead_id,
                              vim_id=vim_id,
                              placement_attr=placement_attr,
                              status=constants.PENDING_CREATE,
@@ -591,9 +591,9 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                      filter(VNFAttribute.vnf_id == vnf_id).delete())
                     query.delete()
 
-                # Delete corresponding vnfd
-                if vnf_dict['vnfd']['template_source'] == "inline":
-                    self.delete_vnfd(context, vnf_dict["vnfd_id"])
+                # Delete corresponding mead
+                if vnf_dict['mead']['template_source'] == "inline":
+                    self.delete_mead(context, vnf_dict["mead_id"])
 
     # reference implementation. needs to be overrided by subclass
     def create_vnf(self, context, vnf):

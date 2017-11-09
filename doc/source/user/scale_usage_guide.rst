@@ -101,7 +101,7 @@ Deploying scaling TOSCA template using Apmec
 Once OpenStack/Devstack along with Apmec has been successfully installed,
 deploy a sample scaling template from location given
 below:
-https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd
+https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead
 
 Refer the 'Getting Started' link below on how to create a VNFD and deploy a
 VNF:

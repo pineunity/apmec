@@ -29,7 +29,7 @@ def _get_template(name):
     f = codecs.open(filename, encoding='utf-8', errors='strict')
     return f.read()
 
-tosca_vnfd_openwrt = _get_template('test_tosca_openwrt.yaml')
+tosca_mead_openwrt = _get_template('test_tosca_openwrt.yaml')
 config_data = _get_template('config_data.yaml')
 update_config_data = _get_template('update_config_data.yaml')
 vnffg_params = _get_template('vnffg_params.yaml')
@@ -45,36 +45,36 @@ vnffgd_tosca_multi_param_template = yaml.safe_load(_get_template(
     'tosca_vnffgd_multi_param_template.yaml'))
 vnffgd_invalid_tosca_template = yaml.safe_load(_get_template(
     'tosca_invalid_vnffgd_template.yaml'))
-vnfd_scale_tosca_template = _get_template('tosca_scale.yaml')
-vnfd_alarm_respawn_tosca_template = _get_template(
-    'test_tosca_vnfd_alarm_respawn.yaml')
-vnfd_alarm_scale_tosca_template = _get_template(
-    'test_tosca_vnfd_alarm_scale.yaml')
-vnfd_alarm_multi_actions_tosca_template = _get_template(
-    'test_tosca_vnfd_alarm_multi_actions.yaml')
+mead_scale_tosca_template = _get_template('tosca_scale.yaml')
+mead_alarm_respawn_tosca_template = _get_template(
+    'test_tosca_mead_alarm_respawn.yaml')
+mead_alarm_scale_tosca_template = _get_template(
+    'test_tosca_mead_alarm_scale.yaml')
+mead_alarm_multi_actions_tosca_template = _get_template(
+    'test_tosca_mead_alarm_multi_actions.yaml')
 nsd_tosca_template = yaml.safe_load(_get_template('tosca_nsd_template.yaml'))
 vnffgd_wrong_cp_number_template = yaml.safe_load(_get_template(
     'tosca_vnffgd_wrong_cp_number_template.yaml'))
 
 
-def get_dummy_vnfd_obj():
-    return {u'vnfd': {u'service_types': [{u'service_type': u'vnfd'}],
-                      'name': 'dummy_vnfd',
+def get_dummy_mead_obj():
+    return {u'mead': {u'service_types': [{u'service_type': u'mead'}],
+                      'name': 'dummy_mead',
                       'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      u'attributes': {u'vnfd': yaml.safe_load(
-                          tosca_vnfd_openwrt)},
-                      'description': 'dummy_vnfd_description',
+                      u'attributes': {u'mead': yaml.safe_load(
+                          tosca_mead_openwrt)},
+                      'description': 'dummy_mead_description',
                       'template_source': 'onboarded',
             u'auth': {u'tenantName': u'admin', u'passwordCredentials': {
                 u'username': u'admin', u'password': u'devstack'}}}}
 
 
-def get_dummy_vnfd_obj_inline():
-    return {u'vnfd': {u'service_types': [{u'service_type': u'vnfd'}],
+def get_dummy_mead_obj_inline():
+    return {u'mead': {u'service_types': [{u'service_type': u'mead'}],
                       'name': 'tmpl-koeak4tqgoqo8cr4-dummy_inline_vnf',
                       'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      u'attributes': {u'vnfd': yaml.safe_load(
-                          tosca_vnfd_openwrt)},
+                      u'attributes': {u'mead': yaml.safe_load(
+                          tosca_mead_openwrt)},
                       'template_source': 'inline',
             u'auth': {u'tenantName': u'admin', u'passwordCredentials': {
                 u'username': u'admin', u'password': u'devstack'}}}}
@@ -82,23 +82,23 @@ def get_dummy_vnfd_obj_inline():
 
 def get_dummy_inline_vnf_obj():
     return {'vnf': {'description': 'dummy_inline_vnf_description',
-                    'vnfd_template': yaml.safe_load(tosca_vnfd_openwrt),
+                    'mead_template': yaml.safe_load(tosca_mead_openwrt),
                     'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                     'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
                     'name': 'dummy_inline_vnf',
                     'attributes': {},
-                    'vnfd_id': None}}
+                    'mead_id': None}}
 
 
 def get_dummy_vnf_obj():
     return {'vnf': {'description': 'dummy_vnf_description',
-                    'vnfd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+                    'mead_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
                     'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                     'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
                     'name': 'dummy_vnf',
                     'deleted_at': datetime.min,
                     'attributes': {},
-                    'vnfd_template': None}}
+                    'mead_template': None}}
 
 
 def get_dummy_vnf_config_obj():
@@ -109,14 +109,14 @@ def get_dummy_vnf_config_obj():
 def get_dummy_device_obj():
     return {'status': 'PENDING_CREATE', 'instance_id': None, 'name':
         u'test_openwrt', 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-        'vnfd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-        'vnfd': {
-            'service_types': [{'service_type': u'vnfd',
+        'mead_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+        'mead': {
+            'service_types': [{'service_type': u'mead',
             'id': u'4a4c2d44-8a52-4895-9a75-9d1c76c3e738'}],
             'description': u'OpenWRT with services',
             'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
             'mgmt_driver': u'openwrt',
-            'attributes': {u'vnfd': tosca_vnfd_openwrt},
+            'attributes': {u'mead': tosca_mead_openwrt},
             'id': u'fb048660-dc1b-4f0f-bd89-b023666650ec',
             'name': u'openwrt_services'},
         'mgmt_url': None, 'service_context': [],
@@ -128,13 +128,13 @@ def get_dummy_device_obj():
 def get_dummy_vnf_config_attr():
     return {'status': 'PENDING_CREATE', 'instance_id': None, 'name':
         u'test_openwrt', 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-        'vnfd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-        'vnfd': {'service_types': [{'service_type': u'vnfd',
+        'mead_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+        'mead': {'service_types': [{'service_type': u'mead',
             'id': u'4a4c2d44-8a52-4895-9a75-9d1c76c3e738'}],
             'description': u'OpenWRT with services',
             'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
             'mgmt_driver': u'openwrt',
-            'attributes': {u'vnfd': tosca_vnfd_openwrt},
+            'attributes': {u'mead': tosca_mead_openwrt},
             'id': u'fb048660-dc1b-4f0f-bd89-b023666650ec', 'name':
             u'openwrt_services'}, 'mgmt_url': None, 'service_context': [],
             'attributes': {u'config': config_data},

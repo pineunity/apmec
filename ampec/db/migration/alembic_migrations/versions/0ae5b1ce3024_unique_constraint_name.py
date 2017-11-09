@@ -54,5 +54,5 @@ def _migrate_duplicate_names(table):
 def upgrade(active_plugins=None, options=None):
 
     _migrate_duplicate_names('vnf')
-    _migrate_duplicate_names('vnfd')
+    _migrate_duplicate_names('mead')
     _migrate_duplicate_names('vims')

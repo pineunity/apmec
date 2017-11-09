@@ -9,12 +9,12 @@ Manages Virtualized Network Function Descriptors (VNFDs).
 The VNFD is a template which describes information about deployment
 and behavior of Virtualized Network Functions (VNFs). For more information, see
 `VNF Descriptor Template Guide
-<https://docs.openstack.org/apmec/latest/contributor/vnfd_template_description.html>`_.
+<https://docs.openstack.org/apmec/latest/contributor/mead_template_description.html>`_.
 
 Create VNFD
 ===========
 
-.. rest_method::  POST /v1.0/vnfds
+.. rest_method::  POST /v1.0/meads
 
 Creates a VNFD.
 
@@ -40,12 +40,12 @@ Request Parameters
   - name: name
   - description: description_opt
   - service_types: service_types
-  - attributes: vnfd_attributes
+  - attributes: mead_attributes
 
 Request Example
 ---------------
 
-.. literalinclude:: samples/vnfds/vnfds-create-request.json
+.. literalinclude:: samples/meads/meads-create-request.json
    :language: javascript
 
 Response Parameters
@@ -53,26 +53,26 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnfd: vnfd
+  - mead: mead
   - service_types: service_types
   - description: description
   - tenant_id: tenant_id
   - created_at: created_at
   - updated_at: updated_at
-  - attributes: vnfd_attributes
-  - id: vnfd_id
+  - attributes: mead_attributes
+  - id: mead_id
   - name: name
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnfds/vnfds-create-response.json
+.. literalinclude:: samples/meads/meads-create-response.json
    :language: javascript
 
 List VNFDs
 ==========
 
-.. rest_method::  GET /v1.0/vnfds
+.. rest_method::  GET /v1.0/meads
 
 Lists VNFDs.
 
@@ -93,28 +93,28 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnfds: vnfds
+  - meads: meads
   - service_types: service_types
   - description: description
   - tenant_id: tenant_id
   - created_at: created_at
   - updated_at: updated_at
-  - attributes: vnfd_attributes
-  - id: vnfd_id
+  - attributes: mead_attributes
+  - id: mead_id
   - name: name
-  - template_source: vnfd_template_source
+  - template_source: mead_template_source
 
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnfds/vnfds-list-response.json
+.. literalinclude:: samples/meads/meads-list-response.json
    :language: javascript
 
 Show VNFD
 =========
 
-.. rest_method::  GET /v1.0/vnfds/{vnfd_id}
+.. rest_method::  GET /v1.0/meads/{mead_id}
 
 Shows information of a given VNFD.
 
@@ -136,34 +136,34 @@ Request Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnfd_id: vnfd_id_path
+  - mead_id: mead_id_path
 
 Response Parameters
 -------------------
 
 .. rest_parameters:: parameters.yaml
 
-  - vnfd: vnfd
+  - mead: mead
   - service_types: service_types
   - description: description
   - tenant_id: tenant_id
   - created_at: created_at
   - updated_at: updated_at
-  - attributes: vnfd_attributes
-  - id: vnfd_id
+  - attributes: mead_attributes
+  - id: mead_id
   - name: name
-  - template_source: vnfd_template_source
+  - template_source: mead_template_source
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnfds/vnfds-show-response.json
+.. literalinclude:: samples/meads/meads-show-response.json
    :language: javascript
 
 Update VNFD
 ===========
 
-.. rest_method::  PUT /v1.0/vnfds/{vnfd_id}
+.. rest_method::  PUT /v1.0/meads/{mead_id}
 
 Updates a given VNFD.
 
@@ -187,14 +187,14 @@ Request Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnfd_id: vnfd_id_path
+  - mead_id: mead_id_path
   - name: name_opt
   - description: description_opt
 
 Request Example
 ---------------
 
-.. literalinclude:: samples/vnfds/vnfds-update-request.json
+.. literalinclude:: samples/meads/meads-update-request.json
    :language: javascript
 
 Response Parameters
@@ -202,26 +202,26 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnfd: vnfd
+  - mead: mead
   - service_types: service_types
   - description: description
   - tenant_id: tenant_id
   - created_at: created_at
   - updated_at: updated_at
-  - attributes: vnfd_attributes
-  - id: vnfd_id
+  - attributes: mead_attributes
+  - id: mead_id
   - name: name
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnfds/vnfds-update-response.json
+.. literalinclude:: samples/meads/meads-update-response.json
    :language: javascript
 
 Delete VNFD
 ===========
 
-.. rest_method::  DELETE /v1.0/vnfds/{vnfd_id}
+.. rest_method::  DELETE /v1.0/meads/{mead_id}
 
 Deletes a given VNFD.
 Only a VNFD without any associated VNFs can be deleted.
@@ -245,4 +245,4 @@ Request Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnfd_id: vnfd_id_path
+  - mead_id: mead_id_path

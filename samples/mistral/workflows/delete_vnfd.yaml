@@ -1,16 +1,16 @@
 ---
 version: '2.0'
 
-std.delete_vnfd:
+std.delete_mead:
   type: direct
 
   description: |
     Delete a VNFD.
 
   input:
-    - vnfd_id
+    - mead_id
 
   tasks:
-    delete_vnfd:
+    delete_mead:
       description: Request to delete a VNFD.
-      action: apmec.delete_vnfd vnfd=<% $.vnfd_id %>
+      action: apmec.delete_mead mead=<% $.mead_id %>

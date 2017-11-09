@@ -111,7 +111,7 @@ Now we create a vnf to verify it works:
 
 .. code-block:: bash
 
-   $ apmec vnf-create --vnfd-template vnfd-sample.yaml \
+   $ apmec vnf-create --mead-template mead-sample.yaml \
      --vim-name vim-test --vim-region-name RegionOne vnf-test
    Created a new vnf:
    +----------------+-------------------------------------------------------+
@@ -129,7 +129,7 @@ Now we create a vnf to verify it works:
    | tenant_id      | 28a525feaf5e4d05b4ab9f7090837964                      |
    | updated_at     |                                                       |
    | vim_id         | 0d1e1cc4-445d-41bd-b3e9-739acb987231                  |
-   | vnfd_id        | dc68ccfd-fd7c-4ef6-8fed-f097d036c722                  |
+   | mead_id        | dc68ccfd-fd7c-4ef6-8fed-f097d036c722                  |
    +----------------+-------------------------------------------------------+
 
    $ apmec vnf-delete vnf-test

@@ -30,4 +30,4 @@ import sqlalchemy as sa
 
 
 def upgrade(active_plugins=None, options=None):
-    op.add_column('vnfd', sa.Column('template_source', sa.String(length=255)))
+    op.add_column('mead', sa.Column('template_source', sa.String(length=255)))

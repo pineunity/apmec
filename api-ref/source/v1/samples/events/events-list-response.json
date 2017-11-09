@@ -25,7 +25,7 @@
             "event_details": "",
             "resource_state": "Not Applicable",
             "id": 3,
-            "resource_type": "vnfd"
+            "resource_type": "mead"
         }
     ]
 }

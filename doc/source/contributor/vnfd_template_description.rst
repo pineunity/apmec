@@ -42,7 +42,7 @@ Each VNFD template will have below fields:
                Describes properties and capabilities of Virtual Link.
 
 For examples, please refer sample VNFD templates available at `GitHub <https:
-//github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd>`_.
+//github.com/openstack/apmec/tree/master/samples/tosca-templates/mead>`_.
 
 Node types
 ----------
@@ -154,7 +154,7 @@ Configuring a VDU
 A VDU can be configured as a specific Network Function under **config**
 section in VNFD template. A sample template configuring a VDU as a firewall
 can be viewed in a `sample file <https://github.com/openstack/apmec/blob/
-master/samples/tosca-templates/vnfd/tosca-config-openwrt-with-firewall.yaml>`_.
+master/samples/tosca-templates/mead/tosca-config-openwrt-with-firewall.yaml>`_.
 
 Specifying external image
 """""""""""""""""""""""""
@@ -563,7 +563,7 @@ a template which mentions all node types with all available options.
      tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
      description: Sample VNFD template mentioning possible values for each node.
      metadata:
-      template_name: sample-tosca-vnfd-template-guide
+      template_name: sample-tosca-mead-template-guide
      topology_template:
       node_templates:
         VDU:

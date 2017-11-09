@@ -69,9 +69,9 @@ Feature Documentation
 .. toctree::
    :maxdepth: 1
 
-   contributor/vnfd_template_description.rst
+   contributor/mead_template_description.rst
    contributor/monitor-api.rst
-   contributor/vnfd_template_parameterization.rst
+   contributor/mead_template_parameterization.rst
    contributor/event_logging.rst
    contributor/vnffgd_template_description.rst
    contributor/apmec_conductor.rst

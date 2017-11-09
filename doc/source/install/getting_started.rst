@@ -53,7 +53,7 @@ the user during vnf-create.
 Onboarding sample VNF
 =====================
 
-1). Create a sample-vnfd.yaml file with the following content:
+1). Create a sample-mead.yaml file with the following content:
 
 .. code-block:: ini
 
@@ -62,7 +62,7 @@ Onboarding sample VNF
    description: Demo example
 
    metadata:
-     template_name: sample-tosca-vnfd
+     template_name: sample-tosca-mead
 
    topology_template:
      node_templates:
@@ -105,21 +105,21 @@ Onboarding sample VNF
 .. note::
 
    You can find more sample tosca templates at
-   https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd.
+   https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead.
 
 
-2). Create a sample vnfd.
+2). Create a sample mead.
 
 .. code-block:: console
 
-   apmec vnfd-create --vnfd-file sample-vnfd.yaml samplevnfd
+   apmec mead-create --mead-file sample-mead.yaml samplemead
 ..
 
 3). Create a VNF.
 
 .. code-block:: console
 
-   apmec vnf-create --vnfd-name samplevnfd samplevnf
+   apmec vnf-create --mead-name samplemead samplevnf
 ..
 
 5). Check the status.
@@ -127,7 +127,7 @@ Onboarding sample VNF
 .. code-block:: console
 
    apmec vim-list
-   apmec vnfd-list
+   apmec mead-list
    apmec vnf-list
    apmec vnf-show samplevnf
 ..

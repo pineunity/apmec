@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 imports:
-    - test-ns-vnfd1
-    - test-ns-vnfd2
+    - test-ns-mead1
+    - test-ns-mead2
 
 topology_template:
   inputs:

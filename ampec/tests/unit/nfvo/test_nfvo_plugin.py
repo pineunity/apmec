@@ -100,10 +100,10 @@ class FakeVNFMPlugin(mock.Mock):
 
     def __init__(self):
         super(FakeVNFMPlugin, self).__init__()
-        self.vnf1_vnfd_id = 'eb094833-995e-49f0-a047-dfb56aaf7c4e'
+        self.vnf1_mead_id = 'eb094833-995e-49f0-a047-dfb56aaf7c4e'
         self.vnf1_vnf_id = '91e32c20-6d1f-47a4-9ba7-08f5e5effe07'
-        self.vnf3_vnfd_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
-        self.vnf2_vnfd_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
+        self.vnf3_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
+        self.vnf2_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
         self.vnf3_vnf_id = '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'
         self.vnf3_update_vnf_id = '10f66bc5-b2f1-45b7-a7cd-6dd6ad0017f5'
 
@@ -112,30 +112,30 @@ class FakeVNFMPlugin(mock.Mock):
         self.cp32_id = '3d1bd2a2-bf0e-44d1-87af-a2c6b2cad3ed'
         self.cp32_update_id = '064c0d99-5a61-4711-9597-2a44dc5da14b'
 
-    def get_vnfd(self, *args, **kwargs):
+    def get_mead(self, *args, **kwargs):
         if 'VNF1' in args:
-            return {'id': self.vnf1_vnfd_id,
+            return {'id': self.vnf1_mead_id,
                     'name': 'VNF1',
-                    'attributes': {'vnfd': _get_template(
-                                   'test-nsd-vnfd1.yaml')}}
+                    'attributes': {'mead': _get_template(
+                                   'test-nsd-mead1.yaml')}}
         elif 'VNF2' in args:
-            return {'id': self.vnf3_vnfd_id,
+            return {'id': self.vnf3_mead_id,
                     'name': 'VNF2',
-                    'attributes': {'vnfd': _get_template(
-                                   'test-nsd-vnfd2.yaml')}}
+                    'attributes': {'mead': _get_template(
+                                   'test-nsd-mead2.yaml')}}
 
-    def get_vnfds(self, *args, **kwargs):
+    def get_meads(self, *args, **kwargs):
         if {'name': ['VNF1']} in args:
-            return [{'id': self.vnf1_vnfd_id}]
+            return [{'id': self.vnf1_mead_id}]
         elif {'name': ['VNF3']} in args:
-            return [{'id': self.vnf3_vnfd_id}]
+            return [{'id': self.vnf3_mead_id}]
         else:
             return []
 
     def get_vnfs(self, *args, **kwargs):
-        if {'vnfd_id': [self.vnf1_vnfd_id]} in args:
+        if {'mead_id': [self.vnf1_mead_id]} in args:
             return [{'id': self.vnf1_vnf_id}]
-        elif {'vnfd_id': [self.vnf3_vnfd_id]} in args:
+        elif {'mead_id': [self.vnf3_mead_id]} in args:
             return [{'id': self.vnf3_vnf_id}]
         else:
             return None
@@ -168,7 +168,7 @@ class FakeVNFMPlugin(mock.Mock):
 
     def get_dummy_vnf1(self):
         return {'description': 'dummy_vnf_description',
-                'vnfd_id': self.vnf1_vnfd_id,
+                'mead_id': self.vnf1_mead_id,
                 'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
                 'name': 'dummy_vnf1',
@@ -176,7 +176,7 @@ class FakeVNFMPlugin(mock.Mock):
 
     def get_dummy_vnf3(self):
         return {'description': 'dummy_vnf_description',
-                'vnfd_id': self.vnf3_vnfd_id,
+                'mead_id': self.vnf3_mead_id,
                 'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
                 'name': 'dummy_vnf2',
@@ -184,7 +184,7 @@ class FakeVNFMPlugin(mock.Mock):
 
     def get_dummy_vnf3_update(self):
         return {'description': 'dummy_vnf_description',
-                'vnfd_id': self.vnf3_vnfd_id,
+                'mead_id': self.vnf3_mead_id,
                 'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
                 'name': 'dummy_vnf_update',
@@ -715,7 +715,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
-            vnfds={'tosca.nodes.nfv.VNF1': 'vnf1',
+            meads={'tosca.nodes.nfv.VNF1': 'vnf1',
                    'tosca.nodes.nfv.VNF2': 'vnf2'},
             description='fake_nsd_template_description',
             deleted_at=datetime.min,
@@ -752,7 +752,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             id='be18005d-5656-4d81-b499-6af4d4d8437f',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='dummy_NSD',
-            vnfds={'tosca.nodes.nfv.VNF1': 'vnf1',
+            meads={'tosca.nodes.nfv.VNF1': 'vnf1',
                    'tosca.nodes.nfv.VNF2': 'vnf2'},
             description='dummy_nsd_description',
             deleted_at=datetime.min,

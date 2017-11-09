@@ -32,10 +32,10 @@ def _get_template(name):
 
 class TestToscaUtils(testtools.TestCase):
     tosca_openwrt = _get_template('test_tosca_openwrt.yaml')
-    vnfd_dict = yaml.safe_load(tosca_openwrt)
-    toscautils.updateimports(vnfd_dict)
+    mead_dict = yaml.safe_load(tosca_openwrt)
+    toscautils.updateimports(mead_dict)
     tosca = tosca_template.ToscaTemplate(parsed_params={}, a_file=False,
-                          yaml_dict_tpl=vnfd_dict)
+                          yaml_dict_tpl=mead_dict)
     tosca_flavor = _get_template('test_tosca_flavor.yaml')
 
     def setUp(self):
@@ -46,7 +46,7 @@ class TestToscaUtils(testtools.TestCase):
         file1 = importspath + '/apmec_defs.yaml'
         file2 = importspath + '/apmec_nfv_defs.yaml'
         expected_imports = [file1, file2]
-        self.assertEqual(expected_imports, self.vnfd_dict['imports'])
+        self.assertEqual(expected_imports, self.mead_dict['imports'])
 
     def test_get_mgmt_driver(self):
         expected_mgmt_driver = 'openwrt'
@@ -72,7 +72,7 @@ class TestToscaUtils(testtools.TestCase):
 
     def test_post_process_template(self):
         tosca2 = tosca_template.ToscaTemplate(parsed_params={}, a_file=False,
-                          yaml_dict_tpl=self.vnfd_dict)
+                          yaml_dict_tpl=self.mead_dict)
         toscautils.post_process_template(tosca2)
         invalidNodes = 0
         for nt in tosca2.nodetemplates:
@@ -103,7 +103,7 @@ class TestToscaUtils(testtools.TestCase):
 
     def test_post_process_heat_template(self):
         tosca1 = tosca_template.ToscaTemplate(parsed_params={}, a_file=False,
-                          yaml_dict_tpl=self.vnfd_dict)
+                          yaml_dict_tpl=self.mead_dict)
         toscautils.post_process_template(tosca1)
         translator = tosca_translator.TOSCATranslator(tosca1, {})
         heat_template_yaml = translator.translate()
@@ -126,10 +126,10 @@ class TestToscaUtils(testtools.TestCase):
                 toscautils.TACKERVDU))
 
     def test_get_flavor_dict(self):
-        vnfd_dict = yaml.safe_load(self.tosca_flavor)
-        toscautils.updateimports(vnfd_dict)
+        mead_dict = yaml.safe_load(self.tosca_flavor)
+        toscautils.updateimports(mead_dict)
         tosca = tosca_template.ToscaTemplate(a_file=False,
-                                             yaml_dict_tpl=vnfd_dict)
+                                             yaml_dict_tpl=mead_dict)
         expected_flavor_dict = {
             "VDU1": {
                 "vcpus": 2,
@@ -159,10 +159,10 @@ class TestToscaUtils(testtools.TestCase):
     def test_get_flavor_dict_extra_specs_all_numa_count(self):
         tosca_fes_all_numa_count = _get_template(
             'tosca_flavor_all_numa_count.yaml')
-        vnfd_dict = yaml.safe_load(tosca_fes_all_numa_count)
-        toscautils.updateimports(vnfd_dict)
+        mead_dict = yaml.safe_load(tosca_fes_all_numa_count)
+        toscautils.updateimports(mead_dict)
         tosca = tosca_template.ToscaTemplate(a_file=False,
-                                             yaml_dict_tpl=vnfd_dict)
+                                             yaml_dict_tpl=mead_dict)
         expected_flavor_dict = {
             "VDU1": {
                 "vcpus": 8,
@@ -182,10 +182,10 @@ class TestToscaUtils(testtools.TestCase):
     def test_apmec_conf_heat_extra_specs_all_numa_count(self):
         tosca_fes_all_numa_count = _get_template(
             'tosca_flavor_all_numa_count.yaml')
-        vnfd_dict = yaml.safe_load(tosca_fes_all_numa_count)
-        toscautils.updateimports(vnfd_dict)
+        mead_dict = yaml.safe_load(tosca_fes_all_numa_count)
+        toscautils.updateimports(mead_dict)
         tosca = tosca_template.ToscaTemplate(a_file=False,
-                                             yaml_dict_tpl=vnfd_dict)
+                                             yaml_dict_tpl=mead_dict)
         expected_flavor_dict = {
             "VDU1": {
                 "vcpus": 8,
@@ -234,7 +234,7 @@ class TestToscaUtils(testtools.TestCase):
 
     def test_check_for_substitution_mappings(self):
         tosca_sb_map = _get_template('../../../../../etc/samples/test-nsd-'
-                                     'vnfd1.yaml')
+                                     'mead1.yaml')
         param = {'substitution_mappings': {
                  'VL2': {'type': 'tosca.nodes.nfv.VL', 'properties': {
                          'network_name': 'net0', 'vendor': 'apmec'}},
@@ -249,7 +249,7 @@ class TestToscaUtils(testtools.TestCase):
 
     def test_get_block_storage_details(self):
         tosca_vol = _get_template('tosca_block_storage.yaml')
-        vnfd_dict = yaml.safe_load(tosca_vol)
+        mead_dict = yaml.safe_load(tosca_vol)
         expected_dict = {
             'volumes': {
                 'VB1': {
@@ -264,5 +264,5 @@ class TestToscaUtils(testtools.TestCase):
                     'volume_id': {'get_resource': 'VB1'}}
             }
         }
-        volume_details = toscautils.get_block_storage_details(vnfd_dict)
+        volume_details = toscautils.get_block_storage_details(mead_dict)
         self.assertEqual(expected_dict, volume_details)

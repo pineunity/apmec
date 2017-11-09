@@ -563,10 +563,10 @@ class Controller(object):
             if 'validate' not in attr_vals:
                 continue
             for rule in attr_vals['validate']:
-                # skip validating vnfd_id when vnfd_template is specified to
+                # skip validating mead_id when mead_template is specified to
                 # create vnf
-                if (resource == 'vnf') and ('vnfd_template' in body['vnf'])\
-                        and (attr == "vnfd_id") and is_create:
+                if (resource == 'vnf') and ('mead_template' in body['vnf'])\
+                        and (attr == "mead_id") and is_create:
                     continue
                 # skip validating vnffgd_id when vnffgd_template is provided
                 if (resource == 'vnffg') and ('vnffgd_template' in body['vnffg'])\

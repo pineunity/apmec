@@ -146,9 +146,9 @@ Deploying EPA TOSCA templates using Apmec
 ------------------------------------------
 
 Once OpenStack/Devstack along with Apmec has been successfully installed,
-deploy a sample EPA template such as tosca-vnfd-hugepages.yaml from location
+deploy a sample EPA template such as tosca-mead-hugepages.yaml from location
 below:
-https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd
+https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead
 
 Refer the 'Getting Started' link below on how to create a VNFD and deploy a
 VNF:

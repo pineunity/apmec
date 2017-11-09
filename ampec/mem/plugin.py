@@ -147,14 +147,14 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
     def spawn_n(self, function, *args, **kwargs):
         self._pool.spawn_n(function, *args, **kwargs)
 
-    def create_vnfd(self, context, vnfd):
-        vnfd_data = vnfd['vnfd']
-        template = vnfd_data['attributes'].get('vnfd')
+    def create_mead(self, context, mead):
+        mead_data = mead['mead']
+        template = mead_data['attributes'].get('mead')
         if isinstance(template, dict):
             # TODO(sripriya) remove this yaml dump once db supports storing
             # json format of yaml files in a separate column instead of
             # key value string pairs in vnf attributes table
-            vnfd_data['attributes']['vnfd'] = yaml.safe_dump(
+            mead_data['attributes']['mead'] = yaml.safe_dump(
                 template)
         elif isinstance(template, str):
             self._report_deprecated_yaml_str()
@@ -162,9 +162,9 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             raise exceptions.Invalid('Not a valid template: '
                                      'tosca_definitions_version is missing.')
 
-        LOG.debug('vnfd %s', vnfd_data)
+        LOG.debug('mead %s', mead_data)
 
-        service_types = vnfd_data.get('service_types')
+        service_types = mead_data.get('service_types')
         if not attributes.is_attr_set(service_types):
             LOG.debug('service type must be specified')
             raise mem.ServiceTypesNotSpecified()
@@ -173,49 +173,49 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             # framework doesn't know what services are valid for now.
             # so doesn't check it here yet.
             pass
-        if 'template_source' in vnfd_data:
-            template_source = vnfd_data.get('template_source')
+        if 'template_source' in mead_data:
+            template_source = mead_data.get('template_source')
         else:
             template_source = 'onboarded'
-        vnfd['vnfd']['template_source'] = template_source
+        mead['mead']['template_source'] = template_source
 
-        self._parse_template_input(vnfd)
-        return super(MEMPlugin, self).create_vnfd(
-            context, vnfd)
+        self._parse_template_input(mead)
+        return super(MEMPlugin, self).create_mead(
+            context, mead)
 
-    def _parse_template_input(self, vnfd):
-        vnfd_dict = vnfd['vnfd']
-        vnfd_yaml = vnfd_dict['attributes'].get('vnfd')
-        if vnfd_yaml is None:
+    def _parse_template_input(self, mead):
+        mead_dict = mead['mead']
+        mead_yaml = mead_dict['attributes'].get('mead')
+        if mead_yaml is None:
             return
 
-        inner_vnfd_dict = yaml.safe_load(vnfd_yaml)
-        LOG.debug('vnfd_dict: %s', inner_vnfd_dict)
+        inner_mead_dict = yaml.safe_load(mead_yaml)
+        LOG.debug('mead_dict: %s', inner_mead_dict)
 
         # Prepend the apmec_defs.yaml import file with the full
         # path to the file
-        toscautils.updateimports(inner_vnfd_dict)
+        toscautils.updateimports(inner_mead_dict)
 
         try:
             tosca = ToscaTemplate(a_file=False,
-                                  yaml_dict_tpl=inner_vnfd_dict)
+                                  yaml_dict_tpl=inner_mead_dict)
         except Exception as e:
             LOG.exception("tosca-parser error: %s", str(e))
             raise mem.ToscaParserFailed(error_msg_details=str(e))
 
-        if ('description' not in vnfd_dict or
-                vnfd_dict['description'] == ''):
-            vnfd_dict['description'] = inner_vnfd_dict.get(
+        if ('description' not in mead_dict or
+                mead_dict['description'] == ''):
+            mead_dict['description'] = inner_mead_dict.get(
                 'description', '')
-        if (('name' not in vnfd_dict or
-                not len(vnfd_dict['name'])) and
-                'metadata' in inner_vnfd_dict):
-            vnfd_dict['name'] = inner_vnfd_dict['metadata'].get(
+        if (('name' not in mead_dict or
+                not len(mead_dict['name'])) and
+                'metadata' in inner_mead_dict):
+            mead_dict['name'] = inner_mead_dict['metadata'].get(
                 'template_name', '')
 
-        vnfd_dict['mgmt_driver'] = toscautils.get_mgmt_driver(
+        mead_dict['mgmt_driver'] = toscautils.get_mgmt_driver(
             tosca)
-        LOG.debug('vnfd %s', vnfd)
+        LOG.debug('mead %s', mead)
 
     def add_vnf_to_monitor(self, context, vnf_dict):
         dev_attrs = vnf_dict['attributes']
@@ -233,10 +233,10 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             self._vnf_monitor.add_hosting_vnf(hosting_vnf)
 
     def add_alarm_url_to_vnf(self, context, vnf_dict):
-        vnfd_yaml = vnf_dict['vnfd']['attributes'].get('vnfd', '')
-        vnfd_dict = yaml.safe_load(vnfd_yaml)
-        if vnfd_dict and vnfd_dict.get('tosca_definitions_version'):
-            polices = vnfd_dict['topology_template'].get('policies', [])
+        mead_yaml = vnf_dict['mead']['attributes'].get('mead', '')
+        mead_dict = yaml.safe_load(mead_yaml)
+        if mead_dict and mead_dict.get('tosca_definitions_version'):
+            polices = mead_dict['topology_template'].get('policies', [])
             for policy_dict in polices:
                 name, policy = list(policy_dict.items())[0]
                 if policy['type'] in constants.POLICY_ALARMING:
@@ -351,15 +351,15 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         vnf_info = vnf['vnf']
         name = vnf_info['name']
 
-        # if vnfd_template specified, create vnfd from template
-        # create template dictionary structure same as needed in create_vnfd()
-        if vnf_info.get('vnfd_template'):
-            vnfd_name = utils.generate_resource_name(name, 'inline')
-            vnfd = {'vnfd': {'attributes': {'vnfd': vnf_info['vnfd_template']},
-                             'name': vnfd_name,
+        # if mead_template specified, create mead from template
+        # create template dictionary structure same as needed in create_mead()
+        if vnf_info.get('mead_template'):
+            mead_name = utils.generate_resource_name(name, 'inline')
+            mead = {'mead': {'attributes': {'mead': vnf_info['mead_template']},
+                             'name': mead_name,
                              'template_source': 'inline',
-                             'service_types': [{'service_type': 'vnfd'}]}}
-            vnf_info['vnfd_id'] = self.create_vnfd(context, vnfd).get('id')
+                             'service_types': [{'service_type': 'mead'}]}}
+            vnf_info['mead_id'] = self.create_mead(context, mead).get('id')
 
         vnf_attributes = vnf_info['attributes']
         if vnf_attributes.get('param_values'):
@@ -672,10 +672,10 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
     def get_vnf_policies(
             self, context, vnf_id, filters=None, fields=None):
         vnf = self.get_vnf(context, vnf_id)
-        vnfd_tmpl = yaml.safe_load(vnf['vnfd']['attributes']['vnfd'])
+        mead_tmpl = yaml.safe_load(vnf['mead']['attributes']['mead'])
         policy_list = []
 
-        polices = vnfd_tmpl['topology_template'].get('policies', [])
+        polices = mead_tmpl['topology_template'].get('policies', [])
         for policy_dict in polices:
             for name, policy in policy_dict.items():
                 def _add(policy):

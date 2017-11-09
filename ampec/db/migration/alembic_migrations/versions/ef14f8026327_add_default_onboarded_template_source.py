@@ -29,8 +29,8 @@ from alembic import op
 
 
 def upgrade(active_plugins=None, options=None):
-    op.alter_column('vnfd', 'template_source',
+    op.alter_column('mead', 'template_source',
                     server_default="onboarded")
 
-    op.execute("UPDATE vnfd set template_source='onboarded'"
+    op.execute("UPDATE mead set template_source='onboarded'"
        " WHERE template_source is NULL")

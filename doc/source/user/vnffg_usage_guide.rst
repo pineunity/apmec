@@ -116,11 +116,11 @@ same Connection Point definitions as the ones you declared in your VNFFGD.
 
 .. code-block:: console
 
-   apmec vnfd-create --vnfd-file tosca-vnffg-vnfd1.yaml VNFD1
-   apmec vnf-create --vnfd-name VNFD1 VNF1
+   apmec mead-create --mead-file tosca-vnffg-mead1.yaml VNFD1
+   apmec vnf-create --mead-name VNFD1 VNF1
 
-   apmec vnfd-create --vnfd-file tosca-vnffg-vnfd2.yaml VNFD2
-   apmec vnf-create --vnfd-name VNFD2 VNF2
+   apmec mead-create --mead-file tosca-vnffg-mead2.yaml VNFD2
+   apmec vnf-create --mead-name VNFD2 VNF2
 
 Refer the 'Getting Started' link below on how to create a VNFD and deploy
 2 VNFs: `VNF1`_ and `VNF2`_.
@@ -167,7 +167,7 @@ to the desired VNF instance:
    apmec vnf-list
 
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
-   | id                                   | name | mgmt_url                  | status | vim_id                               | vnfd_id                              |
+   | id                                   | name | mgmt_url                  | status | vim_id                               | mead_id                              |
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
    | 7168062e-9fa1-4203-8cb7-f5c99ff3ee1b | VNF2 | {"VDU1": "192.168.1.5"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | ea842879-5a7a-4f29-a8b0-528b2ad3b027 |
    | 91e32c20-6d1f-47a4-9ba7-08f5e5effe07 | VNF1 | {"VDU1": "192.168.1.7"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | 27795330-62a7-406d-9443-2daad76e674b |
@@ -248,5 +248,5 @@ Known Issues and Limitations
 - NSH attributes not yet supported
 - Symmetrical is not supported by driver yet
 
-.. _VNF1: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-vnfd1.yaml
-.. _VNF2: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-vnfd2.yaml
+.. _VNF1: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-mead1.yaml
+.. _VNF2: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-mead2.yaml

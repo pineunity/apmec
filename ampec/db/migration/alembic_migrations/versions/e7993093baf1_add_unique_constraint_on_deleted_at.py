@@ -42,6 +42,6 @@ def _add_unique_constraint(table):
 
 
 def upgrade(active_plugins=None, options=None):
-    for table in ['vnf', 'vnfd', 'vims', 'ns', 'nsd']:
+    for table in ['vnf', 'mead', 'vims', 'ns', 'nsd']:
         _drop_unique_constraint(table)
         _add_unique_constraint(table)

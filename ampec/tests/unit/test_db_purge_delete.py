@@ -65,8 +65,8 @@ class TestDbPurgeDelete(db_base.SqlTestCase):
         purge_tables._purge_resource_tables.assert_called_once_with(
             mock.ANY, mock.ANY, mock.ANY, mock.ANY, mock.ANY)
 
-    def test_purge_delete_call_vnfd(self):
-        purge_tables.purge_deleted(self.config, 'vnfd', '90', 'days')
+    def test_purge_delete_call_mead(self):
+        purge_tables.purge_deleted(self.config, 'mead', '90', 'days')
         purge_tables._purge_resource_tables.assert_called_once_with(
             mock.ANY, mock.ANY, mock.ANY, mock.ANY, mock.ANY)
 

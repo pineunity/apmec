@@ -1,7 +1,7 @@
 ---
 version: '2.0'
 
-std.create_vnfd:
+std.create_mead:
   type: direct
 
   description: |
@@ -10,13 +10,13 @@ std.create_vnfd:
   input:
     - body
   output:
-    vnfd_id: <% $.vnfd_id %>
+    mead_id: <% $.mead_id %>
 
   tasks:
-    create_vnfd:
+    create_mead:
       description: Request to create a VNFD.
-      action: apmec.create_vnfd body=<% $.body %>
+      action: apmec.create_mead body=<% $.body %>
       input:
         body: <% $.body %>
       publish:
-        vnfd_id: <% task(create_vnfd).result.vnfd.id %>
+        mead_id: <% task(create_mead).result.mead.id %>

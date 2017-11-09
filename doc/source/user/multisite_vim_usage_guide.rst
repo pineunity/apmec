@@ -80,7 +80,7 @@ Deploying a new VNF on registered VIM
 
 ::
 
- $ apmec vnf-create --description 'Openwrt VNF on Site1' --vnfd-id c3cbf0c0-a492-49e3-9541-945e49e7ed7e --vim-name Site1 openwrt_VNF
+ $ apmec vnf-create --description 'Openwrt VNF on Site1' --mead-id c3cbf0c0-a492-49e3-9541-945e49e7ed7e --vim-name Site1 openwrt_VNF
  Created a new vnf:
  +----------------+--------------------------------------+
  | Field          | Value                                |
@@ -94,7 +94,7 @@ Deploying a new VNF on registered VIM
  | status         | PENDING_CREATE                       |
  | tenant_id      | 8907bae480c0414d98c3519acbad1b06     |
  | vim_id         | 3f3c51c5-8bda-4bd3-adb3-5ae62eae65c3 |
- | vnfd_id        | c3cbf0c0-a492-49e3-9541-945e49e7ed7e |
+ | mead_id        | c3cbf0c0-a492-49e3-9541-945e49e7ed7e |
  +----------------+--------------------------------------+
 
 The --vim-id/--vim-name argument is optional during vnf-create. If
