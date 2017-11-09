@@ -62,7 +62,7 @@ core_opts = [
 
 core_cli_opts = [
     cfg.StrOpt('state_path',
-               default='/var/tosca_lib/apmec',
+               default='/var/lib/apmec',
                help=_("Where to store Apmec state files. "
                       "This directory must be writable by "
                       "the agent.")),

@@ -761,7 +761,7 @@ class Resource(Application):
                  deserializer=None, serializer=None):
         """Object initialization.
 
-        :param controller: object that implement methods created by routes tosca_lib
+        :param controller: object that implement methods created by routes lib
         :param deserializer: object that can serialize the output of a
                              controller into a webob response
         :param serializer: object that can deserialize a webob request
