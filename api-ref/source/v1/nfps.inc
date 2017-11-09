@@ -6,7 +6,7 @@ Network Forwarding Paths (NFPs)
 
 Lists Network Forwarding Paths (NFPs) and shows information of a given NFP.
 
-The NFP is a component of VNFFG and contains a Service Function Chain (SFC)
+The NFP is a component of NFY and contains a Service Function Chain (SFC)
 and a classifier.
 
 List NFPs

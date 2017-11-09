@@ -20,7 +20,7 @@ from apmec.services import service_base
 
 
 @six.add_metaclass(abc.ABCMeta)
-class VNFFGPluginBase(service_base.NFVPluginBase):
+class NFYPluginBase(service_base.NFVPluginBase):
 
     @abc.abstractmethod
     def create_NANYD(self, context, NANYD):

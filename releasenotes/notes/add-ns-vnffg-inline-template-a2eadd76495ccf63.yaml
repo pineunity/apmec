@@ -1,5 +1,5 @@
 ---
 features:
   - |
-    Support to create directly VNFFG and NS from its descriptor template
-    without creating VNFFGD and NSD.
+    Support to create directly NFY and NS from its descriptor template
+    without creating NFYD and NSD.

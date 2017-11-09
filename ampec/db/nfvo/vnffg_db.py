@@ -36,7 +36,7 @@ _ACTIVE_UPDATE = (constants.ACTIVE, constants.PENDING_UPDATE)
 _ACTIVE_UPDATE_ERROR_DEAD = (
     constants.PENDING_CREATE, constants.ACTIVE, constants.PENDING_UPDATE,
     constants.ERROR, constants.DEAD)
-_VALID_VNFFG_UPDATE_ATTRIBUTES = ('name', 'description', 'mea_mapping')
+_VALID_NFY_UPDATE_ATTRIBUTES = ('name', 'description', 'mea_mapping')
 _VALID_SFC_UPDATE_ATTRIBUTES = ('chain', 'symmetrical')
 _VALID_FC_UPDATE_ATTRIBUTES = ()
 MATCH_CRITERIA = (
@@ -133,7 +133,7 @@ class VnffgChain(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
 
 
 class VnffgClassifier(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
-    """VNFFG NFP Classifier Data Model"""
+    """NFY NFP Classifier Data Model"""
 
     status = sa.Column(sa.String(255), nullable=False)
 
@@ -188,7 +188,7 @@ class ACLMatchCriteria(model_base.BASE, models_v1.HasId):
     ipv6_nd_tll = sa.Column(sa.String(36), nullable=True)
 
 
-class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
+class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
         super(VnffgPluginDbMixin, self).__init__()
@@ -428,7 +428,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
 
         if not nfp_dict['path_id']:
             # TODO(trozet): do we need to check if this path ID is already
-            # taken by another VNFFG
+            # taken by another NFY
             nfp_dict['path_id'] = random.randint(1, 16777216)
 
         return nfp_dict
@@ -438,7 +438,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
 
         :param context: SQL session context
         :param mea_mapping: dict of MEAD to VNF instance mappings
-        :param template_db: VNFFG Descriptor
+        :param template_db: NFY Descriptor
         :param nfp_name: name of the forwarding path with chain requirements
         :return: list of port chain including mea name and list of CPs
         """
@@ -499,7 +499,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
     def _get_nfp_attribute(template, nfp, attribute):
         """Finds any attribute of an NFP described in a template
 
-        :param template: VNFFGD template
+        :param template: NFYD template
         :param nfp: name of NFP
         :param attribute: attribute to find
         :return: value of attribute from template
@@ -533,7 +533,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
 
         :param context: SQL session context
         :param mea_mapping: dict of requested MEAD:VNF_ID mappings
-        :param mea_members: list of constituent VNFs from a VNFFG
+        :param mea_members: list of constituent VNFs from a NFY
         :return: dict of MEAD:VNF_ID mappings
         """
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
@@ -784,7 +784,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
             nfp_query.update({'status': new_status})
 
             if new_NANY is not None:
-                for key in _VALID_VNFFG_UPDATE_ATTRIBUTES:
+                for key in _VALID_NFY_UPDATE_ATTRIBUTES:
                     query.update({key: new_NANY[key]})
                 nfp_query.update({'symmetrical': new_NANY['symmetrical']})
 

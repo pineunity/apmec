@@ -19,8 +19,8 @@
         capability: CP32
 
   groups:
-    VNFFG1:
-      type: tosca.groups.nfv.VNFFG
+    NFY1:
+      type: tosca.groups.nfv.NFY
       description: HTTP to Corporate Net
       properties:
         vendor: apmec

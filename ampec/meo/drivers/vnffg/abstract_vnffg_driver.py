@@ -27,7 +27,7 @@ class VnffgAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def get_name(self):
-        """Return a symbolic name for the Apmec VNFFG SFC driver."""
+        """Return a symbolic name for the Apmec NFY SFC driver."""
         pass
 
     @abc.abstractmethod

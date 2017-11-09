@@ -21,12 +21,12 @@ from apmec.meo.drivers.NANY import abstract_NANY_driver
 LOG = logging.getLogger(__name__)
 
 
-class VNFFGNoop(abstract_NANY_driver.VnffgAbstractDriver):
+class NFYNoop(abstract_NANY_driver.VnffgAbstractDriver):
 
-    """Noop driver for VNFFG tests"""
+    """Noop driver for NFY tests"""
 
     def __init__(self):
-        super(VNFFGNoop, self).__init__()
+        super(NFYNoop, self).__init__()
         self._instances = set()
 
     def get_type(self):
@@ -36,7 +36,7 @@ class VNFFGNoop(abstract_NANY_driver.VnffgAbstractDriver):
         return 'noop'
 
     def get_description(self):
-        return 'VNFFG Noop driver'
+        return 'NFY Noop driver'
 
     @log.log
     def create_chain(self, name, fc_id, meas, auth_attr=None):

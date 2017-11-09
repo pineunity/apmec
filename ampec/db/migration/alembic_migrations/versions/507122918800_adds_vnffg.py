@@ -13,7 +13,7 @@
 #    under the License.
 #
 
-"""adds_VNFFG
+"""adds_NFY
 
 Revision ID: 507122918800
 Revises: 4ee19c8a6d0a

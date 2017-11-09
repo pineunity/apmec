@@ -63,13 +63,13 @@ mead_id_path:
   type: string
 NANY_id_path:
   description: |
-    The UUID of the VNFFG.
+    The UUID of the NFY.
   in: path
   required: true
   type: string
 NANYD_id_path:
   description: |
-    The UUID of the VNFFGD.
+    The UUID of the NFYD.
   in: path
   required: true
   type: string
@@ -844,19 +844,19 @@ NANY:
 NANY_forwarding_paths:
   description: |
     The UUID of the Network Forwarding Path (NFP) on which
-    the VNFFG relies.
+    the NFY relies.
   in: body
   required: true
   type: string
 NANY_id:
   description: |
-    The UUID of the VNFFG.
+    The UUID of the NFY.
   in: body
   required: true
   type: string
 NANY_status:
   description: |
-    Status of the VNFFG.
+    Status of the NFY.
   in: body
   required: true
   type: string
@@ -868,15 +868,15 @@ NANYD:
   type: object
 NANYD_id:
   description: |
-    The UUID of the VNFFGD.
+    The UUID of the NFYD.
   in: body
   required: true
   type: string
 NANYD_template:
   description: |
     A template object which includes behavioral and deployment
-    information of VNFFGs. For more information, see
-    `VNFFG Descriptor Template Guide
+    information of NFYs. For more information, see
+    `NFY Descriptor Template Guide
     <https://docs.openstack.org/apmec/latest/contributor/NANYD_template_description.html>`_.
   in: body
   required: true

@@ -1,17 +1,17 @@
-VNFFG Descriptor Template Guide
+NFY Descriptor Template Guide
 ===============================
 Overview
 --------
 
-This document explains VNFFGD template structure and its various fields based
+This document explains NFYD template structure and its various fields based
 on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-nfv/
 v1.0/tosca-nfv-v1.0.html>`_.
 
-The behavioural and deployment information of a VNFFG in Apmec is defined in a
-template known as VNFFG Descriptor (VNFFGD). The template is based on TOSCA
-standards and is written in YAML. It is on-boarded in a VNFFG catalog.
+The behavioural and deployment information of a NFY in Apmec is defined in a
+template known as NFY Descriptor (NFYD). The template is based on TOSCA
+standards and is written in YAML. It is on-boarded in a NFY catalog.
 
-Each VNFFGD template will have below fields:
+Each NFYD template will have below fields:
 
 ::
 
@@ -30,14 +30,14 @@ Each VNFFGD template will have below fields:
        template_name: A name to be given to the template.
 
     topology_template:
-       Describes the topology of the VNFFG under node_template field.
+       Describes the topology of the NFY under node_template field.
        node_template:
-           Describes node types of a VNFFG.
+           Describes node types of a NFY.
            FP:
                Describes properties and path of a Forwarding Path.
        groups:
            Describes groupings of nodes that have an implied relationship.
-           VNFFG:
+           NFY:
                Describes properties and members of a VNF Forwarding Graph.
 
 For examples, please refer sample MEAD templates available at `GitHub <https:
@@ -45,7 +45,7 @@ For examples, please refer sample MEAD templates available at `GitHub <https:
 
 Node types
 ----------
-For Apmec purposes a VNFFGD only includes **Forwarding Path**.  In a full
+For Apmec purposes a NFYD only includes **Forwarding Path**.  In a full
 Network Services Descriptor (NSD), it would include information about each
 MEAD as well.  However until that implementation, MEAD is described in a
 separate template.  Only a single Forwarding Path is currently supported.
@@ -53,7 +53,7 @@ separate template.  Only a single Forwarding Path is currently supported.
 
 Forwarding Path
 ---------------
-Forwarding Path is a required entry in a VNFFGD.  It describes the chain as
+Forwarding Path is a required entry in a NFYD.  It describes the chain as
 well as the classifier that will eventually be created to form a path
 through a set of VNFs.
 
@@ -62,7 +62,7 @@ through a set of VNFs.
 :properties:
     Describes the properties of a FP.  These include id (path ID), policy
     (traffic match policy to flow through the path), and path (chain of
-    VNFs/Connection Points). A complete list of VNFFG properties currently
+    VNFs/Connection Points). A complete list of NFY properties currently
     supported by Apmec are listed `here <https://github
     .com/openstack/apmec/blob/master/apmec/
     tosca/lib/apmec_nfv_defs.yaml>`_ under **properties** section of
@@ -114,7 +114,7 @@ path
 """"
 Path defines an ordered list of nodes to traverse in a Forwarding Path.  Each
 node is really a logical port, which is defined in the path as a Connection
-Point (CP) belonging to a specific MEAD.  It is not necessary at VNFFGD
+Point (CP) belonging to a specific MEAD.  It is not necessary at NFYD
 creation time to have predefined these MEADs used in the path.  They may be
 created later.  Up to 2 CPs may be listed (in order) per MEAD.  If 2 are
 listed, the first will be considered the ingress port for traffic and the
@@ -124,36 +124,36 @@ interpreted as both the ingress and egress port for traffic.
 
 Groups
 ------
-In Apmec and TOSCA, the VNFFG itself is described in this section.  There
-may only be a single VNFFG described in each VNFFGD under this section.
+In Apmec and TOSCA, the NFY itself is described in this section.  There
+may only be a single NFY described in each NFYD under this section.
 
-VNFFG
+NFY
 -----
-VNFFG maps the Forwarding Path to other node types defined in the properties
+NFY maps the Forwarding Path to other node types defined in the properties
 section.
 
 :type:
-    tosca.groups.nfv.VNFFG
+    tosca.groups.nfv.NFY
 :properties:
-    Describes the properties of a VNFFG.  These include vendor, version,
+    Describes the properties of a NFY.  These include vendor, version,
     dependent_virtual_link, connection_points, constituent_meas.
-    . A complete list of VNFFG properties currently
+    . A complete list of NFY properties currently
     supported by Apmec are listed in `TOSCA <http://docs.oasis-open
     .org/tosca/tosca-nfv/v1.0/csd03/tosca-nfv-v1.0-csd03
     .html#_Toc447714727>`_.
 :members:
-    A list of Forwarding Paths which belong to this VNFFG.  At the moment
+    A list of Forwarding Paths which belong to this NFY.  At the moment
     only one is supported.
 
-Specifying VNFFG properties and members
+Specifying NFY properties and members
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-An example VNFFG shown below:
+An example NFY shown below:
 
 ::
 
   groups:
-    VNFFG1:
-      type: tosca.groups.nfv.VNFFG
+    NFY1:
+      type: tosca.groups.nfv.NFY
       description: HTTP to Corporate Net
       properties:
         vendor: apmec
@@ -166,7 +166,7 @@ An example VNFFG shown below:
 
 number_of_endpoints
 """""""""""""""""""
-Number of CPs included in this VNFFG.
+Number of CPs included in this NFY.
 
 dependent_virtual_link
 """"""""""""""""""""""
@@ -184,17 +184,17 @@ Path).
 
 Summary
 -------
-To summarize VNFFGD is written in YAML and describes a VNFFG topology. It is
-composed of a Forwarding Path and a VNFFG.  A full VNFFGD is shown below:
+To summarize NFYD is written in YAML and describes a NFY topology. It is
+composed of a Forwarding Path and a NFY.  A full NFYD is shown below:
 
 ::
 
   tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 
-  description: Sample VNFFG template
+  description: Sample NFY template
 
   topology_template:
-    description: Sample VNFFG template
+    description: Sample NFY template
 
     node_templates:
 
@@ -217,8 +217,8 @@ composed of a Forwarding Path and a VNFFG.  A full VNFFGD is shown below:
               capability: CP22
 
     groups:
-      VNFFG1:
-        type: tosca.groups.nfv.VNFFG
+      NFY1:
+        type: tosca.groups.nfv.NFY
         description: HTTP to Corporate Net
         properties:
           vendor: apmec

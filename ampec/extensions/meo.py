@@ -87,7 +87,7 @@ class ToscaParserFailed(exceptions.InvalidInput):
 
 
 class VnffgdInvalidTemplate(exceptions.InvalidInput):
-    message = _("Invalid VNFFG template input: %(template)s")
+    message = _("Invalid NFY template input: %(template)s")
 
 
 class VnffgdDuplicateForwarderException(exceptions.InvalidInput):
@@ -101,8 +101,8 @@ class VnffgdDuplicateCPException(exceptions.InvalidInput):
 
 
 class VnffgdVnfdNotFoundException(exceptions.NotFound):
-    message = _("Specified MEAD %(mead_name)s in VNFFGD does not exist. "
-                "Please create MEADs before creating VNFFG")
+    message = _("Specified MEAD %(mead_name)s in NFYD does not exist. "
+                "Please create MEADs before creating NFY")
 
 
 class VnffgdCpNotFoundException(exceptions.NotFound):
@@ -123,21 +123,21 @@ class VnffgdWrongEndpointNumber(exceptions.ApmecException):
 
 
 class VnffgdInUse(exceptions.InUse):
-    message = _('VNFFGD %(NANYD_id)s is still in use')
+    message = _('NFYD %(NANYD_id)s is still in use')
 
 
 class VnffgdNotFoundException(exceptions.NotFound):
-    message = _('VNFFG Template %(NANYD_id)s could not be found')
+    message = _('NFY Template %(NANYD_id)s could not be found')
 
 
 class VnffgCreateFailed(exceptions.ApmecException):
-    message = _('Creating VNFFG based on %(NANYD_id)s failed')
+    message = _('Creating NFY based on %(NANYD_id)s failed')
 
 
 class VnffgInvalidMappingException(exceptions.ApmecException):
     message = _("Matching VNF Instance for MEAD %(mead_name)s could not be "
                 "found. Please create an instance of this MEAD before "
-                "creating/updating VNFFG.")
+                "creating/updating NFY.")
 
 
 class VnffgParamValueFormatError(exceptions.ApmecException):
@@ -145,7 +145,7 @@ class VnffgParamValueFormatError(exceptions.ApmecException):
 
 
 class VnffgTemplateParamParsingException(exceptions.ApmecException):
-    message = _("Failed to parse VNFFG Template due to "
+    message = _("Failed to parse NFY Template due to "
                 "missing input param %(get_input)s.")
 
 
@@ -154,7 +154,7 @@ class VnffgParamValueNotUsed(exceptions.ApmecException):
 
 
 class VnffgPropertyNotFoundException(exceptions.NotFound):
-    message = _('VNFFG Property %(NANY_property)s could not be found')
+    message = _('NFY Property %(NANY_property)s could not be found')
 
 
 class VnffgCpNotFoundException(exceptions.NotFound):
@@ -163,11 +163,11 @@ class VnffgCpNotFoundException(exceptions.NotFound):
 
 
 class VnffgNotFoundException(exceptions.NotFound):
-    message = _('VNFFG %(NANY_id)s could not be found')
+    message = _('NFY %(NANY_id)s could not be found')
 
 
 class VnffgInUse(exceptions.InUse):
-    message = _('VNFFG %(NANY_id)s is still in use')
+    message = _('NFY %(NANY_id)s is still in use')
 
 
 class VnffgVnfNotFoundException(exceptions.NotFound):
@@ -176,7 +176,7 @@ class VnffgVnfNotFoundException(exceptions.NotFound):
 
 
 class VnffgDeleteFailed(exceptions.ApmecException):
-    message = _('Deleting VNFFG %(NANY_id)s failed')
+    message = _('Deleting NFY %(NANY_id)s failed')
 
 
 class NfpAttributeNotFoundException(exceptions.NotFound):

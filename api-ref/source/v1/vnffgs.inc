@@ -1,22 +1,22 @@
 .. -*- rst -*-
 
 ==============================
-VNF Forwarding Graphs (VNFFGs)
+VNF Forwarding Graphs (NFYs)
 ==============================
 
-Manages VNF Forwarding Graphs (VNFFGs).
+Manages VNF Forwarding Graphs (NFYs).
 
-The VNFFG feature is used to orchestrate and manage traffic through VNFs.
-For more information about VNFFG, see
+The NFY feature is used to orchestrate and manage traffic through VNFs.
+For more information about NFY, see
 `VNF Forwarding Graph
 <https://docs.openstack.org/apmec/latest/user/NANY_usage_guide.html>`_.
 
-Create VNFFG
+Create NFY
 ============
 
 .. rest_method::  POST /v1.0/NANYs
 
-Creates a VNFFG.
+Creates a NFY.
 
 Response Codes
 --------------
@@ -70,12 +70,12 @@ Response Example
 .. literalinclude:: samples/NANYs/NANYs-create-response.json
    :language: javascript
 
-List VNFFGs
+List NFYs
 ===========
 
 .. rest_method::  GET /v1.0/NANYs
 
-Lists VNFFGs.
+Lists NFYs.
 
 Response Codes
 --------------
@@ -110,12 +110,12 @@ Response Example
 .. literalinclude:: samples/NANYs/NANYs-list-response.json
    :language: javascript
 
-Show VNFFG
+Show NFY
 ==========
 
 .. rest_method::  GET /v1.0/NANYs/{NANY_id}
 
-Shows information of a given VNFFG.
+Shows information of a given NFY.
 
 Response Codes
 --------------
@@ -158,12 +158,12 @@ Response Example
 .. literalinclude:: samples/NANYs/NANYs-show-response.json
    :language: javascript
 
-Delete VNFFG
+Delete NFY
 ============
 
 .. rest_method::  DELETE /v1.0/NANYs/{NANY_id}
 
-Deletes a given VNFFG.
+Deletes a given NFY.
 
 Response Codes
 --------------

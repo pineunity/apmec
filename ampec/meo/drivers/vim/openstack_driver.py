@@ -394,7 +394,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
         neutronclient_ = NeutronClient(auth_attr)
         port_pair_group_list = []
         for mea in meas:
-            # TODO(s3wong): once scaling is in place and VNFFG supports it
+            # TODO(s3wong): once scaling is in place and NFY supports it
             # that model needs to be implemented to concatenate all
             # port-pairs into the port-pair-group
             # port pair group could include port-pairs from different VNFs
@@ -442,7 +442,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
         # TODO(s3wong): should the chain name be given as a parameter?
         port_chain = {}
         port_chain['name'] = name + '-port-chain'
-        port_chain['description'] = 'port-chain for Apmec VNFFG'
+        port_chain['description'] = 'port-chain for Apmec NFY'
         port_chain['port_pair_groups'] = port_pair_group_list
         port_chain['flow_classifiers'] = [fc_id]
         return neutronclient_.port_chain_create(port_chain)

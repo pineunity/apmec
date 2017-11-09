@@ -9,9 +9,9 @@
     "symmetrical": false,
     "NANYD_template": {
       "tosca_definitions_version": "tosca_simple_profile_for_nfv_1_0_0",
-      "description": "Sample VNFFG template",
+      "description": "Sample NFY template",
       "topology_template": {
-        "description": "Sample VNFFG template",
+        "description": "Sample NFY template",
         "node_templates": {
           "Forwarding_path1": {
             "type": "tosca.nodes.nfv.FP.Apmec",
@@ -43,8 +43,8 @@
           }
         },
         "groups": {
-          "VNFFG1": {
-            "type": "tosca.groups.nfv.VNFFG",
+          "NFY1": {
+            "type": "tosca.groups.nfv.NFY",
             "description": "HTTP to Corporate Net",
             "properties": {
               "vendor": "apmec",

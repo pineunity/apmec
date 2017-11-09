@@ -1,23 +1,23 @@
 .. -*- rst -*-
 
 ==========================================
-VNF Forwarding Graph Descriptors (VNFFGDs)
+VNF Forwarding Graph Descriptors (NFYDs)
 ==========================================
 
-Manages VNF Forwarding Graph Descriptors (VNFFGDs).
+Manages VNF Forwarding Graph Descriptors (NFYDs).
 
-The VNFFGD is a template which describes information about deployment and
-behavior of VNF Forwarding Graphs (VNFFGs). For more information, see
-`VNFFG Descriptor Template Guide
+The NFYD is a template which describes information about deployment and
+behavior of VNF Forwarding Graphs (NFYs). For more information, see
+`NFY Descriptor Template Guide
 <https://docs.openstack.org/apmec/latest/contributor/NANYD_template_description.html>`_.
 
 
-Create VNFFGD
+Create NFYD
 =============
 
 .. rest_method::  POST /v1.0/NANYDs
 
-Creates a VNFFGD.
+Creates a NFYD.
 
 Response Codes
 --------------
@@ -65,12 +65,12 @@ Response Example
 .. literalinclude:: samples/NANYDs/NANYDs-create-response.json
    :language: javascript
 
-List VNFFGDs
+List NFYDs
 ============
 
 .. rest_method::  GET /v1.0/NANYDs
 
-Lists VNFFGDs.
+Lists NFYDs.
 
 Response Codes
 --------------
@@ -102,12 +102,12 @@ Response Example
 .. literalinclude:: samples/NANYDs/NANYDs-list-response.json
    :language: javascript
 
-Show VNFFGD
+Show NFYD
 ===========
 
 .. rest_method::  GET /v1.0/NANYDs/{NANYD_id}
 
-Shows information of a given VNFFGD.
+Shows information of a given NFYD.
 
 Response Codes
 --------------
@@ -146,13 +146,13 @@ Response Example
 .. literalinclude:: samples/NANYDs/NANYDs-show-response.json
    :language: javascript
 
-Delete VNFFGD
+Delete NFYD
 =============
 
 .. rest_method::  DELETE /v1.0/NANYDs/{NANYD_id}
 
-Deletes a given VNFFGD.
-Only a VNFFGD without any associated VNFFGs can be deleted.
+Deletes a given NFYD.
+Only a NFYD without any associated NFYs can be deleted.
 
 Response Codes
 --------------

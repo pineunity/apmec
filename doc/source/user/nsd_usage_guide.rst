@@ -26,7 +26,7 @@ NSD in Ocata can be used for creating multiple (related) VNFs in one shot
 using a single TOSCA template. This is a first (big) step into NSD, few
 follow-on enhancements like:
 1) Creating VLs / neutron networks using NSD (to support inter-VNF private VL)
-2) VNFFGD support in NSD.
+2) NFYD support in NSD.
 
 Creating the NSD
 ~~~~~~~~~~~~~~~~

@@ -15,7 +15,7 @@
           "/opt/stack/apmec/apmec/tosca/lib/apmec_defs.yaml",
           "/opt/stack/apmec/apmec/tosca/lib/apmec_nfv_defs.yaml"
         ],
-        "description": "Sample VNFFG template",
+        "description": "Sample NFY template",
         "topology_template": {
           "node_templates": {
             "Forwarding_path1": {
@@ -47,10 +47,10 @@
               }
             }
           },
-          "description": "Sample VNFFG template",
+          "description": "Sample NFY template",
           "groups": {
-            "VNFFG1": {
-              "type": "tosca.groups.nfv.VNFFG",
+            "NFY1": {
+              "type": "tosca.groups.nfv.NFY",
               "description": "HTTP to Corporate Net",
               "members": [
                 "Forwarding_path1"

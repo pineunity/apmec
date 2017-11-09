@@ -305,8 +305,8 @@ msgstr ""
 "comprueba el estado del servicio %(service)s."
 
 #, python-format
-msgid "Creating VNFFG based on %(NANYD_id)s failed"
-msgstr "Creación de VNFFG basado en %(NANYD_id)s falló"
+msgid "Creating NFY based on %(NANYD_id)s failed"
+msgstr "Creación de NFY basado en %(NANYD_id)s falló"
 
 #, python-format
 msgid "Creation failed. %(dev_name)s already exists."
@@ -331,8 +331,8 @@ msgid "Default VIM is not defined."
 msgstr "VIM por defecto no definido."
 
 #, python-format
-msgid "Deleting VNFFG %(NANY_id)s failed"
-msgstr "Borrado de VNFFG %(NANY_id)s falló"
+msgid "Deleting NFY %(NANY_id)s failed"
+msgstr "Borrado de NFY %(NANY_id)s falló"
 
 #, python-format
 msgid "Duplicate IP address '%s'"
@@ -398,9 +398,9 @@ msgstr "No se ha podido iniciar la política %(policy)s debido a %(reason)s"
 
 #, python-format
 msgid ""
-"Failed to parse VNFFG Template due to missing input param %(get_input)s."
+"Failed to parse NFY Template due to missing input param %(get_input)s."
 msgstr ""
-"Falló al analizar plantilla VNFFG debido a falta de parámetros de entrada "
+"Falló al analizar plantilla NFY debido a falta de parámetros de entrada "
 "%(get_input)s."
 
 #, python-format
@@ -508,8 +508,8 @@ msgstr ""
 "%(forwarder)s"
 
 #, python-format
-msgid "Invalid VNFFG template input: %(template)s"
-msgstr "Plantilla VNFFG insertada no valida: %(template)s"
+msgid "Invalid NFY template input: %(template)s"
+msgstr "Plantilla NFY insertada no valida: %(template)s"
 
 #, python-format
 msgid "Invalid alarm url for VNF %(mea_id)s"
@@ -617,10 +617,10 @@ msgstr "Cuerpo de solicitud formado incorrectamente: %(reason)s"
 #, python-format
 msgid ""
 "Matching VNF Instance for MEAD %(mead_name)s could not be found. Please "
-"create an instance of this MEAD before creating/updating VNFFG."
+"create an instance of this MEAD before creating/updating NFY."
 msgstr ""
 "Instancia VNF correspondiente a MEAD %(mead_name)s no ha sido encontrada. "
-"Por favor crea una instancia de este MEAD antes de crear/actualizar el VNFFG."
+"Por favor crea una instancia de este MEAD antes de crear/actualizar el NFY."
 
 msgid "Max header line to accommodate large tokens"
 msgstr "Máximo de línea de cabecera para acomodar señales grandes"
@@ -867,11 +867,11 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Specified MEAD %(mead_name)s in VNFFGD does not exist. Please create MEADs "
-"before creating VNFFG"
+"Specified MEAD %(mead_name)s in NFYD does not exist. Please create MEADs "
+"before creating NFY"
 msgstr ""
-"MEAD especificado %(mead_name)s en VNFFGD no existe. Por favor crea MEADs "
-"antes de crear VNFFG"
+"MEAD especificado %(mead_name)s en NFYD no existe. Por favor crea MEADs "
+"antes de crear NFY"
 
 msgid "Specified model is invalid, only Event model supported"
 msgstr "Modelo especificado es invalido, solo modelo Event soportado"
@@ -1135,24 +1135,24 @@ msgid "MEAD Forwarder %(mead)s not found in VNF Mapping %(mapping)s"
 msgstr "MEAD Forwarder %(mead)s no encontrado en VNF Mapping %(mapping)s"
 
 #, python-format
-msgid "VNFFG %(NANY_id)s could not be found"
-msgstr "VNFFG %(NANY_id)s no ha sido encontrado"
+msgid "NFY %(NANY_id)s could not be found"
+msgstr "NFY %(NANY_id)s no ha sido encontrado"
 
 #, python-format
-msgid "VNFFG %(NANY_id)s is still in use"
-msgstr "VNFFG %(NANY_id)s sigue en uso"
+msgid "NFY %(NANY_id)s is still in use"
+msgstr "NFY %(NANY_id)s sigue en uso"
 
 #, python-format
-msgid "VNFFG Property %(NANY_property)s could not be found"
-msgstr "Propiedad %(NANY_property)s de VNFFG no ha sido encontrada"
+msgid "NFY Property %(NANY_property)s could not be found"
+msgstr "Propiedad %(NANY_property)s de NFY no ha sido encontrada"
 
 #, python-format
-msgid "VNFFG Template %(NANYD_id)s could not be found"
-msgstr "Plantilla VNFFG %(NANYD_id)s no ha sido encontrada"
+msgid "NFY Template %(NANYD_id)s could not be found"
+msgstr "Plantilla NFY %(NANYD_id)s no ha sido encontrada"
 
 #, python-format
-msgid "VNFFGD %(NANYD_id)s is still in use"
-msgstr "VNFFGD %(NANYD_id)s sigue en uso"
+msgid "NFYD %(NANYD_id)s is still in use"
+msgstr "NFYD %(NANYD_id)s sigue en uso"
 
 msgid "VXLAN Network unsupported."
 msgstr "Red VXLAN no soportada."
