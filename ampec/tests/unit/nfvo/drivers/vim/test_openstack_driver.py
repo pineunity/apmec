@@ -17,8 +17,8 @@ from keystoneauth1 import exceptions
 import mock
 from oslo_config import cfg
 
-from apmec.extensions import nfvo
-from apmec.nfvo.drivers.vim import openstack_driver
+from apmec.extensions import meo
+from apmec.meo.drivers.vim import openstack_driver
 from apmec.tests.unit import base
 from apmec.tests.unit.db import utils
 
@@ -204,7 +204,7 @@ class TestOpenstack_Driver(base.TestCase):
         mock_ks_client = mock.Mock(version=keystone_version, **attrs)
         self.keystone.get_version.return_value = keystone_version
         self.keystone.initialize_client.return_value = mock_ks_client
-        self.assertRaises(nfvo.VimUnauthorizedException,
+        self.assertRaises(meo.VimUnauthorizedException,
                           self.openstack_driver.register_vim,
                           None,
                           self.vim_obj)
@@ -239,7 +239,7 @@ class TestOpenstack_Driver(base.TestCase):
         self.openstack_driver._get_client = mock.Mock(
             return_value=fake_neutron_client)
 
-        self.assertRaises(nfvo.VimGetResourceNameNotUnique,
+        self.assertRaises(meo.VimGetResourceNameNotUnique,
                           self.openstack_driver.get_vim_resource_id,
                           self.vim_obj, resource_type, resource_name)
 
@@ -252,6 +252,6 @@ class TestOpenstack_Driver(base.TestCase):
         self.openstack_driver._get_client = mock.Mock(
             return_value=fake_neutron_client)
 
-        self.assertRaises(nfvo.VimGetResourceNotFoundException,
+        self.assertRaises(meo.VimGetResourceNotFoundException,
                           self.openstack_driver.get_vim_resource_id,
                           self.vim_obj, resource_type, resource_name)

@@ -30,8 +30,8 @@ from apmec.db import db_base
 from apmec.db import model_base
 from apmec.db import models_v1
 from apmec.db import types
-from apmec.extensions import nfvo
-from apmec.extensions.nfvo_plugins import network_service
+from apmec.extensions import meo
+from apmec.extensions.meo_plugins import network_service
 from apmec.plugins.common import constants
 
 LOG = logging.getLogger(__name__)
@@ -217,7 +217,7 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
             nss_db = context.session.query(NS).filter_by(
                 nsd_id=nsd_id).first()
             if nss_db is not None and nss_db.deleted_at is None:
-                raise nfvo.NSDInUse(nsd_id=nsd_id)
+                raise meo.NSDInUse(nsd_id=nsd_id)
 
             nsd_db = self._get_resource(context, NSD,
                                         nsd_id)

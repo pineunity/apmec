@@ -13,7 +13,7 @@
 from oslo_log import log as logging
 
 from apmec.mistral import workflow_generator
-from apmec.nfvo.workflows import vim_monitor
+from apmec.meo.workflows import vim_monitor
 
 LOG = logging.getLogger(__name__)
 

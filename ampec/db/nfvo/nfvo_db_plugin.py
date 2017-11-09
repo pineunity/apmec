@@ -22,9 +22,9 @@ from sqlalchemy import sql
 from apmec.common import exceptions
 from apmec.db.common_services import common_services_db_plugin
 from apmec.db import db_base
-from apmec.db.nfvo import nfvo_db
+from apmec.db.meo import meo_db
 from apmec.db.mem import mem_db
-from apmec.extensions import nfvo
+from apmec.extensions import meo
 from apmec import manager
 from apmec.plugins.common import constants
 
@@ -36,7 +36,7 @@ VIM_ATTRIBUTES = ('id', 'type', 'tenant_id', 'name', 'description',
 VIM_AUTH_ATTRIBUTES = ('auth_url', 'vim_project', 'password', 'auth_cred')
 
 
-class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
+class NfvoPluginDb(meo.NFVOPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
         super(NfvoPluginDb, self).__init__()
@@ -67,8 +67,8 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
         try:
             return self._get_by_id(context, model, id)
         except orm_exc.NoResultFound:
-            if issubclass(model, nfvo_db.Vim):
-                raise nfvo.VimNotFoundException(vim_id=id)
+            if issubclass(model, meo_db.Vim):
+                raise meo.VimNotFoundException(vim_id=id)
             else:
                 raise
 
@@ -78,7 +78,7 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
 
         try:
             with context.session.begin(subtransactions=True):
-                vim_db = nfvo_db.Vim(
+                vim_db = meo_db.Vim(
                     id=vim.get('id'),
                     type=vim.get('type'),
                     tenant_id=vim.get('tenant_id'),
@@ -89,7 +89,7 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
                     status=vim.get('status'),
                     deleted_at=datetime.min)
                 context.session.add(vim_db)
-                vim_auth_db = nfvo_db.VimAuth(
+                vim_auth_db = meo_db.VimAuth(
                     id=uuidutils.generate_uuid(),
                     vim_id=vim.get('id'),
                     password=vim_cred.pop('password'),
@@ -112,7 +112,7 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
 
     def delete_vim(self, context, vim_id, soft_delete=True):
         with context.session.begin(subtransactions=True):
-            vim_db = self._get_resource(context, nfvo_db.Vim, vim_id)
+            vim_db = self._get_resource(context, meo_db.Vim, vim_id)
             if soft_delete:
                 vim_db.update({'deleted_at': timeutils.utcnow()})
                 self._cos_db_plg.create_event(
@@ -122,7 +122,7 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
                     evt_type=constants.RES_EVT_DELETE,
                     tstamp=vim_db[constants.RES_EVT_DELETED_FLD])
             else:
-                context.session.query(nfvo_db.VimAuth).filter_by(
+                context.session.query(meo_db.VimAuth).filter_by(
                     vim_id=vim_id).delete()
                 context.session.delete(vim_db)
 
@@ -131,15 +131,15 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
             vnfs_db = self._model_query(context, mem_db.VNF).filter_by(
                 vim_id=vim_id).first()
             if vnfs_db is not None:
-                raise nfvo.VimInUseException(vim_id=vim_id)
+                raise meo.VimInUseException(vim_id=vim_id)
         return vnfs_db
 
     def get_vim(self, context, vim_id, fields=None, mask_password=True):
-        vim_db = self._get_resource(context, nfvo_db.Vim, vim_id)
+        vim_db = self._get_resource(context, meo_db.Vim, vim_id)
         return self._make_vim_dict(vim_db, mask_password=mask_password)
 
     def get_vims(self, context, filters=None, fields=None):
-        return self._get_collection(context, nfvo_db.Vim, self._make_vim_dict,
+        return self._get_collection(context, meo_db.Vim, self._make_vim_dict,
                                     filters=filters, fields=fields)
 
     def update_vim(self, context, vim_id, vim):
@@ -147,7 +147,7 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
         with context.session.begin(subtransactions=True):
             vim_cred = vim['auth_cred']
             vim_project = vim['vim_project']
-            vim_db = self._get_resource(context, nfvo_db.Vim, vim_id)
+            vim_db = self._get_resource(context, meo_db.Vim, vim_id)
             try:
                 if 'name' in vim:
                     vim_db.update({'name': vim.get('name')})
@@ -159,11 +159,11 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
                     vim_db.update(
                         {'placement_attr': vim.get('placement_attr')})
                 vim_auth_db = (self._model_query(
-                    context, nfvo_db.VimAuth).filter(
-                        nfvo_db.VimAuth.vim_id == vim_id).with_lockmode(
+                    context, meo_db.VimAuth).filter(
+                        meo_db.VimAuth.vim_id == vim_id).with_lockmode(
                             'update').one())
             except orm_exc.NoResultFound:
-                raise nfvo.VimNotFoundException(vim_id=vim_id)
+                raise meo.VimNotFoundException(vim_id=vim_id)
             vim_auth_db.update({'auth_cred': vim_cred, 'password':
                                 vim_cred.pop('password'), 'vim_project':
                                 vim_project})
@@ -180,10 +180,10 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
     def update_vim_status(self, context, vim_id, status):
         with context.session.begin(subtransactions=True):
             try:
-                vim_db = (self._model_query(context, nfvo_db.Vim).filter(
-                    nfvo_db.Vim.id == vim_id).with_lockmode('update').one())
+                vim_db = (self._model_query(context, meo_db.Vim).filter(
+                    meo_db.Vim.id == vim_id).with_lockmode('update').one())
             except orm_exc.NoResultFound:
-                raise nfvo.VimNotFoundException(vim_id=vim_id)
+                raise meo.VimNotFoundException(vim_id=vim_id)
             vim_db.update({'status': status,
                            'updated_at': timeutils.utcnow()})
         return self._make_vim_dict(vim_db)
@@ -197,11 +197,11 @@ class NfvoPluginDb(nfvo.NFVOPluginBase, db_base.CommonDbMixin):
             return True
         if vim_id == vim_db.id:
             return True
-        raise nfvo.VimDefaultDuplicateException(vim_id=vim_db.id)
+        raise meo.VimDefaultDuplicateException(vim_id=vim_db.id)
 
     def _get_default_vim(self, context):
-        query = self._model_query(context, nfvo_db.Vim)
-        return query.filter(nfvo_db.Vim.is_default == sql.true()).one()
+        query = self._model_query(context, meo_db.Vim)
+        return query.filter(meo_db.Vim.is_default == sql.true()).one()
 
     def get_default_vim(self, context):
         vim_db = self._get_default_vim(context)

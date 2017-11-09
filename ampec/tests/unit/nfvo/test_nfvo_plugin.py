@@ -23,12 +23,12 @@ from mock import patch
 
 from apmec import context
 from apmec.db.common_services import common_services_db_plugin
-from apmec.db.nfvo import nfvo_db
-from apmec.db.nfvo import ns_db
-from apmec.db.nfvo import vnffg_db
-from apmec.extensions import nfvo
+from apmec.db.meo import meo_db
+from apmec.db.meo import ns_db
+from apmec.db.meo import vnffg_db
+from apmec.extensions import meo
 from apmec.manager import TackerManager
-from apmec.nfvo import nfvo_plugin
+from apmec.meo import meo_plugin
 from apmec.plugins.common import constants
 from apmec.tests.unit.db import base as db_base
 from apmec.tests.unit.db import utils
@@ -65,11 +65,11 @@ class FakeDriverManager(mock.Mock):
         elif ('prepare_and_create_workflow' in args and
               'delete' == kwargs['action'] and
               DUMMY_NS_2 == kwargs['kwargs']['ns']['id']):
-            raise nfvo.NoTasksException()
+            raise meo.NoTasksException()
         elif ('prepare_and_create_workflow' in args and
               'create' == kwargs['action'] and
               utils.DUMMY_NS_2_NAME == kwargs['kwargs']['ns']['ns']['name']):
-            raise nfvo.NoTasksException()
+            raise meo.NoTasksException()
 
 
 def get_by_name():
@@ -197,9 +197,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         self.addCleanup(mock.patch.stopall)
         self.context = context.get_admin_context()
         self._mock_driver_manager()
-        mock.patch('apmec.meo.nfvo_plugin.NfvoPlugin._get_vim_from_vnf',
+        mock.patch('apmec.meo.meo_plugin.NfvoPlugin._get_vim_from_vnf',
                    side_effect=dummy_get_vim).start()
-        self.nfvo_plugin = nfvo_plugin.NfvoPlugin()
+        self.meo_plugin = meo_plugin.NfvoPlugin()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
@@ -217,7 +217,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_vim(self):
         session = self.context.session
-        vim_db = nfvo_db.Vim(
+        vim_db = meo_db.Vim(
             id='6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_vim',
@@ -226,7 +226,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             status='Active',
             deleted_at=datetime.min,
             placement_attr={'regions': ['RegionOne']})
-        vim_auth_db = nfvo_db.VimAuth(
+        vim_auth_db = meo_db.VimAuth(
             vim_id='6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             password='encrypted_pw',
             auth_url='http://localhost:5000',
@@ -240,7 +240,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_vim_barbican(self):
         session = self.context.session
-        vim_db = nfvo_db.Vim(
+        vim_db = meo_db.Vim(
             id='6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_vim',
@@ -249,7 +249,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             status='Active',
             deleted_at=datetime.min,
             placement_attr={'regions': ['RegionOne']})
-        vim_auth_db = nfvo_db.VimAuth(
+        vim_auth_db = meo_db.VimAuth(
             vim_id='6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             password='encrypted_pw',
             auth_url='http://localhost:5000',
@@ -265,7 +265,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_vim(self):
         vim_dict = utils.get_vim_obj()
         vim_type = 'openstack'
-        res = self.nfvo_plugin.create_vim(self.context, vim_dict)
+        res = self.meo_plugin.create_vim(self.context, vim_dict)
         self._cos_db_plugin.create_event.assert_any_call(
             self.context, evt_type=constants.RES_EVT_CREATE, res_id=mock.ANY,
             res_state=mock.ANY, res_type=constants.RES_TYPE_VIM,
@@ -284,8 +284,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         self._insert_dummy_vim()
         vim_type = u'openstack'
         vim_id = '6261579e-d6f3-49ad-8bc3-a9cb974778ff'
-        vim_obj = self.nfvo_plugin._get_vim(self.context, vim_id)
-        self.nfvo_plugin.delete_vim(self.context, vim_id)
+        vim_obj = self.meo_plugin._get_vim(self.context, vim_id)
+        self.meo_plugin.delete_vim(self.context, vim_id)
         self._driver_manager.invoke.assert_called_once_with(
             vim_type, 'deregister_vim',
             context=self.context,
@@ -304,9 +304,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         vim_auth_username = vim_dict['vim']['auth_cred']['username']
         vim_project = vim_dict['vim']['vim_project']
         self._insert_dummy_vim()
-        res = self.nfvo_plugin.update_vim(self.context, vim_dict['vim']['id'],
+        res = self.meo_plugin.update_vim(self.context, vim_dict['vim']['id'],
                                           vim_dict)
-        vim_obj = self.nfvo_plugin._get_vim(
+        vim_obj = self.meo_plugin._get_vim(
             self.context, vim_dict['vim']['id'])
         vim_obj['updated_at'] = None
         self._driver_manager.invoke.assert_called_with(
@@ -334,11 +334,11 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         vim_auth_username = vim_dict['vim']['auth_cred']['username']
         vim_project = vim_dict['vim']['vim_project']
         self._insert_dummy_vim_barbican()
-        old_vim_obj = self.nfvo_plugin._get_vim(
+        old_vim_obj = self.meo_plugin._get_vim(
             self.context, vim_dict['vim']['id'])
-        res = self.nfvo_plugin.update_vim(self.context, vim_dict['vim']['id'],
+        res = self.meo_plugin.update_vim(self.context, vim_dict['vim']['id'],
                                           vim_dict)
-        vim_obj = self.nfvo_plugin._get_vim(
+        vim_obj = self.meo_plugin._get_vim(
             self.context, vim_dict['vim']['id'])
         vim_obj['updated_at'] = None
         self._driver_manager.invoke.assert_called_with(
@@ -484,33 +484,33 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     def test_validate_tosca(self):
         template = utils.vnffgd_tosca_template
-        self.nfvo_plugin.validate_tosca(template)
+        self.meo_plugin.validate_tosca(template)
 
     def test_validate_tosca_missing_tosca_ver(self):
         template = utils.vnffgd_template
-        self.assertRaises(nfvo.ToscaParserFailed,
-                          self.nfvo_plugin.validate_tosca,
+        self.assertRaises(meo.ToscaParserFailed,
+                          self.meo_plugin.validate_tosca,
                           template)
 
     def test_validate_tosca_invalid(self):
         template = utils.vnffgd_invalid_tosca_template
-        self.assertRaises(nfvo.ToscaParserFailed,
-                          self.nfvo_plugin.validate_tosca,
+        self.assertRaises(meo.ToscaParserFailed,
+                          self.meo_plugin.validate_tosca,
                           template)
 
     def test_validate_vnffg_properties(self):
         template = {'vnffgd': utils.vnffgd_tosca_template}
-        self.nfvo_plugin.validate_vnffg_properties(template)
+        self.meo_plugin.validate_vnffg_properties(template)
 
     def test_validate_vnffg_properties_wrong_number(self):
         template = {'vnffgd': utils.vnffgd_wrong_cp_number_template}
-        self.assertRaises(nfvo.VnffgdWrongEndpointNumber,
-                          self.nfvo_plugin.validate_vnffg_properties,
+        self.assertRaises(meo.VnffgdWrongEndpointNumber,
+                          self.meo_plugin.validate_vnffg_properties,
                           template)
 
     def test_create_vnffgd(self):
         vnffgd_obj = utils.get_dummy_vnffgd_obj()
-        result = self.nfvo_plugin.create_vnffgd(self.context, vnffgd_obj)
+        result = self.meo_plugin.create_vnffgd(self.context, vnffgd_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('template', result)
@@ -519,7 +519,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     def test_create_vnffgd_inline(self):
         vnffgd_obj = utils.get_dummy_vnffgd_obj_inline()
-        result = self.nfvo_plugin.create_vnffgd(self.context, vnffgd_obj)
+        result = self.meo_plugin.create_vnffgd(self.context, vnffgd_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('template', result)
@@ -533,7 +533,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_template()
             vnffg_obj = utils.get_dummy_vnffg_obj()
-            result = self.nfvo_plugin.create_vnffg(self.context, vnffg_obj)
+            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
@@ -546,7 +546,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            symmetrical=mock.ANY
                                                            )
 
-    @mock.patch('apmec.meo.nfvo_plugin.NfvoPlugin.create_vnffgd')
+    @mock.patch('apmec.meo.meo_plugin.NfvoPlugin.create_vnffgd')
     def test_create_vnffg_abstract_types_inline(self, mock_create_vnffgd):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
@@ -557,7 +557,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                     '11da9f20-9347-4283-bc68-eb98061ef8f7'}
             self._insert_dummy_vnffg_template_inline()
             vnffg_obj = utils.get_dummy_vnffg_obj_inline()
-            result = self.nfvo_plugin.create_vnffg(self.context, vnffg_obj)
+            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
@@ -580,7 +580,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_param_template()
             vnffg_obj = utils.get_dummy_vnffg_param_obj()
-            result = self.nfvo_plugin.create_vnffg(self.context, vnffg_obj)
+            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
@@ -593,15 +593,15 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            symmetrical=mock.ANY
                                                            )
 
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_id')
+    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_id')
     def test_create_vnffg_param_value_format_error(self, mock_get_by_id):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_id.value = get_by_id()
             vnffg_obj = utils.get_dummy_vnffg_str_param_obj()
-            self.assertRaises(nfvo.VnffgParamValueFormatError,
-                              self.nfvo_plugin.create_vnffg,
+            self.assertRaises(meo.VnffgParamValueFormatError,
+                              self.meo_plugin.create_vnffg,
                               self.context, vnffg_obj)
 
     def test_create_vnffg_template_param_not_parse(self):
@@ -610,8 +610,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             self._insert_dummy_vnffg_multi_param_template()
             vnffg_obj = utils.get_dummy_vnffg_param_obj()
-            self.assertRaises(nfvo.VnffgTemplateParamParsingException,
-                              self.nfvo_plugin.create_vnffg,
+            self.assertRaises(meo.VnffgTemplateParamParsingException,
+                              self.meo_plugin.create_vnffg,
                               self.context, vnffg_obj)
 
     def test_create_vnffg_param_value_not_use(self):
@@ -620,8 +620,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             self._insert_dummy_vnffg_param_template()
             vnffg_obj = utils.get_dummy_vnffg_multi_param_obj()
-            self.assertRaises(nfvo.VnffgParamValueNotUsed,
-                              self.nfvo_plugin.create_vnffg,
+            self.assertRaises(meo.VnffgParamValueNotUsed,
+                              self.meo_plugin.create_vnffg,
                               self.context, vnffg_obj)
 
     def test_create_vnffg_vnf_mapping(self):
@@ -632,7 +632,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_template()
             vnffg_obj = utils.get_dummy_vnffg_obj_vnf_mapping()
-            result = self.nfvo_plugin.create_vnffg(self.context, vnffg_obj)
+            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
@@ -659,8 +659,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                 {'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
                  'VNF3': '5c7f5631-9e74-46e8-b3d2-397c0eda9d0b'}
             updated_vnffg['vnffg']['vnf_mapping'] = updated_vnf_mapping
-            self.assertRaises(nfvo.VnffgInvalidMappingException,
-                              self.nfvo_plugin.update_vnffg,
+            self.assertRaises(meo.VnffgInvalidMappingException,
+                              self.meo_plugin.update_vnffg,
                               self.context, vnffg['id'], updated_vnffg)
 
     def test_update_vnffg(self):
@@ -677,7 +677,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                 {'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
                  'VNF3': '10f66bc5-b2f1-45b7-a7cd-6dd6ad0017f5'}
             updated_vnffg['vnffg']['vnf_mapping'] = updated_vnf_mapping
-            self.nfvo_plugin.update_vnffg(self.context, vnffg['id'],
+            self.meo_plugin.update_vnffg(self.context, vnffg['id'],
                                           updated_vnffg)
             self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
                                                            vnfs=mock.ANY,
@@ -689,7 +689,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_delete_vnffg(self):
         self._insert_dummy_vnffg_template()
         vnffg = self._insert_dummy_vnffg()
-        self.nfvo_plugin.delete_vnffg(self.context, vnffg['id'])
+        self.meo_plugin.delete_vnffg(self.context, vnffg['id'])
         self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
                                                        fc_id=mock.ANY,
                                                        auth_attr=mock.ANY)
@@ -803,7 +803,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            result = self.nfvo_plugin.create_nsd(self.context, nsd_obj)
+            result = self.meo_plugin.create_nsd(self.context, nsd_obj)
             self.assertIsNotNone(result)
             self.assertEqual('dummy_NSD', result['name'])
             self.assertIn('id', result)
@@ -820,7 +820,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            result = self.nfvo_plugin.create_nsd(self.context, nsd_obj)
+            result = self.meo_plugin.create_nsd(self.context, nsd_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertEqual('dummy_NSD_inline', result['name'])
@@ -831,9 +831,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('created_at', result)
             self.assertIn('updated_at', result)
 
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
     def test_create_ns(self, mock_get_by_name, mock_get_vimi, mock_auth_dict):
         self._insert_dummy_ns_template()
         self._insert_dummy_vim()
@@ -849,7 +849,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             mock_get_by_name.return_value = get_by_name()
 
             ns_obj = utils.get_dummy_ns_obj()
-            result = self.nfvo_plugin.create_ns(self.context, ns_obj)
+            result = self.meo_plugin.create_ns(self.context, ns_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertEqual(ns_obj['ns']['nsd_id'], result['nsd_id'])
@@ -857,10 +857,10 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('status', result)
             self.assertIn('tenant_id', result)
 
-    @mock.patch('apmec.meo.nfvo_plugin.NfvoPlugin.create_nsd')
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch('apmec.meo.meo_plugin.NfvoPlugin.create_nsd')
+    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
     def test_create_ns_inline(self, mock_get_by_name, mock_get_vimi,
                               mock_auth_dict, mock_create_nsd):
         self._insert_dummy_ns_template_inline()
@@ -879,7 +879,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                             'be18005d-5656-4d81-b499-6af4d4d8437f'}
 
             ns_obj = utils.get_dummy_ns_obj_inline()
-            result = self.nfvo_plugin.create_ns(self.context, ns_obj)
+            result = self.meo_plugin.create_ns(self.context, ns_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertEqual(ns_obj['ns']['nsd_id'], result['nsd_id'])
@@ -889,9 +889,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('tenant_id', result)
             mock_create_nsd.assert_called_once_with(mock.ANY, mock.ANY)
 
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
     def test_create_ns_workflow_no_task_exception(
             self, mock_get_by_name, mock_get_vimi, mock_auth_dict):
         self._insert_dummy_ns_template()
@@ -908,13 +908,13 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             mock_get_by_name.return_value = get_by_name()
 
             ns_obj = utils.get_dummy_ns_obj_2()
-            self.assertRaises(nfvo.NoTasksException,
-                              self.nfvo_plugin.create_ns,
+            self.assertRaises(meo.NoTasksException,
+                              self.meo_plugin.create_ns,
                               self.context, ns_obj)
 
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
     def test_delete_ns(self, mock_get_by_name, mock_get_vim, mock_auth_dict):
         self._insert_dummy_vim()
         self._insert_dummy_ns_template()
@@ -930,13 +930,13 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_name.return_value = get_by_name()
-            result = self.nfvo_plugin.delete_ns(self.context,
+            result = self.meo_plugin.delete_ns(self.context,
                 'ba6bf017-f6f7-45f1-a280-57b073bf78ea')
             self.assertIsNotNone(result)
 
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
     @mock.patch("apmec.db.meo.ns_db.NSPluginDb.delete_ns_post")
     def test_delete_ns_no_task_exception(
             self, mock_delete_ns_post, mock_get_by_name, mock_get_vim,
@@ -956,7 +956,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_name.return_value = get_by_name()
-            self.nfvo_plugin.delete_ns(self.context,
+            self.meo_plugin.delete_ns(self.context,
                 DUMMY_NS_2)
         mock_delete_ns_post.assert_called_with(
             self.context, DUMMY_NS_2, None, None)

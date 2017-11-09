@@ -191,12 +191,12 @@ If you are using keystone v2 then,
    use_syslog = False
    bind_host = <TACKER_NODE_IP>
    bind_port = 9890
-   service_plugins = nfvo,mem
+   service_plugins = meo,mem
 
    state_path = /var/lib/apmec
    ...
 
-   [nfvo]
+   [meo]
    vim_drivers = openstack
 
    [keystone_authtoken]

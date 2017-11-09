@@ -18,7 +18,7 @@ from oslo_log import log as logging
 from apmec.common import rpc
 from apmec.mistral.actionrpc import kill_action as killaction
 from apmec.mistral import mistral_client
-from apmec.nfvo.workflows.vim_monitor import workflow_generator
+from apmec.meo.workflows.vim_monitor import workflow_generator
 from apmec.mem import keystone
 
 

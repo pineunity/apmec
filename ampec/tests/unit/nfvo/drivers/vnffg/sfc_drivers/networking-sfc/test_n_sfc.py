@@ -16,7 +16,7 @@ import mock
 from oslo_utils import uuidutils
 
 from apmec import context
-from apmec.nfvo.drivers.vim import openstack_driver
+from apmec.meo.drivers.vim import openstack_driver
 from apmec.tests.unit import base
 from apmec.tests.unit.db import utils
 

@@ -25,8 +25,8 @@ from sqlalchemy.orm import exc as orm_exc
 from apmec.common import topics
 from apmec import context as t_context
 from apmec.db.common_services import common_services_db
-from apmec.db.nfvo import nfvo_db
-from apmec.extensions import nfvo
+from apmec.db.meo import meo_db
+from apmec.extensions import meo
 from apmec import manager
 from apmec.plugins.common import constants
 from apmec import service as apmec_service
@@ -49,13 +49,13 @@ class Conductor(manager.Manager):
         update_time = timeutils.utcnow()
         with t_admin_context.session.begin(subtransactions=True):
             try:
-                query = t_admin_context.session.query(nfvo_db.Vim)
+                query = t_admin_context.session.query(meo_db.Vim)
                 query.filter(
-                    nfvo_db.Vim.id == vim_id).update(
+                    meo_db.Vim.id == vim_id).update(
                         {'status': status,
                          'updated_at': update_time})
             except orm_exc.NoResultFound:
-                raise nfvo.VimNotFoundException(vim_id=vim_id)
+                raise meo.VimNotFoundException(vim_id=vim_id)
             event_db = common_services_db.Event(
                 resource_id=vim_id,
                 resource_type=constants.RES_TYPE_VIM,

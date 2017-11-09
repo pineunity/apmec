@@ -25,8 +25,8 @@ from apmec.db import db_base
 from apmec.db import model_base
 from apmec.db import models_v1
 from apmec.db import types
-from apmec.extensions import nfvo
-from apmec.extensions.nfvo_plugins import vnffg
+from apmec.extensions import meo
+from apmec.extensions.meo_plugins import vnffg
 from apmec import manager
 from apmec.plugins.common import constants
 
@@ -258,7 +258,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             vnffg_db = context.session.query(Vnffg).filter_by(
                 vnffgd_id=vnffgd_id).first()
             if vnffg_db is not None:
-                raise nfvo.VnffgdInUse(vnffgd_id=vnffgd_id)
+                raise meo.VnffgdInUse(vnffgd_id=vnffgd_id)
 
             template_db = self._get_resource(context, VnffgTemplate,
                                              vnffgd_id)
@@ -303,7 +303,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                         param_matched.setdefault(value['get_input'], 0)
                         param_matched[value['get_input']] += 1
                     else:
-                        raise nfvo.VnffgTemplateParamParsingException(
+                        raise meo.VnffgTemplateParamParsingException(
                             get_input=value['get_input'])
                 else:
                     self._update_template_params(value,
@@ -320,11 +320,11 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             self._update_template_params(vnffgd_template,
                                 param_vattrs_dict, param_matched)
         else:
-            raise nfvo.VnffgParamValueFormatError(
+            raise meo.VnffgParamValueFormatError(
                 param_value=param_vattrs_dict)
         for param_key in param_vattrs_dict.keys():
             if param_matched.get(param_key) is None:
-                raise nfvo.VnffgParamValueNotUsed(param_key=param_key)
+                raise meo.VnffgParamValueNotUsed(param_key=param_key)
 
     # called internally, not by REST API
     def _create_vnffg_pre(self, context, vnffg):
@@ -451,7 +451,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         # Build physical port chain
         for element in logical_chain:
             if element['forwarder'] not in vnf_mapping.keys():
-                raise nfvo.NfpForwarderNotFoundException(vnfd=element[
+                raise meo.NfpForwarderNotFoundException(vnfd=element[
                                                          'forwarder'],
                                                          mapping=vnf_mapping)
             # TODO(trozet): validate CP in VNFD has forwarding capability
@@ -468,7 +468,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                     vnf_cp = resource['id']
                     break
             if vnf_cp is None:
-                raise nfvo.VnffgCpNotFoundException(cp_id=element[
+                raise meo.VnffgCpNotFoundException(cp_id=element[
                     'capability'], vnf_id=vnf_mapping[element['forwarder']])
             # Check if this is a new VNF entry in the chain
             if element['forwarder'] != prev_forwarder:
@@ -478,7 +478,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             # Must be an egress CP
             else:
                 if len(chain_list[-1][CP]) > 1:
-                    raise nfvo.NfpRequirementsException(vnfd=element[
+                    raise meo.NfpRequirementsException(vnfd=element[
                         'forwarder'])
                 else:
                     chain_list[-1][CP].append(vnf_cp)
@@ -492,7 +492,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         try:
             return template['groups'][vnffg_name]['properties'][vnffg_property]
         except KeyError:
-            raise nfvo.VnffgPropertyNotFoundException(
+            raise meo.VnffgPropertyNotFoundException(
                 vnffg_property=vnffg_property)
 
     @staticmethod
@@ -512,11 +512,11 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 LOG.debug('NFP %(nfp)s, attr %(attr)s',
                           {'nfp': template['node_templates'][nfp],
                            'attr': attribute})
-                raise nfvo.NfpAttributeNotFoundException(attribute=attribute)
+                raise meo.NfpAttributeNotFoundException(attribute=attribute)
             else:
                 return attr_val
         except KeyError:
-            raise nfvo.NfpAttributeNotFoundException(attribute=attribute)
+            raise meo.NfpAttributeNotFoundException(attribute=attribute)
 
     @staticmethod
     def _search_value(search_dict, search_key):
@@ -545,9 +545,9 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 vnfd_id = mem_plugin.get_vnfds(context, {'name': [vnfd]},
                                                 fields=['id']).pop()['id']
             except Exception:
-                raise nfvo.VnffgdVnfdNotFoundException(vnfd_name=vnfd)
+                raise meo.VnffgdVnfdNotFoundException(vnfd_name=vnfd)
             if vnfd_id is None:
-                raise nfvo.VnffgdVnfdNotFoundException(vnfd_name=vnfd)
+                raise meo.VnffgdVnfdNotFoundException(vnfd_name=vnfd)
             else:
                 # if no VNF mapping, we need to abstractly look for instances
                 # that match VNFD
@@ -558,7 +558,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                                                     {'vnfd_id': [vnfd_id]},
                                                     fields=['id'])
                     if len(vnf_list) == 0:
-                        raise nfvo.VnffgInvalidMappingException(vnfd_name=vnfd)
+                        raise meo.VnffgInvalidMappingException(vnfd_name=vnfd)
                     else:
                         LOG.debug('Matching VNFs found %s', vnf_list)
                         vnf_list = [vnf['id'] for vnf in vnf_list]
@@ -573,9 +573,9 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                     if vnf_vnfd is not None:
                         vnf_vnfd_id = vnf_vnfd['vnfd_id']
                     else:
-                        raise nfvo.VnffgInvalidMappingException(vnfd_name=vnfd)
+                        raise meo.VnffgInvalidMappingException(vnfd_name=vnfd)
                     if vnfd_id != vnf_vnfd_id:
-                        raise nfvo.VnffgInvalidMappingException(vnfd_name=vnfd)
+                        raise meo.VnffgInvalidMappingException(vnfd_name=vnfd)
                     else:
                         new_mapping[vnfd] = vnf_mapping.pop(vnfd)
         self._validate_vim(context, new_mapping.values())
@@ -596,7 +596,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             if vim_id is None:
                 vim_id = vnf_dict['vim_id']
             elif vnf_dict['vim_id'] != vim_id:
-                raise nfvo.VnffgVimMappingException(vnf_id=vnf, vim_id=vim_id)
+                raise meo.VnffgVimMappingException(vnf_id=vnf, vim_id=vim_id)
 
     def _policy_to_acl_criteria(self, context, template_db, nfp_name,
                                 vnf_mapping):
@@ -605,14 +605,14 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         try:
             policy = nfp['properties']['policy']
         except KeyError:
-            raise nfvo.NfpPolicyNotFoundException(policy=nfp)
+            raise meo.NfpPolicyNotFoundException(policy=nfp)
 
         if 'type' in policy:
             if policy['type'] != 'ACL':
-                raise nfvo.NfpPolicyTypeError(type=policy['type'])
+                raise meo.NfpPolicyTypeError(type=policy['type'])
 
         if 'criteria' not in policy:
-            raise nfvo.NfpPolicyCriteriaError(error="Missing criteria in "
+            raise meo.NfpPolicyCriteriaError(error="Missing criteria in "
                                               "policy")
         match = dict()
         for criteria in policy['criteria']:
@@ -621,7 +621,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                     match.update(self._convert_criteria(context, key, val,
                                                         vnf_mapping))
                 else:
-                    raise nfvo.NfpPolicyCriteriaError(error="Unsupported "
+                    raise meo.NfpPolicyCriteriaError(error="Unsupported "
                                                       "criteria: "
                                                       "{}".format(key))
         return match
@@ -643,7 +643,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             try:
                 min_val, max_val = value.split('-')
             except ValueError:
-                raise nfvo.NfpPolicyCriteriaError(error="Range missing or "
+                raise meo.NfpPolicyCriteriaError(error="Range missing or "
                                                   "incorrect for "
                                                   "%s".format(criteria))
             return {criteria_min: int(min_val), criteria_max: int(max_val)}
@@ -820,9 +820,9 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 filter(Vnffg.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise nfvo.VnffgNotFoundException(vnffg_id=vnffg_id)
+            raise meo.VnffgNotFoundException(vnffg_id=vnffg_id)
         if vnffg_db.status == constants.PENDING_UPDATE:
-            raise nfvo.VnffgInUse(vnffg_id=vnffg_id)
+            raise meo.VnffgInUse(vnffg_id=vnffg_id)
         vnffg_db.update({'status': new_status})
         return vnffg_db
 
@@ -834,9 +834,9 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 filter(VnffgNfp.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise nfvo.NfpNotFoundException(nfp_id=nfp_id)
+            raise meo.NfpNotFoundException(nfp_id=nfp_id)
         if nfp_db.status == constants.PENDING_UPDATE:
-            raise nfvo.NfpInUse(nfp_id=nfp_id)
+            raise meo.NfpInUse(nfp_id=nfp_id)
         nfp_db.update({'status': new_status})
         return nfp_db
 
@@ -848,9 +848,9 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 filter(VnffgChain.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise nfvo.SfcNotFoundException(sfc_id=sfc_id)
+            raise meo.SfcNotFoundException(sfc_id=sfc_id)
         if sfc_db.status == constants.PENDING_UPDATE:
-            raise nfvo.SfcInUse(sfc_id=sfc_id)
+            raise meo.SfcInUse(sfc_id=sfc_id)
         sfc_db.update({'status': new_status})
         return sfc_db
 
@@ -862,9 +862,9 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 filter(VnffgClassifier.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise nfvo.ClassifierNotFoundException(fc_id=fc_id)
+            raise meo.ClassifierNotFoundException(fc_id=fc_id)
         if fc_db.status == constants.PENDING_UPDATE:
-            raise nfvo.ClassifierInUse(fc_id=fc_id)
+            raise meo.ClassifierInUse(fc_id=fc_id)
         fc_db.update({'status': new_status})
         return fc_db
 
@@ -976,12 +976,12 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             return self._get_by_id(context, model, res_id)
         except orm_exc.NoResultFound:
             if issubclass(model, Vnffg):
-                raise nfvo.VnffgNotFoundException(vnffg_id=res_id)
+                raise meo.VnffgNotFoundException(vnffg_id=res_id)
             elif issubclass(model, VnffgClassifier):
-                raise nfvo.ClassifierNotFoundException(classifier_id=res_id)
+                raise meo.ClassifierNotFoundException(classifier_id=res_id)
             if issubclass(model, VnffgTemplate):
-                raise nfvo.VnffgdNotFoundException(vnffgd_id=res_id)
+                raise meo.VnffgdNotFoundException(vnffgd_id=res_id)
             if issubclass(model, VnffgChain):
-                raise nfvo.SfcNotFoundException(sfc_id=res_id)
+                raise meo.SfcNotFoundException(sfc_id=res_id)
             else:
                 raise

@@ -34,6 +34,6 @@ def upgrade(active_plugins=None, options=None):
         op.add_column(table,
                       sa.Column('deleted_at', sa.DateTime(), nullable=True))
 
-    # unique constraint is taken care by the nfvo_db plugin to support
+    # unique constraint is taken care by the meo_db plugin to support
     # soft deletion of vim
     op.drop_index('auth_url', table_name='vimauths')

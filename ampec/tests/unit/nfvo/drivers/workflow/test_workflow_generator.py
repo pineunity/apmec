@@ -13,7 +13,7 @@
 #    under the License.
 
 from apmec import context
-from apmec.nfvo.drivers.workflow import workflow_generator
+from apmec.meo.drivers.workflow import workflow_generator
 from apmec.tests.unit import base
 
 

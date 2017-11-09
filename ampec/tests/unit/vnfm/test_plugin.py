@@ -22,7 +22,7 @@ import yaml
 
 from apmec import context
 from apmec.db.common_services import common_services_db_plugin
-from apmec.db.nfvo import nfvo_db
+from apmec.db.meo import meo_db
 from apmec.db.mem import mem_db
 from apmec.extensions import mem
 from apmec.plugins.common import constants
@@ -198,7 +198,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_vim(self):
         session = self.context.session
-        vim_db = nfvo_db.Vim(
+        vim_db = meo_db.Vim(
             id='6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_vim',
@@ -207,7 +207,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             status='Active',
             deleted_at=datetime.min,
             placement_attr={'regions': ['RegionOne']})
-        vim_auth_db = nfvo_db.VimAuth(
+        vim_auth_db = meo_db.VimAuth(
             vim_id='6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             password='encrypted_pw',
             auth_url='http://localhost:5000',

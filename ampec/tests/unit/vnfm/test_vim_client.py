@@ -13,7 +13,7 @@ import mock
 
 from sqlalchemy.orm import exc as orm_exc
 
-from apmec.extensions import nfvo
+from apmec.extensions import meo
 from apmec import manager
 from apmec.tests.unit import base
 from apmec.mem import vim_client
@@ -29,11 +29,11 @@ class TestVIMClient(base.TestCase):
     def test_get_vim_without_defined_default_vim(self):
         vimclient = vim_client.VimClient()
         service_plugins = mock.Mock()
-        nfvo_plugin = mock.Mock()
-        nfvo_plugin.get_default_vim.side_effect = \
+        meo_plugin = mock.Mock()
+        meo_plugin.get_default_vim.side_effect = \
             orm_exc.NoResultFound()
-        service_plugins.get.return_value = nfvo_plugin
+        service_plugins.get.return_value = meo_plugin
         with mock.patch.object(manager.TackerManager, 'get_service_plugins',
                                return_value=service_plugins):
-            self.assertRaises(nfvo.VimDefaultNotDefined,
+            self.assertRaises(meo.VimDefaultNotDefined,
                               vimclient.get_vim, None)

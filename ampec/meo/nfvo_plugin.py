@@ -33,14 +33,14 @@ from apmec._i18n import _
 from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
-from apmec.db.nfvo import nfvo_db_plugin
-from apmec.db.nfvo import ns_db
-from apmec.db.nfvo import vnffg_db
+from apmec.db.meo import meo_db_plugin
+from apmec.db.meo import ns_db
+from apmec.db.meo import vnffg_db
 from apmec.extensions import common_services as cs
-from apmec.extensions import nfvo
+from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
 from apmec import manager
-from apmec.nfvo.workflows.vim_monitor import vim_monitor_utils
+from apmec.meo.workflows.vim_monitor import vim_monitor_utils
 from apmec.plugins.common import constants
 from apmec.mem import vim_client
 
@@ -54,10 +54,10 @@ MISTRAL_RETRY_WAIT = 6
 
 
 def config_opts():
-    return [('nfvo_vim', NfvoPlugin.OPTS)]
+    return [('meo_vim', NfvoPlugin.OPTS)]
 
 
-class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
+class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                  ns_db.NSPluginDb):
     """NFVO reference plugin for NFVO extension
 
@@ -76,14 +76,14 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             'monitor_interval', default=30,
             help=_('Interval to check for VIM health')),
     ]
-    cfg.CONF.register_opts(OPTS, 'nfvo_vim')
+    cfg.CONF.register_opts(OPTS, 'meo_vim')
 
     def __init__(self):
         super(NfvoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self._vim_drivers = driver_manager.DriverManager(
             'apmec.meo.vim.drivers',
-            cfg.CONF.nfvo_vim.vim_drivers)
+            cfg.CONF.meo_vim.vim_drivers)
         self.vim_client = vim_client.VimClient()
 
     def get_auth_dict(self, context):
@@ -206,7 +206,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
     @log.log
     def validate_tosca(self, template):
         if "tosca_definitions_version" not in template:
-            raise nfvo.ToscaParserFailed(
+            raise meo.ToscaParserFailed(
                 error_msg_details='tosca_definitions_version missing in '
                                   'template'
             )
@@ -220,7 +220,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                 a_file=False, yaml_dict_tpl=template)
         except Exception as e:
             LOG.exception("tosca-parser error: %s", str(e))
-            raise nfvo.ToscaParserFailed(error_msg_details=str(e))
+            raise meo.ToscaParserFailed(error_msg_details=str(e))
 
     @log.log
     def validate_vnffgd_path(self, template):
@@ -236,12 +236,12 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             if element.get('forwarder') in known_forwarders:
                 if prev_element is not None and element.get('forwarder')\
                         != prev_element['forwarder']:
-                    raise nfvo.VnffgdDuplicateForwarderException(
+                    raise meo.VnffgdDuplicateForwarderException(
                         forwarder=element.get('forwarder')
                     )
                 elif prev_element is not None and element.get(
                         'capability') == prev_element['capability']:
-                    raise nfvo.VnffgdDuplicateCPException(
+                    raise meo.VnffgdDuplicateCPException(
                         cp=element.get('capability')
                     )
             else:
@@ -258,7 +258,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             template, 'number_of_endpoints')
 
         if len(connection_point) != number_endpoint:
-            raise nfvo.VnffgdWrongEndpointNumber(
+            raise meo.VnffgdWrongEndpointNumber(
                 number=number_endpoint,
                 cps=connection_point)
 
@@ -273,7 +273,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         vnffgd['vnffgd']['template_source'] = template_source
 
         if 'vnffgd' not in template.get('template'):
-            raise nfvo.VnffgdInvalidTemplate(template=template.get('template'))
+            raise meo.VnffgdInvalidTemplate(template=template.get('template'))
         else:
             self.validate_tosca(template['template']['vnffgd'])
 
@@ -445,7 +445,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         vim_id = mem_plugin.get_vnf(context, vnf_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
-            raise nfvo.VimFromVnfNotFoundException(vnf_id=vnf_id)
+            raise meo.VimFromVnfNotFoundException(vnf_id=vnf_id)
         self._build_vim_auth(context, vim_obj)
         return vim_obj
 
@@ -484,7 +484,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         f = fernet.Fernet(vim_key)
         if not f:
             LOG.warning('Unable to decode VIM auth')
-            raise nfvo.VimNotFoundException(
+            raise meo.VimNotFoundException(
                 'Unable to decode VIM auth key')
         return f.decrypt(cred)
 
@@ -568,7 +568,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                           yaml_dict_tpl=inner_nsd_dict)
         except Exception as e:
             LOG.exception("tosca-parser error: %s", str(e))
-            raise nfvo.ToscaParserFailed(error_msg_details=str(e))
+            raise meo.ToscaParserFailed(error_msg_details=str(e))
         finally:
             for file_path in new_files:
                 os.remove(file_path)
@@ -777,7 +777,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                 auth_dict=self.get_auth_dict(context),
                 kwargs={
                     'ns': ns})
-        except nfvo.NoTasksException:
+        except meo.NoTasksException:
             LOG.warning("No VNF deletion task(s).")
         if workflow:
             try:
