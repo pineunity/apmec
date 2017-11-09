@@ -121,7 +121,7 @@ function create_apmec_accounts {
         create_service_user "apmec" "advsvc"
 
         local apmec_service=$(get_or_create_service "apmec" \
-            "nfv-orchestration" "Apmec NFV Orchestration Service")
+            "mec-orchestration" "Apmec MEC Orchestration Service")
         get_or_create_endpoint $apmec_service \
             "$REGION_NAME" \
             "$APMEC_PROTOCOL://$SERVICE_HOST:$APMEC_PORT/" \
@@ -403,13 +403,13 @@ function apmec_create_initial_network {
 function apmec_register_default_vim {
     # Note: These must be the same as in apmec/tests/etc/samples/local-vim.yaml
     # and devstack/lib/apmec/vim_config.yaml
-    DEFAULT_VIM_PROJECT_NAME="nfv"
-    DEFAULT_VIM_USER="nfv_user"
+    DEFAULT_VIM_PROJECT_NAME="mec"
+    DEFAULT_VIM_USER="mec_user"
     DEFAULT_VIM_PASSWORD="devstack"
 
-    echo "Create NFV VIM project $DEFAULT_VIM_PROJECT_NAME ..."
+    echo "Create MEC VIM project $DEFAULT_VIM_PROJECT_NAME ..."
     get_or_create_project $DEFAULT_VIM_PROJECT_NAME
-    echo "Create NFV VIM user $DEFAULT_VIM_USER ..."
+    echo "Create MEC VIM user $DEFAULT_VIM_USER ..."
     get_or_create_user $DEFAULT_VIM_USER $DEFAULT_VIM_PASSWORD
     get_or_add_user_project_role "admin" $DEFAULT_VIM_USER $DEFAULT_VIM_PROJECT_NAME
     get_or_add_user_project_role "advsvc" $DEFAULT_VIM_USER $DEFAULT_VIM_PROJECT_NAME
