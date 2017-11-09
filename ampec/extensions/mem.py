@@ -39,8 +39,8 @@ class ServiceTypesNotSpecified(exceptions.InvalidInput):
     message = _('service types are not specified')
 
 
-class VNFDInUse(exceptions.InUse):
-    message = _('VNFD %(mead_id)s is still in use')
+class MEADInUse(exceptions.InUse):
+    message = _('MEAD %(mead_id)s is still in use')
 
 
 class VNFInUse(exceptions.InUse):
@@ -67,12 +67,12 @@ class VNFScaleWaitFailed(exceptions.ApmecException):
     message = _('%(reason)s')
 
 
-class VNFDeleteWaitFailed(exceptions.ApmecException):
+class MEADeleteWaitFailed(exceptions.ApmecException):
     message = _('%(reason)s')
 
 
-class VNFDNotFound(exceptions.NotFound):
-    message = _('VNFD %(mead_id)s could not be found')
+class MEADNotFound(exceptions.NotFound):
+    message = _('MEAD %(mead_id)s could not be found')
 
 
 class ServiceTypeNotFound(exceptions.NotFound):
@@ -114,12 +114,12 @@ class HugePageSizeInvalidInput(exceptions.InvalidInput):
 
 
 class CpuAllocationInvalidKeys(exceptions.InvalidInput):
-    message = _("Invalid keys specified in VNFD - %(error_msg_details)s."
+    message = _("Invalid keys specified in MEAD - %(error_msg_details)s."
                 "Supported keys are: %(valid_keys)s")
 
 
 class NumaNodesInvalidKeys(exceptions.InvalidInput):
-    message = _("Invalid keys specified in VNFD - %(error_msg_details)s."
+    message = _("Invalid keys specified in MEAD - %(error_msg_details)s."
                 "Supported keys are: %(valid_keys)s")
 
 

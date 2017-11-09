@@ -49,9 +49,9 @@ CREATE_STATES = (constants.PENDING_CREATE, constants.DEAD)
 ###########################################################################
 # db tables
 
-class VNFD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
+class MEAD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
            models_v1.Audit):
-    """Represents VNFD to create VNF."""
+    """Represents MEAD to create VNF."""
 
     __tablename__ = 'mead'
     # Descriptive name
@@ -67,7 +67,7 @@ class VNFD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     mgmt_driver = sa.Column(sa.String(255))
 
     # (key, value) pair to spin up
-    attributes = orm.relationship('VNFDAttribute',
+    attributes = orm.relationship('MEADAttribute',
                                   backref='mead')
 
     # mead template source - inline or onboarded
@@ -93,7 +93,7 @@ class ServiceType(model_base.BASE, models_v1.HasId, models_v1.HasTenant):
     service_type = sa.Column(sa.String(64), nullable=False)
 
 
-class VNFDAttribute(model_base.BASE, models_v1.HasId):
+class MEADAttribute(model_base.BASE, models_v1.HasId):
     """Represents attributes necessary for spinning up VM in (key, value) pair
 
     key value pair is adopted for being agnostic to actuall manager of VMs.
@@ -117,7 +117,7 @@ class VNF(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
 
     __tablename__ = 'mea'
     mead_id = sa.Column(types.Uuid, sa.ForeignKey('mead.id'))
-    mead = orm.relationship('VNFD')
+    mead = orm.relationship('MEAD')
 
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text, nullable=True)
@@ -183,8 +183,8 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                 return self._get_by_id(context, model, id)
             return self._get_by_name(context, model, id)
         except orm_exc.NoResultFound:
-            if issubclass(model, VNFD):
-                raise mem.VNFDNotFound(mead_id=id)
+            if issubclass(model, MEAD):
+                raise mem.MEADNotFound(mead_id=id)
             elif issubclass(model, ServiceType):
                 raise mem.ServiceTypeNotFound(service_type_id=id)
             if issubclass(model, VNF):
@@ -251,7 +251,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         try:
             with context.session.begin(subtransactions=True):
                 mead_id = uuidutils.generate_uuid()
-                mead_db = VNFD(
+                mead_db = MEAD(
                     id=mead_id,
                     tenant_id=tenant_id,
                     name=mead.get('name'),
@@ -261,7 +261,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                     deleted_at=datetime.min)
                 context.session.add(mead_db)
                 for (key, value) in mead.get('attributes', {}).items():
-                    attribute_db = VNFDAttribute(
+                    attribute_db = MEADAttribute(
                         id=uuidutils.generate_uuid(),
                         mead_id=mead_id,
                         key=key,
@@ -286,7 +286,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         LOG.debug('mead_dict %s', mead_dict)
         self._cos_db_plg.create_event(
             context, res_id=mead_dict['id'],
-            res_type=constants.RES_TYPE_VNFD,
+            res_type=constants.RES_TYPE_MEAD,
             res_state=constants.RES_EVT_ONBOARDED,
             evt_type=constants.RES_EVT_CREATE,
             tstamp=mead_dict[constants.RES_EVT_CREATED_FLD])
@@ -295,14 +295,14 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
     def update_mead(self, context, mead_id,
                     mead):
         with context.session.begin(subtransactions=True):
-            mead_db = self._get_resource(context, VNFD,
+            mead_db = self._get_resource(context, MEAD,
                                          mead_id)
             mead_db.update(mead['mead'])
             mead_db.update({'updated_at': timeutils.utcnow()})
             mead_dict = self._make_mead_dict(mead_db)
             self._cos_db_plg.create_event(
                 context, res_id=mead_dict['id'],
-                res_type=constants.RES_TYPE_VNFD,
+                res_type=constants.RES_TYPE_MEAD,
                 res_state=constants.RES_EVT_NA_STATE,
                 evt_type=constants.RES_EVT_UPDATE,
                 tstamp=mead_dict[constants.RES_EVT_UPDATED_FLD])
@@ -318,33 +318,33 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
             meas_db = context.session.query(VNF).filter_by(
                 mead_id=mead_id).first()
             if meas_db is not None and meas_db.deleted_at is None:
-                raise mem.VNFDInUse(mead_id=mead_id)
-            mead_db = self._get_resource(context, VNFD,
+                raise mem.MEADInUse(mead_id=mead_id)
+            mead_db = self._get_resource(context, MEAD,
                                          mead_id)
             if soft_delete:
                 mead_db.update({'deleted_at': timeutils.utcnow()})
                 self._cos_db_plg.create_event(
                     context, res_id=mead_db['id'],
-                    res_type=constants.RES_TYPE_VNFD,
+                    res_type=constants.RES_TYPE_MEAD,
                     res_state=constants.RES_EVT_NA_STATE,
                     evt_type=constants.RES_EVT_DELETE,
                     tstamp=mead_db[constants.RES_EVT_DELETED_FLD])
             else:
                 context.session.query(ServiceType).filter_by(
                     mead_id=mead_id).delete()
-                context.session.query(VNFDAttribute).filter_by(
+                context.session.query(MEADAttribute).filter_by(
                     mead_id=mead_id).delete()
                 context.session.delete(mead_db)
 
     def get_mead(self, context, mead_id, fields=None):
-        mead_db = self._get_resource(context, VNFD, mead_id)
+        mead_db = self._get_resource(context, MEAD, mead_id)
         return self._make_mead_dict(mead_db)
 
     def get_meads(self, context, filters, fields=None):
         if 'template_source' in filters and \
            filters['template_source'][0] == 'all':
                 filters.pop('template_source')
-        return self._get_collection(context, VNFD,
+        return self._get_collection(context, MEAD,
                                     self._make_mead_dict,
                                     filters=filters, fields=fields)
 
@@ -354,19 +354,19 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         LOG.debug('required_attributes %s', required_attributes)
         with context.session.begin(subtransactions=True):
             query = (
-                context.session.query(VNFD).
+                context.session.query(MEAD).
                 filter(
                     sa.exists().
                     where(sa.and_(
-                        VNFD.id == ServiceType.mead_id,
+                        MEAD.id == ServiceType.mead_id,
                         ServiceType.service_type == service_type))))
             for key in required_attributes:
                 query = query.filter(
                     sa.exists().
                     where(sa.and_(
-                        VNFD.id ==
-                        VNFDAttribute.mead_id,
-                        VNFDAttribute.key == key)))
+                        MEAD.id ==
+                        MEADAttribute.mead_id,
+                        MEADAttribute.key == key)))
             LOG.debug('statements %s', query)
             mead_db = query.first()
             if mead_db:
@@ -397,7 +397,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         placement_attr = mea.get('placement_attr', {})
         try:
             with context.session.begin(subtransactions=True):
-                mead_db = self._get_resource(context, VNFD,
+                mead_db = self._get_resource(context, MEAD,
                                              mead_id)
                 mea_db = VNF(id=mea_id,
                              tenant_id=tenant_id,

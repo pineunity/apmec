@@ -91,7 +91,7 @@ class Vnffg(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
 
     status = sa.Column(sa.String(255), nullable=False)
 
-    # Mapping of VNFD to VNF instance names
+    # Mapping of MEAD to VNF instance names
     mea_mapping = sa.Column(types.Json)
 
     attributes = sa.Column(types.Json)
@@ -437,7 +437,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
         """Creates a list of physical port ids to represent an ordered chain
 
         :param context: SQL session context
-        :param mea_mapping: dict of VNFD to VNF instance mappings
+        :param mea_mapping: dict of MEAD to VNF instance mappings
         :param template_db: VNFFG Descriptor
         :param nfp_name: name of the forwarding path with chain requirements
         :return: list of port chain including mea name and list of CPs
@@ -454,7 +454,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
                 raise meo.NfpForwarderNotFoundException(mead=element[
                                                          'forwarder'],
                                                          mapping=mea_mapping)
-            # TODO(trozet): validate CP in VNFD has forwarding capability
+            # TODO(trozet): validate CP in MEAD has forwarding capability
             # Find VNF resources
             mea = mem_plugin.get_mea_resources(context,
                                                 mea_mapping[element[
@@ -529,12 +529,12 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
                     return val
 
     def _get_mea_mapping(self, context, mea_mapping, mea_members):
-        """Creates/validates a mapping of VNFD names to VNF IDs for NFP.
+        """Creates/validates a mapping of MEAD names to VNF IDs for NFP.
 
         :param context: SQL session context
-        :param mea_mapping: dict of requested VNFD:VNF_ID mappings
+        :param mea_mapping: dict of requested MEAD:VNF_ID mappings
         :param mea_members: list of constituent VNFs from a VNFFG
-        :return: dict of VNFD:VNF_ID mappings
+        :return: dict of MEAD:VNF_ID mappings
         """
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         new_mapping = dict()
@@ -550,7 +550,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
                 raise meo.VnffgdVnfdNotFoundException(mead_name=mead)
             else:
                 # if no VNF mapping, we need to abstractly look for instances
-                # that match VNFD
+                # that match MEAD
                 if mea_mapping is None or mead not in mea_mapping.keys():
                     # find suitable VNFs from mead_id
                     LOG.debug('Searching VNFS with id %s', mead_id)
@@ -566,7 +566,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
                         new_mapping[mead] = random.choice(mea_list)
                     else:
                         new_mapping[mead] = mea_list[0]
-                # if VNF mapping, validate instances exist and match the VNFD
+                # if VNF mapping, validate instances exist and match the MEAD
                 else:
                     mea_mead = mem_plugin.get_mea(context, mea_mapping[mead],
                                                    fields=['mead_id'])
@@ -632,7 +632,7 @@ class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
         :param context: SQL session context
         :param criteria: input criteria name
         :param value: input value
-        :param mea_mapping: mapping of VNFD to VNF instances
+        :param mea_mapping: mapping of MEAD to VNF instances
         :return: converted dictionary
         """
 

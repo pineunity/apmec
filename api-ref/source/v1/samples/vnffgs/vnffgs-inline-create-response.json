@@ -6,8 +6,8 @@
     "tenant_id": "058079ca392749bfa58831e0467a5439",
     "NANYD_id": "5263b036-8d11-410c-9417-6e0300456160",
     "mea_mapping": {
-      "VNFD2": "af76238b-75db-4f70-9ad7-bd286bb0f88a",
-      "VNFD1": "dcda3482-1e75-4b37-8bdd-77c018a59cd7"
+      "MEAD2": "af76238b-75db-4f70-9ad7-bd286bb0f88a",
+      "MEAD1": "dcda3482-1e75-4b37-8bdd-77c018a59cd7"
     },
     "attributes": {
       "NANYD": {
@@ -36,11 +36,11 @@
                 "path": [
                   {
                     "capability": "CP12",
-                    "forwarder": "VNFD1"
+                    "forwarder": "MEAD1"
                   },
                   {
                     "capability": "CP22",
-                    "forwarder": "VNFD2"
+                    "forwarder": "MEAD2"
                   }
                 ],
                 "id": 51
@@ -63,8 +63,8 @@
                 ],
                 "version": 1,
                 "constituent_meas": [
-                  "VNFD1",
-                  "VNFD2"
+                  "MEAD1",
+                  "MEAD2"
                 ],
                 "number_of_endpoints": 2,
                 "dependent_virtual_link": [

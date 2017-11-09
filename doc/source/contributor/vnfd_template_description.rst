@@ -3,15 +3,15 @@ VNF Descriptor Template Guide
 Overview
 --------
 
-This document explains VNFD template structure and its various fields based
+This document explains MEAD template structure and its various fields based
 on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-nfv/
 v1.0/tosca-nfv-v1.0.html>`_.
 
 The behavioural and deployment information of a VNF in Apmec is defined in a
-template known as VNF Descriptor (VNFD). The template is based on TOSCA
+template known as VNF Descriptor (MEAD). The template is based on TOSCA
 standards and is written in YAML. It is on-boarded in a VNF catalog.
 
-Each VNFD template will have below fields:
+Each MEAD template will have below fields:
 
 ::
 
@@ -41,16 +41,16 @@ Each VNFD template will have below fields:
            VL:
                Describes properties and capabilities of Virtual Link.
 
-For examples, please refer sample VNFD templates available at `GitHub <https:
+For examples, please refer sample MEAD templates available at `GitHub <https:
 //github.com/openstack/apmec/tree/master/samples/tosca-templates/mead>`_.
 
 Node types
 ----------
 A VNF includes **VDU/s**, **connection point/s** and **virtual link/s**. Hence
-a valid VNFD must have these 3 components. Each component is referred as a
+a valid MEAD must have these 3 components. Each component is referred as a
 node and can have certain type, capabilities, properties, attributes and
 requirements. These components are described under **node_templates** in the
-VNFD template. **node_templates** is a child of **topology_template**.
+MEAD template. **node_templates** is a child of **topology_template**.
 
 VDU
 ---
@@ -106,7 +106,7 @@ OpenStack specific **flavors** can also be used to describe VDU configuration.
           availability_zone: nova
 
 However, when both **nfv_compute properties** and **flavor** are mentioned in
-a VNFD, **flavor** setting will take precedence.
+a MEAD, **flavor** setting will take precedence.
 
 Monitoring the VDU
 """"""""""""""""""
@@ -135,7 +135,7 @@ It can be re-spawned in case ping fails. This is described under
 
 Providing user data
 """""""""""""""""""
-Custom commands to be run on VDU once it is spawned can be specified in a VNFD
+Custom commands to be run on VDU once it is spawned can be specified in a MEAD
 template as user data.
 
 ::
@@ -152,7 +152,7 @@ template as user data.
 Configuring a VDU
 """""""""""""""""
 A VDU can be configured as a specific Network Function under **config**
-section in VNFD template. A sample template configuring a VDU as a firewall
+section in MEAD template. A sample template configuring a VDU as a firewall
 can be viewed in a `sample file <https://github.com/openstack/apmec/blob/
 master/samples/tosca-templates/mead/tosca-config-openwrt-with-firewall.yaml>`_.
 
@@ -532,7 +532,7 @@ An example of assign floating ip to VDU
 
 Multiple nodes
 --------------
-Multiple node types can be defined in a VNFD.
+Multiple node types can be defined in a MEAD.
 
 ::
 
@@ -554,14 +554,14 @@ Multiple node types can be defined in a VNFD.
 
 Summary
 -------
-To summarize VNFD is written in YAML and describes a VNF topology. It has
+To summarize MEAD is written in YAML and describes a VNF topology. It has
 three node types, each with different capabilities and requirements. Below is
 a template which mentions all node types with all available options.
 
 ::
 
      tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
-     description: Sample VNFD template mentioning possible values for each node.
+     description: Sample MEAD template mentioning possible values for each node.
      metadata:
       template_name: sample-tosca-mead-template-guide
      topology_template:

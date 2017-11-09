@@ -27,7 +27,7 @@ Prerequisites
 To have persistent volume support to VDUs, we must enable cinder service in
 addition to the other services that needed by Apmec.
 
-VNFD Changes
+MEAD Changes
 ~~~~~~~~~~~~
 
 There are two steps to have volume attached to VDU:
@@ -38,7 +38,7 @@ There are two steps to have volume attached to VDU:
 Create Volume
 ~~~~~~~~~~~~~
 
-To add volume, we need to add the below node to the VNFD:
+To add volume, we need to add the below node to the MEAD:
 
 .. code-block:: yaml
 
@@ -63,7 +63,7 @@ Next attach the created volume to VDU as below:
         - virtualAttachment:
             node: VB1
 
-With these additions, the new VNFD looks like below:
+With these additions, the new MEAD looks like below:
 
 .. code-block:: yaml
 

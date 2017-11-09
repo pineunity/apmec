@@ -143,10 +143,10 @@ mead/tosca-mead-openwrt.yaml>`_ and other one is
 <https://github.com/openstack/apmec/blob/master/samples/tosca-templates/
 mead/tosca-config-openwrt-with-firewall.yaml>`_.
 In this template file, we specify the **mgmt_driver: openwrt** which means
-this VNFD is managed by `openwrt driver
+this MEAD is managed by `openwrt driver
 <https://github.com/openstack/apmec/blob/master/apmec/
 mem/mgmt_drivers/openwrt/openwrt.py>`_. This driver can inject firewall rules
-which defined in VNFD into OpenWRT instance by using SSH protocol. We can
+which defined in MEAD into OpenWRT instance by using SSH protocol. We can
 run **cat /etc/config/firewall** to confirm the firewall rules if inject
 succeed.
 
@@ -156,17 +156,17 @@ succeed.
 
     apmec mead-create \
                        --mead-file tosca-mead-openwrt-with-firewall-rules.yaml \
-                       <VNFD_NAME>
+                       <MEAD_NAME>
 ..
 
 4.Create a VNF:
 
 .. code-block:: console
 
-    apmec mea-create --mead-name <VNFD_NAME> <NAME>
+    apmec mea-create --mead-name <MEAD_NAME> <NAME>
 ..
 
-This VNF will contains all the firewall rules that VNFD contains
+This VNF will contains all the firewall rules that MEAD contains
 by using 'cat /etc/config/firewall' in VNF.
 
 

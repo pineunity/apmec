@@ -40,14 +40,14 @@ Each VNFFGD template will have below fields:
            VNFFG:
                Describes properties and members of a VNF Forwarding Graph.
 
-For examples, please refer sample VNFD templates available at `GitHub <https:
+For examples, please refer sample MEAD templates available at `GitHub <https:
 //github.com/openstack/apmec/tree/master/samples/tosca-templates/NANYD>`_.
 
 Node types
 ----------
 For Apmec purposes a VNFFGD only includes **Forwarding Path**.  In a full
 Network Services Descriptor (NSD), it would include information about each
-VNFD as well.  However until that implementation, VNFD is described in a
+MEAD as well.  However until that implementation, MEAD is described in a
 separate template.  Only a single Forwarding Path is currently supported.
 **node_templates** is a child of **topology_template**.
 
@@ -114,9 +114,9 @@ path
 """"
 Path defines an ordered list of nodes to traverse in a Forwarding Path.  Each
 node is really a logical port, which is defined in the path as a Connection
-Point (CP) belonging to a specific VNFD.  It is not necessary at VNFFGD
-creation time to have predefined these VNFDs used in the path.  They may be
-created later.  Up to 2 CPs may be listed (in order) per VNFD.  If 2 are
+Point (CP) belonging to a specific MEAD.  It is not necessary at VNFFGD
+creation time to have predefined these MEADs used in the path.  They may be
+created later.  Up to 2 CPs may be listed (in order) per MEAD.  If 2 are
 listed, the first will be considered the ingress port for traffic and the
 second will be the egress.  If only one port is provided, then it will be
 interpreted as both the ingress and egress port for traffic.
@@ -179,7 +179,7 @@ List of Connection Points defined in the Forwarding Path.
 
 constituent_meas
 """"""""""""""""
-List of VNFD names used in this Forwarding Graph (also defined in Forwarding
+List of MEAD names used in this Forwarding Graph (also defined in Forwarding
 Path).
 
 Summary
@@ -211,9 +211,9 @@ composed of a Forwarding Path and a VNFFG.  A full VNFFGD is shown below:
               - ip_proto: 6
               - ip_dst_prefix: 192.168.1.2/24
           path:
-            - forwarder: VNFD1
+            - forwarder: MEAD1
               capability: CP12
-            - forwarder: VNFD2
+            - forwarder: MEAD2
               capability: CP22
 
     groups:
@@ -226,5 +226,5 @@ composed of a Forwarding Path and a VNFFG.  A full VNFFGD is shown below:
           number_of_endpoints: 2
           dependent_virtual_link: [VL12,VL22]
           connection_point: [CP12,CP22]
-          constituent_meas: [VNFD1,VNFD2]
+          constituent_meas: [MEAD1,MEAD2]
         members: [Forwarding_path1]

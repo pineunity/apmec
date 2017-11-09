@@ -1,22 +1,22 @@
-VNFD Template Parameterization
+MEAD Template Parameterization
 ==============================
 
 Overview
 --------
 
-Parameterization allows for the ability to use a single VNFD to be deployed
+Parameterization allows for the ability to use a single MEAD to be deployed
 multiple times with different values for the VDU parameters provided at
-deploy time. In contrast, a non-parameterized VNFD has static values
+deploy time. In contrast, a non-parameterized MEAD has static values
 for the parameters that might limit the number of concurrent VNFs that can be
-deployed using a single VNFD. For example, deploying an instance of a
+deployed using a single MEAD. For example, deploying an instance of a
 non-parameterized template that has fixed IP addresses specified for network
 interface a second time without deleting the first instance of VNF would lead
 to an error.
 
-Non-parameterized VNFD template
+Non-parameterized MEAD template
 -------------------------------
 
-Find below an example of a non-parameterized VNFD where the text italicized
+Find below an example of a non-parameterized MEAD where the text italicized
 are the VDU parameters and text in bold are the values for those VDU
 parameters that get applied to the VDU when this template is deployed.
 The next section will illustrate how the below non-parameterized template
@@ -97,7 +97,7 @@ Here is the sample template:
            vendor: Apmec
 
 
-Parameterized VNFD template
+Parameterized MEAD template
 ---------------------------
 This section will walk through parameterizing the template in above section
 for re-use and allow for deploying multiple VNFs with the same template.
@@ -257,9 +257,9 @@ VNF deploy.
 
 Key Summary
 -----------
-#. Parameterize your VNFD if you want to re-use for multiple VNF deployments.
+#. Parameterize your MEAD if you want to re-use for multiple VNF deployments.
 #. Identify parameters that would need to be provided values at deploy time
-   and substitute value in VNFD template with {get_input: <param_value_name>},
+   and substitute value in MEAD template with {get_input: <param_value_name>},
    where 'param_value_name' is the name of the variable that holds the value
    in the parameters value file.
 #. Supply a parameters value file in yaml format each time during VNF
@@ -273,5 +273,5 @@ Key Summary
 
 #. Specifying a parameter values file during VNF creation is also supported in
    Horizon UI.
-#. Sample VNFD parameterized templates and parameter values files can be found
+#. Sample MEAD parameterized templates and parameter values files can be found
    at https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead.

@@ -5,12 +5,12 @@ std.delete_mead:
   type: direct
 
   description: |
-    Delete a VNFD.
+    Delete a MEAD.
 
   input:
     - mead_id
 
   tasks:
     delete_mead:
-      description: Request to delete a VNFD.
+      description: Request to delete a MEAD.
       action: apmec.delete_mead mead=<% $.mead_id %>

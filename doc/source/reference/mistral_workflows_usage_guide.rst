@@ -120,11 +120,11 @@ std.delete_mea workflows in Mistral.
 
 
 
-VNFD resource creation with std.create_mead workflow
+MEAD resource creation with std.create_mead workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To create VNFD apmec resource based on the VNFD workflow input file.
+To create MEAD apmec resource based on the MEAD workflow input file.
 
-Create new execution for VNFD creation.
+Create new execution for MEAD creation.
 
 ::
 
@@ -174,7 +174,7 @@ Gather execution details based on execution id.
 
 .. note:: Wait until execution state become as SUCCESS.
 
-Gather VNFD ID from execution output data.
+Gather MEAD ID from execution output data.
 
 ::
 
@@ -190,7 +190,7 @@ Gather VNFD ID from execution output data.
     "mead_id": "fb164b77-5e24-402d-b5f4-c6596352cabe"
   }
 
-Verify VNFD details using apmec CLI
+Verify MEAD details using apmec CLI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -404,7 +404,7 @@ Gather execution output data from execution id.
   }
 
 
-VNFD resource deletion with std.delete_mead workflow
+MEAD resource deletion with std.delete_mead workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Update the mead_id from the output of above execution in delete_mead.json
 
@@ -488,11 +488,11 @@ Gather execution output data from execution id.
                     "action": "apmec.delete_mead mead=<% $.mead_id %>",
                     "version": "2.0",
                     "type": "direct",
-                    "description": "Request to delete a VNFD.",
+                    "description": "Request to delete a MEAD.",
                     "name": "delete_mead"
                 }
             },
-            "description": "Delete a VNFD.\n",
+            "description": "Delete a MEAD.\n",
             "version": "2.0",
             "input": [
                 "mead_id"

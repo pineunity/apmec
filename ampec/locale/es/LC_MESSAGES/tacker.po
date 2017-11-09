@@ -565,10 +565,10 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Invalid keys specified in VNFD - %(error_msg_details)s.Supported keys are: "
+"Invalid keys specified in MEAD - %(error_msg_details)s.Supported keys are: "
 "%(valid_keys)s"
 msgstr ""
-"Claves invalidas especificadas en VNFD - %(error_msg_details)s. Claves "
+"Claves invalidas especificadas en MEAD - %(error_msg_details)s. Claves "
 "soportadas son: %(valid_keys)s"
 
 #, python-format
@@ -616,11 +616,11 @@ msgstr "Cuerpo de solicitud formado incorrectamente: %(reason)s"
 
 #, python-format
 msgid ""
-"Matching VNF Instance for VNFD %(mead_name)s could not be found. Please "
-"create an instance of this VNFD before creating/updating VNFFG."
+"Matching VNF Instance for MEAD %(mead_name)s could not be found. Please "
+"create an instance of this MEAD before creating/updating VNFFG."
 msgstr ""
-"Instancia VNF correspondiente a VNFD %(mead_name)s no ha sido encontrada. "
-"Por favor crea una instancia de este VNFD antes de crear/actualizar el VNFFG."
+"Instancia VNF correspondiente a MEAD %(mead_name)s no ha sido encontrada. "
+"Por favor crea una instancia de este MEAD antes de crear/actualizar el VNFFG."
 
 msgid "Max header line to accommodate large tokens"
 msgstr "Máximo de línea de cabecera para acomodar señales grandes"
@@ -831,18 +831,18 @@ msgstr "CP especificado %(cp_id)s no ha sido encontrado en VNF %(mea_id)s."
 
 #, python-format
 msgid ""
-"Specified CP %(cp_id)s could not be found in VNFD %(mead_name)s. Please "
-"check VNFD for correct Connection Point."
+"Specified CP %(cp_id)s could not be found in MEAD %(mead_name)s. Please "
+"check MEAD for correct Connection Point."
 msgstr ""
-"CP especificado %(cp_id)s no ha sido encontrado en VNFD %(mead_name)s. Por "
-"favor comprueba VNFD para el correcto Punto de Conexión."
+"CP especificado %(cp_id)s no ha sido encontrado en MEAD %(mead_name)s. Por "
+"favor comprueba MEAD para el correcto Punto de Conexión."
 
 #, python-format
 msgid ""
-"Specified CP %(cp_id)s in VNFD %(mead_name)s does not have forwarding "
+"Specified CP %(cp_id)s in MEAD %(mead_name)s does not have forwarding "
 "capability, which is required to be included in forwarding path"
 msgstr ""
-"CP %(cp_id)s especificado en VNFD %(mead_name)s no tiene capacidad de "
+"CP %(cp_id)s especificado en MEAD %(mead_name)s no tiene capacidad de "
 "reenvío, que es requerida para ser incluido en el forwarding path"
 
 #, python-format
@@ -867,10 +867,10 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Specified VNFD %(mead_name)s in VNFFGD does not exist. Please create VNFDs "
+"Specified MEAD %(mead_name)s in VNFFGD does not exist. Please create MEADs "
 "before creating VNFFG"
 msgstr ""
-"VNFD especificado %(mead_name)s en VNFFGD no existe. Por favor crea VNFDs "
+"MEAD especificado %(mead_name)s en VNFFGD no existe. Por favor crea MEADs "
 "antes de crear VNFFG"
 
 msgid "Specified model is invalid, only Event model supported"
@@ -1123,16 +1123,16 @@ msgstr ""
 "a que la pila %(stack)s escalara."
 
 #, python-format
-msgid "VNFD %(mead_id)s could not be found"
-msgstr "VNFD %(mead_id)s no ha sido encontrado"
+msgid "MEAD %(mead_id)s could not be found"
+msgstr "MEAD %(mead_id)s no ha sido encontrado"
 
 #, python-format
-msgid "VNFD %(mead_id)s is still in use"
-msgstr "VNFD %(mead_id)s sigue en uso"
+msgid "MEAD %(mead_id)s is still in use"
+msgstr "MEAD %(mead_id)s sigue en uso"
 
 #, python-format
-msgid "VNFD Forwarder %(mead)s not found in VNF Mapping %(mapping)s"
-msgstr "VNFD Forwarder %(mead)s no encontrado en VNF Mapping %(mapping)s"
+msgid "MEAD Forwarder %(mead)s not found in VNF Mapping %(mapping)s"
+msgstr "MEAD Forwarder %(mead)s no encontrado en VNF Mapping %(mapping)s"
 
 #, python-format
 msgid "VNFFG %(NANY_id)s could not be found"

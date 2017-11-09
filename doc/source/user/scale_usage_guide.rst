@@ -17,7 +17,7 @@
 VNF scaling
 ===========
 
-VNF resources in terms of CPU core and memory are hardcoded in VNFD template
+VNF resources in terms of CPU core and memory are hardcoded in MEAD template
 through image flavor settings. This result in either provisioning VNF for
 typical usage or for maximum usage. The former leads to service disruption
 when load exceeds provisioned capacity. And the later leads to underutilized
@@ -70,7 +70,7 @@ Apmec defines TOSCA schema for the scaling policy as given below:
 Sample TOSCA with scaling policy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Following TOSCA snippet shows the scaling policy used in VNFD, in which vdu1
+Following TOSCA snippet shows the scaling policy used in MEAD, in which vdu1
 and vdu2 are already defined VDUs.
 
 .. code-block:: yaml
@@ -103,7 +103,7 @@ deploy a sample scaling template from location given
 below:
 https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead
 
-Refer the 'Getting Started' link below on how to create a VNFD and deploy a
+Refer the 'Getting Started' link below on how to create a MEAD and deploy a
 VNF:
 https://docs.openstack.org/apmec/latest/install/getting_started.html
 
@@ -122,7 +122,7 @@ Apmec provides following CLI for scaling.
 
 Here,
 
-* scaling-policy-name - Policy name defined in scaling VNFD
+* scaling-policy-name - Policy name defined in scaling MEAD
 * scaling-type - in or out
 * mea-id - scaling VNF id
 * mea-name - scaling VNF name
@@ -151,7 +151,7 @@ with body
 
 Here,
 
-* scaling-policy-name - Policy name defined in scaling VNFD
+* scaling-policy-name - Policy name defined in scaling MEAD
 * scaling-type - in or out
 * mea-id - scaling VNF id
 
@@ -180,7 +180,7 @@ Following features are not supported with scaling:
 
 * Auto-scaling feature is supported only with alarm monitors and it does
   not work with other monitors such as ping, http_ping.
-* When VNF is modelled with scaling requirement in VNFD, any config
-  management requirement in VNFD is not supported.
+* When VNF is modelled with scaling requirement in MEAD, any config
+  management requirement in MEAD is not supported.
 * Scaling feature does not support to selectively choose the VDU as part
   of scaling.

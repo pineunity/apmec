@@ -37,11 +37,11 @@
                                 "path": [
                                     {
                                         "capability": "CP12",
-                                        "forwarder": "VNFD1"
+                                        "forwarder": "MEAD1"
                                     },
                                     {
                                         "capability": "CP22",
-                                        "forwarder": "VNFD2"
+                                        "forwarder": "MEAD2"
                                     }
                                 ],
                                 "id": 51
@@ -64,8 +64,8 @@
                                 ],
                                 "version": 1.0,
                                 "constituent_meas": [
-                                    "VNFD1",
-                                    "VNFD2"
+                                    "MEAD1",
+                                    "MEAD2"
                                 ],
                                 "number_of_endpoints": 2,
                                 "dependent_virtual_link": [

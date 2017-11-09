@@ -20,9 +20,9 @@ topology_template:
             - ip_proto: 6
             - ip_dst_prefix: 192.168.1.2/24
         path:
-          - forwarder: VNFD1
+          - forwarder: MEAD1
             capability: CP12
-          - forwarder: VNFD2
+          - forwarder: MEAD2
             capability: CP22
 
   groups:
@@ -35,5 +35,5 @@ topology_template:
         number_of_endpoints: 2
         dependent_virtual_link: [VL12,VL22]
         connection_point: [CP12,CP22]
-        constituent_meas: [VNFD1,VNFD2]
+        constituent_meas: [MEAD1,MEAD2]
       members: [Forwarding_path1]

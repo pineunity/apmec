@@ -3,8 +3,8 @@
     "tenant_id": "058079ca392749bfa58831e0467a5439",
     "name": "NANY1",
     "mea_mapping": {
-      "VNFD2": "e40f29eb-b3e5-4c47-ab05-567be3a63fdb",
-      "VNFD1": "e759aa4c-ae09-403a-8c04-90c77abfae56"
+      "MEAD2": "e40f29eb-b3e5-4c47-ab05-567be3a63fdb",
+      "MEAD1": "e759aa4c-ae09-403a-8c04-90c77abfae56"
     },
     "symmetrical": false,
     "NANYD_template": {
@@ -31,11 +31,11 @@
               },
               "path": [
                 {
-                  "forwarder": "VNFD1",
+                  "forwarder": "MEAD1",
                   "capability": "CP12"
                 },
                 {
-                  "forwarder": "VNFD2",
+                  "forwarder": "MEAD2",
                   "capability": "CP22"
                 }
               ]
@@ -59,8 +59,8 @@
                 "CP22"
               ],
               "constituent_meas": [
-                "VNFD1",
-                "VNFD2"
+                "MEAD1",
+                "MEAD2"
               ]
             },
             "members": [

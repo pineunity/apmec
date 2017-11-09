@@ -23,7 +23,7 @@ rendered into Service Function Chains (SFCs) and Classifiers.  The SFC makes
 up an ordered list of VNFs for traffic to traverse, while the classifier
 decides which traffic should go through them.
 
-Similar to how VNFs are described by VNFDs, VNFFGs are described by VNF
+Similar to how VNFs are described by MEADs, VNFFGs are described by VNF
 Forwarding Graph Descriptors (VNFFGD). Please see the `devref guide
 <https://github.com/openstack/apmec/blob/master/doc/source/contributor
 /NANYD_template_description.rst>`_ on VNFFGD to learn more about
@@ -110,19 +110,19 @@ Creating the VNFFG
 ~~~~~~~~~~~~~~~~~~
 
 To create a VNFFG, you must have first created VNF instances of the same
-VNFD types listed in the VNFFGD.  Failure to do so will result in error when
-trying to create a VNFFG.  Note, the VNFD you define **must** include the
+MEAD types listed in the VNFFGD.  Failure to do so will result in error when
+trying to create a VNFFG.  Note, the MEAD you define **must** include the
 same Connection Point definitions as the ones you declared in your VNFFGD.
 
 .. code-block:: console
 
-   apmec mead-create --mead-file tosca-NANY-mead1.yaml VNFD1
-   apmec mea-create --mead-name VNFD1 VNF1
+   apmec mead-create --mead-file tosca-NANY-mead1.yaml MEAD1
+   apmec mea-create --mead-name MEAD1 VNF1
 
-   apmec mead-create --mead-file tosca-NANY-mead2.yaml VNFD2
-   apmec mea-create --mead-name VNFD2 VNF2
+   apmec mead-create --mead-file tosca-NANY-mead2.yaml MEAD2
+   apmec mea-create --mead-name MEAD2 VNF2
 
-Refer the 'Getting Started' link below on how to create a VNFD and deploy
+Refer the 'Getting Started' link below on how to create a MEAD and deploy
 2 VNFs: `VNF1`_ and `VNF2`_.
 
 https://docs.openstack.org/apmec/latest/install/getting_started.html
@@ -154,12 +154,12 @@ Here,
 
 * NANYD-name - VNFFGD to use to instantiate this VNFFG
 * param-file  - Parameter file in Yaml.
-* mea-mapping - Allows a list of logical VNFD to VNF instance mapping
+* mea-mapping - Allows a list of logical MEAD to VNF instance mapping
 * symmetrical - True/False
 
 VNF Mapping is used to declare which exact VNF instance to be used for
 each VNF in the Forwarding Path. The following command would list VNFs
-in Apmec and then map each VNFD defined in the VNFFGD Forwarding Path
+in Apmec and then map each MEAD defined in the VNFFGD Forwarding Path
 to the desired VNF instance:
 
 .. code-block:: console
@@ -174,11 +174,11 @@ to the desired VNF instance:
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
 
    apmec NANY-create --NANYD-name myNANYD --mea-mapping \
-      VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',VNF2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myNANY
+      MEAD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',VNF2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myNANY
 
 Alternatively, if no mea-mapping is provided then Apmec VNFFG will attempt
-to search for VNF instances derived from the given VNFDs in the VNFFGD.  If
-multiple VNF instances exist for a given VNFD, the VNF instance chosen to be
+to search for VNF instances derived from the given MEADs in the VNFFGD.  If
+multiple VNF instances exist for a given MEAD, the VNF instance chosen to be
 used in the VNFFG is done at random.
 
 The symmetrical argument is used to indicate if reverse traffic should also
@@ -194,7 +194,7 @@ routed normally and does not enter the VNFFG.
 Parameters for VNFFGD template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Similar to TOSCA VNFD template, any value of VNFFGD template can be
+Similar to TOSCA MEAD template, any value of VNFFGD template can be
 parameterized. Once parameterized different values can be passed while
 instantiating the forwarding graph using the same VNFFGD template.
 The value of a parameterized attribute can be specified like *{get_input foo}*
@@ -212,8 +212,8 @@ VNFFG command with parameter file:
 
 .. code-block:: console
 
-   apmec NANY-create --NANYD-name NANYD-param --mea-mapping VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',\
-   VNFD2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' --param-file NANY-param-file.yaml myNANY
+   apmec NANY-create --NANYD-name NANYD-param --mea-mapping MEAD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',\
+   MEAD2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' --param-file NANY-param-file.yaml myNANY
 
 
 See `VNFFGD template samples with parameter support <https://github.com/

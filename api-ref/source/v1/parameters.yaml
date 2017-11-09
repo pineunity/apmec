@@ -33,7 +33,7 @@ ns_id_path:
   type: string
 nsd_id_path:
   description: |
-    The UUID of the VNFD.
+    The UUID of the MEAD.
   in: path
   required: true
   type: string
@@ -57,7 +57,7 @@ mea_id_path:
   type: string
 mead_id_path:
   description: |
-    The UUID of the VNFD.
+    The UUID of the MEAD.
   in: path
   required: true
   type: string
@@ -655,7 +655,7 @@ mea_error_reason:
   type: string
 mea_heat_template:
   description: |
-    Heat template which is translated from the VNFD template.
+    Heat template which is translated from the MEAD template.
   in: body
   required: true
   type: string
@@ -681,18 +681,18 @@ mea_instance_id:
   type: string
 mea_mapping:
   description: |
-    A ``mea_mapping`` object which contains mappings from VNFD name
+    A ``mea_mapping`` object which contains mappings from MEAD name
     to VNF instance ID.
   in: body
   required: true
   type: object
 mea_mapping_opt:
   description: |
-    A ``mea_mapping`` object which contains mappings from VNFD name
+    A ``mea_mapping`` object which contains mappings from MEAD name
     to VNF instance ID. This is used to declare which exact VNF
-    instance to be used for each VNFD in the Forwarding Path definition.
+    instance to be used for each MEAD in the Forwarding Path definition.
     If no mea mappings are provided, then Apmec attempts to search
-    for VNF instance derived from each VNFDs.
+    for VNF instance derived from each MEADs.
   in: body
   required: false
   type: object
@@ -704,15 +704,15 @@ mea_mgmt_url:
   type: string
 mea_monitoring_policy:
   description: |
-    Monitoring policy which is derived from the VNFD template.
+    Monitoring policy which is derived from the MEAD template.
   in: body
   required: true
   type: string
 mea_param_values:
   description: |
     VNF parameter object. These parameters will be substituted for VNF
-    if the VNFD template is appropriately parameterized.
-    See `VNFD Template Parameterization
+    if the MEAD template is appropriately parameterized.
+    See `MEAD Template Parameterization
     <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_
     for more information.
   in: body
@@ -721,8 +721,8 @@ mea_param_values:
 mea_param_values_opt:
   description: |
     VNF parameter object. These parameters will be substituted for VNF
-    if the VNFD template is appropriately parameterized.
-    See `VNFD Template Parameterization
+    if the MEAD template is appropriately parameterized.
+    See `MEAD Template Parameterization
     <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_
     for more information.
   in: body
@@ -773,8 +773,8 @@ mea_scale:
   type: object
 mea_scale_policy:
   description: |
-    Scaling policy defined in VNFD template. For more information, see
-    `VNFD scaling
+    Scaling policy defined in MEAD template. For more information, see
+    `MEAD scaling
     <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_.
   in: body
   required: true
@@ -813,7 +813,7 @@ mead_attributes:
   type: object
 mead_id:
   description: |
-    The UUID of the VNFD.
+    The UUID of the MEAD.
   in: body
   required: false
   type: string
@@ -825,7 +825,7 @@ mead_template:
   type: object
 mead_template_source:
   description: |
-    Source of VNFD.
+    Source of MEAD.
   in: body
   required: false
   type: string

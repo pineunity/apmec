@@ -120,7 +120,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_device_template(self):
         session = self.context.session
-        device_template = mem_db.VNFD(
+        device_template = mem_db.MEAD(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
@@ -133,7 +133,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_device_template_inline(self):
         session = self.context.session
-        device_template = mem_db.VNFD(
+        device_template = mem_db.MEAD(
             id='d58bcc4e-d0cf-11e6-bf26-cec0c932ce01',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='tmpl-koeak4tqgoqo8cr4-dummy_inline_mea',
@@ -146,7 +146,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_mead_attributes(self, template):
         session = self.context.session
-        mead_attr = mem_db.VNFDAttribute(
+        mead_attr = mem_db.MEADAttribute(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             mead_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             key='mead',
@@ -186,7 +186,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_scaling_attributes_mead(self):
         session = self.context.session
-        mead_attributes = mem_db.VNFDAttribute(
+        mead_attributes = mem_db.MEADAttribute(
             id='7800cb81-7ed1-4cf6-8387-746468522650',
             mead_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             key='mead',
@@ -246,7 +246,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._cos_db_plugin.create_event.assert_called_once_with(
             self.context, evt_type=constants.RES_EVT_CREATE, res_id=mock.ANY,
             res_state=constants.RES_EVT_ONBOARDED,
-            res_type=constants.RES_TYPE_VNFD, tstamp=mock.ANY)
+            res_type=constants.RES_TYPE_MEAD, tstamp=mock.ANY)
 
     def test_create_mead_no_service_types(self):
         mead_obj = utils.get_dummy_mead_obj()

@@ -36,6 +36,6 @@ class TestOpenStack(base.TestCase):
         stack = {"stack_status", "DELETE_IN_PROGRESS"}
         mocked_hc.get.side_effect = [stack, Exception("any stuff")]
         openstack_driver = openstack.OpenStack()
-        self.assertRaises(mem.VNFDeleteWaitFailed,
+        self.assertRaises(mem.MEADeleteWaitFailed,
                           openstack_driver.delete_wait,
                           None, None, 'mea_id', None, None)

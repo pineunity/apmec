@@ -13,7 +13,7 @@
 #    under the License.
 #
 
-"""make VNFD/VNF/VIM name mandatory
+"""make MEAD/VNF/VIM name mandatory
 
 Revision ID: 5f88e86b35c7
 Revises: 354de64ba129

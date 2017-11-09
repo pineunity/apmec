@@ -20,7 +20,7 @@ As of Newton release, events information is captured for below:
 
 - VNF
 
-- VNFD
+- MEAD
 
 - VIM
 
@@ -52,7 +52,7 @@ Apmec supports display of events to an end user via
     - events-list: Lists all events for all resources.
     - vim-events-list: List events that belong to a given VIM.
     - mea-events-list: List events that belong to a given VNF.
-    - mead-events-list: List events that belong to a given VNFD.
+    - mead-events-list: List events that belong to a given MEAD.
 
 NOTE: For more details on the syntax of these CLIs, refer to
 `Apmec CLI reference guide <http://docs.openstack.org/cli-reference/apmec.html>`_

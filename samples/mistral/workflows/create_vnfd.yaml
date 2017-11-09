@@ -5,7 +5,7 @@ std.create_mead:
   type: direct
 
   description: |
-    Create a VNFD.
+    Create a MEAD.
 
   input:
     - body
@@ -14,7 +14,7 @@ std.create_mead:
 
   tasks:
     create_mead:
-      description: Request to create a VNFD.
+      description: Request to create a MEAD.
       action: apmec.create_mead body=<% $.body %>
       input:
         body: <% $.body %>

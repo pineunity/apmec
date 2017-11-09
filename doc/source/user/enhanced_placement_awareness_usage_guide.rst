@@ -10,7 +10,7 @@ Enhanced Placement Awareness Usage Guide
 Overview
 --------
 
-OpenStack Apmec supports TOSCA VNFD templates that allow specifying
+OpenStack Apmec supports TOSCA MEAD templates that allow specifying
 requirements for a VNF that leverages features of a compute node such as
 NUMA topology, SR-IOV, Huge pages and CPU pinning. This allows for Enhanced
 Platform Awareness(EPA) placement of a VNF that has high performance and low
@@ -121,10 +121,10 @@ availability zone and adding compute nodes.
 **NOTE**: Consult http://docs.openstack.org/cli-reference/nova.html for
 latest supported commands.
 
-Specifying Availability Zone for VDU in VNFD template
+Specifying Availability Zone for VDU in MEAD template
 -----------------------------------------------------
 
-Find below snippet of VNFD template that specifies the EPA Availability Zone
+Find below snippet of MEAD template that specifies the EPA Availability Zone
 created as part of the VDU properties using **availability_zone** property.
 
 .. code-block:: yaml
@@ -150,6 +150,6 @@ deploy a sample EPA template such as tosca-mead-hugepages.yaml from location
 below:
 https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead
 
-Refer the 'Getting Started' link below on how to create a VNFD and deploy a
+Refer the 'Getting Started' link below on how to create a MEAD and deploy a
 VNF:
 https://docs.openstack.org/apmec/latest/install/getting_started.html

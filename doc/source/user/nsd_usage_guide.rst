@@ -32,14 +32,14 @@ Creating the NSD
 ~~~~~~~~~~~~~~~~
 
 Once OpenStack along with Apmec has been successfully installed,
-deploy a sample VNFD templates using mea1.yaml and mea2.yaml as mentioned in
+deploy a sample MEAD templates using mea1.yaml and mea2.yaml as mentioned in
 reference section.
 
 ::
 
-  apmec mead-create --mead-file mead1.yaml VNFD1
+  apmec mead-create --mead-file mead1.yaml MEAD1
 
-  apmec mead-create --mead-file mead2.yaml VNFD2
+  apmec mead-create --mead-file mead2.yaml MEAD2
 
 The following code represents sample NSD which instantiates the above VNFs
 
@@ -47,8 +47,8 @@ The following code represents sample NSD which instantiates the above VNFs
 
     tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
     imports:
-      - VNFD1
-      - VNFD2
+      - MEAD1
+      - MEAD2
     topology_template:
       node_templates:
         VNF1:
@@ -80,7 +80,7 @@ Creating the NS
 ~~~~~~~~~~~~~~~~
 
 To create a NS, you must have onboarded corresponding NSD and
-VNFDS(which NS is substituting)
+MEADS(which NS is substituting)
 
 Apmec provides the following CLI to create NS:
 

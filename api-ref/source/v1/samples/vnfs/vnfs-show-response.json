@@ -1,7 +1,7 @@
 {
     "mea": {
         "status": "ACTIVE",
-        "description": "OpenWRT VNFD with parameterized VDU name",
+        "description": "OpenWRT MEAD with parameterized VDU name",
         "mead_id": "a04b47d1-e8ad-4ef9-8341-eafec398ce02",
         "tenant_id": "6673e4d4e13340acb0b847f9ecde613b",
         "created_at": "2016-10-25 10:15:06",

@@ -1,22 +1,22 @@
 .. -*- rst -*-
 
 ================================================
-Virtualized Network Function Descriptors (VNFDs)
+Virtualized Network Function Descriptors (MEADs)
 ================================================
 
-Manages Virtualized Network Function Descriptors (VNFDs).
+Manages Virtualized Network Function Descriptors (MEADs).
 
-The VNFD is a template which describes information about deployment
+The MEAD is a template which describes information about deployment
 and behavior of Virtualized Network Functions (VNFs). For more information, see
 `VNF Descriptor Template Guide
 <https://docs.openstack.org/apmec/latest/contributor/mead_template_description.html>`_.
 
-Create VNFD
+Create MEAD
 ===========
 
 .. rest_method::  POST /v1.0/meads
 
-Creates a VNFD.
+Creates a MEAD.
 
 Response Codes
 --------------
@@ -69,12 +69,12 @@ Response Example
 .. literalinclude:: samples/meads/meads-create-response.json
    :language: javascript
 
-List VNFDs
+List MEADs
 ==========
 
 .. rest_method::  GET /v1.0/meads
 
-Lists VNFDs.
+Lists MEADs.
 
 Response Codes
 --------------
@@ -111,12 +111,12 @@ Response Example
 .. literalinclude:: samples/meads/meads-list-response.json
    :language: javascript
 
-Show VNFD
+Show MEAD
 =========
 
 .. rest_method::  GET /v1.0/meads/{mead_id}
 
-Shows information of a given VNFD.
+Shows information of a given MEAD.
 
 Response Codes
 --------------
@@ -160,12 +160,12 @@ Response Example
 .. literalinclude:: samples/meads/meads-show-response.json
    :language: javascript
 
-Update VNFD
+Update MEAD
 ===========
 
 .. rest_method::  PUT /v1.0/meads/{mead_id}
 
-Updates a given VNFD.
+Updates a given MEAD.
 
 Response Codes
 --------------
@@ -218,13 +218,13 @@ Response Example
 .. literalinclude:: samples/meads/meads-update-response.json
    :language: javascript
 
-Delete VNFD
+Delete MEAD
 ===========
 
 .. rest_method::  DELETE /v1.0/meads/{mead_id}
 
-Deletes a given VNFD.
-Only a VNFD without any associated VNFs can be deleted.
+Deletes a given MEAD.
+Only a MEAD without any associated VNFs can be deleted.
 
 Response Codes
 --------------

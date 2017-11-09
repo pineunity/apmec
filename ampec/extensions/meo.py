@@ -101,18 +101,18 @@ class VnffgdDuplicateCPException(exceptions.InvalidInput):
 
 
 class VnffgdVnfdNotFoundException(exceptions.NotFound):
-    message = _("Specified VNFD %(mead_name)s in VNFFGD does not exist. "
-                "Please create VNFDs before creating VNFFG")
+    message = _("Specified MEAD %(mead_name)s in VNFFGD does not exist. "
+                "Please create MEADs before creating VNFFG")
 
 
 class VnffgdCpNotFoundException(exceptions.NotFound):
-    message = _("Specified CP %(cp_id)s could not be found in VNFD "
-                "%(mead_name)s. Please check VNFD for correct Connection "
+    message = _("Specified CP %(cp_id)s could not be found in MEAD "
+                "%(mead_name)s. Please check MEAD for correct Connection "
                 "Point.")
 
 
 class VnffgdCpNoForwardingException(exceptions.ApmecException):
-    message = _("Specified CP %(cp_id)s in VNFD %(mead_name)s "
+    message = _("Specified CP %(cp_id)s in MEAD %(mead_name)s "
                 "does not have forwarding capability, which is required to be "
                 "included in forwarding path")
 
@@ -135,8 +135,8 @@ class VnffgCreateFailed(exceptions.ApmecException):
 
 
 class VnffgInvalidMappingException(exceptions.ApmecException):
-    message = _("Matching VNF Instance for VNFD %(mead_name)s could not be "
-                "found. Please create an instance of this VNFD before "
+    message = _("Matching VNF Instance for MEAD %(mead_name)s could not be "
+                "found. Please create an instance of this MEAD before "
                 "creating/updating VNFFG.")
 
 
@@ -204,11 +204,11 @@ class NfpPolicyTypeError(exceptions.PolicyCheckError):
 
 
 class NfpForwarderNotFoundException(exceptions.NotFound):
-    message = _('VNFD Forwarder %(mead)s not found in VNF Mapping %(mapping)s')
+    message = _('MEAD Forwarder %(mead)s not found in VNF Mapping %(mapping)s')
 
 
 class NfpRequirementsException(exceptions.ApmecException):
-    message = _('VNFD Forwarder %(mead)s specified more than twice in '
+    message = _('MEAD Forwarder %(mead)s specified more than twice in '
                 'requirements path')
 
 
