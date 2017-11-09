@@ -32,7 +32,7 @@ Creating the NSD
 ~~~~~~~~~~~~~~~~
 
 Once OpenStack along with Apmec has been successfully installed,
-deploy a sample VNFD templates using vnf1.yaml and vnf2.yaml as mentioned in
+deploy a sample VNFD templates using mea1.yaml and mea2.yaml as mentioned in
 reference section.
 
 ::

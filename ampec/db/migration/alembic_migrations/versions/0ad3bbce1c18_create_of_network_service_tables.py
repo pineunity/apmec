@@ -54,7 +54,7 @@ def upgrade(active_plugins=None, options=None):
         sa.Column('vim_id', sa.String(length=64), nullable=False),
         sa.Column('name', sa.String(length=255), nullable=False),
         sa.Column('description', sa.Text(), nullable=True),
-        sa.Column('vnf_ids', sa.TEXT(length=65535), nullable=True),
+        sa.Column('mea_ids', sa.TEXT(length=65535), nullable=True),
         sa.Column('mgmt_urls', sa.TEXT(length=65535), nullable=True),
         sa.Column('status', sa.String(length=64), nullable=False),
         sa.Column('error_reason', sa.Text(), nullable=True),

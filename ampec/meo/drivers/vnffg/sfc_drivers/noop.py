@@ -16,12 +16,12 @@
 from oslo_log import log as logging
 from oslo_utils import uuidutils
 from apmec.common import log
-from apmec.meo.drivers.vnffg import abstract_vnffg_driver
+from apmec.meo.drivers.NANY import abstract_NANY_driver
 
 LOG = logging.getLogger(__name__)
 
 
-class VNFFGNoop(abstract_vnffg_driver.VnffgAbstractDriver):
+class VNFFGNoop(abstract_NANY_driver.VnffgAbstractDriver):
 
     """Noop driver for VNFFG tests"""
 
@@ -39,13 +39,13 @@ class VNFFGNoop(abstract_vnffg_driver.VnffgAbstractDriver):
         return 'VNFFG Noop driver'
 
     @log.log
-    def create_chain(self, name, fc_id, vnfs, auth_attr=None):
+    def create_chain(self, name, fc_id, meas, auth_attr=None):
         instance_id = uuidutils.generate_uuid()
         self._instances.add(instance_id)
         return instance_id
 
     @log.log
-    def update_chain(self, chain_id, fc_ids, vnfs, auth_attr=None):
+    def update_chain(self, chain_id, fc_ids, meas, auth_attr=None):
         if chain_id not in self._instances:
             LOG.debug('Chain not found')
             raise ValueError('No chain instance %s' % chain_id)

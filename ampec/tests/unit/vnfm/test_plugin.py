@@ -37,7 +37,7 @@ class FakeDriverManager(mock.Mock):
             return uuidutils.generate_uuid()
 
         if 'get_resource_info' in args:
-            return {'resources': {'name': 'dummy_vnf',
+            return {'resources': {'name': 'dummy_mea',
                                   'type': 'dummy',
                                   'id': uuidutils.generate_uuid()}}
 
@@ -62,8 +62,8 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._mock_vim_client()
         self._stub_get_vim()
         self._mock_device_manager()
-        self._mock_vnf_monitor()
-        self._mock_vnf_alarm_monitor()
+        self._mock_mea_monitor()
+        self._mock_mea_alarm_monitor()
         self._mock_green_pool()
         self._insert_dummy_vim()
         self.mem_plugin = plugin.VNFMPlugin()
@@ -104,19 +104,19 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._mock(
             'eventlet.GreenPool', fake_green_pool)
 
-    def _mock_vnf_monitor(self):
-        self._vnf_monitor = mock.Mock(wraps=FakeVNFMonitor())
-        fake_vnf_monitor = mock.Mock()
-        fake_vnf_monitor.return_value = self._vnf_monitor
+    def _mock_mea_monitor(self):
+        self._mea_monitor = mock.Mock(wraps=FakeVNFMonitor())
+        fake_mea_monitor = mock.Mock()
+        fake_mea_monitor.return_value = self._mea_monitor
         self._mock(
-            'apmec.mem.monitor.VNFMonitor', fake_vnf_monitor)
+            'apmec.mem.monitor.VNFMonitor', fake_mea_monitor)
 
-    def _mock_vnf_alarm_monitor(self):
-        self._vnf_alarm_monitor = mock.Mock(wraps=FakeVNFMonitor())
-        fake_vnf_alarm_monitor = mock.Mock()
-        fake_vnf_alarm_monitor.return_value = self._vnf_alarm_monitor
+    def _mock_mea_alarm_monitor(self):
+        self._mea_alarm_monitor = mock.Mock(wraps=FakeVNFMonitor())
+        fake_mea_alarm_monitor = mock.Mock()
+        fake_mea_alarm_monitor.return_value = self._mea_alarm_monitor
         self._mock(
-            'apmec.mem.monitor.VNFAlarmMonitor', fake_vnf_alarm_monitor)
+            'apmec.mem.monitor.VNFAlarmMonitor', fake_mea_alarm_monitor)
 
     def _insert_dummy_device_template(self):
         session = self.context.session
@@ -136,7 +136,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         device_template = mem_db.VNFD(
             id='d58bcc4e-d0cf-11e6-bf26-cec0c932ce01',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
-            name='tmpl-koeak4tqgoqo8cr4-dummy_inline_vnf',
+            name='tmpl-koeak4tqgoqo8cr4-dummy_inline_mea',
             description='inline_fake_template_description',
             deleted_at=datetime.min,
             template_source='inline')
@@ -172,17 +172,17 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         session.flush()
         return device_db
 
-    def _insert_scaling_attributes_vnf(self):
+    def _insert_scaling_attributes_mea(self):
         session = self.context.session
-        vnf_attributes = mem_db.VNFAttribute(
+        mea_attributes = mem_db.VNFAttribute(
             id='7800cb81-7ed1-4cf6-8387-746468522651',
-            vnf_id='6261579e-d6f3-49ad-8bc3-a9cb974778fe',
+            mea_id='6261579e-d6f3-49ad-8bc3-a9cb974778fe',
             key='scaling_group_names',
             value='{"SP1": "G1"}'
         )
-        session.add(vnf_attributes)
+        session.add(mea_attributes)
         session.flush()
-        return vnf_attributes
+        return mea_attributes
 
     def _insert_scaling_attributes_mead(self):
         session = self.context.session
@@ -255,10 +255,10 @@ class TestVNFMPlugin(db_base.SqlTestCase):
                           self.mem_plugin.create_mead,
                           self.context, mead_obj)
 
-    def test_create_vnf_with_mead(self):
+    def test_create_mea_with_mead(self):
         self._insert_dummy_device_template()
-        vnf_obj = utils.get_dummy_vnf_obj()
-        result = self.mem_plugin.create_vnf(self.context, vnf_obj)
+        mea_obj = utils.get_dummy_mea_obj()
+        result = self.mem_plugin.create_mea(self.context, mea_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('instance_id', result)
@@ -271,7 +271,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
                                                        'create',
                                                        plugin=mock.ANY,
                                                        context=mock.ANY,
-                                                       vnf=mock.ANY,
+                                                       mea=mock.ANY,
                                                        auth_attr=mock.ANY)
         self._pool.spawn_n.assert_called_once_with(mock.ANY)
         self._cos_db_plugin.create_event.assert_called_with(
@@ -280,12 +280,12 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             tstamp=mock.ANY, details=mock.ANY)
 
     @mock.patch('apmec.mem.plugin.VNFMPlugin.create_mead')
-    def test_create_vnf_from_template(self, mock_create_mead):
+    def test_create_mea_from_template(self, mock_create_mead):
         self._insert_dummy_device_template_inline()
         mock_create_mead.return_value = {'id':
                 'd58bcc4e-d0cf-11e6-bf26-cec0c932ce01'}
-        vnf_obj = utils.get_dummy_inline_vnf_obj()
-        result = self.mem_plugin.create_vnf(self.context, vnf_obj)
+        mea_obj = utils.get_dummy_inline_mea_obj()
+        result = self.mem_plugin.create_mea(self.context, mea_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('instance_id', result)
@@ -299,7 +299,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
                                                        'create',
                                                        plugin=mock.ANY,
                                                        context=mock.ANY,
-                                                       vnf=mock.ANY,
+                                                       mea=mock.ANY,
                                                        auth_attr=mock.ANY)
         self._pool.spawn_n.assert_called_once_with(mock.ANY)
         self._cos_db_plugin.create_event.assert_called_with(
@@ -308,34 +308,34 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
             tstamp=mock.ANY, details=mock.ANY)
 
-    def test_show_vnf_details_vnf_inactive(self):
+    def test_show_mea_details_mea_inactive(self):
         self._insert_dummy_device_template()
-        vnf_obj = utils.get_dummy_vnf_obj()
-        result = self.mem_plugin.create_vnf(self.context, vnf_obj)
-        self.assertRaises(mem.VNFInactive, self.mem_plugin.get_vnf_resources,
+        mea_obj = utils.get_dummy_mea_obj()
+        result = self.mem_plugin.create_mea(self.context, mea_obj)
+        self.assertRaises(mem.VNFInactive, self.mem_plugin.get_mea_resources,
                           self.context, result['id'])
 
-    def test_show_vnf_details_vnf_active(self):
+    def test_show_mea_details_mea_active(self):
         self._insert_dummy_device_template()
-        active_vnf = self._insert_dummy_device()
-        resources = self.mem_plugin.get_vnf_resources(self.context,
-                                                       active_vnf['id'])[0]
+        active_mea = self._insert_dummy_device()
+        resources = self.mem_plugin.get_mea_resources(self.context,
+                                                       active_mea['id'])[0]
         self.assertIn('name', resources)
         self.assertIn('type', resources)
         self.assertIn('id', resources)
 
-    def test_delete_vnf(self):
+    def test_delete_mea(self):
         self._insert_dummy_device_template()
         dummy_device_obj = self._insert_dummy_device()
-        self.mem_plugin.delete_vnf(self.context, dummy_device_obj[
+        self.mem_plugin.delete_mea(self.context, dummy_device_obj[
             'id'])
         self._device_manager.invoke.assert_called_with('test_vim', 'delete',
                                                        plugin=mock.ANY,
                                                        context=mock.ANY,
-                                                       vnf_id=mock.ANY,
+                                                       mea_id=mock.ANY,
                                                        auth_attr=mock.ANY,
                                                        region_name=mock.ANY)
-        self._vnf_monitor.delete_hosting_vnf.assert_called_with(mock.ANY)
+        self._mea_monitor.delete_hosting_mea.assert_called_with(mock.ANY)
         self._pool.spawn_n.assert_called_once_with(mock.ANY, mock.ANY,
                                                    mock.ANY, mock.ANY,
                                                    mock.ANY)
@@ -344,12 +344,12 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
             tstamp=mock.ANY, details=mock.ANY)
 
-    def test_update_vnf(self):
+    def test_update_mea(self):
         self._insert_dummy_device_template()
         dummy_device_obj = self._insert_dummy_device()
-        vnf_config_obj = utils.get_dummy_vnf_config_obj()
-        result = self.mem_plugin.update_vnf(self.context, dummy_device_obj[
-            'id'], vnf_config_obj)
+        mea_config_obj = utils.get_dummy_mea_config_obj()
+        result = self.mem_plugin.update_mea(self.context, dummy_device_obj[
+            'id'], mea_config_obj)
         self.assertIsNotNone(result)
         self.assertEqual(dummy_device_obj['id'], result['id'])
         self.assertIn('instance_id', result)
@@ -366,27 +366,27 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             tstamp=mock.ANY)
 
     def _get_dummy_scaling_policy(self, type):
-        vnf_scale = {}
-        vnf_scale['scale'] = {}
-        vnf_scale['scale']['type'] = type
-        vnf_scale['scale']['policy'] = 'SP1'
-        return vnf_scale
+        mea_scale = {}
+        mea_scale['scale'] = {}
+        mea_scale['scale']['type'] = type
+        mea_scale['scale']['policy'] = 'SP1'
+        return mea_scale
 
-    def _test_scale_vnf(self, type, scale_state):
+    def _test_scale_mea(self, type, scale_state):
         # create mead
         self._insert_dummy_device_template()
         self._insert_scaling_attributes_mead()
 
-        # create vnf
+        # create mea
         dummy_device_obj = self._insert_dummy_device()
-        self._insert_scaling_attributes_vnf()
+        self._insert_scaling_attributes_mea()
 
-        # scale vnf
-        vnf_scale = self._get_dummy_scaling_policy(type)
-        self.mem_plugin.create_vnf_scale(
+        # scale mea
+        mea_scale = self._get_dummy_scaling_policy(type)
+        self.mem_plugin.create_mea_scale(
             self.context,
             dummy_device_obj['id'],
-            vnf_scale)
+            mea_scale)
 
         # validate
         self._device_manager.invoke.assert_called_once_with(
@@ -409,22 +409,22 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             res_type=constants.RES_TYPE_VNF,
             tstamp=mock.ANY)
 
-    def test_scale_vnf_out(self):
-        self._test_scale_vnf('out', constants.PENDING_SCALE_OUT)
+    def test_scale_mea_out(self):
+        self._test_scale_mea('out', constants.PENDING_SCALE_OUT)
 
-    def test_scale_vnf_in(self):
-        self._test_scale_vnf('in', constants.PENDING_SCALE_IN)
+    def test_scale_mea_in(self):
+        self._test_scale_mea('in', constants.PENDING_SCALE_IN)
 
-    def _get_dummy_active_vnf(self, mead_template):
-        dummy_vnf = utils.get_dummy_device_obj()
-        dummy_vnf['mead']['attributes']['mead'] = mead_template
-        dummy_vnf['status'] = 'ACTIVE'
-        dummy_vnf['instance_id'] = '4c00108e-c69d-4624-842d-389c77311c1d'
-        dummy_vnf['vim_id'] = '437ac8ef-a8fb-4b6e-8d8a-a5e86a376e8b'
-        return dummy_vnf
+    def _get_dummy_active_mea(self, mead_template):
+        dummy_mea = utils.get_dummy_device_obj()
+        dummy_mea['mead']['attributes']['mead'] = mead_template
+        dummy_mea['status'] = 'ACTIVE'
+        dummy_mea['instance_id'] = '4c00108e-c69d-4624-842d-389c77311c1d'
+        dummy_mea['vim_id'] = '437ac8ef-a8fb-4b6e-8d8a-a5e86a376e8b'
+        return dummy_mea
 
-    def _test_create_vnf_trigger(self, policy_name, action_value):
-        vnf_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
+    def _test_create_mea_trigger(self, policy_name, action_value):
+        mea_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
         trigger_request = {"trigger": {"action_name": action_value, "params": {
             "credential": "026kll6n", "data": {"current": "alarm",
                                                'alarm_id':
@@ -434,41 +434,41 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             "credential": "026kll6n", "data": {"current": "alarm",
             "alarm_id": "b7fa9ffd-0a4f-4165-954b-5a8d0672a35f"}},
             "policy_name": policy_name}
-        self._vnf_alarm_monitor.process_alarm_for_vnf.return_value = True
-        trigger_result = self.mem_plugin.create_vnf_trigger(
-            self.context, vnf_id, trigger_request)
+        self._mea_alarm_monitor.process_alarm_for_mea.return_value = True
+        trigger_result = self.mem_plugin.create_mea_trigger(
+            self.context, mea_id, trigger_request)
         self.assertEqual(expected_result, trigger_result)
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
-    def test_create_vnf_trigger_respawn(self, mock_get_vnf):
-        dummy_vnf = self._get_dummy_active_vnf(
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    def test_create_mea_trigger_respawn(self, mock_get_mea):
+        dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_respawn_tosca_template)
-        mock_get_vnf.return_value = dummy_vnf
-        self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_respawning",
+        mock_get_mea.return_value = dummy_mea
+        self._test_create_mea_trigger(policy_name="vdu_hcpu_usage_respawning",
                                       action_value="respawn")
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
-    def test_create_vnf_trigger_scale(self, mock_get_vnf):
-        dummy_vnf = self._get_dummy_active_vnf(
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    def test_create_mea_trigger_scale(self, mock_get_mea):
+        dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_scale_tosca_template)
-        mock_get_vnf.return_value = dummy_vnf
-        self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_scaling_out",
+        mock_get_mea.return_value = dummy_mea
+        self._test_create_mea_trigger(policy_name="vdu_hcpu_usage_scaling_out",
                                       action_value="SP1-out")
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
-    def test_create_vnf_trigger_multi_actions(self, mock_get_vnf):
-        dummy_vnf = self._get_dummy_active_vnf(
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    def test_create_mea_trigger_multi_actions(self, mock_get_mea):
+        dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_multi_actions_tosca_template)
-        mock_get_vnf.return_value = dummy_vnf
-        self._test_create_vnf_trigger(policy_name="mon_policy_multi_actions",
+        mock_get_mea.return_value = dummy_mea
+        self._test_create_mea_trigger(policy_name="mon_policy_multi_actions",
                                       action_value="respawn&log")
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_vnf')
-    def test_get_vnf_policies(self, mock_get_vnf):
-        vnf_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
-        dummy_vnf = self._get_dummy_active_vnf(
+    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    def test_get_mea_policies(self, mock_get_mea):
+        mea_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
+        dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_respawn_tosca_template)
-        mock_get_vnf.return_value = dummy_vnf
-        policies = self.mem_plugin.get_vnf_policies(self.context, vnf_id,
+        mock_get_mea.return_value = dummy_mea
+        policies = self.mem_plugin.get_mea_policies(self.context, mea_id,
             filters={'name': 'vdu1_cpu_usage_monitoring_policy'})
         self.assertEqual(1, len(policies))

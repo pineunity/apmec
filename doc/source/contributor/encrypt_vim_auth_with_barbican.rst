@@ -107,13 +107,13 @@ We can found that the **key_type** in auth_cred is **barbican_key**,
 the **secret_uuid** exists with masked value, and the fernet key is
 saved in barbican as a secret.
 
-Now we create a vnf to verify it works:
+Now we create a mea to verify it works:
 
 .. code-block:: bash
 
-   $ apmec vnf-create --mead-template mead-sample.yaml \
-     --vim-name vim-test --vim-region-name RegionOne vnf-test
-   Created a new vnf:
+   $ apmec mea-create --mead-template mead-sample.yaml \
+     --vim-name vim-test --vim-region-name RegionOne mea-test
+   Created a new mea:
    +----------------+-------------------------------------------------------+
    | Field          | Value                                                 |
    +----------------+-------------------------------------------------------+
@@ -123,7 +123,7 @@ Now we create a vnf to verify it works:
    | id             | 71d3eef7-6b53-4495-b210-78786cb28ba4                  |
    | instance_id    | 08d0ce6f-69bc-4ff0-87b0-52686a01ce3e                  |
    | mgmt_url       |                                                       |
-   | name           | vnf-test                                              |
+   | name           | mea-test                                              |
    | placement_attr | {"region_name": "RegionOne", "vim_name": "vim-test"}  |
    | status         | PENDING_CREATE                                        |
    | tenant_id      | 28a525feaf5e4d05b4ab9f7090837964                      |
@@ -132,9 +132,9 @@ Now we create a vnf to verify it works:
    | mead_id        | dc68ccfd-fd7c-4ef6-8fed-f097d036c722                  |
    +----------------+-------------------------------------------------------+
 
-   $ apmec vnf-delete vnf-test
+   $ apmec mea-delete mea-test
 
-We can found that vnf create successfully.
+We can found that mea create successfully.
 
 Now we delete the vim to verify the secret can be deleted.
 

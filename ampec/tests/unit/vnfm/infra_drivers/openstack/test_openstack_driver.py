@@ -29,7 +29,7 @@ class TestOpenStack(base.TestCase):
         openstack_driver = openstack.OpenStack()
         self.assertRaises(mem.VNFCreateWaitFailed,
                           openstack_driver.create_wait,
-                          None, None, {}, 'vnf_id', None)
+                          None, None, {}, 'mea_id', None)
 
     @mock.patch("apmec.mem.infra_drivers.openstack.heat_client.HeatClient")
     def test_delete_wait_with_heat_connection_exception(self, mocked_hc):
@@ -38,4 +38,4 @@ class TestOpenStack(base.TestCase):
         openstack_driver = openstack.OpenStack()
         self.assertRaises(mem.VNFDeleteWaitFailed,
                           openstack_driver.delete_wait,
-                          None, None, 'vnf_id', None, None)
+                          None, None, 'mea_id', None, None)

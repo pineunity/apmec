@@ -14,7 +14,7 @@ topology_template:
         mgmt_driver: noop
         availability_zone: nova
         flavor: m1.tiny
-        metadata: {metering.vnf: SG1}
+        metadata: {metering.mea: SG1}
 
     CP1:
       type: tosca.nodes.nfv.CP.Apmec

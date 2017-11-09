@@ -16,15 +16,15 @@ resources:
     properties:
       network: existing_network_1
       port_security_enabled: false
-  firewall_vnfc_create_config:
+  firewall_meac_create_config:
     type: OS::Heat::SoftwareConfig
     properties:
       config: 'echo "Test case for Apmec";'
       group: script
-  firewall_vnfc_create_deploy:
+  firewall_meac_create_deploy:
     type: OS::Heat::SoftwareDeployment
     properties:
-      config: {get_resource: firewall_vnfc_create_config}
+      config: {get_resource: firewall_meac_create_config}
       server: {get_resource: VDU1}
     depends_on:
       - VDU1

@@ -8,7 +8,7 @@
       "created_at": "2017-01-30 07:10:29.809127",
       "updated_at": null,
       "attributes": {
-        "nsd": "imports: [vnf1, vnf2]\ntopology_template:\n  inputs:\n    vl1_name: {default: net_mgmt, description: name of VL1 virtuallink, type: string}\n    vl2_name: {default: net0, description: name of VL2 virtuallink, type: string}\n  node_templates:\n    VL1:\n      properties:\n        network_name: {get_input: vl1_name}\n        vendor: apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      properties:\n        network_name: {get_input: vl2_name}\n        vendor: apmec\n      type: tosca.nodes.nfv.VL\n    VNF1:\n      requirements:\n      - {virtualLink1: VL1}\n      - {virtualLink2: VL2}\n      type: tosca.nodes.nfv.VNF1\ntosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n"
+        "nsd": "imports: [mea1, mea2]\ntopology_template:\n  inputs:\n    vl1_name: {default: net_mgmt, description: name of VL1 virtuallink, type: string}\n    vl2_name: {default: net0, description: name of VL2 virtuallink, type: string}\n  node_templates:\n    VL1:\n      properties:\n        network_name: {get_input: vl1_name}\n        vendor: apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      properties:\n        network_name: {get_input: vl2_name}\n        vendor: apmec\n      type: tosca.nodes.nfv.VL\n    VNF1:\n      requirements:\n      - {virtualLink1: VL1}\n      - {virtualLink2: VL2}\n      type: tosca.nodes.nfv.VNF1\ntosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n"
       },
     }
   ]

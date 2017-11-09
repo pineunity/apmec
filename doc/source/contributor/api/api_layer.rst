@@ -36,7 +36,7 @@ The api-paste.ini file defines the WSGI applications and routes - using the
 
 The INI file directs paste to instantiate the `APIRouter`_ class of
 Apmec, which contains several methods that map VNFM resources (such as
-mead, vnf) to URLs, and the controller for each resource.
+mead, mea) to URLs, and the controller for each resource.
 
 
 .. _config.py: http://git.openstack.org/cgit/openstack/apmec/tree/apmec/common/config.py

@@ -47,9 +47,9 @@ class MEAMonitorHTTPPing(abstract_driver.MEAMonitorAbstractDriver):
     def get_description(self):
         return 'Apmec HTTP Ping Driver for MEA'
 
-    def monitor_url(self, plugin, context, vnf):
-        LOG.debug('monitor_url %s', vnf)
-        return vnf.get('monitor_url', '')
+    def monitor_url(self, plugin, context, mea):
+        LOG.debug('monitor_url %s', mea)
+        return mea.get('monitor_url', '')
 
     def _is_pingable(self, mgmt_ip='', retry=5, timeout=5, port=80, **kwargs):
         """Checks whether the server is reachable by using urllib.
@@ -73,7 +73,7 @@ class MEAMonitorHTTPPing(abstract_driver.MEAMonitorAbstractDriver):
         return 'failure'
 
     @log.log
-    def monitor_call(self, vnf, kwargs):
+    def monitor_call(self, mea, kwargs):
         if not kwargs['mgmt_ip']:
             return
 

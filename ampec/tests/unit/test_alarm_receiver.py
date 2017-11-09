@@ -24,30 +24,30 @@ class TestAlarmReceiver(base.TestCase):
     def setUp(self):
         '''url:
 
-        http://apmec:9890/v1.0/vnfs/vnf-uuid/mon-policy-name/
+        http://apmec:9890/v1.0/meas/mea-uuid/mon-policy-name/
         action-name/8ef785
         '''
         super(TestAlarmReceiver, self).setUp()
         self.alarmrc = AlarmReceiver(None)
         self.alarm_url = {
             '00_base': 'http://apmec:9890/v1.0',
-            '01_url_base': '/vnfs/vnf-uuid/',
-            '02_vnf_id': 'vnf-uuid',
+            '01_url_base': '/meas/mea-uuid/',
+            '02_mea_id': 'mea-uuid',
             '03_monitoring_policy_name': 'mon-policy-name',
             '04_action_name': 'action-name',
             '05_key': 'KEY'
         }
-        self.vnf_id = 'vnf-uuid'
+        self.mea_id = 'mea-uuid'
         self.ordered_url = self._generate_alarm_url()
 
     def _generate_alarm_url(self):
-        return 'http://apmec:9890/v1.0/vnfs/vnf-uuid/mon-policy-name/'\
+        return 'http://apmec:9890/v1.0/meas/mea-uuid/mon-policy-name/'\
                'action-name/8ef785'
 
     def test_handle_url(self):
         prefix_url, p, params = self.alarmrc.handle_url(self.ordered_url)
         self.assertEqual(self.alarm_url['01_url_base'], prefix_url)
-        self.assertEqual(self.alarm_url['02_vnf_id'], p[3])
+        self.assertEqual(self.alarm_url['02_mea_id'], p[3])
         self.assertEqual(self.alarm_url['03_monitoring_policy_name'], p[4])
         self.assertEqual(self.alarm_url['04_action_name'], p[5])
 

@@ -60,7 +60,7 @@ Response Parameters
   - status: ns_status
   - id: ns_id
   - nsd_id: nsd_id
-  - vnf_ids: vnf_ids
+  - mea_ids: mea_ids
   - tenant_id: tenant_id
   - created_at: ns_created_at
   - updated_at: ns_updated_at
@@ -105,7 +105,7 @@ Response Parameters
   - status: ns_status
   - id: ns_id
   - nsd_id: nsd_id
-  - vnf_ids: vnf_ids
+  - mea_ids: mea_ids
   - tenant_id: tenant_id
   - created_at: ns_created_at
   - updated_at: ns_updated_at
@@ -158,7 +158,7 @@ Response Parameters
   - status: ns_status
   - id: ns_id
   - nsd_id: nsd_id
-  - vnf_ids: vnf_ids
+  - mea_ids: mea_ids
   - tenant_id: tenant_id
   - created_at: ns_created_at
   - updated_at: ns_updated_at

@@ -305,8 +305,8 @@ msgstr ""
 "comprueba el estado del servicio %(service)s."
 
 #, python-format
-msgid "Creating VNFFG based on %(vnffgd_id)s failed"
-msgstr "Creación de VNFFG basado en %(vnffgd_id)s falló"
+msgid "Creating VNFFG based on %(NANYD_id)s failed"
+msgstr "Creación de VNFFG basado en %(NANYD_id)s falló"
 
 #, python-format
 msgid "Creation failed. %(dev_name)s already exists."
@@ -331,8 +331,8 @@ msgid "Default VIM is not defined."
 msgstr "VIM por defecto no definido."
 
 #, python-format
-msgid "Deleting VNFFG %(vnffg_id)s failed"
-msgstr "Borrado de VNFFG %(vnffg_id)s falló"
+msgid "Deleting VNFFG %(NANY_id)s failed"
+msgstr "Borrado de VNFFG %(NANY_id)s falló"
 
 #, python-format
 msgid "Duplicate IP address '%s'"
@@ -462,7 +462,7 @@ msgstr ""
 msgid "HTTP port number to send request"
 msgstr "Numero de puerto HTTP para enviar petición"
 
-msgid "Hosting vnf drivers apmec plugin will use"
+msgid "Hosting mea drivers apmec plugin will use"
 msgstr "Drivers VNF de hospedaje que plugin de apmec va a usar"
 
 msgid "How long to preserve deleted data,defaults to 90"
@@ -512,8 +512,8 @@ msgid "Invalid VNFFG template input: %(template)s"
 msgstr "Plantilla VNFFG insertada no valida: %(template)s"
 
 #, python-format
-msgid "Invalid alarm url for VNF %(vnf_id)s"
-msgstr "Url de alarma invalida para VNF %(vnf_id)s"
+msgid "Invalid alarm url for VNF %(mea_id)s"
+msgstr "Url de alarma invalida para VNF %(mea_id)s"
 
 #, python-format
 msgid "Invalid auth_type was specified, auth_type: %(type)s"
@@ -735,8 +735,8 @@ msgid "Plugin '%s' not found."
 msgstr "No se ha encontrado el plugin '%s'."
 
 #, python-format
-msgid "Policy %(policy)s does not exist for VNF %(vnf_id)s"
-msgstr "Regla %(policy)s no existe para VNF %(vnf_id)s"
+msgid "Policy %(policy)s does not exist for VNF %(mea_id)s"
+msgstr "Regla %(policy)s no existe para VNF %(mea_id)s"
 
 msgid "Policy configuration policy.json could not be found"
 msgstr "No se ha podido encontrar el policy.json de configuración de política"
@@ -772,7 +772,7 @@ msgid "Resource body required"
 msgstr "Se necesita cuerpo de recurso"
 
 msgid ""
-"Resource cleanup for vnf is not completed within {wait} seconds as deletion "
+"Resource cleanup for mea is not completed within {wait} seconds as deletion "
 "of Stack {stack} is not completed"
 msgstr ""
 "Eliminado de recursos no ha sido completado en {wait} segundos como "
@@ -803,10 +803,10 @@ msgstr "SFC %(sfc_id)s sigue en uso"
 
 #, python-format
 msgid ""
-"Scaling Policy actionskipped due to status:%(status)s for vnf: %(vnfid)s"
+"Scaling Policy actionskipped due to status:%(status)s for mea: %(meaid)s"
 msgstr ""
-"Acciones de Scaling Policy no ejecutadas debido a estado: %(status)s de vnf: "
-"%(vnfid)s"
+"Acciones de Scaling Policy no ejecutadas debido a estado: %(status)s de mea: "
+"%(meaid)s"
 
 msgid "Seconds between running components report states"
 msgstr "Segundos para reportar estado de componentes ejecutándose"
@@ -826,8 +826,8 @@ msgstr ""
 "servidor. No soportado en OS X."
 
 #, python-format
-msgid "Specified CP %(cp_id)s could not be found in VNF %(vnf_id)s."
-msgstr "CP especificado %(cp_id)s no ha sido encontrado en VNF %(vnf_id)s."
+msgid "Specified CP %(cp_id)s could not be found in VNF %(mea_id)s."
+msgstr "CP especificado %(cp_id)s no ha sido encontrado en VNF %(mea_id)s."
 
 #, python-format
 msgid ""
@@ -861,9 +861,9 @@ msgstr ""
 "VIM id valido"
 
 #, python-format
-msgid "Specified VNF instance %(vnf_name)s in VNF Mapping could not be found"
+msgid "Specified VNF instance %(mea_name)s in VNF Mapping could not be found"
 msgstr ""
-"Instancia VNF %(vnf_name)s especificada en VNF Mapping no ha sido encontrada"
+"Instancia VNF %(mea_name)s especificada en VNF Mapping no ha sido encontrada"
 
 #, python-format
 msgid ""
@@ -978,8 +978,8 @@ msgid "Timeline branches unable to generate timeline"
 msgstr "Las ramas de la línea de tiempo no pueden generar la línea de tiempo"
 
 #, python-format
-msgid "Trigger %(trigger_name)s does not exist for VNF %(vnf_id)s"
-msgstr "Disparador %(trigger_name)s no existe para VNF %(vnf_id)s"
+msgid "Trigger %(trigger_name)s does not exist for VNF %(mea_id)s"
+msgstr "Disparador %(trigger_name)s no existe para VNF %(mea_id)s"
 
 msgid "URL to database"
 msgstr "URL en base de datos"
@@ -1088,24 +1088,24 @@ msgid "VIM driver for launching VNFs"
 msgstr "Driver VIM para ejecutar VNFs"
 
 #, python-format
-msgid "VIM from VNF %(vnf_id)s could not be found"
-msgstr "VIM de VNF %(vnf_id)s no ha sido encontrado"
+msgid "VIM from VNF %(mea_id)s could not be found"
+msgstr "VIM de VNF %(mea_id)s no ha sido encontrado"
 
 #, python-format
 msgid "VIM type %(vim_name)s is not supported as an infra driver "
 msgstr "Tipo de VIM %(vim_name)s no soportado como driver de infra"
 
 #, python-format
-msgid "VNF %(vnf_id)s could not be found"
-msgstr "VNF %(vnf_id)s no ha sido encontrado"
+msgid "VNF %(mea_id)s could not be found"
+msgstr "VNF %(mea_id)s no ha sido encontrado"
 
 #, python-format
-msgid "VNF %(vnf_id)s is not in Active state %(message)s"
-msgstr "VNF %(vnf_id)s no está en estado Activo %(message)s"
+msgid "VNF %(mea_id)s is not in Active state %(message)s"
+msgstr "VNF %(mea_id)s no está en estado Activo %(message)s"
 
 #, python-format
-msgid "VNF %(vnf_id)s is still in use"
-msgstr "VNF %(vnf_id)s sigue en uso"
+msgid "VNF %(mea_id)s is still in use"
+msgstr "VNF %(mea_id)s sigue en uso"
 
 msgid "VNF configuration failed"
 msgstr "Fallo la configuración de VNF"
@@ -1135,24 +1135,24 @@ msgid "VNFD Forwarder %(mead)s not found in VNF Mapping %(mapping)s"
 msgstr "VNFD Forwarder %(mead)s no encontrado en VNF Mapping %(mapping)s"
 
 #, python-format
-msgid "VNFFG %(vnffg_id)s could not be found"
-msgstr "VNFFG %(vnffg_id)s no ha sido encontrado"
+msgid "VNFFG %(NANY_id)s could not be found"
+msgstr "VNFFG %(NANY_id)s no ha sido encontrado"
 
 #, python-format
-msgid "VNFFG %(vnffg_id)s is still in use"
-msgstr "VNFFG %(vnffg_id)s sigue en uso"
+msgid "VNFFG %(NANY_id)s is still in use"
+msgstr "VNFFG %(NANY_id)s sigue en uso"
 
 #, python-format
-msgid "VNFFG Property %(vnffg_property)s could not be found"
-msgstr "Propiedad %(vnffg_property)s de VNFFG no ha sido encontrada"
+msgid "VNFFG Property %(NANY_property)s could not be found"
+msgstr "Propiedad %(NANY_property)s de VNFFG no ha sido encontrada"
 
 #, python-format
-msgid "VNFFG Template %(vnffgd_id)s could not be found"
-msgstr "Plantilla VNFFG %(vnffgd_id)s no ha sido encontrada"
+msgid "VNFFG Template %(NANYD_id)s could not be found"
+msgstr "Plantilla VNFFG %(NANYD_id)s no ha sido encontrada"
 
 #, python-format
-msgid "VNFFGD %(vnffgd_id)s is still in use"
-msgstr "VNFFGD %(vnffgd_id)s sigue en uso"
+msgid "VNFFGD %(NANYD_id)s is still in use"
+msgstr "VNFFGD %(NANYD_id)s sigue en uso"
 
 msgid "VXLAN Network unsupported."
 msgstr "Red VXLAN no soportada."
@@ -1285,8 +1285,8 @@ msgstr "Nombre de usuario para conectarse en openwrt"
 msgid "user_data and/or user_data_format not provided"
 msgstr "user_data y/o user_data_format no proporcionado"
 
-msgid "vnf {vnf_id} deletion is not completed. {stack_status}"
-msgstr "Eliminado de vnf {vnf_id} no ha sido completado. {stack_status}"
+msgid "mea {mea_id} deletion is not completed. {stack_status}"
+msgstr "Eliminado de mea {mea_id} no ha sido completado. {stack_status}"
 
 msgid ""
 "when signal occurred within cool down window, no events generated from heat, "

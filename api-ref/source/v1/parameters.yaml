@@ -49,7 +49,7 @@ vim_id_path:
   in: path
   required: true
   type: string
-vnf_id_path:
+mea_id_path:
   description: |
     The UUID of the VNF.
   in: path
@@ -61,13 +61,13 @@ mead_id_path:
   in: path
   required: true
   type: string
-vnffg_id_path:
+NANY_id_path:
   description: |
     The UUID of the VNFFG.
   in: path
   required: true
   type: string
-vnffgd_id_path:
+NANYD_id_path:
   description: |
     The UUID of the VNFFGD.
   in: path
@@ -601,45 +601,45 @@ vims:
   in: body
   required: true
   type: array
-vnf:
+mea:
   description: |
-    A ``vnf`` object.
+    A ``mea`` object.
   in: body
   required: true
   type: object
-vnf_attributes:
+mea_attributes:
   description: |
     VNF attributes object. This object can contain ``config``,
     ``param_values``, ``monitoring_policy``, and ``heat_template``.
   in: body
   required: true
   type: object
-vnf_attributes_opt:
+mea_attributes_opt:
   description: |
     VNF attributes object. This object can contain ``config`` and
     ``param_values``.
   in: body
   required: false
   type: object
-vnf_attributes_put:
+mea_attributes_put:
   description: |
     VNF attributes object. This object can contain ``config`` object.
   in: body
   required: false
   type: object
-vnf_config:
+mea_config:
   description: |
     VNF configuration object.
   in: body
   required: true
   type: string
-vnf_config_opt:
+mea_config_opt:
   description: |
     VNF configuration object.
   in: body
   required: false
   type: object
-vnf_created_at:
+mea_created_at:
   description: |
     The date and time when the VNF was created.
     The format is ``YYYY-MM-DD hh:mm:ss.ssssss``.
@@ -647,31 +647,31 @@ vnf_created_at:
   in: body
   required: true
   type: string
-vnf_error_reason:
+mea_error_reason:
   description: |
     Reason for VNF error, if any.
   in: body
   required: true
   type: string
-vnf_heat_template:
+mea_heat_template:
   description: |
     Heat template which is translated from the VNFD template.
   in: body
   required: true
   type: string
-vnf_id:
+mea_id:
   description: |
     The UUID of the VNF.
   in: body
   required: true
   type: string
-vnf_ids:
+mea_ids:
   description: |
-    A list of ``vnf_id`` objects.
+    A list of ``mea_id`` objects.
   in: body
   required: true
   type: array
-vnf_instance_id:
+mea_instance_id:
   description: |
     A UUID information to uniquely identify the instance of VNF.
     This instance is equivalent to a Heat stack when using
@@ -679,36 +679,36 @@ vnf_instance_id:
   in: body
   required: true
   type: string
-vnf_mapping:
+mea_mapping:
   description: |
-    A ``vnf_mapping`` object which contains mappings from VNFD name
+    A ``mea_mapping`` object which contains mappings from VNFD name
     to VNF instance ID.
   in: body
   required: true
   type: object
-vnf_mapping_opt:
+mea_mapping_opt:
   description: |
-    A ``vnf_mapping`` object which contains mappings from VNFD name
+    A ``mea_mapping`` object which contains mappings from VNFD name
     to VNF instance ID. This is used to declare which exact VNF
     instance to be used for each VNFD in the Forwarding Path definition.
-    If no vnf mappings are provided, then Apmec attempts to search
+    If no mea mappings are provided, then Apmec attempts to search
     for VNF instance derived from each VNFDs.
   in: body
   required: false
   type: object
-vnf_mgmt_url:
+mea_mgmt_url:
   description: |
     Management URL information for the VNF.
   in: body
   required: true
   type: string
-vnf_monitoring_policy:
+mea_monitoring_policy:
   description: |
     Monitoring policy which is derived from the VNFD template.
   in: body
   required: true
   type: string
-vnf_param_values:
+mea_param_values:
   description: |
     VNF parameter object. These parameters will be substituted for VNF
     if the VNFD template is appropriately parameterized.
@@ -718,7 +718,7 @@ vnf_param_values:
   in: body
   required: true
   type: string
-vnf_param_values_opt:
+mea_param_values_opt:
   description: |
     VNF parameter object. These parameters will be substituted for VNF
     if the VNFD template is appropriately parameterized.
@@ -728,50 +728,50 @@ vnf_param_values_opt:
   in: body
   required: false
   type: object
-vnf_placement_attr:
+mea_placement_attr:
   description: |
     VNF placement information object. This object includes ``region_name``
     and ``vim_name``.
   in: body
   required: true
   type: object
-vnf_placement_attr_opt:
+mea_placement_attr_opt:
   description: |
     VNF placement information object. This object includes ``region_name``.
   in: body
   required: false
   type: object
-vnf_resource_id:
+mea_resource_id:
   description: |
     The UUID of the VNF resource. This is equivalent to Heat stack resource ID.
   in: body
   required: true
   type: string
-vnf_resource_name:
+mea_resource_name:
   description: |
     The name of the VNF resource. This is equivalent to Heat stack resource name.
   in: body
   required: true
   type: string
-vnf_resource_type:
+mea_resource_type:
   description: |
     The type of the VNF resource. This is equivalent to Heat stack resource type.
   in: body
   required: true
   type: string
-vnf_resources:
+mea_resources:
   description: |
     A list of VNF ``resource`` objects.
   in: body
   required: true
   type: array
-vnf_scale:
+mea_scale:
   description: |
     A VNF ``scale`` object, which contains ``policy`` and ``type``.
   in: body
   required: true
   type: object
-vnf_scale_policy:
+mea_scale_policy:
   description: |
     Scaling policy defined in VNFD template. For more information, see
     `VNFD scaling
@@ -779,19 +779,19 @@ vnf_scale_policy:
   in: body
   required: true
   type: string
-vnf_scale_type:
+mea_scale_type:
   description: |
     Scaling type, which is either ``in`` or ``out``.
   in: body
   required: true
   type: string
-vnf_status:
+mea_status:
   description: |
     Status of the VNF.
   in: body
   required: true
   type: string
-vnf_updated_at:
+mea_updated_at:
   description: |
     The date and time when the VNF was updated.
     The format is ``YYYY-MM-DD hh:mm:ss.ssssss``.
@@ -835,67 +835,67 @@ meads:
   in: body
   required: true
   type: array
-vnffg:
+NANY:
   description: |
-    A ``vnffg`` object.
+    A ``NANY`` object.
   in: body
   required: true
   type: object
-vnffg_forwarding_paths:
+NANY_forwarding_paths:
   description: |
     The UUID of the Network Forwarding Path (NFP) on which
     the VNFFG relies.
   in: body
   required: true
   type: string
-vnffg_id:
+NANY_id:
   description: |
     The UUID of the VNFFG.
   in: body
   required: true
   type: string
-vnffg_status:
+NANY_status:
   description: |
     Status of the VNFFG.
   in: body
   required: true
   type: string
-vnffgd:
+NANYD:
   description: |
-    A ``vnffgd`` object.
+    A ``NANYD`` object.
   in: body
   required: true
   type: object
-vnffgd_id:
+NANYD_id:
   description: |
     The UUID of the VNFFGD.
   in: body
   required: true
   type: string
-vnffgd_template:
+NANYD_template:
   description: |
     A template object which includes behavioral and deployment
     information of VNFFGs. For more information, see
     `VNFFG Descriptor Template Guide
-    <https://docs.openstack.org/apmec/latest/contributor/vnffgd_template_description.html>`_.
+    <https://docs.openstack.org/apmec/latest/contributor/NANYD_template_description.html>`_.
   in: body
   required: true
   type: object
-vnffgds:
+NANYDs:
   description: |
-    A list of ``vnffgd`` objects.
+    A list of ``NANYD`` objects.
   in: body
   required: true
   type: array
-vnffgs:
+NANYs:
   description: |
-    A list of ``vnffg`` objects.
+    A list of ``NANY`` objects.
   in: body
   required: true
   type: array
-vnfs:
+meas:
   description: |
-    A list of ``vnf`` objects.
+    A list of ``mea`` objects.
   in: body
   required: true
   type: array

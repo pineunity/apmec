@@ -2,30 +2,30 @@
 VNF Component in Apmec
 ========================
 
-This section will cover how to deploy `vnf component` in Apmec with the
+This section will cover how to deploy `mea component` in Apmec with the
 examples of how to write VNF descriptors.
 
 
-Sample TOSCA with vnfc
+Sample TOSCA with meac
 =======================
 
-The following example shows vnfc resource using TOSCA template.
-The target (VDU1) of the 'firewall_vnfc' in this example need to be
+The following example shows meac resource using TOSCA template.
+The target (VDU1) of the 'firewall_meac' in this example need to be
 described firstly like other TOSCA templates in Apmec.
 
 .. code-block:: yaml
 
      topology_template:
        node_templates:
-         firewall_vnfc:
+         firewall_meac:
            type: tosca.nodes.nfv.VNFC.Apmec
            requirements:
              - host: VDU1
            interfaces:
              Standard:
-               create: install_vnfc.sh
+               create: install_meac.sh
 
-Every vnfc node must be of type 'tosca.nodes.nfv.VNFC.Apmec'. It takes
+Every meac node must be of type 'tosca.nodes.nfv.VNFC.Apmec'. It takes
 two parameters:
 
 1) requirements: This node will accept list of hosts on which VNFC has to be
@@ -41,7 +41,7 @@ To make use of VNFC in Apmec, we have to upload the image to the glance in
 which heat-config and heat-config agents are installed. The installation steps
 can be referred `here <https://github.com/openstack/heat-templates/blob/master/
 hot/software-config/elements/README.rst>`_. The tool
-'tools/vnfc/build_image.sh' can be used to generate such a kind of image.
+'tools/meac/build_image.sh' can be used to generate such a kind of image.
 
 Currently VNFC feature works by using `heat software config <https://docs.openstack.org/heat/latest/
 template_guide/software_deployment.html#software-config-resources>`_  which
@@ -54,5 +54,5 @@ Known Limitations
 ~~~~~~~~~~~~~~~~~
 1) Only one VNFC is supported for one VDU. Multiple VNFC per VDU will
    be introduced in future.
-2) The shell script for vnfc has to be placed in the machine where apmec
+2) The shell script for meac has to be placed in the machine where apmec
    server is running.

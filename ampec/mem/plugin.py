@@ -65,46 +65,46 @@ class MEMMgmtMixin(object):
         self._mgmt_manager = driver_manager.DriverManager(
             'apmec.apmec.mgmt.drivers', cfg.CONF.apmec.mgmt_driver)
 
-    def _invoke(self, vnf_dict, **kwargs):
+    def _invoke(self, mea_dict, **kwargs):
         method = inspect.stack()[1][3]
         return self._mgmt_manager.invoke(
-            self._mgmt_driver_name(vnf_dict), method, **kwargs)
+            self._mgmt_driver_name(mea_dict), method, **kwargs)
 
-    def mgmt_create_pre(self, context, vnf_dict):
+    def mgmt_create_pre(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_create_post(self, context, vnf_dict):
+    def mgmt_create_post(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_update_pre(self, context, vnf_dict):
+    def mgmt_update_pre(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_update_post(self, context, vnf_dict):
+    def mgmt_update_post(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_delete_pre(self, context, vnf_dict):
+    def mgmt_delete_pre(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_delete_post(self, context, vnf_dict):
+    def mgmt_delete_post(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_get_config(self, context, vnf_dict):
+    def mgmt_get_config(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_url(self, context, vnf_dict):
+    def mgmt_url(self, context, mea_dict):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict)
+            mea_dict, plugin=self, context=context, mea=mea_dict)
 
-    def mgmt_call(self, context, vnf_dict, kwargs):
+    def mgmt_call(self, context, mea_dict, kwargs):
         return self._invoke(
-            vnf_dict, plugin=self, context=context, vnf=vnf_dict,
+            mea_dict, plugin=self, context=context, mea=mea_dict,
             kwargs=kwargs)
 
 
@@ -116,7 +116,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
     OPTS_INFRA_DRIVER = [
         cfg.ListOpt(
             'infra_driver', default=['noop', 'openstack'],
-            help=_('Hosting vnf drivers apmec plugin will use')),
+            help=_('Hosting mea drivers apmec plugin will use')),
     ]
     cfg.CONF.register_opts(OPTS_INFRA_DRIVER, 'apmec')
 
@@ -124,7 +124,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         cfg.ListOpt(
             'policy_action', default=['autoscaling', 'respawn',
                                       'log', 'log_and_kill'],
-            help=_('Hosting vnf drivers apmec plugin will use')),
+            help=_('Hosting mea drivers apmec plugin will use')),
     ]
     cfg.CONF.register_opts(OPTS_POLICY_ACTION, 'apmec')
 
@@ -135,14 +135,14 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         self._pool = eventlet.GreenPool()
         self.boot_wait = cfg.CONF.apmec.boot_wait
         self.vim_client = vim_client.VimClient()
-        self._vnf_manager = driver_manager.DriverManager(
+        self._mea_manager = driver_manager.DriverManager(
             'apmec.apmec.mem.drivers',
             cfg.CONF.apmec.infra_driver)
-        self._vnf_action = driver_manager.DriverManager(
+        self._mea_action = driver_manager.DriverManager(
             'apmec.apmec.policy.actions',
             cfg.CONF.apmec.policy_action)
-        self._vnf_monitor = monitor.MEMonitor(self.boot_wait)
-        self._vnf_alarm_monitor = monitor.VNFAlarmMonitor()
+        self._mea_monitor = monitor.MEMonitor(self.boot_wait)
+        self._mea_alarm_monitor = monitor.VNFAlarmMonitor()
 
     def spawn_n(self, function, *args, **kwargs):
         self._pool.spawn_n(function, *args, **kwargs)
@@ -153,7 +153,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         if isinstance(template, dict):
             # TODO(sripriya) remove this yaml dump once db supports storing
             # json format of yaml files in a separate column instead of
-            # key value string pairs in vnf attributes table
+            # key value string pairs in mea attributes table
             mead_data['attributes']['mead'] = yaml.safe_dump(
                 template)
         elif isinstance(template, str):
@@ -217,23 +217,23 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             tosca)
         LOG.debug('mead %s', mead)
 
-    def add_vnf_to_monitor(self, context, vnf_dict):
-        dev_attrs = vnf_dict['attributes']
-        mgmt_url = vnf_dict['mgmt_url']
+    def add_mea_to_monitor(self, context, mea_dict):
+        dev_attrs = mea_dict['attributes']
+        mgmt_url = mea_dict['mgmt_url']
         if 'monitoring_policy' in dev_attrs and mgmt_url:
             def action_cb(action):
                 LOG.debug('policy action: %s', action)
-                self._vnf_action.invoke(
+                self._mea_action.invoke(
                     action, 'execute_action', plugin=self, context=context,
-                    vnf_dict=hosting_vnf['vnf'], args={})
+                    mea_dict=hosting_mea['mea'], args={})
 
-            hosting_vnf = self._vnf_monitor.to_hosting_vnf(
-                vnf_dict, action_cb)
-            LOG.debug('hosting_vnf: %s', hosting_vnf)
-            self._vnf_monitor.add_hosting_vnf(hosting_vnf)
+            hosting_mea = self._mea_monitor.to_hosting_mea(
+                mea_dict, action_cb)
+            LOG.debug('hosting_mea: %s', hosting_mea)
+            self._mea_monitor.add_hosting_mea(hosting_mea)
 
-    def add_alarm_url_to_vnf(self, context, vnf_dict):
-        mead_yaml = vnf_dict['mead']['attributes'].get('mead', '')
+    def add_alarm_url_to_mea(self, context, mea_dict):
+        mead_yaml = mea_dict['mead']['attributes'].get('mead', '')
         mead_dict = yaml.safe_load(mead_yaml)
         if mead_dict and mead_dict.get('tosca_definitions_version'):
             polices = mead_dict['topology_template'].get('policies', [])
@@ -241,282 +241,282 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                 name, policy = list(policy_dict.items())[0]
                 if policy['type'] in constants.POLICY_ALARMING:
                     alarm_url =\
-                        self._vnf_alarm_monitor.update_vnf_with_alarm(
-                            self, context, vnf_dict, policy)
-                    vnf_dict['attributes']['alarming_policy'] = vnf_dict['id']
-                    vnf_dict['attributes'].update(alarm_url)
+                        self._mea_alarm_monitor.update_mea_with_alarm(
+                            self, context, mea_dict, policy)
+                    mea_dict['attributes']['alarming_policy'] = mea_dict['id']
+                    mea_dict['attributes'].update(alarm_url)
                     break
 
-    def config_vnf(self, context, vnf_dict):
-        config = vnf_dict['attributes'].get('config')
+    def config_mea(self, context, mea_dict):
+        config = mea_dict['attributes'].get('config')
         if not config:
             return
         eventlet.sleep(self.boot_wait)      # wait for vm to be ready
-        vnf_id = vnf_dict['id']
+        mea_id = mea_dict['id']
         update = {
-            'vnf': {
-                'id': vnf_id,
+            'mea': {
+                'id': mea_id,
                 'attributes': {'config': config},
             }
         }
-        self.update_vnf(context, vnf_id, update)
+        self.update_mea(context, mea_id, update)
 
-    def _get_infra_driver(self, context, vnf_info):
-        vim_res = self.get_vim(context, vnf_info)
+    def _get_infra_driver(self, context, mea_info):
+        vim_res = self.get_vim(context, mea_info)
         return vim_res['vim_type'], vim_res['vim_auth']
 
-    def _create_vnf_wait(self, context, vnf_dict, auth_attr, driver_name):
-        vnf_id = vnf_dict['id']
-        instance_id = self._instance_id(vnf_dict)
+    def _create_mea_wait(self, context, mea_dict, auth_attr, driver_name):
+        mea_id = mea_dict['id']
+        instance_id = self._instance_id(mea_dict)
         create_failed = False
 
         try:
-            self._vnf_manager.invoke(
+            self._mea_manager.invoke(
                 driver_name, 'create_wait', plugin=self, context=context,
-                vnf_dict=vnf_dict, vnf_id=instance_id,
+                mea_dict=mea_dict, mea_id=instance_id,
                 auth_attr=auth_attr)
         except mem.VNFCreateWaitFailed as e:
-            LOG.error("VNF Create failed for vnf_id %s", vnf_id)
+            LOG.error("VNF Create failed for mea_id %s", mea_id)
             create_failed = True
-            vnf_dict['status'] = constants.ERROR
-            self.set_vnf_error_status_reason(context, vnf_id,
+            mea_dict['status'] = constants.ERROR
+            self.set_mea_error_status_reason(context, mea_id,
                                              six.text_type(e))
 
         if instance_id is None or create_failed:
             mgmt_url = None
         else:
-            # mgmt_url = self.mgmt_url(context, vnf_dict)
+            # mgmt_url = self.mgmt_url(context, mea_dict)
             # FIXME(yamahata):
-            mgmt_url = vnf_dict['mgmt_url']
+            mgmt_url = mea_dict['mgmt_url']
 
-        self._create_vnf_post(
-            context, vnf_id, instance_id, mgmt_url, vnf_dict)
-        self.mgmt_create_post(context, vnf_dict)
+        self._create_mea_post(
+            context, mea_id, instance_id, mgmt_url, mea_dict)
+        self.mgmt_create_post(context, mea_dict)
 
         if instance_id is None or create_failed:
             return
 
-        vnf_dict['mgmt_url'] = mgmt_url
+        mea_dict['mgmt_url'] = mgmt_url
 
         kwargs = {
             mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_CREATE_VNF,
-            mgmt_constants.KEY_KWARGS: {'vnf': vnf_dict},
+            mgmt_constants.KEY_KWARGS: {'mea': mea_dict},
         }
         new_status = constants.ACTIVE
         try:
-            self.mgmt_call(context, vnf_dict, kwargs)
+            self.mgmt_call(context, mea_dict, kwargs)
         except exceptions.MgmtDriverException:
             LOG.error('VNF configuration failed')
             new_status = constants.ERROR
-            self.set_vnf_error_status_reason(context, vnf_id,
+            self.set_mea_error_status_reason(context, mea_id,
                                              'Unable to configure VDU')
-        vnf_dict['status'] = new_status
-        self._create_vnf_status(context, vnf_id, new_status)
+        mea_dict['status'] = new_status
+        self._create_mea_status(context, mea_id, new_status)
 
-    def get_vim(self, context, vnf):
-        region_name = vnf.setdefault('placement_attr', {}).get(
+    def get_vim(self, context, mea):
+        region_name = mea.setdefault('placement_attr', {}).get(
             'region_name', None)
-        vim_res = self.vim_client.get_vim(context, vnf['vim_id'],
+        vim_res = self.vim_client.get_vim(context, mea['vim_id'],
                                           region_name)
-        vnf['placement_attr']['vim_name'] = vim_res['vim_name']
-        vnf['vim_id'] = vim_res['vim_id']
+        mea['placement_attr']['vim_name'] = vim_res['vim_name']
+        mea['vim_id'] = vim_res['vim_id']
         return vim_res
 
-    def _create_vnf(self, context, vnf, vim_auth, driver_name):
-        vnf_dict = self._create_vnf_pre(
-            context, vnf) if not vnf.get('id') else vnf
-        vnf_id = vnf_dict['id']
-        LOG.debug('vnf_dict %s', vnf_dict)
-        self.mgmt_create_pre(context, vnf_dict)
-        self.add_alarm_url_to_vnf(context, vnf_dict)
+    def _create_mea(self, context, mea, vim_auth, driver_name):
+        mea_dict = self._create_mea_pre(
+            context, mea) if not mea.get('id') else mea
+        mea_id = mea_dict['id']
+        LOG.debug('mea_dict %s', mea_dict)
+        self.mgmt_create_pre(context, mea_dict)
+        self.add_alarm_url_to_mea(context, mea_dict)
         try:
-            instance_id = self._vnf_manager.invoke(
+            instance_id = self._mea_manager.invoke(
                 driver_name, 'create', plugin=self,
-                context=context, vnf=vnf_dict, auth_attr=vim_auth)
+                context=context, mea=mea_dict, auth_attr=vim_auth)
         except Exception:
-            LOG.debug('Fail to create vnf %s in infra_driver, '
-                      'so delete this vnf',
-                      vnf_dict['id'])
+            LOG.debug('Fail to create mea %s in infra_driver, '
+                      'so delete this mea',
+                      mea_dict['id'])
             with excutils.save_and_reraise_exception():
-                self.delete_vnf(context, vnf_id)
+                self.delete_mea(context, mea_id)
 
         if instance_id is None:
-            self._create_vnf_post(context, vnf_id, None, None,
-                                  vnf_dict)
+            self._create_mea_post(context, mea_id, None, None,
+                                  mea_dict)
             return
-        vnf_dict['instance_id'] = instance_id
-        return vnf_dict
+        mea_dict['instance_id'] = instance_id
+        return mea_dict
 
-    def create_vnf(self, context, vnf):
-        vnf_info = vnf['vnf']
-        name = vnf_info['name']
+    def create_mea(self, context, mea):
+        mea_info = mea['mea']
+        name = mea_info['name']
 
         # if mead_template specified, create mead from template
         # create template dictionary structure same as needed in create_mead()
-        if vnf_info.get('mead_template'):
+        if mea_info.get('mead_template'):
             mead_name = utils.generate_resource_name(name, 'inline')
-            mead = {'mead': {'attributes': {'mead': vnf_info['mead_template']},
+            mead = {'mead': {'attributes': {'mead': mea_info['mead_template']},
                              'name': mead_name,
                              'template_source': 'inline',
                              'service_types': [{'service_type': 'mead'}]}}
-            vnf_info['mead_id'] = self.create_mead(context, mead).get('id')
+            mea_info['mead_id'] = self.create_mead(context, mead).get('id')
 
-        vnf_attributes = vnf_info['attributes']
-        if vnf_attributes.get('param_values'):
-            param = vnf_attributes['param_values']
+        mea_attributes = mea_info['attributes']
+        if mea_attributes.get('param_values'):
+            param = mea_attributes['param_values']
             if isinstance(param, dict):
                 # TODO(sripriya) remove this yaml dump once db supports storing
                 # json format of yaml files in a separate column instead of
-                #  key value string pairs in vnf attributes table
-                vnf_attributes['param_values'] = yaml.safe_dump(param)
+                #  key value string pairs in mea attributes table
+                mea_attributes['param_values'] = yaml.safe_dump(param)
             else:
                 self._report_deprecated_yaml_str()
-        if vnf_attributes.get('config'):
-            config = vnf_attributes['config']
+        if mea_attributes.get('config'):
+            config = mea_attributes['config']
             if isinstance(config, dict):
                 # TODO(sripriya) remove this yaml dump once db supports storing
                 # json format of yaml files in a separate column instead of
-                #  key value string pairs in vnf attributes table
-                vnf_attributes['config'] = yaml.safe_dump(config)
+                #  key value string pairs in mea attributes table
+                mea_attributes['config'] = yaml.safe_dump(config)
             else:
                 self._report_deprecated_yaml_str()
-        infra_driver, vim_auth = self._get_infra_driver(context, vnf_info)
-        if infra_driver not in self._vnf_manager:
+        infra_driver, vim_auth = self._get_infra_driver(context, mea_info)
+        if infra_driver not in self._mea_manager:
             LOG.debug('unknown vim driver '
                       '%(infra_driver)s in %(drivers)s',
                       {'infra_driver': infra_driver,
                        'drivers': cfg.CONF.apmec.infra_driver})
             raise mem.InvalidInfraDriver(vim_name=infra_driver)
 
-        vnf_dict = self._create_vnf(context, vnf_info, vim_auth, infra_driver)
+        mea_dict = self._create_mea(context, mea_info, vim_auth, infra_driver)
 
-        def create_vnf_wait():
-            self._create_vnf_wait(context, vnf_dict, vim_auth, infra_driver)
-            if vnf_dict['status'] is not constants.ERROR:
-                self.add_vnf_to_monitor(context, vnf_dict)
-            self.config_vnf(context, vnf_dict)
-        self.spawn_n(create_vnf_wait)
-        return vnf_dict
+        def create_mea_wait():
+            self._create_mea_wait(context, mea_dict, vim_auth, infra_driver)
+            if mea_dict['status'] is not constants.ERROR:
+                self.add_mea_to_monitor(context, mea_dict)
+            self.config_mea(context, mea_dict)
+        self.spawn_n(create_mea_wait)
+        return mea_dict
 
-    # not for wsgi, but for service to create hosting vnf
-    # the vnf is NOT added to monitor.
-    def create_vnf_sync(self, context, vnf):
-        infra_driver, vim_auth = self._get_infra_driver(context, vnf)
-        vnf_dict = self._create_vnf(context, vnf, vim_auth, infra_driver)
-        self._create_vnf_wait(context, vnf_dict, vim_auth, infra_driver)
-        return vnf_dict
+    # not for wsgi, but for service to create hosting mea
+    # the mea is NOT added to monitor.
+    def create_mea_sync(self, context, mea):
+        infra_driver, vim_auth = self._get_infra_driver(context, mea)
+        mea_dict = self._create_mea(context, mea, vim_auth, infra_driver)
+        self._create_mea_wait(context, mea_dict, vim_auth, infra_driver)
+        return mea_dict
 
-    def _update_vnf_wait(self, context, vnf_dict, vim_auth, driver_name):
-        instance_id = self._instance_id(vnf_dict)
+    def _update_mea_wait(self, context, mea_dict, vim_auth, driver_name):
+        instance_id = self._instance_id(mea_dict)
         kwargs = {
             mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_UPDATE_VNF,
-            mgmt_constants.KEY_KWARGS: {'vnf': vnf_dict},
+            mgmt_constants.KEY_KWARGS: {'mea': mea_dict},
         }
         new_status = constants.ACTIVE
-        placement_attr = vnf_dict['placement_attr']
+        placement_attr = mea_dict['placement_attr']
         region_name = placement_attr.get('region_name')
 
         try:
-            self._vnf_manager.invoke(
+            self._mea_manager.invoke(
                 driver_name, 'update_wait', plugin=self,
-                context=context, vnf_id=instance_id, auth_attr=vim_auth,
+                context=context, mea_id=instance_id, auth_attr=vim_auth,
                 region_name=region_name)
-            self.mgmt_call(context, vnf_dict, kwargs)
+            self.mgmt_call(context, mea_dict, kwargs)
         except exceptions.MgmtDriverException as e:
             LOG.error('VNF configuration failed')
             new_status = constants.ERROR
-            self._vnf_monitor.delete_hosting_vnf(vnf_dict['id'])
-            self.set_vnf_error_status_reason(context, vnf_dict['id'],
+            self._mea_monitor.delete_hosting_mea(mea_dict['id'])
+            self.set_mea_error_status_reason(context, mea_dict['id'],
                                              six.text_type(e))
-        vnf_dict['status'] = new_status
-        self.mgmt_update_post(context, vnf_dict)
+        mea_dict['status'] = new_status
+        self.mgmt_update_post(context, mea_dict)
 
-        self._update_vnf_post(context, vnf_dict['id'],
-                              new_status, vnf_dict)
+        self._update_mea_post(context, mea_dict['id'],
+                              new_status, mea_dict)
 
-    def update_vnf(self, context, vnf_id, vnf):
-        vnf_attributes = vnf['vnf']['attributes']
-        if vnf_attributes.get('config'):
-            config = vnf_attributes['config']
+    def update_mea(self, context, mea_id, mea):
+        mea_attributes = mea['mea']['attributes']
+        if mea_attributes.get('config'):
+            config = mea_attributes['config']
             if isinstance(config, dict):
                 # TODO(sripriya) remove this yaml dump once db supports storing
                 # json format of yaml files in a separate column instead of
-                #  key value string pairs in vnf attributes table
-                vnf_attributes['config'] = yaml.safe_dump(config)
+                #  key value string pairs in mea attributes table
+                mea_attributes['config'] = yaml.safe_dump(config)
             else:
                 self._report_deprecated_yaml_str()
-        vnf_dict = self._update_vnf_pre(context, vnf_id)
-        driver_name, vim_auth = self._get_infra_driver(context, vnf_dict)
-        instance_id = self._instance_id(vnf_dict)
+        mea_dict = self._update_mea_pre(context, mea_id)
+        driver_name, vim_auth = self._get_infra_driver(context, mea_dict)
+        instance_id = self._instance_id(mea_dict)
 
         try:
-            self.mgmt_update_pre(context, vnf_dict)
-            self._vnf_manager.invoke(
+            self.mgmt_update_pre(context, mea_dict)
+            self._mea_manager.invoke(
                 driver_name, 'update', plugin=self, context=context,
-                vnf_id=instance_id, vnf_dict=vnf_dict,
-                vnf=vnf, auth_attr=vim_auth)
+                mea_id=instance_id, mea_dict=mea_dict,
+                mea=mea, auth_attr=vim_auth)
         except Exception as e:
             with excutils.save_and_reraise_exception():
-                vnf_dict['status'] = constants.ERROR
-                self._vnf_monitor.delete_hosting_vnf(vnf_id)
-                self.set_vnf_error_status_reason(context,
-                                                 vnf_dict['id'],
+                mea_dict['status'] = constants.ERROR
+                self._mea_monitor.delete_hosting_mea(mea_id)
+                self.set_mea_error_status_reason(context,
+                                                 mea_dict['id'],
                                                  six.text_type(e))
-                self.mgmt_update_post(context, vnf_dict)
-                self._update_vnf_post(context, vnf_id,
+                self.mgmt_update_post(context, mea_dict)
+                self._update_mea_post(context, mea_id,
                                       constants.ERROR,
-                                      vnf_dict)
+                                      mea_dict)
 
-        self.spawn_n(self._update_vnf_wait, context, vnf_dict, vim_auth,
+        self.spawn_n(self._update_mea_wait, context, mea_dict, vim_auth,
                      driver_name)
-        return vnf_dict
+        return mea_dict
 
-    def _delete_vnf_wait(self, context, vnf_dict, auth_attr, driver_name):
-        instance_id = self._instance_id(vnf_dict)
+    def _delete_mea_wait(self, context, mea_dict, auth_attr, driver_name):
+        instance_id = self._instance_id(mea_dict)
         e = None
         if instance_id:
-            placement_attr = vnf_dict['placement_attr']
+            placement_attr = mea_dict['placement_attr']
             region_name = placement_attr.get('region_name')
             try:
-                self._vnf_manager.invoke(
+                self._mea_manager.invoke(
                     driver_name,
                     'delete_wait',
                     plugin=self,
                     context=context,
-                    vnf_id=instance_id,
+                    mea_id=instance_id,
                     auth_attr=auth_attr,
                     region_name=region_name)
             except Exception as e_:
                 e = e_
-                vnf_dict['status'] = constants.ERROR
-                vnf_dict['error_reason'] = six.text_type(e)
-                LOG.exception('_delete_vnf_wait')
-                self.set_vnf_error_status_reason(context, vnf_dict['id'],
-                                                 vnf_dict['error_reason'])
+                mea_dict['status'] = constants.ERROR
+                mea_dict['error_reason'] = six.text_type(e)
+                LOG.exception('_delete_mea_wait')
+                self.set_mea_error_status_reason(context, mea_dict['id'],
+                                                 mea_dict['error_reason'])
 
-        self.mgmt_delete_post(context, vnf_dict)
-        self._delete_vnf_post(context, vnf_dict, e)
+        self.mgmt_delete_post(context, mea_dict)
+        self._delete_mea_post(context, mea_dict, e)
 
-    def delete_vnf(self, context, vnf_id):
-        vnf_dict = self._delete_vnf_pre(context, vnf_id)
-        driver_name, vim_auth = self._get_infra_driver(context, vnf_dict)
-        self._vnf_monitor.delete_hosting_vnf(vnf_id)
-        instance_id = self._instance_id(vnf_dict)
-        placement_attr = vnf_dict['placement_attr']
+    def delete_mea(self, context, mea_id):
+        mea_dict = self._delete_mea_pre(context, mea_id)
+        driver_name, vim_auth = self._get_infra_driver(context, mea_dict)
+        self._mea_monitor.delete_hosting_mea(mea_id)
+        instance_id = self._instance_id(mea_dict)
+        placement_attr = mea_dict['placement_attr']
         region_name = placement_attr.get('region_name')
         kwargs = {
             mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_DELETE_VNF,
-            mgmt_constants.KEY_KWARGS: {'vnf': vnf_dict},
+            mgmt_constants.KEY_KWARGS: {'mea': mea_dict},
         }
         try:
-            self.mgmt_delete_pre(context, vnf_dict)
-            self.mgmt_call(context, vnf_dict, kwargs)
+            self.mgmt_delete_pre(context, mea_dict)
+            self.mgmt_call(context, mea_dict, kwargs)
             if instance_id:
-                self._vnf_manager.invoke(driver_name,
+                self._mea_manager.invoke(driver_name,
                                          'delete',
                                          plugin=self,
                                          context=context,
-                                         vnf_id=instance_id,
+                                         mea_id=instance_id,
                                          auth_attr=vim_auth,
                                          region_name=region_name)
         except Exception as e:
@@ -524,17 +524,17 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             # the error, and delete row in db
             # Other case mark error
             with excutils.save_and_reraise_exception():
-                vnf_dict['status'] = constants.ERROR
-                vnf_dict['error_reason'] = six.text_type(e)
-                self.set_vnf_error_status_reason(context, vnf_dict['id'],
-                                                 vnf_dict['error_reason'])
-                self.mgmt_delete_post(context, vnf_dict)
-                self._delete_vnf_post(context, vnf_dict, e)
+                mea_dict['status'] = constants.ERROR
+                mea_dict['error_reason'] = six.text_type(e)
+                self.set_mea_error_status_reason(context, mea_dict['id'],
+                                                 mea_dict['error_reason'])
+                self.mgmt_delete_post(context, mea_dict)
+                self._delete_mea_post(context, mea_dict, e)
 
-        self.spawn_n(self._delete_vnf_wait, context, vnf_dict, vim_auth,
+        self.spawn_n(self._delete_mea_wait, context, mea_dict, vim_auth,
                      driver_name)
 
-    def _handle_vnf_scaling(self, context, policy):
+    def _handle_mea_scaling(self, context, policy):
         # validate
         def _validate_scaling_policy():
             type = policy['type']
@@ -565,34 +565,34 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             return status
 
         # pre
-        def _handle_vnf_scaling_pre():
+        def _handle_mea_scaling_pre():
             status = _get_status()
-            result = self._update_vnf_scaling_status(context,
+            result = self._update_mea_scaling_status(context,
                                                      policy,
                                                      [constants.ACTIVE],
                                                      status)
-            LOG.debug("Policy %(policy)s vnf is at %(status)s",
+            LOG.debug("Policy %(policy)s mea is at %(status)s",
                       {'policy': policy['name'],
                        'status': status})
             return result
 
         # post
-        def _handle_vnf_scaling_post(new_status, mgmt_url=None):
+        def _handle_mea_scaling_post(new_status, mgmt_url=None):
             status = _get_status()
-            result = self._update_vnf_scaling_status(context,
+            result = self._update_mea_scaling_status(context,
                                                      policy,
                                                      [status],
                                                      new_status,
                                                      mgmt_url)
-            LOG.debug("Policy %(policy)s vnf is at %(status)s",
+            LOG.debug("Policy %(policy)s mea is at %(status)s",
                       {'policy': policy['name'],
                        'status': new_status})
             return result
 
         # action
-        def _vnf_policy_action():
+        def _mea_policy_action():
             try:
-                last_event_id = self._vnf_manager.invoke(
+                last_event_id = self._mea_manager.invoke(
                     infra_driver,
                     'scale',
                     plugin=self,
@@ -608,19 +608,19 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                 LOG.error("Policy %s action is failed to start",
                           policy)
                 with excutils.save_and_reraise_exception():
-                    vnf['status'] = constants.ERROR
-                    self.set_vnf_error_status_reason(
+                    mea['status'] = constants.ERROR
+                    self.set_mea_error_status_reason(
                         context,
-                        policy['vnf']['id'],
+                        policy['mea']['id'],
                         six.text_type(e))
-                    _handle_vnf_scaling_post(constants.ERROR)
+                    _handle_mea_scaling_post(constants.ERROR)
 
         # wait
-        def _vnf_policy_action_wait():
+        def _mea_policy_action_wait():
             try:
                 LOG.debug("Policy %s action is in progress",
                           policy['name'])
-                mgmt_url = self._vnf_manager.invoke(
+                mgmt_url = self._mea_manager.invoke(
                     infra_driver,
                     'scale_wait',
                     plugin=self,
@@ -632,27 +632,27 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                 )
                 LOG.debug("Policy %s action is completed successfully",
                           policy['name'])
-                _handle_vnf_scaling_post(constants.ACTIVE, mgmt_url)
+                _handle_mea_scaling_post(constants.ACTIVE, mgmt_url)
                 # TODO(kanagaraj-manickam): Add support for config and mgmt
             except Exception as e:
                 LOG.error("Policy %s action is failed to complete",
                           policy['name'])
                 with excutils.save_and_reraise_exception():
-                    self.set_vnf_error_status_reason(
+                    self.set_mea_error_status_reason(
                         context,
-                        policy['vnf']['id'],
+                        policy['mea']['id'],
                         six.text_type(e))
-                    _handle_vnf_scaling_post(constants.ERROR)
+                    _handle_mea_scaling_post(constants.ERROR)
 
         _validate_scaling_policy()
 
-        vnf = _handle_vnf_scaling_pre()
-        policy['instance_id'] = vnf['instance_id']
+        mea = _handle_mea_scaling_pre()
+        policy['instance_id'] = mea['instance_id']
 
-        infra_driver, vim_auth = self._get_infra_driver(context, vnf)
-        region_name = vnf.get('placement_attr', {}).get('region_name', None)
-        last_event_id = _vnf_policy_action()
-        self.spawn_n(_vnf_policy_action_wait)
+        infra_driver, vim_auth = self._get_infra_driver(context, mea)
+        region_name = mea.get('placement_attr', {}).get('region_name', None)
+        last_event_id = _mea_policy_action()
+        self.spawn_n(_mea_policy_action_wait)
 
         return policy
 
@@ -660,26 +660,26 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         utils.deprecate_warning(what='yaml as string',
                                 as_of='N', in_favor_of='yaml as dictionary')
 
-    def _make_policy_dict(self, vnf, name, policy):
+    def _make_policy_dict(self, mea, name, policy):
         p = {}
         p['type'] = policy.get('type')
         p['properties'] = policy.get('properties') or policy.get('triggers')
-        p['vnf'] = vnf
+        p['mea'] = mea
         p['name'] = name
         p['id'] = uuidutils.generate_uuid()
         return p
 
-    def get_vnf_policies(
-            self, context, vnf_id, filters=None, fields=None):
-        vnf = self.get_vnf(context, vnf_id)
-        mead_tmpl = yaml.safe_load(vnf['mead']['attributes']['mead'])
+    def get_mea_policies(
+            self, context, mea_id, filters=None, fields=None):
+        mea = self.get_mea(context, mea_id)
+        mead_tmpl = yaml.safe_load(mea['mead']['attributes']['mead'])
         policy_list = []
 
         polices = mead_tmpl['topology_template'].get('policies', [])
         for policy_dict in polices:
             for name, policy in policy_dict.items():
                 def _add(policy):
-                    p = self._make_policy_dict(vnf, name, policy)
+                    p = self._make_policy_dict(mea, name, policy)
                     p['name'] = name
                     policy_list.append(p)
 
@@ -698,42 +698,42 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
 
         return policy_list
 
-    def get_vnf_policy(
-            self, context, policy_id, vnf_id, fields=None):
-        policies = self.get_vnf_policies(context,
-                                         vnf_id,
+    def get_mea_policy(
+            self, context, policy_id, mea_id, fields=None):
+        policies = self.get_mea_policies(context,
+                                         mea_id,
                                          filters={'name': policy_id})
         if policies:
             return policies[0]
         else:
             return None
 
-    def create_vnf_scale(self, context, vnf_id, scale):
-        policy_ = self.get_vnf_policy(context,
+    def create_mea_scale(self, context, mea_id, scale):
+        policy_ = self.get_mea_policy(context,
                                       scale['scale']['policy'],
-                                      vnf_id)
+                                      mea_id)
         if not policy_:
             raise exceptions.VnfPolicyNotFound(policy=scale['scale']['policy'],
-                                               vnf_id=vnf_id)
+                                               mea_id=mea_id)
         policy_.update({'action': scale['scale']['type']})
-        self._handle_vnf_scaling(context, policy_)
+        self._handle_mea_scaling(context, policy_)
 
         return scale['scale']
 
-    def get_vnf_policy_by_type(self, context, vnf_id, policy_type=None, fields=None):             # noqa
-        policies = self.get_vnf_policies(context,
-                                         vnf_id,
+    def get_mea_policy_by_type(self, context, mea_id, policy_type=None, fields=None):             # noqa
+        policies = self.get_mea_policies(context,
+                                         mea_id,
                                          filters={'type': policy_type})
         if policies:
             return policies[0]
 
         raise exceptions.VnfPolicyTypeInvalid(type=constants.POLICY_ALARMING,
-                                              vnf_id=vnf_id)
+                                              mea_id=mea_id)
 
-    def _validate_alarming_policy(self, context, vnf_id, trigger):
+    def _validate_alarming_policy(self, context, mea_id, trigger):
         # validate alarm status
-        if not self._vnf_alarm_monitor.process_alarm_for_vnf(vnf_id, trigger):
-            raise exceptions.AlarmUrlInvalid(vnf_id=vnf_id)
+        if not self._mea_alarm_monitor.process_alarm_for_mea(mea_id, trigger):
+            raise exceptions.AlarmUrlInvalid(mea_id=mea_id)
 
         # validate policy action. if action is composite, split it.
         # ex: respawn%notify
@@ -749,14 +749,14 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             action_ = None
             if action in constants.DEFAULT_ALARM_ACTIONS:
                 pl_action_dict['policy_actions']['def_actions'].append(action)
-            policy_ = self.get_vnf_policy(context, action, vnf_id)
+            policy_ = self.get_mea_policy(context, action, mea_id)
             if not policy_:
                 sp_action = action.split('-')
                 if len(sp_action) == 2:
                     bk_policy_name = sp_action[0]
                     bk_policy_action = sp_action[1]
-                    policies_ = self.get_vnf_policies(
-                        context, vnf_id, filters={'name': bk_policy_name})
+                    policies_ = self.get_mea_policies(
+                        context, mea_id, filters={'name': bk_policy_name})
                     if policies_:
                         policy_ = policies_[0]
                         action_ = bk_policy_action
@@ -770,46 +770,46 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         return pl_action_dict
         # validate url
 
-    def _get_vnf_triggers(self, context, vnf_id, filters=None, fields=None):
-        policy = self.get_vnf_policy_by_type(
-            context, vnf_id, policy_type=constants.POLICY_ALARMING)
+    def _get_mea_triggers(self, context, mea_id, filters=None, fields=None):
+        policy = self.get_mea_policy_by_type(
+            context, mea_id, policy_type=constants.POLICY_ALARMING)
         triggers = policy['properties']
-        vnf_trigger = dict()
+        mea_trigger = dict()
         for trigger_name, trigger_dict in triggers.items():
             if trigger_name == filters.get('name'):
-                vnf_trigger['trigger'] = {trigger_name: trigger_dict}
-                vnf_trigger['vnf'] = policy['vnf']
+                mea_trigger['trigger'] = {trigger_name: trigger_dict}
+                mea_trigger['mea'] = policy['mea']
                 break
 
-        return vnf_trigger
+        return mea_trigger
 
-    def get_vnf_trigger(self, context, vnf_id, trigger_name):
-        trigger = self._get_vnf_triggers(
-            context, vnf_id, filters={'name': trigger_name})
+    def get_mea_trigger(self, context, mea_id, trigger_name):
+        trigger = self._get_mea_triggers(
+            context, mea_id, filters={'name': trigger_name})
         if not trigger:
             raise exceptions.TriggerNotFound(
                 trigger_name=trigger_name,
-                vnf_id=vnf_id
+                mea_id=mea_id
             )
         return trigger
 
-    def _handle_vnf_monitoring(self, context, trigger):
-        vnf_dict = trigger['vnf']
+    def _handle_mea_monitoring(self, context, trigger):
+        mea_dict = trigger['mea']
         if trigger['action_name'] in constants.DEFAULT_ALARM_ACTIONS:
             action = trigger['action_name']
-            LOG.debug('vnf for monitoring: %s', vnf_dict)
-            self._vnf_action.invoke(
+            LOG.debug('mea for monitoring: %s', mea_dict)
+            self._mea_action.invoke(
                 action, 'execute_action', plugin=self, context=context,
-                vnf_dict=vnf_dict, args={})
+                mea_dict=mea_dict, args={})
 
         # Multiple actions support
         if trigger.get('policy_actions'):
             policy_actions = trigger['policy_actions']
             if policy_actions.get('def_actions'):
                 for action in policy_actions['def_actions']:
-                    self._vnf_action.invoke(
+                    self._mea_action.invoke(
                         action, 'execute_action', plugin=self, context=context,
-                        vnf_dict=vnf_dict, args={})
+                        mea_dict=mea_dict, args={})
             if policy_actions.get('custom_actions'):
                 custom_actions = policy_actions['custom_actions']
                 for pl_action, pl_action_dict in custom_actions.items():
@@ -817,52 +817,52 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                     bckend_action = pl_action_dict['bckend_action']
                     bckend_policy_type = bckend_policy['type']
                     if bckend_policy_type == constants.POLICY_SCALING:
-                        if vnf_dict['status'] != constants.ACTIVE:
+                        if mea_dict['status'] != constants.ACTIVE:
                             LOG.info(_("Scaling Policy action"
                                        "skipped due to status:"
-                                       "%(status)s for vnf: %(vnfid)s"),
-                                     {"status": vnf_dict['status'],
-                                      "vnfid": vnf_dict['id']})
+                                       "%(status)s for mea: %(meaid)s"),
+                                     {"status": mea_dict['status'],
+                                      "meaid": mea_dict['id']})
                             return
                         action = 'autoscaling'
                         scale = {}
                         scale.setdefault('scale', {})
                         scale['scale']['type'] = bckend_action
                         scale['scale']['policy'] = bckend_policy['name']
-                        self._vnf_action.invoke(
+                        self._mea_action.invoke(
                             action, 'execute_action', plugin=self,
-                            context=context, vnf_dict=vnf_dict, args=scale)
+                            context=context, mea_dict=mea_dict, args=scale)
 
-    def create_vnf_trigger(
-            self, context, vnf_id, trigger):
-        trigger_ = self.get_vnf_trigger(
-            context, vnf_id, trigger['trigger']['policy_name'])
+    def create_mea_trigger(
+            self, context, mea_id, trigger):
+        trigger_ = self.get_mea_trigger(
+            context, mea_id, trigger['trigger']['policy_name'])
         # action_name before analyzing
         trigger_.update({'action_name': trigger['trigger']['action_name']})
         trigger_.update({'params': trigger['trigger']['params']})
         policy_actions = self._validate_alarming_policy(
-            context, vnf_id, trigger_)
+            context, mea_id, trigger_)
         if policy_actions:
             trigger_.update(policy_actions)
-        self._handle_vnf_monitoring(context, trigger_)
+        self._handle_mea_monitoring(context, trigger_)
         return trigger['trigger']
 
-    def get_vnf_resources(self, context, vnf_id, fields=None, filters=None):
-        vnf_info = self.get_vnf(context, vnf_id)
-        infra_driver, vim_auth = self._get_infra_driver(context, vnf_info)
-        if vnf_info['status'] == constants.ACTIVE:
-            vnf_details = self._vnf_manager.invoke(infra_driver,
+    def get_mea_resources(self, context, mea_id, fields=None, filters=None):
+        mea_info = self.get_mea(context, mea_id)
+        infra_driver, vim_auth = self._get_infra_driver(context, mea_info)
+        if mea_info['status'] == constants.ACTIVE:
+            mea_details = self._mea_manager.invoke(infra_driver,
                                                    'get_resource_info',
                                                    plugin=self,
                                                    context=context,
-                                                   vnf_info=vnf_info,
+                                                   mea_info=mea_info,
                                                    auth_attr=vim_auth)
             resources = [{'name': name,
                           'type': info.get('type'),
                           'id': info.get('id')}
-                        for name, info in vnf_details.items()]
+                        for name, info in mea_details.items()]
             return resources
         # Raise exception when VNF.status != ACTIVE
         else:
-            raise mem.VNFInactive(vnf_id=vnf_id,
+            raise mem.VNFInactive(mea_id=mea_id,
                                    message=_(' Cannot fetch details'))

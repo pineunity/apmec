@@ -34,7 +34,7 @@ from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
 from apmec.mistral import mistral_client
 from apmec.meo.drivers.vim import abstract_vim_driver
-from apmec.meo.drivers.vnffg import abstract_vnffg_driver
+from apmec.meo.drivers.NANY import abstract_NANY_driver
 from apmec.meo.drivers.workflow import workflow_generator
 from apmec.mem import keystone
 
@@ -89,7 +89,7 @@ def config_opts():
 
 
 class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
-                       abstract_vnffg_driver.VnffgAbstractDriver):
+                       abstract_NANY_driver.VnffgAbstractDriver):
     """Driver for OpenStack VIM
 
     OpenStack driver handles interactions with local as well as

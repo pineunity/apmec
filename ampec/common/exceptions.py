@@ -256,15 +256,15 @@ class MgmtDriverException(ApmecException):
 
 
 class AlarmUrlInvalid(BadRequest):
-    message = _("Invalid alarm url for VNF %(vnf_id)s")
+    message = _("Invalid alarm url for VNF %(mea_id)s")
 
 
 class TriggerNotFound(NotFound):
-    message = _("Trigger %(trigger_name)s does not exist for VNF %(vnf_id)s")
+    message = _("Trigger %(trigger_name)s does not exist for VNF %(mea_id)s")
 
 
 class VnfPolicyNotFound(NotFound):
-    message = _("Policy %(policy)s does not exist for VNF %(vnf_id)s")
+    message = _("Policy %(policy)s does not exist for VNF %(mea_id)s")
 
 
 class VnfPolicyActionInvalid(BadRequest):

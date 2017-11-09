@@ -26,7 +26,7 @@ from apmec.db import model_base
 from apmec.db import models_v1
 from apmec.db import types
 from apmec.extensions import meo
-from apmec.extensions.meo_plugins import vnffg
+from apmec.extensions.meo_plugins import NANY
 from apmec import manager
 from apmec.plugins.common import constants
 
@@ -36,7 +36,7 @@ _ACTIVE_UPDATE = (constants.ACTIVE, constants.PENDING_UPDATE)
 _ACTIVE_UPDATE_ERROR_DEAD = (
     constants.PENDING_CREATE, constants.ACTIVE, constants.PENDING_UPDATE,
     constants.ERROR, constants.DEAD)
-_VALID_VNFFG_UPDATE_ATTRIBUTES = ('name', 'description', 'vnf_mapping')
+_VALID_VNFFG_UPDATE_ATTRIBUTES = ('name', 'description', 'mea_mapping')
 _VALID_SFC_UPDATE_ATTRIBUTES = ('chain', 'symmetrical')
 _VALID_FC_UPDATE_ATTRIBUTES = ()
 MATCH_CRITERIA = (
@@ -84,15 +84,15 @@ class Vnffg(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
     description = sa.Column(sa.String(255), nullable=True)
 
     # List of associated NFPs
-    forwarding_paths = orm.relationship("VnffgNfp", backref="vnffg")
+    forwarding_paths = orm.relationship("VnffgNfp", backref="NANY")
 
-    vnffgd_id = sa.Column(types.Uuid, sa.ForeignKey('vnffgtemplates.id'))
-    vnffgd = orm.relationship('VnffgTemplate')
+    NANYD_id = sa.Column(types.Uuid, sa.ForeignKey('NANYtemplates.id'))
+    NANYD = orm.relationship('VnffgTemplate')
 
     status = sa.Column(sa.String(255), nullable=False)
 
     # Mapping of VNFD to VNF instance names
-    vnf_mapping = sa.Column(types.Json)
+    mea_mapping = sa.Column(types.Json)
 
     attributes = sa.Column(types.Json)
 
@@ -101,7 +101,7 @@ class VnffgNfp(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
     """Network Forwarding Path Data Model"""
 
     name = sa.Column(sa.String(255), nullable=False)
-    vnffg_id = sa.Column(types.Uuid, sa.ForeignKey('vnffgs.id'),
+    NANY_id = sa.Column(types.Uuid, sa.ForeignKey('NANYs.id'),
                          nullable=False)
     classifier = orm.relationship('VnffgClassifier', backref='nfp',
                                   uselist=False)
@@ -129,7 +129,7 @@ class VnffgChain(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
     chain = sa.Column(types.Json)
 
     path_id = sa.Column(sa.String(255), nullable=False)
-    nfp_id = sa.Column(types.Uuid, sa.ForeignKey('vnffgnfps.id'))
+    nfp_id = sa.Column(types.Uuid, sa.ForeignKey('NANYnfps.id'))
 
 
 class VnffgClassifier(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
@@ -139,10 +139,10 @@ class VnffgClassifier(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
 
     instance_id = sa.Column(sa.String(255), nullable=True)
 
-    chain_id = sa.Column(types.Uuid, sa.ForeignKey('vnffgchains.id'))
+    chain_id = sa.Column(types.Uuid, sa.ForeignKey('NANYchains.id'))
     chain = orm.relationship('VnffgChain', backref='classifier',
                              uselist=False, foreign_keys=[chain_id])
-    nfp_id = sa.Column(types.Uuid, sa.ForeignKey('vnffgnfps.id'))
+    nfp_id = sa.Column(types.Uuid, sa.ForeignKey('NANYnfps.id'))
     # match criteria
     match = orm.relationship('ACLMatchCriteria')
 
@@ -150,7 +150,7 @@ class VnffgClassifier(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
 class ACLMatchCriteria(model_base.BASE, models_v1.HasId):
     """Represents ACL match criteria of a classifier."""
 
-    vnffgc_id = sa.Column(types.Uuid, sa.ForeignKey('vnffgclassifiers.id'))
+    NANYc_id = sa.Column(types.Uuid, sa.ForeignKey('NANYclassifiers.id'))
     eth_src = sa.Column(sa.String(36), nullable=True)
     eth_dst = sa.Column(sa.String(36), nullable=True)
     eth_type = sa.Column(sa.String(36), nullable=True)
@@ -188,39 +188,39 @@ class ACLMatchCriteria(model_base.BASE, models_v1.HasId):
     ipv6_nd_tll = sa.Column(sa.String(36), nullable=True)
 
 
-class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
+class VnffgPluginDbMixin(NANY.VNFFGPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
         super(VnffgPluginDbMixin, self).__init__()
 
-    def create_vnffg(self, context, vnffg):
-        vnffg_dict = self._create_vnffg_pre(context, vnffg)
+    def create_NANY(self, context, NANY):
+        NANY_dict = self._create_NANY_pre(context, NANY)
         sfc_instance = uuidutils.generate_uuid()
         fc_instance = uuidutils.generate_uuid()
-        self._create_vnffg_post(context, sfc_instance,
-                                fc_instance, vnffg_dict)
-        self._create_vnffg_status(context, vnffg_dict)
-        return vnffg_dict
+        self._create_NANY_post(context, sfc_instance,
+                                fc_instance, NANY_dict)
+        self._create_NANY_status(context, NANY_dict)
+        return NANY_dict
 
-    def get_vnffg(self, context, vnffg_id, fields=None):
-        vnffg_db = self._get_resource(context, Vnffg, vnffg_id)
-        return self._make_vnffg_dict(vnffg_db, fields)
+    def get_NANY(self, context, NANY_id, fields=None):
+        NANY_db = self._get_resource(context, Vnffg, NANY_id)
+        return self._make_NANY_dict(NANY_db, fields)
 
-    def get_vnffgs(self, context, filters=None, fields=None):
-        return self._get_collection(context, Vnffg, self._make_vnffg_dict,
+    def get_NANYs(self, context, filters=None, fields=None):
+        return self._get_collection(context, Vnffg, self._make_NANY_dict,
                                     filters=filters, fields=fields)
 
-    def update_vnffg(self, context, vnffg_id, vnffg):
-        vnffg_dict = self._update_vnffg_pre(context, vnffg_id)
-        self._update_vnffg_post(context, vnffg_id, constants.ACTIVE, vnffg)
-        return vnffg_dict
+    def update_NANY(self, context, NANY_id, NANY):
+        NANY_dict = self._update_NANY_pre(context, NANY_id)
+        self._update_NANY_post(context, NANY_id, constants.ACTIVE, NANY)
+        return NANY_dict
 
-    def delete_vnffg(self, context, vnffg_id):
-        self._delete_vnffg_pre(context, vnffg_id)
-        self._delete_vnffg_post(context, vnffg_id, False)
+    def delete_NANY(self, context, NANY_id):
+        self._delete_NANY_pre(context, NANY_id)
+        self._delete_NANY_post(context, NANY_id, False)
 
-    def create_vnffgd(self, context, vnffgd):
-        template = vnffgd['vnffgd']
+    def create_NANYD(self, context, NANYD):
+        template = NANYD['NANYD']
         LOG.debug('template %s', template)
         tenant_id = self._get_tenant_id_for_create(context, template)
         template_source = template.get('template_source')
@@ -240,12 +240,12 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                   {'template_db': template_db})
         return self._make_template_dict(template_db)
 
-    def get_vnffgd(self, context, vnffgd_id, fields=None):
+    def get_NANYD(self, context, NANYD_id, fields=None):
         template_db = self._get_resource(context, VnffgTemplate,
-                                         vnffgd_id)
+                                         NANYD_id)
         return self._make_template_dict(template_db, fields)
 
-    def get_vnffgds(self, context, filters=None, fields=None):
+    def get_NANYDs(self, context, filters=None, fields=None):
         if ('template_source' in filters) and \
                 (filters['template_source'][0] == 'all'):
             filters.pop('template_source')
@@ -253,15 +253,15 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                                     self._make_template_dict,
                                     filters=filters, fields=fields)
 
-    def delete_vnffgd(self, context, vnffgd_id):
+    def delete_NANYD(self, context, NANYD_id):
         with context.session.begin(subtransactions=True):
-            vnffg_db = context.session.query(Vnffg).filter_by(
-                vnffgd_id=vnffgd_id).first()
-            if vnffg_db is not None:
-                raise meo.VnffgdInUse(vnffgd_id=vnffgd_id)
+            NANY_db = context.session.query(Vnffg).filter_by(
+                NANYD_id=NANYD_id).first()
+            if NANY_db is not None:
+                raise meo.VnffgdInUse(NANYD_id=NANYD_id)
 
             template_db = self._get_resource(context, VnffgTemplate,
-                                             vnffgd_id)
+                                             NANYD_id)
             context.session.delete(template_db)
 
     def get_classifier(self, context, classifier_id, fields=None):
@@ -313,11 +313,11 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 self._update_template_params(element,
                                              paramvalues, param_matched)
 
-    def _process_parameterized_template(self, dev_attrs, vnffgd_template):
+    def _process_parameterized_template(self, dev_attrs, NANYD_template):
         param_vattrs_dict = dev_attrs.pop('param_values', None)
         param_matched = {}
         if isinstance(param_vattrs_dict, dict):
-            self._update_template_params(vnffgd_template,
+            self._update_template_params(NANYD_template,
                                 param_vattrs_dict, param_matched)
         else:
             raise meo.VnffgParamValueFormatError(
@@ -327,54 +327,54 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 raise meo.VnffgParamValueNotUsed(param_key=param_key)
 
     # called internally, not by REST API
-    def _create_vnffg_pre(self, context, vnffg):
-        vnffg = vnffg['vnffg']
-        LOG.debug('vnffg %s', vnffg)
-        tenant_id = self._get_tenant_id_for_create(context, vnffg)
-        name = vnffg.get('name')
-        vnffg_id = vnffg.get('id') or uuidutils.generate_uuid()
-        template_id = vnffg['vnffgd_id']
-        symmetrical = vnffg['symmetrical']
+    def _create_NANY_pre(self, context, NANY):
+        NANY = NANY['NANY']
+        LOG.debug('NANY %s', NANY)
+        tenant_id = self._get_tenant_id_for_create(context, NANY)
+        name = NANY.get('name')
+        NANY_id = NANY.get('id') or uuidutils.generate_uuid()
+        template_id = NANY['NANYD_id']
+        symmetrical = NANY['symmetrical']
 
         with context.session.begin(subtransactions=True):
             template_db = self._get_resource(context, VnffgTemplate,
                                              template_id)
-            LOG.debug('vnffg template %s', template_db)
+            LOG.debug('NANY template %s', template_db)
 
-            if vnffg.get('attributes') and \
-                    vnffg['attributes'].get('param_values'):
-                vnffg_param = vnffg['attributes']
-                vnffgd_topology_template = \
-                    template_db.template['vnffgd']['topology_template']
-                self._process_parameterized_template(vnffg_param,
-                                                     vnffgd_topology_template)
-                template_db.template['vnffgd']['topology_template'] = \
-                    vnffgd_topology_template
+            if NANY.get('attributes') and \
+                    NANY['attributes'].get('param_values'):
+                NANY_param = NANY['attributes']
+                NANYD_topology_template = \
+                    template_db.template['NANYD']['topology_template']
+                self._process_parameterized_template(NANY_param,
+                                                     NANYD_topology_template)
+                template_db.template['NANYD']['topology_template'] = \
+                    NANYD_topology_template
 
-            vnf_members = self._get_vnffg_property(template_db.template,
-                                                   'constituent_vnfs')
-            LOG.debug('Constituent VNFs: %s', vnf_members)
-            vnf_mapping = self._get_vnf_mapping(context, vnffg.get(
-                                                'vnf_mapping'), vnf_members)
-            LOG.debug('VNF Mapping: %s', vnf_mapping)
+            mea_members = self._get_NANY_property(template_db.template,
+                                                   'constituent_meas')
+            LOG.debug('Constituent VNFs: %s', mea_members)
+            mea_mapping = self._get_mea_mapping(context, NANY.get(
+                                                'mea_mapping'), mea_members)
+            LOG.debug('VNF Mapping: %s', mea_mapping)
             # create NFP dict
             nfp_dict = self._create_nfp_pre(template_db)
             LOG.debug('NFP: %s', nfp_dict)
-            vnffg_db = Vnffg(id=vnffg_id,
+            NANY_db = Vnffg(id=NANY_id,
                              tenant_id=tenant_id,
                              name=name,
                              description=template_db.description,
-                             vnf_mapping=vnf_mapping,
-                             vnffgd_id=template_id,
+                             mea_mapping=mea_mapping,
+                             NANYD_id=template_id,
                              attributes=template_db.get('template'),
                              status=constants.PENDING_CREATE)
-            context.session.add(vnffg_db)
+            context.session.add(NANY_db)
 
             nfp_id = uuidutils.generate_uuid()
             sfc_id = uuidutils.generate_uuid()
             classifier_id = uuidutils.generate_uuid()
 
-            nfp_db = VnffgNfp(id=nfp_id, vnffg_id=vnffg_id,
+            nfp_db = VnffgNfp(id=nfp_id, NANY_id=NANY_id,
                               tenant_id=tenant_id,
                               name=nfp_dict['name'],
                               status=constants.PENDING_CREATE,
@@ -382,7 +382,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                               symmetrical=symmetrical)
             context.session.add(nfp_db)
 
-            chain = self._create_port_chain(context, vnf_mapping, template_db,
+            chain = self._create_port_chain(context, mea_mapping, template_db,
                                             nfp_dict['name'])
             LOG.debug('chain: %s', chain)
             sfc_db = VnffgChain(id=sfc_id,
@@ -404,25 +404,25 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
 
             match = self._policy_to_acl_criteria(context, template_db,
                                                  nfp_dict['name'],
-                                                 vnf_mapping)
+                                                 mea_mapping)
             LOG.debug('acl_match %s', match)
 
             match_db_table = ACLMatchCriteria(
                 id=uuidutils.generate_uuid(),
-                vnffgc_id=classifier_id,
+                NANYc_id=classifier_id,
                 **match)
 
             context.session.add(match_db_table)
 
-        return self._make_vnffg_dict(vnffg_db)
+        return self._make_NANY_dict(NANY_db)
 
     @staticmethod
     def _create_nfp_pre(template_db):
-        template = template_db.template['vnffgd']['topology_template']
+        template = template_db.template['NANYD']['topology_template']
         nfp_dict = dict()
-        vnffg_name = list(template['groups'].keys())[0]
+        NANY_name = list(template['groups'].keys())[0]
         # we assume only one NFP for initial implementation
-        nfp_dict['name'] = template['groups'][vnffg_name]['members'][0]
+        nfp_dict['name'] = template['groups'][NANY_name]['members'][0]
         nfp_dict['path_id'] = template['node_templates'][nfp_dict['name']][
             'properties']['id']
 
@@ -433,14 +433,14 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
 
         return nfp_dict
 
-    def _create_port_chain(self, context, vnf_mapping, template_db, nfp_name):
+    def _create_port_chain(self, context, mea_mapping, template_db, nfp_name):
         """Creates a list of physical port ids to represent an ordered chain
 
         :param context: SQL session context
-        :param vnf_mapping: dict of VNFD to VNF instance mappings
+        :param mea_mapping: dict of VNFD to VNF instance mappings
         :param template_db: VNFFG Descriptor
         :param nfp_name: name of the forwarding path with chain requirements
-        :return: list of port chain including vnf name and list of CPs
+        :return: list of port chain including mea name and list of CPs
         """
         chain_list = []
         prev_forwarder = None
@@ -450,30 +450,30 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                                                 nfp_name, 'path')
         # Build physical port chain
         for element in logical_chain:
-            if element['forwarder'] not in vnf_mapping.keys():
+            if element['forwarder'] not in mea_mapping.keys():
                 raise meo.NfpForwarderNotFoundException(mead=element[
                                                          'forwarder'],
-                                                         mapping=vnf_mapping)
+                                                         mapping=mea_mapping)
             # TODO(trozet): validate CP in VNFD has forwarding capability
             # Find VNF resources
-            vnf = mem_plugin.get_vnf_resources(context,
-                                                vnf_mapping[element[
+            mea = mem_plugin.get_mea_resources(context,
+                                                mea_mapping[element[
                                                     'forwarder']]
                                                 )
-            vnf_info = mem_plugin.get_vnf(context,
-                                           vnf_mapping[element['forwarder']])
-            vnf_cp = None
-            for resource in vnf:
+            mea_info = mem_plugin.get_mea(context,
+                                           mea_mapping[element['forwarder']])
+            mea_cp = None
+            for resource in mea:
                 if resource['name'] == element['capability']:
-                    vnf_cp = resource['id']
+                    mea_cp = resource['id']
                     break
-            if vnf_cp is None:
+            if mea_cp is None:
                 raise meo.VnffgCpNotFoundException(cp_id=element[
-                    'capability'], vnf_id=vnf_mapping[element['forwarder']])
+                    'capability'], mea_id=mea_mapping[element['forwarder']])
             # Check if this is a new VNF entry in the chain
             if element['forwarder'] != prev_forwarder:
-                chain_list.append({'name': vnf_info['name'],
-                                   CP: [vnf_cp]})
+                chain_list.append({'name': mea_info['name'],
+                                   CP: [mea_cp]})
                 prev_forwarder = element['forwarder']
             # Must be an egress CP
             else:
@@ -481,19 +481,19 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                     raise meo.NfpRequirementsException(mead=element[
                         'forwarder'])
                 else:
-                    chain_list[-1][CP].append(vnf_cp)
+                    chain_list[-1][CP].append(mea_cp)
 
         return chain_list
 
     @staticmethod
-    def _get_vnffg_property(template, vnffg_property):
-        template = template['vnffgd']['topology_template']
-        vnffg_name = list(template['groups'].keys())[0]
+    def _get_NANY_property(template, NANY_property):
+        template = template['NANYD']['topology_template']
+        NANY_name = list(template['groups'].keys())[0]
         try:
-            return template['groups'][vnffg_name]['properties'][vnffg_property]
+            return template['groups'][NANY_name]['properties'][NANY_property]
         except KeyError:
             raise meo.VnffgPropertyNotFoundException(
-                vnffg_property=vnffg_property)
+                NANY_property=NANY_property)
 
     @staticmethod
     def _get_nfp_attribute(template, nfp, attribute):
@@ -504,7 +504,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         :param attribute: attribute to find
         :return: value of attribute from template
         """
-        template = template['vnffgd']['topology_template']
+        template = template['NANYD']['topology_template']
         try:
             attr_val = VnffgPluginDbMixin._search_value(
                 template['node_templates'][nfp], attribute)
@@ -528,18 +528,18 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 if val is not None:
                     return val
 
-    def _get_vnf_mapping(self, context, vnf_mapping, vnf_members):
+    def _get_mea_mapping(self, context, mea_mapping, mea_members):
         """Creates/validates a mapping of VNFD names to VNF IDs for NFP.
 
         :param context: SQL session context
-        :param vnf_mapping: dict of requested VNFD:VNF_ID mappings
-        :param vnf_members: list of constituent VNFs from a VNFFG
+        :param mea_mapping: dict of requested VNFD:VNF_ID mappings
+        :param mea_members: list of constituent VNFs from a VNFFG
         :return: dict of VNFD:VNF_ID mappings
         """
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         new_mapping = dict()
 
-        for mead in vnf_members:
+        for mead in mea_members:
             # there should only be one ID returned for a unique name
             try:
                 mead_id = mem_plugin.get_meads(context, {'name': [mead]},
@@ -551,56 +551,56 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             else:
                 # if no VNF mapping, we need to abstractly look for instances
                 # that match VNFD
-                if vnf_mapping is None or mead not in vnf_mapping.keys():
+                if mea_mapping is None or mead not in mea_mapping.keys():
                     # find suitable VNFs from mead_id
                     LOG.debug('Searching VNFS with id %s', mead_id)
-                    vnf_list = mem_plugin.get_vnfs(context,
+                    mea_list = mem_plugin.get_meas(context,
                                                     {'mead_id': [mead_id]},
                                                     fields=['id'])
-                    if len(vnf_list) == 0:
+                    if len(mea_list) == 0:
                         raise meo.VnffgInvalidMappingException(mead_name=mead)
                     else:
-                        LOG.debug('Matching VNFs found %s', vnf_list)
-                        vnf_list = [vnf['id'] for vnf in vnf_list]
-                    if len(vnf_list) > 1:
-                        new_mapping[mead] = random.choice(vnf_list)
+                        LOG.debug('Matching VNFs found %s', mea_list)
+                        mea_list = [mea['id'] for mea in mea_list]
+                    if len(mea_list) > 1:
+                        new_mapping[mead] = random.choice(mea_list)
                     else:
-                        new_mapping[mead] = vnf_list[0]
+                        new_mapping[mead] = mea_list[0]
                 # if VNF mapping, validate instances exist and match the VNFD
                 else:
-                    vnf_mead = mem_plugin.get_vnf(context, vnf_mapping[mead],
+                    mea_mead = mem_plugin.get_mea(context, mea_mapping[mead],
                                                    fields=['mead_id'])
-                    if vnf_mead is not None:
-                        vnf_mead_id = vnf_mead['mead_id']
+                    if mea_mead is not None:
+                        mea_mead_id = mea_mead['mead_id']
                     else:
                         raise meo.VnffgInvalidMappingException(mead_name=mead)
-                    if mead_id != vnf_mead_id:
+                    if mead_id != mea_mead_id:
                         raise meo.VnffgInvalidMappingException(mead_name=mead)
                     else:
-                        new_mapping[mead] = vnf_mapping.pop(mead)
+                        new_mapping[mead] = mea_mapping.pop(mead)
         self._validate_vim(context, new_mapping.values())
         return new_mapping
 
-    def _validate_vim(self, context, vnfs):
+    def _validate_vim(self, context, meas):
         """Validates all VNFs are in the same VIM
 
         :param context: SQL Session Context
-        :param vnfs: List of VNF instance IDs
+        :param meas: List of VNF instance IDs
         :return: None
         """
-        LOG.debug('validating vim for vnfs %s', vnfs)
+        LOG.debug('validating vim for meas %s', meas)
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         vim_id = None
-        for vnf in vnfs:
-            vnf_dict = mem_plugin.get_vnf(context, vnf)
+        for mea in meas:
+            mea_dict = mem_plugin.get_mea(context, mea)
             if vim_id is None:
-                vim_id = vnf_dict['vim_id']
-            elif vnf_dict['vim_id'] != vim_id:
-                raise meo.VnffgVimMappingException(vnf_id=vnf, vim_id=vim_id)
+                vim_id = mea_dict['vim_id']
+            elif mea_dict['vim_id'] != vim_id:
+                raise meo.VnffgVimMappingException(mea_id=mea, vim_id=vim_id)
 
     def _policy_to_acl_criteria(self, context, template_db, nfp_name,
-                                vnf_mapping):
-        template = template_db.template['vnffgd']['topology_template']
+                                mea_mapping):
+        template = template_db.template['NANYD']['topology_template']
         nfp = template['node_templates'][nfp_name]
         try:
             policy = nfp['properties']['policy']
@@ -619,20 +619,20 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             for key, val in criteria.items():
                 if key in MATCH_CRITERIA:
                     match.update(self._convert_criteria(context, key, val,
-                                                        vnf_mapping))
+                                                        mea_mapping))
                 else:
                     raise meo.NfpPolicyCriteriaError(error="Unsupported "
                                                       "criteria: "
                                                       "{}".format(key))
         return match
 
-    def _convert_criteria(self, context, criteria, value, vnf_mapping):
+    def _convert_criteria(self, context, criteria, value, mea_mapping):
         """Method is used to convert criteria to proper db value from template
 
         :param context: SQL session context
         :param criteria: input criteria name
         :param value: input value
-        :param vnf_mapping: mapping of VNFD to VNF instances
+        :param mea_mapping: mapping of VNFD to VNF instances
         :return: converted dictionary
         """
 
@@ -650,22 +650,22 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
 
         elif criteria.endswith('_name'):
             prefix = criteria[:-5]
-            vnf_id = list(vnf_mapping.values())[0]
+            mea_id = list(mea_mapping.values())[0]
             new_value = self._vim_resource_name_to_id(context, prefix, value,
-                                                      vnf_id)
+                                                      mea_id)
             new_name = prefix + "_id"
             return {new_name: new_value}
 
         else:
             return {criteria: value}
 
-    def _vim_resource_name_to_id(self, context, resource, name, vnf_id):
+    def _vim_resource_name_to_id(self, context, resource, name, mea_id):
         """Converts a VIM resource name to its ID
 
         :param context: SQL session context
         :param resource: resource type to find (network, subnet, etc)
         :param name: name of the resource to find its ID
-        :param vnf_id: A VNF instance ID that is part of the chain to which
+        :param mea_id: A VNF instance ID that is part of the chain to which
                the classifier will apply to
         :return: ID of the resource name
         """
@@ -675,11 +675,11 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
 
     # called internally, not by REST API
     # instance_id = None means error on creation
-    def _create_vnffg_post(self, context, sfc_instance_id,
-                           fc_instance_id, vnffg_dict):
+    def _create_NANY_post(self, context, sfc_instance_id,
+                           fc_instance_id, NANY_dict):
         LOG.debug('SFC created instance is %s', sfc_instance_id)
         LOG.debug('Flow Classifier created instance is %s', fc_instance_id)
-        nfp_dict = self.get_nfp(context, vnffg_dict['forwarding_paths'])
+        nfp_dict = self.get_nfp(context, NANY_dict['forwarding_paths'])
         sfc_id = nfp_dict['chain_id']
         classifier_id = nfp_dict['classifier_id']
         with context.session.begin(subtransactions=True):
@@ -705,47 +705,47 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             else:
                 query.update({'status': constants.ACTIVE})
 
-    def _create_vnffg_status(self, context, vnffg):
-        nfp = self.get_nfp(context, vnffg['forwarding_paths'])
+    def _create_NANY_status(self, context, NANY):
+        nfp = self.get_nfp(context, NANY['forwarding_paths'])
         chain = self.get_sfc(context, nfp['chain_id'])
         classifier = self.get_classifier(context, nfp['classifier_id'])
 
         if classifier['status'] == constants.ERROR or chain['status'] ==\
                 constants.ERROR:
-            self._update_all_status(context, vnffg['id'], nfp['id'],
+            self._update_all_status(context, NANY['id'], nfp['id'],
                                     constants.ERROR)
         elif classifier['status'] == constants.ACTIVE and \
                 chain['status'] == constants.ACTIVE:
-            self._update_all_status(context, vnffg['id'], nfp['id'],
+            self._update_all_status(context, NANY['id'], nfp['id'],
                                     constants.ACTIVE)
 
-    def _update_all_status(self, context, vnffg_id, nfp_id, status):
+    def _update_all_status(self, context, NANY_id, nfp_id, status):
         with context.session.begin(subtransactions=True):
             query = (self._model_query(context, Vnffg).
-                     filter(Vnffg.id == vnffg_id))
+                     filter(Vnffg.id == NANY_id))
             query.update({'status': status})
             nfp_query = (self._model_query(context, VnffgNfp).
                          filter(VnffgNfp.id == nfp_id))
             nfp_query.update({'status': status})
 
-    def _make_vnffg_dict(self, vnffg_db, fields=None):
-        LOG.debug('vnffg_db %s', vnffg_db)
-        LOG.debug('vnffg_db nfp %s', vnffg_db.forwarding_paths)
+    def _make_NANY_dict(self, NANY_db, fields=None):
+        LOG.debug('NANY_db %s', NANY_db)
+        LOG.debug('NANY_db nfp %s', NANY_db.forwarding_paths)
         res = {
-            'forwarding_paths': vnffg_db.forwarding_paths[0]['id']
+            'forwarding_paths': NANY_db.forwarding_paths[0]['id']
         }
         key_list = ('id', 'tenant_id', 'name', 'description',
-                    'vnf_mapping', 'status', 'vnffgd_id', 'attributes')
-        res.update((key, vnffg_db[key]) for key in key_list)
+                    'mea_mapping', 'status', 'NANYD_id', 'attributes')
+        res.update((key, NANY_db[key]) for key in key_list)
         return self._fields(res, fields)
 
-    def _update_vnffg_pre(self, context, vnffg_id):
-        vnffg = self.get_vnffg(context, vnffg_id)
-        nfp = self.get_nfp(context, vnffg['forwarding_paths'])
+    def _update_NANY_pre(self, context, NANY_id):
+        NANY = self.get_NANY(context, NANY_id)
+        nfp = self.get_nfp(context, NANY['forwarding_paths'])
         sfc = self.get_sfc(context, nfp['chain_id'])
         fc = self.get_classifier(context, nfp['classifier_id'])
         with context.session.begin(subtransactions=True):
-            vnffg_db = self._get_vnffg_db(context, vnffg['id'], _ACTIVE_UPDATE,
+            NANY_db = self._get_NANY_db(context, NANY['id'], _ACTIVE_UPDATE,
                                           constants.PENDING_UPDATE)
             self._get_nfp_db(context, nfp['id'], _ACTIVE_UPDATE,
                              constants.PENDING_UPDATE)
@@ -753,12 +753,12 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                              constants.PENDING_UPDATE)
             self._get_classifier_db(context, fc['id'], _ACTIVE_UPDATE,
                                     constants.PENDING_UPDATE)
-        return self._make_vnffg_dict(vnffg_db)
+        return self._make_NANY_dict(NANY_db)
 
-    def _update_vnffg_post(self, context, vnffg_id, new_status,
-                           new_vnffg=None):
-        vnffg = self.get_vnffg(context, vnffg_id)
-        nfp = self.get_nfp(context, vnffg['forwarding_paths'])
+    def _update_NANY_post(self, context, NANY_id, new_status,
+                           new_NANY=None):
+        NANY = self.get_NANY(context, NANY_id)
+        nfp = self.get_nfp(context, NANY['forwarding_paths'])
         sfc_id = nfp['chain_id']
         classifier_id = nfp['classifier_id']
         with context.session.begin(subtransactions=True):
@@ -774,7 +774,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             query.update({'status': new_status})
 
             query = (self._model_query(context, Vnffg).
-                     filter(Vnffg.id == vnffg['id']).
+                     filter(Vnffg.id == NANY['id']).
                      filter(Vnffg.status == constants.PENDING_UPDATE))
             query.update({'status': new_status})
 
@@ -783,10 +783,10 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                          filter(VnffgNfp.status == constants.PENDING_UPDATE))
             nfp_query.update({'status': new_status})
 
-            if new_vnffg is not None:
+            if new_NANY is not None:
                 for key in _VALID_VNFFG_UPDATE_ATTRIBUTES:
-                    query.update({key: new_vnffg[key]})
-                nfp_query.update({'symmetrical': new_vnffg['symmetrical']})
+                    query.update({key: new_NANY[key]})
+                nfp_query.update({'symmetrical': new_NANY['symmetrical']})
 
     def _update_sfc_post(self, context, sfc_id, new_status, new_sfc=None):
         with context.session.begin(subtransactions=True):
@@ -812,19 +812,19 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 for key in _VALID_FC_UPDATE_ATTRIBUTES:
                     fc_query.update({key: new_fc[key]})
 
-    def _get_vnffg_db(self, context, vnffg_id, current_statuses, new_status):
+    def _get_NANY_db(self, context, NANY_id, current_statuses, new_status):
         try:
-            vnffg_db = (
+            NANY_db = (
                 self._model_query(context, Vnffg).
-                filter(Vnffg.id == vnffg_id).
+                filter(Vnffg.id == NANY_id).
                 filter(Vnffg.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise meo.VnffgNotFoundException(vnffg_id=vnffg_id)
-        if vnffg_db.status == constants.PENDING_UPDATE:
-            raise meo.VnffgInUse(vnffg_id=vnffg_id)
-        vnffg_db.update({'status': new_status})
-        return vnffg_db
+            raise meo.VnffgNotFoundException(NANY_id=NANY_id)
+        if NANY_db.status == constants.PENDING_UPDATE:
+            raise meo.VnffgInUse(NANY_id=NANY_id)
+        NANY_db.update({'status': new_status})
+        return NANY_db
 
     def _get_nfp_db(self, context, nfp_id, current_statuses, new_status):
         try:
@@ -868,14 +868,14 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         fc_db.update({'status': new_status})
         return fc_db
 
-    def _delete_vnffg_pre(self, context, vnffg_id):
-        vnffg = self.get_vnffg(context, vnffg_id)
-        nfp = self.get_nfp(context, vnffg['forwarding_paths'])
+    def _delete_NANY_pre(self, context, NANY_id):
+        NANY = self.get_NANY(context, NANY_id)
+        nfp = self.get_nfp(context, NANY['forwarding_paths'])
         chain = self.get_sfc(context, nfp['chain_id'])
         classifier = self.get_classifier(context, nfp['classifier_id'])
         with context.session.begin(subtransactions=True):
-            vnffg_db = self._get_vnffg_db(
-                context, vnffg['id'], _ACTIVE_UPDATE_ERROR_DEAD,
+            NANY_db = self._get_NANY_db(
+                context, NANY['id'], _ACTIVE_UPDATE_ERROR_DEAD,
                 constants.PENDING_DELETE)
             self._get_nfp_db(context, nfp['id'], _ACTIVE_UPDATE_ERROR_DEAD,
                              constants.PENDING_DELETE)
@@ -885,17 +885,17 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                                     _ACTIVE_UPDATE_ERROR_DEAD,
                                     constants.PENDING_DELETE)
 
-        return self._make_vnffg_dict(vnffg_db)
+        return self._make_NANY_dict(NANY_db)
 
-    def _delete_vnffg_post(self, context, vnffg_id, error):
-        vnffg = self.get_vnffg(context, vnffg_id)
-        nfp = self.get_nfp(context, vnffg['forwarding_paths'])
+    def _delete_NANY_post(self, context, NANY_id, error):
+        NANY = self.get_NANY(context, NANY_id)
+        nfp = self.get_nfp(context, NANY['forwarding_paths'])
         chain = self.get_sfc(context, nfp['chain_id'])
         classifier = self.get_classifier(context, nfp['classifier_id'])
         with context.session.begin(subtransactions=True):
-            vnffg_query = (
+            NANY_query = (
                 self._model_query(context, Vnffg).
-                filter(Vnffg.id == vnffg['id']).
+                filter(Vnffg.id == NANY['id']).
                 filter(Vnffg.status == constants.PENDING_DELETE))
             nfp_query = (
                 self._model_query(context, VnffgNfp).
@@ -911,9 +911,9 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 filter(VnffgClassifier.status == constants.PENDING_DELETE))
             match_query = (
                 self._model_query(context, ACLMatchCriteria).
-                filter(ACLMatchCriteria.vnffgc_id == classifier['id']))
+                filter(ACLMatchCriteria.NANYc_id == classifier['id']))
             if error:
-                vnffg_query.update({'status': constants.ERROR})
+                NANY_query.update({'status': constants.ERROR})
                 nfp_query.update({'status': constants.ERROR})
                 sfc_query.update({'status': constants.ERROR})
                 fc_query.update({'status': constants.ERROR})
@@ -922,14 +922,14 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
                 fc_query.delete()
                 sfc_query.delete()
                 nfp_query.delete()
-                vnffg_query.delete()
+                NANY_query.delete()
 
-            vnffgd_id = vnffg.get('vnffgd_id')
+            NANYD_id = NANY.get('NANYD_id')
             template_db = self._get_resource(context, VnffgTemplate,
-                                             vnffgd_id)
+                                             NANYD_id)
 
             if template_db.get('template_source') == 'inline':
-                self.delete_vnffgd(context, vnffgd_id)
+                self.delete_NANYD(context, NANYD_id)
 
     def _make_template_dict(self, template, fields=None):
         res = {}
@@ -959,7 +959,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         res = {'chain_id': nfp_db.chain['id'],
                'classifier_id': nfp_db.classifier['id']}
         key_list = ('name', 'id', 'tenant_id', 'symmetrical', 'status',
-                    'path_id', 'vnffg_id')
+                    'path_id', 'NANY_id')
         res.update((key, nfp_db[key]) for key in key_list)
         return self._fields(res, fields)
 
@@ -976,11 +976,11 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
             return self._get_by_id(context, model, res_id)
         except orm_exc.NoResultFound:
             if issubclass(model, Vnffg):
-                raise meo.VnffgNotFoundException(vnffg_id=res_id)
+                raise meo.VnffgNotFoundException(NANY_id=res_id)
             elif issubclass(model, VnffgClassifier):
                 raise meo.ClassifierNotFoundException(classifier_id=res_id)
             if issubclass(model, VnffgTemplate):
-                raise meo.VnffgdNotFoundException(vnffgd_id=res_id)
+                raise meo.VnffgdNotFoundException(NANYD_id=res_id)
             if issubclass(model, VnffgChain):
                 raise meo.SfcNotFoundException(sfc_id=res_id)
             else:

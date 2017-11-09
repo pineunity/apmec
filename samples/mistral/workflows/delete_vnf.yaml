@@ -1,16 +1,16 @@
 ---
 version: '2.0'
 
-std.delete_vnf:
+std.delete_mea:
   type: direct
 
   description: |
     Delete a VNF.
 
   input:
-    - vnf_id
+    - mea_id
 
   tasks:
-    delete_vnf:
+    delete_mea:
       description: Request to delete a VNF.
-      action: apmec.delete_vnf vnf=<% $.vnf_id %>
+      action: apmec.delete_mea mea=<% $.mea_id %>

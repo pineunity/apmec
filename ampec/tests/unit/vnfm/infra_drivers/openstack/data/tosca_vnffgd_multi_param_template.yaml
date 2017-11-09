@@ -48,5 +48,5 @@ topology_template:
         number_of_endpoints: 5
         dependent_virtual_link: [VL12,VL22]
         connection_point: [CP12,CP22]
-        constituent_vnfs: [VNFD1,VNFD2]
+        constituent_meas: [VNFD1,VNFD2]
       members: [Forwarding_path1]

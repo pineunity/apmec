@@ -22,7 +22,7 @@ A testcase body typically looks as below:
 
 .. code-block:: python
 
- class vnfClassName(base.BaseApmecTest):
+ class meaClassName(base.BaseApmecTest):
 
    def test_create_delete(self):
 
@@ -33,12 +33,12 @@ A testcase body typically looks as below:
      //cleanup
 
 
-In above example test class 'vnfClassName' is derived from
+In above example test class 'meaClassName' is derived from
 base.BaseApmecTest. Testcases typically has sections to setup, test, validate
 results and finally cleanup.
 
 Input yaml files: These are input files used in testcases for operations like
-create mead or create vnf. The location of files is apmec/tests/etc/samples/.
+create mead or create mea. The location of files is apmec/tests/etc/samples/.
 
 requirements.txt and test-requirements.txt : The file requirements.txt and
 test-requirements.txt lists all the packages needed for functional test.
@@ -52,7 +52,7 @@ testcase.
 Eg: assertIsNotNone, assertEqual
 
 Apmec-client: In base.py we instantiate apmecclient object which has apis to
-create/delete/list mead/vnf once given the necessary parameters.
+create/delete/list mead/mea once given the necessary parameters.
 Verify apmecclient/v1_0/client.py for all the apmec related apis supported.
 
 

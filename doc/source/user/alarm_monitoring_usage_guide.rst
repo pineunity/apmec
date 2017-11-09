@@ -76,7 +76,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
             image: cirros-0.3.5-x86_64-disk
             mgmt_driver: noop
             availability_zone: nova
-            metadata: {metering.vnf: SG1}
+            metadata: {metering.mea: SG1}
 
         CP1:
           type: tosca.nodes.nfv.CP.Apmec
@@ -100,7 +100,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
             image: cirros-0.3.5-x86_64-disk
             mgmt_driver: noop
             availability_zone: nova
-            metadata: {metering.vnf: SG1}
+            metadata: {metering.mea: SG1}
 
         CP2:
           type: tosca.nodes.nfv.CP.Apmec
@@ -186,7 +186,7 @@ How to monitor VNFs via alarm triggers
 How to setup alarm configuration
 ================================
 
-Firstly, mead and vnf need to be created successfully using pre-defined TOSCA
+Firstly, mead and mea need to be created successfully using pre-defined TOSCA
 template for alarm monitoring. Then, in order to know whether alarm
 configuration defined in Apmec is successfully passed to Ceilometer,
 Apmec users could use CLI:
@@ -209,7 +209,7 @@ Apmec users could use CLI:
     +---------------------------+-------------------------------------------------------------------------------------------------------------------------------+
     | Field                     | Value                                                                                                                         |
     +---------------------------+-------------------------------------------------------------------------------------------------------------------------------+
-    | alarm_actions             | [u'http://pinedcn:9890/v1.0/vnfs/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd']                   |
+    | alarm_actions             | [u'http://pinedcn:9890/v1.0/meas/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd']                   |
     | alarm_id                  | 6f2336b9-e0a2-4e33-88be-bc036192b42b                                                                                          |
     | comparison_operator       | lt                                                                                                                            |
     | description               | utilization less_than 10%                                                                                                     |
@@ -222,7 +222,7 @@ Apmec users could use CLI:
     | ok_actions                | None                                                                                                                          |
     | period                    | 600                                                                                                                           |
     | project_id                | 3db801789c9e4b61b14ce448c9e7fb6d                                                                                              |
-    | query                     | metadata.user_metadata.vnf_id = a0f60b00-ad3d-4769-92ef-e8d9518da2c8                                                          |
+    | query                     | metadata.user_metadata.mea_id = a0f60b00-ad3d-4769-92ef-e8d9518da2c8                                                          |
     | repeat_actions            | True                                                                                                                          |
     | severity                  | low                                                                                                                           |
     | state                     | insufficient data                                                                                                             |
@@ -252,9 +252,9 @@ Another way could be used to check if backend action is handled well in Apmec:
 
 .. code-block::ini
 
-curl -H "Content-Type: application/json" -X POST -d '{"alarm_id": "35a80852-e24f-46ed-bd34-e2f831d00172", "current": "alarm"}' http://pinedcn:9890/v1.0/vnfs/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd
+curl -H "Content-Type: application/json" -X POST -d '{"alarm_id": "35a80852-e24f-46ed-bd34-e2f831d00172", "current": "alarm"}' http://pinedcn:9890/v1.0/meas/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd
 
-Then, users can check Horizon to know if vnf is respawned. Please note that
+Then, users can check Horizon to know if mea is respawned. Please note that
 the url used in the above command could be captured from "**ceilometer alarm-show** command as shown before.
 "key" attribute in body request need to be captured from the url. The reason is that key will be authenticated
 so that the url is requested only one time.

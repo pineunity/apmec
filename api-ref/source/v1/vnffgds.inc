@@ -9,13 +9,13 @@ Manages VNF Forwarding Graph Descriptors (VNFFGDs).
 The VNFFGD is a template which describes information about deployment and
 behavior of VNF Forwarding Graphs (VNFFGs). For more information, see
 `VNFFG Descriptor Template Guide
-<https://docs.openstack.org/apmec/latest/contributor/vnffgd_template_description.html>`_.
+<https://docs.openstack.org/apmec/latest/contributor/NANYD_template_description.html>`_.
 
 
 Create VNFFGD
 =============
 
-.. rest_method::  POST /v1.0/vnffgds
+.. rest_method::  POST /v1.0/NANYDs
 
 Creates a VNFFGD.
 
@@ -39,13 +39,13 @@ Request Parameters
 
   - tenant_id: tenant_id_opt
   - name: name
-  - template: vnffgd_template
+  - template: NANYD_template
   - description: description_opt
 
 Request Example
 ---------------
 
-.. literalinclude:: samples/vnffgds/vnffgds-create-request.json
+.. literalinclude:: samples/NANYDs/NANYDs-create-request.json
    :language: javascript
 
 Response Parameters
@@ -53,22 +53,22 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffgd: vnffgd
+  - NANYD: NANYD
   - tenant_id: tenant_id
   - name: name
-  - template: vnffgd_template
+  - template: NANYD_template
   - description: description
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnffgds/vnffgds-create-response.json
+.. literalinclude:: samples/NANYDs/NANYDs-create-response.json
    :language: javascript
 
 List VNFFGDs
 ============
 
-.. rest_method::  GET /v1.0/vnffgds
+.. rest_method::  GET /v1.0/NANYDs
 
 Lists VNFFGDs.
 
@@ -89,23 +89,23 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffgds: vnffgds
+  - NANYDs: NANYDs
   - description: description
   - tenant_id: tenant_id
-  - id: vnffgd_id
+  - id: NANYD_id
   - name: name
 
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnffgds/vnffgds-list-response.json
+.. literalinclude:: samples/NANYDs/NANYDs-list-response.json
    :language: javascript
 
 Show VNFFGD
 ===========
 
-.. rest_method::  GET /v1.0/vnffgds/{vnffgd_id}
+.. rest_method::  GET /v1.0/NANYDs/{NANYD_id}
 
 Shows information of a given VNFFGD.
 
@@ -127,29 +127,29 @@ Request Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffgd_id: vnffgd_id_path
+  - NANYD_id: NANYD_id_path
 
 Response Parameters
 -------------------
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffgd: vnffgd
+  - NANYD: NANYD
   - description: description
   - tenant_id: tenant_id
-  - id: vnffgd_id
+  - id: NANYD_id
   - name: name
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnffgds/vnffgds-show-response.json
+.. literalinclude:: samples/NANYDs/NANYDs-show-response.json
    :language: javascript
 
 Delete VNFFGD
 =============
 
-.. rest_method::  DELETE /v1.0/vnffgds/{vnffgd_id}
+.. rest_method::  DELETE /v1.0/NANYDs/{NANYD_id}
 
 Deletes a given VNFFGD.
 Only a VNFFGD without any associated VNFFGs can be deleted.
@@ -173,4 +173,4 @@ Request Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffgd_id: vnffgd_id_path
+  - NANYD_id: NANYD_id_path

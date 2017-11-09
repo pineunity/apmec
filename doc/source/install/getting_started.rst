@@ -40,7 +40,7 @@ is the account information collected in file vim-config.yaml::
 
 2.) Register the VIM that will be used as a default VIM for VNF deployments.
 This will be required when the optional argument --vim-id is not provided by
-the user during vnf-create.
+the user during mea-create.
 
 .. code-block:: console
 
@@ -119,7 +119,7 @@ Onboarding sample VNF
 
 .. code-block:: console
 
-   apmec vnf-create --mead-name samplemead samplevnf
+   apmec mea-create --mead-name samplemead samplemea
 ..
 
 5). Check the status.
@@ -128,6 +128,6 @@ Onboarding sample VNF
 
    apmec vim-list
    apmec mead-list
-   apmec vnf-list
-   apmec vnf-show samplevnf
+   apmec mea-list
+   apmec mea-show samplemea
 ..

@@ -22,11 +22,11 @@ from apmec.mem.policy_actions import abstract_action
 LOG = logging.getLogger(__name__)
 
 
-def _log_monitor_events(context, vnf_dict, evt_details):
+def _log_monitor_events(context, mea_dict, evt_details):
     _cos_db_plg = common_services_db_plugin.CommonServicesPluginDb()
-    _cos_db_plg.create_event(context, res_id=vnf_dict['id'],
+    _cos_db_plg.create_event(context, res_id=mea_dict['id'],
                              res_type=constants.RES_TYPE_MEA,
-                             res_state=vnf_dict['status'],
+                             res_state=mea_dict['status'],
                              evt_type=constants.RES_EVT_MONITOR,
                              tstamp=timeutils.utcnow(),
                              details=evt_details)
@@ -42,11 +42,11 @@ class MEAActionLog(abstract_action.AbstractPolicyAction):
     def get_description(self):
         return 'Apmec MEA logging policy'
 
-    def execute_action(self, plugin, context, vnf_dict, args):
-        vnf_id = vnf_dict['id']
-        LOG.error('vnf %s dead', vnf_id)
+    def execute_action(self, plugin, context, mea_dict, args):
+        mea_id = mea_dict['id']
+        LOG.error('mea %s dead', mea_id)
         _log_monitor_events(context,
-                            vnf_dict,
+                            mea_dict,
                             "ActionLogOnly invoked")
 
 
@@ -60,13 +60,13 @@ class MEAActionLogAndKill(abstract_action.AbstractPolicyAction):
     def get_description(self):
         return 'Apmec MEA log_and_kill policy'
 
-    def execute_action(self, plugin, context, vnf_dict, args):
+    def execute_action(self, plugin, context, mea_dict, args):
         _log_monitor_events(context,
-                            vnf_dict,
+                            mea_dict,
                             "ActionLogAndKill invoked")
-        vnf_id = vnf_dict['id']
-        if plugin._mark_vnf_dead(vnf_dict['id']):
-            if vnf_dict['attributes'].get('monitoring_policy'):
-                plugin._vnf_monitor.mark_dead(vnf_dict['id'])
-            plugin.delete_vnf(context, vnf_id)
-        LOG.error('vnf %s dead', vnf_id)
+        mea_id = mea_dict['id']
+        if plugin._mark_mea_dead(mea_dict['id']):
+            if mea_dict['attributes'].get('monitoring_policy'):
+                plugin._mea_monitor.mark_dead(mea_dict['id'])
+            plugin.delete_mea(context, mea_id)
+        LOG.error('mea %s dead', mea_id)

@@ -39,12 +39,12 @@ Following methods need to be overridden in the new action:
     This method must return the type of action. ex: respawn
 
 ``def get_name(self)``
-    This method must return the symbolic name of the vnf policy action.
+    This method must return the symbolic name of the mea policy action.
 
 ``def get_description(self)``
     This method must return the description for the policy action.
 
-``def execute_action(self, plugin, context, vnf, arguments)``
+``def execute_action(self, plugin, context, mea, arguments)``
     This method must expose what will be executed with the policy action.
     'arguments' is used to add more options for policy actions. For example,
     if action is scaling, 'arguments' should let you know
@@ -57,7 +57,7 @@ This function can be used to describe the execution process of policy.
 For example:
 ::
 
-  _log_monitor_events(context, vnf_dict, "ActionRespawnHeat invoked")
+  _log_monitor_events(context, mea_dict, "ActionRespawnHeat invoked")
 
 
 How to combine policy with existing monitoring framework in Apmec

@@ -34,7 +34,7 @@ from apmec.db.types import Json
 def upgrade(active_plugins=None, options=None):
 
     op.create_table(
-        'vnffgtemplates',
+        'NANYtemplates',
         sa.Column('id', sa.String(length=36), nullable=False),
         sa.Column('tenant_id', sa.String(length=64), nullable=False),
         sa.Column('name', sa.String(length=255), nullable=False),
@@ -45,35 +45,35 @@ def upgrade(active_plugins=None, options=None):
     )
 
     op.create_table(
-        'vnffgs',
+        'NANYs',
         sa.Column('id', sa.String(length=36), nullable=False),
         sa.Column('tenant_id', sa.String(length=64), nullable=False),
         sa.Column('name', sa.String(length=255), nullable=False),
         sa.Column('description', sa.String(length=255), nullable=True),
-        sa.Column('vnffgd_id', sa.String(length=36), nullable=False),
+        sa.Column('NANYD_id', sa.String(length=36), nullable=False),
         sa.Column('status', sa.String(length=255), nullable=False),
-        sa.Column('vnf_mapping', Json),
-        sa.ForeignKeyConstraint(['vnffgd_id'], ['vnffgtemplates.id'], ),
+        sa.Column('mea_mapping', Json),
+        sa.ForeignKeyConstraint(['NANYD_id'], ['NANYtemplates.id'], ),
         sa.PrimaryKeyConstraint('id'),
         mysql_engine='InnoDB'
     )
 
     op.create_table(
-        'vnffgnfps',
+        'NANYnfps',
         sa.Column('id', sa.String(length=36), nullable=False),
         sa.Column('tenant_id', sa.String(length=64), nullable=False),
-        sa.Column('vnffg_id', sa.String(length=36), nullable=False),
+        sa.Column('NANY_id', sa.String(length=36), nullable=False),
         sa.Column('name', sa.String(length=255), nullable=False),
         sa.Column('status', sa.String(length=255), nullable=False),
         sa.Column('path_id', sa.String(length=255), nullable=False),
         sa.Column('symmetrical', sa.Boolean, default=False),
-        sa.ForeignKeyConstraint(['vnffg_id'], ['vnffgs.id'], ),
+        sa.ForeignKeyConstraint(['NANY_id'], ['NANYs.id'], ),
         sa.PrimaryKeyConstraint('id'),
         mysql_engine='InnoDB'
     )
 
     op.create_table(
-        'vnffgchains',
+        'NANYchains',
         sa.Column('id', sa.String(length=36), nullable=False),
         sa.Column('tenant_id', sa.String(length=64), nullable=False),
         sa.Column('instance_id', sa.String(length=255), nullable=True),
@@ -82,21 +82,21 @@ def upgrade(active_plugins=None, options=None):
         sa.Column('path_id', sa.String(length=255), nullable=False),
         sa.Column('symmetrical', sa.Boolean, default=False),
         sa.Column('chain', Json),
-        sa.ForeignKeyConstraint(['nfp_id'], ['vnffgnfps.id'], ),
+        sa.ForeignKeyConstraint(['nfp_id'], ['NANYnfps.id'], ),
         sa.PrimaryKeyConstraint('id'),
         mysql_engine='InnoDB'
     )
 
     op.create_table(
-        'vnffgclassifiers',
+        'NANYclassifiers',
         sa.Column('id', sa.String(length=36), nullable=False),
         sa.Column('tenant_id', sa.String(length=64), nullable=False),
         sa.Column('nfp_id', sa.String(length=36), nullable=False),
         sa.Column('instance_id', sa.String(length=255), nullable=True),
         sa.Column('chain_id', sa.String(length=36), nullable=False),
         sa.Column('status', sa.String(length=255), nullable=False),
-        sa.ForeignKeyConstraint(['nfp_id'], ['vnffgnfps.id'], ),
-        sa.ForeignKeyConstraint(['chain_id'], ['vnffgchains.id'], ),
+        sa.ForeignKeyConstraint(['nfp_id'], ['NANYnfps.id'], ),
+        sa.ForeignKeyConstraint(['chain_id'], ['NANYchains.id'], ),
         sa.PrimaryKeyConstraint('id'),
         mysql_engine='InnoDB'
     )
@@ -104,7 +104,7 @@ def upgrade(active_plugins=None, options=None):
     op.create_table(
         'aclmatchcriterias',
         sa.Column('id', sa.String(length=36), nullable=False),
-        sa.Column('vnffgc_id', sa.String(length=36), nullable=False),
+        sa.Column('NANYc_id', sa.String(length=36), nullable=False),
         sa.Column('eth_src', sa.String(length=36), nullable=True),
         sa.Column('eth_dst', sa.String(length=36), nullable=True),
         sa.Column('eth_type', sa.String(length=36), nullable=True),
@@ -140,6 +140,6 @@ def upgrade(active_plugins=None, options=None):
         sa.Column('ipv6_nd_target', sa.String(36), nullable=True),
         sa.Column('ipv6_nd_sll', sa.String(36), nullable=True),
         sa.Column('ipv6_nd_tll', sa.String(36), nullable=True),
-        sa.ForeignKeyConstraint(['vnffgc_id'], ['vnffgclassifiers.id'], ),
+        sa.ForeignKeyConstraint(['NANYc_id'], ['NANYclassifiers.id'], ),
         sa.PrimaryKeyConstraint('id'),
     )

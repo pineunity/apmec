@@ -110,7 +110,7 @@ def purge_deleted(apmec_config, table_name, age, granularity='days'):
         _purge_events_table(meta, engine, time_line)
     elif table_name == 'all':
         _purge_events_table(meta, engine, time_line)
-        for t in ['vnf', 'mead', 'vims']:
+        for t in ['mea', 'mead', 'vims']:
             _purge_resource_tables(t, meta, engine, time_line, assoc_map)
     else:
         _purge_resource_tables(table_name, meta, engine, time_line, assoc_map)

@@ -35,7 +35,7 @@ from apmec.common import log
 from apmec.common import utils
 from apmec.db.meo import meo_db_plugin
 from apmec.db.meo import ns_db
-from apmec.db.meo import vnffg_db
+from apmec.db.meo import NANY_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
@@ -57,7 +57,7 @@ def config_opts():
     return [('meo_vim', NfvoPlugin.OPTS)]
 
 
-class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
+class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                  ns_db.NSPluginDb):
     """NFVO reference plugin for NFVO extension
 
@@ -223,10 +223,10 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             raise meo.ToscaParserFailed(error_msg_details=str(e))
 
     @log.log
-    def validate_vnffgd_path(self, template):
-        temp = template['vnffgd']['topology_template']
-        vnffg_name = list(temp['groups'].keys())[0]
-        nfp_name = temp['groups'][vnffg_name]['members'][0]
+    def validate_NANYD_path(self, template):
+        temp = template['NANYD']['topology_template']
+        NANY_name = list(temp['groups'].keys())[0]
+        nfp_name = temp['groups'][NANY_name]['members'][0]
         path = self._get_nfp_attribute(template, nfp_name,
                                        'path')
 
@@ -249,12 +249,12 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             prev_element = element
 
     @log.log
-    def validate_vnffg_properties(self, template):
+    def validate_NANY_properties(self, template):
 
         # check whether number_of_endpoints is same with connection_point
-        connection_point = self._get_vnffg_property(
+        connection_point = self._get_NANY_property(
             template, 'connection_point')
-        number_endpoint = self._get_vnffg_property(
+        number_endpoint = self._get_NANY_property(
             template, 'number_of_endpoints')
 
         if len(connection_point) != number_endpoint:
@@ -263,114 +263,114 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                 cps=connection_point)
 
     @log.log
-    def create_vnffgd(self, context, vnffgd):
-        template = vnffgd['vnffgd']
+    def create_NANYD(self, context, NANYD):
+        template = NANYD['NANYD']
 
         if 'template_source' in template:
             template_source = template.get('template_source')
         else:
             template_source = 'onboarded'
-        vnffgd['vnffgd']['template_source'] = template_source
+        NANYD['NANYD']['template_source'] = template_source
 
-        if 'vnffgd' not in template.get('template'):
+        if 'NANYD' not in template.get('template'):
             raise meo.VnffgdInvalidTemplate(template=template.get('template'))
         else:
-            self.validate_tosca(template['template']['vnffgd'])
+            self.validate_tosca(template['template']['NANYD'])
 
-            self.validate_vnffgd_path(template['template'])
+            self.validate_NANYD_path(template['template'])
 
-            self.validate_vnffg_properties(template['template'])
+            self.validate_NANY_properties(template['template'])
 
-        return super(NfvoPlugin, self).create_vnffgd(context, vnffgd)
+        return super(NfvoPlugin, self).create_NANYD(context, NANYD)
 
     @log.log
-    def create_vnffg(self, context, vnffg):
-        vnffg_info = vnffg['vnffg']
-        name = vnffg_info['name']
+    def create_NANY(self, context, NANY):
+        NANY_info = NANY['NANY']
+        name = NANY_info['name']
 
-        if vnffg_info.get('vnffgd_template'):
-            vnffgd_name = utils.generate_resource_name(name, 'inline')
-            vnffgd = {'vnffgd': {'tenant_id': vnffg_info['tenant_id'],
-                                 'name': vnffgd_name,
+        if NANY_info.get('NANYD_template'):
+            NANYD_name = utils.generate_resource_name(name, 'inline')
+            NANYD = {'NANYD': {'tenant_id': NANY_info['tenant_id'],
+                                 'name': NANYD_name,
                                  'template': {
-                                     'vnffgd': vnffg_info['vnffgd_template']},
+                                     'NANYD': NANY_info['NANYD_template']},
                                  'template_source': 'inline',
-                                 'description': vnffg_info['description']}}
-            vnffg_info['vnffgd_id'] = \
-                self.create_vnffgd(context, vnffgd).get('id')
+                                 'description': NANY_info['description']}}
+            NANY_info['NANYD_id'] = \
+                self.create_NANYD(context, NANYD).get('id')
 
-        vnffg_dict = super(NfvoPlugin, self)._create_vnffg_pre(context, vnffg)
+        NANY_dict = super(NfvoPlugin, self)._create_NANY_pre(context, NANY)
         nfp = super(NfvoPlugin, self).get_nfp(context,
-                                              vnffg_dict['forwarding_paths'])
+                                              NANY_dict['forwarding_paths'])
         sfc = super(NfvoPlugin, self).get_sfc(context, nfp['chain_id'])
         match = super(NfvoPlugin, self).get_classifier(context,
                                                        nfp['classifier_id'],
                                                        fields='match')['match']
         # grab the first VNF to check it's VIM type
         # we have already checked that all VNFs are in the same VIM
-        vim_obj = self._get_vim_from_vnf(context,
-                                         list(vnffg_dict[
-                                              'vnf_mapping'].values())[0])
+        vim_obj = self._get_vim_from_mea(context,
+                                         list(NANY_dict[
+                                              'mea_mapping'].values())[0])
         # TODO(trozet): figure out what auth info we actually need to pass
         # to the driver.  Is it a session, or is full vim obj good enough?
         driver_type = vim_obj['type']
         try:
             fc_id = self._vim_drivers.invoke(driver_type,
                                              'create_flow_classifier',
-                                             name=vnffg_dict['name'],
+                                             name=NANY_dict['name'],
                                              fc=match,
                                              auth_attr=vim_obj['auth_cred'],
                                              symmetrical=sfc['symmetrical'])
             sfc_id = self._vim_drivers.invoke(driver_type,
                                               'create_chain',
-                                              name=vnffg_dict['name'],
-                                              vnfs=sfc['chain'], fc_id=fc_id,
+                                              name=NANY_dict['name'],
+                                              meas=sfc['chain'], fc_id=fc_id,
                                               symmetrical=sfc['symmetrical'],
                                               auth_attr=vim_obj['auth_cred'])
         except Exception:
             with excutils.save_and_reraise_exception():
-                self.delete_vnffg(context, vnffg_id=vnffg_dict['id'])
-        super(NfvoPlugin, self)._create_vnffg_post(context, sfc_id, fc_id,
-                                                   vnffg_dict)
-        super(NfvoPlugin, self)._create_vnffg_status(context, vnffg_dict)
-        return vnffg_dict
+                self.delete_NANY(context, NANY_id=NANY_dict['id'])
+        super(NfvoPlugin, self)._create_NANY_post(context, sfc_id, fc_id,
+                                                   NANY_dict)
+        super(NfvoPlugin, self)._create_NANY_status(context, NANY_dict)
+        return NANY_dict
 
     @log.log
-    def update_vnffg(self, context, vnffg_id, vnffg):
-        vnffg_dict = super(NfvoPlugin, self)._update_vnffg_pre(context,
-                                                               vnffg_id)
-        new_vnffg = vnffg['vnffg']
-        LOG.debug('vnffg update: %s', vnffg)
+    def update_NANY(self, context, NANY_id, NANY):
+        NANY_dict = super(NfvoPlugin, self)._update_NANY_pre(context,
+                                                               NANY_id)
+        new_NANY = NANY['NANY']
+        LOG.debug('NANY update: %s', NANY)
         nfp = super(NfvoPlugin, self).get_nfp(context,
-                                              vnffg_dict['forwarding_paths'])
+                                              NANY_dict['forwarding_paths'])
         sfc = super(NfvoPlugin, self).get_sfc(context, nfp['chain_id'])
 
         fc = super(NfvoPlugin, self).get_classifier(context,
                                                     nfp['classifier_id'])
-        template_db = self._get_resource(context, vnffg_db.VnffgTemplate,
-                                         vnffg_dict['vnffgd_id'])
-        vnf_members = self._get_vnffg_property(template_db.template,
-                                               'constituent_vnfs')
-        new_vnffg['vnf_mapping'] = super(NfvoPlugin, self)._get_vnf_mapping(
-            context, new_vnffg.get('vnf_mapping'), vnf_members)
-        template_id = vnffg_dict['vnffgd_id']
-        template_db = self._get_resource(context, vnffg_db.VnffgTemplate,
+        template_db = self._get_resource(context, NANY_db.VnffgTemplate,
+                                         NANY_dict['NANYD_id'])
+        mea_members = self._get_NANY_property(template_db.template,
+                                               'constituent_meas')
+        new_NANY['mea_mapping'] = super(NfvoPlugin, self)._get_mea_mapping(
+            context, new_NANY.get('mea_mapping'), mea_members)
+        template_id = NANY_dict['NANYD_id']
+        template_db = self._get_resource(context, NANY_db.VnffgTemplate,
                                          template_id)
-        # functional attributes that allow update are vnf_mapping,
+        # functional attributes that allow update are mea_mapping,
         # and symmetrical.  Therefore we need to figure out the new chain if
-        # it was updated by new vnf_mapping.  Symmetrical is handled by driver.
+        # it was updated by new mea_mapping.  Symmetrical is handled by driver.
 
         chain = super(NfvoPlugin, self)._create_port_chain(context,
-                                                           new_vnffg[
-                                                               'vnf_mapping'],
+                                                           new_NANY[
+                                                               'mea_mapping'],
                                                            template_db,
                                                            nfp['name'])
         LOG.debug('chain update: %s', chain)
         sfc['chain'] = chain
-        sfc['symmetrical'] = new_vnffg['symmetrical']
-        vim_obj = self._get_vim_from_vnf(context,
-                                         list(vnffg_dict[
-                                              'vnf_mapping'].values())[0])
+        sfc['symmetrical'] = new_NANY['symmetrical']
+        vim_obj = self._get_vim_from_mea(context,
+                                         list(NANY_dict[
+                                              'mea_mapping'].values())[0])
         driver_type = vim_obj['type']
         try:
             # we don't support updating the match criteria in first iteration
@@ -379,20 +379,20 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             self._vim_drivers.invoke(driver_type, 'update_flow_classifier',
                                      fc_id=fc['instance_id'], fc=fc['match'],
                                      auth_attr=vim_obj['auth_cred'],
-                                     symmetrical=new_vnffg['symmetrical'])
+                                     symmetrical=new_NANY['symmetrical'])
             self._vim_drivers.invoke(driver_type, 'update_chain',
-                                     vnfs=sfc['chain'],
+                                     meas=sfc['chain'],
                                      fc_ids=[fc['instance_id']],
                                      chain_id=sfc['instance_id'],
                                      auth_attr=vim_obj['auth_cred'],
-                                     symmetrical=new_vnffg['symmetrical'])
+                                     symmetrical=new_NANY['symmetrical'])
         except Exception:
             with excutils.save_and_reraise_exception():
-                vnffg_dict['status'] = constants.ERROR
-                super(NfvoPlugin, self)._update_vnffg_post(context, vnffg_id,
+                NANY_dict['status'] = constants.ERROR
+                super(NfvoPlugin, self)._update_NANY_post(context, NANY_id,
                                                            constants.ERROR)
-        super(NfvoPlugin, self)._update_vnffg_post(context, vnffg_id,
-                                                   constants.ACTIVE, new_vnffg)
+        super(NfvoPlugin, self)._update_NANY_post(context, NANY_id,
+                                                   constants.ACTIVE, new_NANY)
         # update chain
         super(NfvoPlugin, self)._update_sfc_post(context, sfc['id'],
                                                  constants.ACTIVE, sfc)
@@ -400,21 +400,21 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         # updates are supported to classifier
         super(NfvoPlugin, self)._update_classifier_post(context, fc['id'],
                                                         constants.ACTIVE)
-        return vnffg_dict
+        return NANY_dict
 
     @log.log
-    def delete_vnffg(self, context, vnffg_id):
-        vnffg_dict = super(NfvoPlugin, self)._delete_vnffg_pre(context,
-                                                               vnffg_id)
+    def delete_NANY(self, context, NANY_id):
+        NANY_dict = super(NfvoPlugin, self)._delete_NANY_pre(context,
+                                                               NANY_id)
         nfp = super(NfvoPlugin, self).get_nfp(context,
-                                              vnffg_dict['forwarding_paths'])
+                                              NANY_dict['forwarding_paths'])
         sfc = super(NfvoPlugin, self).get_sfc(context, nfp['chain_id'])
 
         fc = super(NfvoPlugin, self).get_classifier(context,
                                                     nfp['classifier_id'])
-        vim_obj = self._get_vim_from_vnf(context,
-                                         list(vnffg_dict[
-                                              'vnf_mapping'].values())[0])
+        vim_obj = self._get_vim_from_mea(context,
+                                         list(NANY_dict[
+                                              'mea_mapping'].values())[0])
         driver_type = vim_obj['type']
         try:
             if sfc['instance_id'] is not None:
@@ -428,24 +428,24 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
                                          auth_attr=vim_obj['auth_cred'])
         except Exception:
             with excutils.save_and_reraise_exception():
-                vnffg_dict['status'] = constants.ERROR
-                super(NfvoPlugin, self)._delete_vnffg_post(context, vnffg_id,
+                NANY_dict['status'] = constants.ERROR
+                super(NfvoPlugin, self)._delete_NANY_post(context, NANY_id,
                                                            True)
-        super(NfvoPlugin, self)._delete_vnffg_post(context, vnffg_id, False)
-        return vnffg_dict
+        super(NfvoPlugin, self)._delete_NANY_post(context, NANY_id, False)
+        return NANY_dict
 
-    def _get_vim_from_vnf(self, context, vnf_id):
+    def _get_vim_from_mea(self, context, mea_id):
         """Figures out VIM based on a VNF
 
         :param context: SQL Session Context
-        :param vnf_id: VNF ID
+        :param mea_id: VNF ID
         :return: VIM or VIM properties if fields are provided
         """
         mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
-        vim_id = mem_plugin.get_vnf(context, vnf_id, fields=['vim_id'])
+        vim_id = mem_plugin.get_mea(context, mea_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
-            raise meo.VimFromVnfNotFoundException(vnf_id=vnf_id)
+            raise meo.VimFromVnfNotFoundException(mea_id=mea_id)
         self._build_vim_auth(context, vim_obj)
         return vim_obj
 
@@ -496,16 +496,16 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             return f.read()
         LOG.warning('VIM id invalid or key not found for  %s', vim_id)
 
-    def _vim_resource_name_to_id(self, context, resource, name, vnf_id):
+    def _vim_resource_name_to_id(self, context, resource, name, mea_id):
         """Converts a VIM resource name to its ID
 
         :param resource: resource type to find (network, subnet, etc)
         :param name: name of the resource to find its ID
-        :param vnf_id: A VNF instance ID that is part of the chain to which
+        :param mea_id: A VNF instance ID that is part of the chain to which
                the classifier will apply to
         :return: ID of the resource name
         """
-        vim_obj = self._get_vim_from_vnf(context, vnf_id)
+        vim_obj = self._get_vim_from_mea(context, mea_id)
         driver_type = vim_obj['type']
         return self._vim_drivers.invoke(driver_type,
                                         'get_vim_resource_id',
@@ -675,7 +675,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         workflow = self._vim_drivers.invoke(
             driver_type,
             'prepare_and_create_workflow',
-            resource='vnf',
+            resource='mea',
             action='create',
             auth_dict=self.get_auth_dict(context),
             kwargs=kwargs)
@@ -772,7 +772,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             workflow = self._vim_drivers.invoke(
                 driver_type,
                 'prepare_and_create_workflow',
-                resource='vnf',
+                resource='mea',
                 action='delete',
                 auth_dict=self.get_auth_dict(context),
                 kwargs={

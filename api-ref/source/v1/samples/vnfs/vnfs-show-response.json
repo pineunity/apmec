@@ -1,5 +1,5 @@
 {
-    "vnf": {
+    "mea": {
         "status": "ACTIVE",
         "description": "OpenWRT VNFD with parameterized VDU name",
         "mead_id": "a04b47d1-e8ad-4ef9-8341-eafec398ce02",

@@ -13,7 +13,7 @@
 #    under the License.
 #
 
-"""add_attributes_to_vnffg
+"""add_attributes_to_NANY
 
 Revision ID: e8918cda6433
 Revises: 000632983ada
@@ -31,4 +31,4 @@ from apmec.db.types import Json
 
 
 def upgrade(active_plugins=None, options=None):
-    op.add_column('vnffgs', sa.Column('attributes', Json))
+    op.add_column('NANYs', sa.Column('attributes', Json))

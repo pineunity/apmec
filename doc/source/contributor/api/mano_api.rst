@@ -3,7 +3,7 @@ Apmec API Overview
 *******************
 
 Apmec API provides REST API end-points based on `ETSI NFV MANO standards`_.
-The two new resources introduced are 'mead' and 'vnf' for
+The two new resources introduced are 'mead' and 'mea' for
 describing the 'mem' extension. The resources request and response formats are
 described in below sections.
 
@@ -157,15 +157,15 @@ body.
 Vnfs
 ====
 
-**GET /v1.0/vnfs**
+**GET /v1.0/meas**
 
-List vnfs - Lists instantiated vnfs in VNF Manager.
+List meas - Lists instantiated meas in VNF Manager.
 
 ::
 
     Response:
     {
-        "vnfs": [
+        "meas": [
             {
                 "status": "ACTIVE",
                 "name": "open_wrt",
@@ -186,15 +186,15 @@ List vnfs - Lists instantiated vnfs in VNF Manager.
         ]
     }
 
-**GET /v1.0/vnfs/{vnf_id}**
+**GET /v1.0/meas/{mea_id}**
 
-Show vnf - Show information for a specified vnf_id.
+Show mea - Show information for a specified mea_id.
 
 ::
 
     Response:
     {
-        "vnf": [
+        "mea": [
             {
                 "status": "ACTIVE",
                 "name": "open_wrt",
@@ -214,9 +214,9 @@ Show vnf - Show information for a specified vnf_id.
         ]
     }
 
-**POST /v1.0/vnfs**
+**POST /v1.0/meas**
 
-Create vnf - Create a vnf based on the mead template id.
+Create mea - Create a mea based on the mead template id.
 
 ::
 
@@ -229,12 +229,12 @@ Create vnf - Create a vnf based on the mead template id.
                 "password": "devstack"
             }
         },
-        "vnf": {
+        "mea": {
             "attributes": {},
             "vim_id": "",
             "description": "demo-example",
             "mead_id": "ad0c2c7c-825e-43c5-a402-b5710902b408",
-            "name": "demo-vnf"
+            "name": "demo-mea"
         }
     }
 
@@ -242,12 +242,12 @@ Create vnf - Create a vnf based on the mead template id.
 
     Response:
     {
-        "vnf": {
+        "mea": {
             "status": "PENDING_CREATE",
             "description": "demo-example",
             "tenant_id": "bb6a3be1021a4746ab727a6c9296e797",
             "vim_id": "c91413b9-eaf9-47f7-86b6-3f3a3e29261e",
-            "name": "demo-vnf",
+            "name": "demo-mea",
             "instance_id": "050f4d0e-ff7c-4a5d-9dba-dbe238b3348b",
             "mgmt_url": null,
             "placement_attr": {
@@ -266,9 +266,9 @@ Create vnf - Create a vnf based on the mead template id.
         }
     }
 
-**PUT /v1.0/vnfs/{vnf_id}**
+**PUT /v1.0/meas/{mea_id}**
 
-Update vnf - Update a vnf based on user config file or data.
+Update mea - Update a mea based on user config file or data.
 
 ::
 
@@ -281,7 +281,7 @@ Update vnf - Update a vnf based on user config file or data.
                 "password": "devstack"
             }
         },
-        "vnf": {
+        "mea": {
             "attributes": {
                 "config": "vdus:\n  vdu1: <sample_vdu_config> \n\n"
             }
@@ -292,7 +292,7 @@ Update vnf - Update a vnf based on user config file or data.
 
     Response:
     {
-        "vnf": {
+        "mea": {
             "status": "PENDING_UPDATE",
             "name": "",
             "tenant_id": "4dd6c1d7b6c94af980ca886495bcfed0",
@@ -310,6 +310,6 @@ Update vnf - Update a vnf based on user config file or data.
         }
     }
 
-**DELETE /v1.0/vnfs/{vnf_id}**
+**DELETE /v1.0/meas/{mea_id}**
 
-Delete vnf - Deletes a specified vnf_id from the VNF list.
+Delete mea - Deletes a specified mea_id from the VNF list.

@@ -13,7 +13,7 @@
 #    under the License.
 #
 
-"""add descrition to vnf
+"""add descrition to mea
 
 Revision ID: 13c0e0661015
 Revises: 4c31092895b8

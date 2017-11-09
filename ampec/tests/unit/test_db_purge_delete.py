@@ -58,10 +58,10 @@ class TestDbPurgeDelete(db_base.SqlTestCase):
 
     def test_invalid_granularity_input(self):
         self.assertRaises(exceptions.InvalidInput, purge_tables.purge_deleted,
-                          self.config, 'vnf', '90', 'decade')
+                          self.config, 'mea', '90', 'decade')
 
-    def test_purge_delete_call_vnf(self):
-        purge_tables.purge_deleted(self.config, 'vnf', '90', 'days')
+    def test_purge_delete_call_mea(self):
+        purge_tables.purge_deleted(self.config, 'mea', '90', 'days')
         purge_tables._purge_resource_tables.assert_called_once_with(
             mock.ANY, mock.ANY, mock.ANY, mock.ANY, mock.ANY)
 

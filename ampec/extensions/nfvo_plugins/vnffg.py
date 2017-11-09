@@ -23,39 +23,39 @@ from apmec.services import service_base
 class VNFFGPluginBase(service_base.NFVPluginBase):
 
     @abc.abstractmethod
-    def create_vnffgd(self, context, vnffgd):
+    def create_NANYD(self, context, NANYD):
         pass
 
     @abc.abstractmethod
-    def delete_vnffgd(self, context, vnffgd_id):
+    def delete_NANYD(self, context, NANYD_id):
         pass
 
     @abc.abstractmethod
-    def get_vnffgd(self, context, vnffgd_id, fields=None):
+    def get_NANYD(self, context, NANYD_id, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vnffgds(self, context, filters=None, fields=None):
+    def get_NANYDs(self, context, filters=None, fields=None):
         pass
 
     @abc.abstractmethod
-    def create_vnffg(self, context, vnffg):
+    def create_NANY(self, context, NANY):
         pass
 
     @abc.abstractmethod
-    def get_vnffgs(self, context, filters=None, fields=None):
+    def get_NANYs(self, context, filters=None, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vnffg(self, context, vnffg_id, fields=None):
+    def get_NANY(self, context, NANY_id, fields=None):
         pass
 
     @abc.abstractmethod
-    def update_vnffg(self, context, vnffg_id, vnffg):
+    def update_NANY(self, context, NANY_id, NANY):
         pass
 
     @abc.abstractmethod
-    def delete_vnffg(self, context, vnffg_id):
+    def delete_NANY(self, context, NANY_id):
         pass
 
     @abc.abstractmethod

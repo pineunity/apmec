@@ -8,13 +8,13 @@
                 "connection_points": [
                     "e48cd49d-3bf7-4c8d-b6a7-3e2846b01c7c"
                 ],
-                "name": "my-vnf1"
+                "name": "my-mea1"
             },
             {
                 "connection_points": [
                     "4b0b3a8f-07ca-46c3-b8fa-90caeaada031"
                 ],
-                "name": "my-vnf2"
+                "name": "my-mea2"
             }
         ],
         "tenant_id": "e8935dc5484345a1aff7a1043e88c8b1",

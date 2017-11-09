@@ -79,7 +79,7 @@ class VimGetResourceNotFoundException(exceptions.ApmecException):
 
 
 class VimFromVnfNotFoundException(exceptions.NotFound):
-    message = _('VIM from VNF %(vnf_id)s could not be found')
+    message = _('VIM from VNF %(mea_id)s could not be found')
 
 
 class ToscaParserFailed(exceptions.InvalidInput):
@@ -123,15 +123,15 @@ class VnffgdWrongEndpointNumber(exceptions.ApmecException):
 
 
 class VnffgdInUse(exceptions.InUse):
-    message = _('VNFFGD %(vnffgd_id)s is still in use')
+    message = _('VNFFGD %(NANYD_id)s is still in use')
 
 
 class VnffgdNotFoundException(exceptions.NotFound):
-    message = _('VNFFG Template %(vnffgd_id)s could not be found')
+    message = _('VNFFG Template %(NANYD_id)s could not be found')
 
 
 class VnffgCreateFailed(exceptions.ApmecException):
-    message = _('Creating VNFFG based on %(vnffgd_id)s failed')
+    message = _('Creating VNFFG based on %(NANYD_id)s failed')
 
 
 class VnffgInvalidMappingException(exceptions.ApmecException):
@@ -154,29 +154,29 @@ class VnffgParamValueNotUsed(exceptions.ApmecException):
 
 
 class VnffgPropertyNotFoundException(exceptions.NotFound):
-    message = _('VNFFG Property %(vnffg_property)s could not be found')
+    message = _('VNFFG Property %(NANY_property)s could not be found')
 
 
 class VnffgCpNotFoundException(exceptions.NotFound):
     message = _("Specified CP %(cp_id)s could not be found in VNF "
-                "%(vnf_id)s.")
+                "%(mea_id)s.")
 
 
 class VnffgNotFoundException(exceptions.NotFound):
-    message = _('VNFFG %(vnffg_id)s could not be found')
+    message = _('VNFFG %(NANY_id)s could not be found')
 
 
 class VnffgInUse(exceptions.InUse):
-    message = _('VNFFG %(vnffg_id)s is still in use')
+    message = _('VNFFG %(NANY_id)s is still in use')
 
 
 class VnffgVnfNotFoundException(exceptions.NotFound):
-    message = _("Specified VNF instance %(vnf_name)s in VNF Mapping could not "
+    message = _("Specified VNF instance %(mea_name)s in VNF Mapping could not "
                 "be found")
 
 
 class VnffgDeleteFailed(exceptions.ApmecException):
-    message = _('Deleting VNFFG %(vnffg_id)s failed')
+    message = _('Deleting VNFFG %(NANY_id)s failed')
 
 
 class NfpAttributeNotFoundException(exceptions.NotFound):
@@ -331,7 +331,7 @@ RESOURCE_ATTRIBUTE_MAP = {
         },
     },
 
-    'vnffgds': {
+    'NANYDs': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -375,7 +375,7 @@ RESOURCE_ATTRIBUTE_MAP = {
         }
     },
 
-    'vnffgs': {
+    'NANYs': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -390,7 +390,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'required_by_policy': True,
             'is_visible': True
         },
-        'vnffgd_id': {
+        'NANYD_id': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:uuid': None},
@@ -410,7 +410,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
             'default': '',
         },
-        'vnf_mapping': {
+        'mea_mapping': {
             'allow_post': True,
             'allow_put': True,
             'convert_to': attr.convert_none_to_empty_dict,
@@ -443,7 +443,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'allow_put': False,
             'is_visible': True,
         },
-        'vnffgd_template': {
+        'NANYD_template': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:dict_or_nodata': None},
@@ -467,7 +467,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'required_by_policy': True,
             'is_visible': True
         },
-        'vnffg_id': {
+        'NANY_id': {
             'allow_post': False,
             'allow_put': False,
             'validate': {'type:uuid': None},
@@ -697,7 +697,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'allow_put': False,
             'is_visible': True,
         },
-        'vnf_ids': {
+        'mea_ids': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:string': None},

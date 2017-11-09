@@ -39,7 +39,7 @@ Validate workflow definition files before registering with Mistral.
 
 ::
 
-  $ mistral workflow-validate create_vnf.yaml
+  $ mistral workflow-validate create_mea.yaml
 
   +-------+-------+
   | Field | Value |
@@ -57,7 +57,7 @@ Validate workflow definition files before registering with Mistral.
   | Error | None  |
   +-------+-------+
 
-  $ mistral workflow-validate delete_vnf.yaml
+  $ mistral workflow-validate delete_mea.yaml
 
   +-------+-------+
   | Field | Value |
@@ -78,8 +78,8 @@ Validate workflow definition files before registering with Mistral.
 Registering Apmec workflows with Mistral
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To create std.create_vnf, std.create_mead, std.delete_mead and
-std.delete_vnf workflows in Mistral.
+To create std.create_mea, std.create_mead, std.delete_mead and
+std.delete_mea workflows in Mistral.
 
 ::
 
@@ -87,12 +87,12 @@ std.delete_vnf workflows in Mistral.
 
 ::
 
-  $ mistral workflow-create create_vnf.yaml --public
+  $ mistral workflow-create create_mea.yaml --public
 
   +--------------------------------------+----------------+----------------------------------+--------+-------+----------------------------+------------+
   | ID                                   | Name           | Project ID                       | Tags   | Input | Created at                 | Updated at |
   +--------------------------------------+----------------+----------------------------------+--------+-------+----------------------------+------------+
-  | 445e165a-3654-4996-aad4-c6fea65e95d5 | std.create_vnf | bde60e557de840a8a837733aaa96e42e | <none> | body  | 2016-07-29 15:08:45.585192 | None       |
+  | 445e165a-3654-4996-aad4-c6fea65e95d5 | std.create_mea | bde60e557de840a8a837733aaa96e42e | <none> | body  | 2016-07-29 15:08:45.585192 | None       |
   +--------------------------------------+----------------+----------------------------------+--------+-------+----------------------------+------------+
 
   $ mistral workflow-create create_mead.yaml --public
@@ -111,11 +111,11 @@ std.delete_vnf workflows in Mistral.
   | f15b7402-ce31-4369-98d4-818125191564 | std.delete_mead | bde60e557de840a8a837733aaa96e42e | <none> | mead_id | 2016-08-14 20:01:00.135104 | None       |
   +--------------------------------------+-----------------+----------------------------------+--------+---------+----------------------------+------------+
 
-  $ mistral workflow-create delete_vnf.yaml --public
+  $ mistral workflow-create delete_mea.yaml --public
   +--------------------------------------+----------------+----------------------------------+--------+--------+----------------------------+------------+
   | ID                                   | Name           | Project ID                       | Tags   | Input  | Created at                 | Updated at |
   +--------------------------------------+----------------+----------------------------------+--------+--------+----------------------------+------------+
-  | d6451b4e-6448-4a26-aa33-ac5e18c7a412 | std.delete_vnf | bde60e557de840a8a837733aaa96e42e | <none> | vnf_id | 2016-08-14 20:01:08.088654 | None       |
+  | d6451b4e-6448-4a26-aa33-ac5e18c7a412 | std.delete_mea | bde60e557de840a8a837733aaa96e42e | <none> | mea_id | 2016-08-14 20:01:08.088654 | None       |
   +--------------------------------------+----------------+----------------------------------+--------+--------+----------------------------+------------+
 
 
@@ -219,22 +219,22 @@ Verify VNFD details using apmec CLI
   | tenant_id     | bde60e557de840a8a837733aaa96e42e                                                                                                                                          |
   +---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-VNF resource creation with std.create_vnf workflow
+VNF resource creation with std.create_mea workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Update the mead_id from the output of above execution in create_vnf.json
+Update the mead_id from the output of above execution in create_mea.json
 
 Create new execution for VNF creation.
 
 ::
 
-  $ mistral execution-create std.create_vnf create_vnf.json
+  $ mistral execution-create std.create_mea create_mea.json
 
   +-------------------+--------------------------------------+
   | Field             | Value                                |
   +-------------------+--------------------------------------+
   | ID                | 3bf2051b-ac2e-433b-8f18-23f57f32f184 |
   | Workflow ID       | 445e165a-3654-4996-aad4-c6fea65e95d5 |
-  | Workflow name     | std.create_vnf                       |
+  | Workflow name     | std.create_mea                       |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | RUNNING                              |
@@ -254,7 +254,7 @@ Gather execution details based on execution id.
   +-------------------+--------------------------------------+
   | ID                | 3bf2051b-ac2e-433b-8f18-23f57f32f184 |
   | Workflow ID       | 445e165a-3654-4996-aad4-c6fea65e95d5 |
-  | Workflow name     | std.create_vnf                       |
+  | Workflow name     | std.create_mea                       |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | SUCCESS                              |
@@ -275,14 +275,14 @@ Gather VNF ID from execution output data.
     "status": "ACTIVE",
     "mgmt_url": "{\"VDU1\": \"192.168.120.7\"}",
     "vim_id": "22ac5ce6-1415-460c-badf-40ffc5091f94",
-    "vnf_id": "1c349534-a539-4d5a-b854-033f98036cd5"
+    "mea_id": "1c349534-a539-4d5a-b854-033f98036cd5"
   }
 
 Verify VNF details using apmec CLI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ::
 
-  $ apmec vnf-show "1c349534-a539-4d5a-b854-033f98036cd5"
+  $ apmec mea-show "1c349534-a539-4d5a-b854-033f98036cd5"
 
   +----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
   | Field          | Value                                                                                                                                                                 |
@@ -298,29 +298,29 @@ Verify VNF details using apmec CLI
   | id             | 1c349534-a539-4d5a-b854-033f98036cd5                                                                                                                                  |
   | instance_id    | 771c53df-9f41-454c-a719-7eccd3a4eba9                                                                                                                                  |
   | mgmt_url       | {"VDU1": "192.168.120.7"}                                                                                                                                             |
-  | name           | apmec-create-vnf                                                                                                                                                     |
+  | name           | apmec-create-mea                                                                                                                                                     |
   | placement_attr | {"vim_name": "VIM0"}                                                                                                                                                  |
   | status         | ACTIVE                                                                                                                                                                |
   | tenant_id      | bde60e557de840a8a837733aaa96e42e                                                                                                                                      |
   | vim_id         | 22ac5ce6-1415-460c-badf-40ffc5091f94                                                                                                                                  |
   +----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-VNF resource deletion with std.delete_vnf workflow
+VNF resource deletion with std.delete_mea workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Update the vnf_id from the output of above execution in delete_vnf.json
+Update the mea_id from the output of above execution in delete_mea.json
 
 Create new execution for VNF deletion.
 
 ::
 
-  $ mistral execution-create std.delete_vnf delete_vnf.json
+  $ mistral execution-create std.delete_mea delete_mea.json
 
   +-------------------+--------------------------------------+
   | Field             | Value                                |
   +-------------------+--------------------------------------+
   | ID                | 677c7bab-18ee-4a34-b1e6-a305e98ba887 |
   | Workflow ID       | d6451b4e-6448-4a26-aa33-ac5e18c7a412 |
-  | Workflow name     | std.delete_vnf                       |
+  | Workflow name     | std.delete_mea                       |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | RUNNING                              |
@@ -340,7 +340,7 @@ Gather execution details based on execution id.
   +-------------------+--------------------------------------+
   | ID                | 677c7bab-18ee-4a34-b1e6-a305e98ba887 |
   | Workflow ID       | d6451b4e-6448-4a26-aa33-ac5e18c7a412 |
-  | Workflow name     | std.delete_vnf                       |
+  | Workflow name     | std.delete_mea                       |
   | Description       |                                      |
   | Task Execution ID | <none>                               |
   | State             | SUCCESS                              |
@@ -374,31 +374,31 @@ Gather execution output data from execution id.
         "project_id": "bde60e557de840a8a837733aaa96e42e",
         "user_name": "demo"
     },
-    "vnf_id": "f467e215-43a3-4083-8bbb-ce49d9c70443",
+    "mea_id": "f467e215-43a3-4083-8bbb-ce49d9c70443",
     "__env": {},
     "__execution": {
         "input": {
-            "vnf_id": "f467e215-43a3-4083-8bbb-ce49d9c70443"
+            "mea_id": "f467e215-43a3-4083-8bbb-ce49d9c70443"
         },
         "params": {},
         "id": "677c7bab-18ee-4a34-b1e6-a305e98ba887",
         "spec": {
             "tasks": {
-                "delete_vnf": {
-                    "action": "apmec.delete_vnf vnf=<% $.vnf_id %>",
+                "delete_mea": {
+                    "action": "apmec.delete_mea mea=<% $.mea_id %>",
                     "version": "2.0",
                     "type": "direct",
                     "description": "Request to delete a VNF.",
-                    "name": "delete_vnf"
+                    "name": "delete_mea"
                 }
             },
             "description": "Delete a VNF.\n",
             "version": "2.0",
             "input": [
-                "vnf_id"
+                "mea_id"
             ],
             "type": "direct",
-            "name": "std.delete_vnf"
+            "name": "std.delete_mea"
         }
       }
   }

@@ -1,9 +1,9 @@
 {
-    "vnffgd": {
+    "NANYD": {
         "tenant_id": "e8935dc5484345a1aff7a1043e88c8b1",
-        "name": "vnffgd1",
+        "name": "NANYD1",
         "template": {
-            "vnffgd": {
+            "NANYD": {
                 "tosca_definitions_version": "tosca_simple_profile_for_nfv_1_0_0",
                 "description": "Sample VNFFG template",
                 "topology_template": {
@@ -58,7 +58,7 @@
                                     "CP22"
                                 ],
                                 "version": 1.0,
-                                "constituent_vnfs": [
+                                "constituent_meas": [
                                     "VNFD1",
                                     "VNFD2"
                                 ],
@@ -73,6 +73,6 @@
                 }
             }
         },
-        "description": "sample vnffgd"
+        "description": "sample NANYD"
     }
 }

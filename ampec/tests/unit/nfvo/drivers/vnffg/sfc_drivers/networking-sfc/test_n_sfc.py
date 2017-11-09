@@ -185,20 +185,20 @@ class TestChainSFC(base.TestCase):
 
         self.assertIsNotNone(fc_id)
 
-        vnf_1 = {'name': 'test_create_chain_vnf_1',
+        mea_1 = {'name': 'test_create_chain_mea_1',
                  'connection_points': [uuidutils.generate_uuid(),
                                        uuidutils.generate_uuid()]}
-        vnf_2 = {'name': 'test_create_chain_vnf_2',
+        mea_2 = {'name': 'test_create_chain_mea_2',
                  'connection_points': [uuidutils.generate_uuid(),
                                        uuidutils.generate_uuid()]}
-        vnf_3 = {'name': 'test_create_chain_vnf_3',
+        mea_3 = {'name': 'test_create_chain_mea_3',
                  'connection_points': [uuidutils.generate_uuid(),
                                        uuidutils.generate_uuid()]}
-        vnfs = [vnf_1, vnf_2, vnf_3]
+        meas = [mea_1, mea_2, mea_3]
 
         result = self.sfc_driver.create_chain(name='fake_ffg',
                                               fc_id=fc_id,
-                                              vnfs=vnfs,
+                                              meas=meas,
                                               auth_attr=auth_attr)
 
         self.assertIsNotNone(result)
@@ -216,20 +216,20 @@ class TestChainSFC(base.TestCase):
 
         self.assertIsNotNone(fc_id)
 
-        vnf_1 = {'name': 'test_delete_chain_vnf_1',
+        mea_1 = {'name': 'test_delete_chain_mea_1',
                  'connection_points': [uuidutils.generate_uuid(),
                                        uuidutils.generate_uuid()]}
-        vnf_2 = {'name': 'test_delete_chain_vnf_2',
+        mea_2 = {'name': 'test_delete_chain_mea_2',
                  'connection_points': [uuidutils.generate_uuid(),
                                        uuidutils.generate_uuid()]}
-        vnf_3 = {'name': 'test_delete_chain_vnf_3',
+        mea_3 = {'name': 'test_delete_chain_mea_3',
                  'connection_points': [uuidutils.generate_uuid(),
                                        uuidutils.generate_uuid()]}
-        vnfs = [vnf_1, vnf_2, vnf_3]
+        meas = [mea_1, mea_2, mea_3]
 
         chain_id = self.sfc_driver.create_chain(name='fake_ffg',
                                                 fc_id=fc_id,
-                                                vnfs=vnfs,
+                                                meas=meas,
                                                 auth_attr=auth_attr)
 
         self.assertIsNotNone(chain_id)

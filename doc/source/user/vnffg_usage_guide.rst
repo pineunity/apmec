@@ -11,7 +11,7 @@
   License for the specific language governing permissions and limitations
   under the License.
 
-.. _ref-vnffg:
+.. _ref-NANY:
 
 ====================
 VNF Forwarding Graph
@@ -26,7 +26,7 @@ decides which traffic should go through them.
 Similar to how VNFs are described by VNFDs, VNFFGs are described by VNF
 Forwarding Graph Descriptors (VNFFGD). Please see the `devref guide
 <https://github.com/openstack/apmec/blob/master/doc/source/contributor
-/vnffgd_template_description.rst>`_ on VNFFGD to learn more about
+/NANYD_template_description.rst>`_ on VNFFGD to learn more about
 how a VNFFGD is defined.
 
 VNFFG can be instantiated from VNFFGD or directly from VNFFGD template by
@@ -64,8 +64,8 @@ Creating the VNFFGD
 
 Once OpenStack/Devstack along with Apmec has been successfully installed,
 deploy a sample VNFFGD template such as the one `here <https://github.com/
-openstack/apmec/tree/master/samples/tosca-templates/vnffgd/
-tosca-vnffgd-sample.yaml>`_.
+openstack/apmec/tree/master/samples/tosca-templates/NANYD/
+tosca-NANYD-sample.yaml>`_.
 
 .. note::
 
@@ -103,7 +103,7 @@ Apmec provides the following CLI to create a VNFFGD:
 
 .. code-block:: console
 
-   apmec vnffgd-create --vnffgd-file <vnffgd-file> <vnffgd-name>
+   apmec NANYD-create --NANYD-file <NANYD-file> <NANYD-name>
 
 
 Creating the VNFFG
@@ -116,11 +116,11 @@ same Connection Point definitions as the ones you declared in your VNFFGD.
 
 .. code-block:: console
 
-   apmec mead-create --mead-file tosca-vnffg-mead1.yaml VNFD1
-   apmec vnf-create --mead-name VNFD1 VNF1
+   apmec mead-create --mead-file tosca-NANY-mead1.yaml VNFD1
+   apmec mea-create --mead-name VNFD1 VNF1
 
-   apmec mead-create --mead-file tosca-vnffg-mead2.yaml VNFD2
-   apmec vnf-create --mead-name VNFD2 VNF2
+   apmec mead-create --mead-file tosca-NANY-mead2.yaml VNFD2
+   apmec mea-create --mead-name VNFD2 VNF2
 
 Refer the 'Getting Started' link below on how to create a VNFD and deploy
 2 VNFs: `VNF1`_ and `VNF2`_.
@@ -131,30 +131,30 @@ Apmec provides the following CLI to create VNFFG from VNFFGD:
 
 .. code-block:: console
 
-   apmec vnffg-create --vnffgd-name <vnffgd-name> \
-          --vnf-mapping <vnf-mapping> --symmetrical <boolean> <vnffg-name>
+   apmec NANY-create --NANYD-name <NANYD-name> \
+          --mea-mapping <mea-mapping> --symmetrical <boolean> <NANY-name>
 
-or you can create directly VNFFG from vnffgd template without initiating
+or you can create directly VNFFG from NANYD template without initiating
 VNFFGD.
 
 .. code-block:: console
 
-   apmec vnffg-create --vnffgd-template <vnffgd-template> \
-      --vnf-mapping <vnf-mapping> --symmetrical <boolean> <vnffg-name>
+   apmec NANY-create --NANYD-template <NANYD-template> \
+      --mea-mapping <mea-mapping> --symmetrical <boolean> <NANY-name>
 
-If you use a parameterized vnffg template:
+If you use a parameterized NANY template:
 
 .. code-block:: console
 
-   apmec vnffg-create --vnffgd-name <vnffgd-name> \
-      --param-file <param-file> --vnf-mapping <vnf-mapping> \
-      --symmetrical <boolean> <vnffg-name>
+   apmec NANY-create --NANYD-name <NANYD-name> \
+      --param-file <param-file> --mea-mapping <mea-mapping> \
+      --symmetrical <boolean> <NANY-name>
 
 Here,
 
-* vnffgd-name - VNFFGD to use to instantiate this VNFFG
+* NANYD-name - VNFFGD to use to instantiate this VNFFG
 * param-file  - Parameter file in Yaml.
-* vnf-mapping - Allows a list of logical VNFD to VNF instance mapping
+* mea-mapping - Allows a list of logical VNFD to VNF instance mapping
 * symmetrical - True/False
 
 VNF Mapping is used to declare which exact VNF instance to be used for
@@ -164,7 +164,7 @@ to the desired VNF instance:
 
 .. code-block:: console
 
-   apmec vnf-list
+   apmec mea-list
 
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
    | id                                   | name | mgmt_url                  | status | vim_id                               | mead_id                              |
@@ -173,10 +173,10 @@ to the desired VNF instance:
    | 91e32c20-6d1f-47a4-9ba7-08f5e5effe07 | VNF1 | {"VDU1": "192.168.1.7"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | 27795330-62a7-406d-9443-2daad76e674b |
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
 
-   apmec vnffg-create --vnffgd-name myvnffgd --vnf-mapping \
-      VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',VNF2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myvnffg
+   apmec NANY-create --NANYD-name myNANYD --mea-mapping \
+      VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',VNF2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myNANY
 
-Alternatively, if no vnf-mapping is provided then Apmec VNFFG will attempt
+Alternatively, if no mea-mapping is provided then Apmec VNFFG will attempt
 to search for VNF instances derived from the given VNFDs in the VNFFGD.  If
 multiple VNF instances exist for a given VNFD, the VNF instance chosen to be
 used in the VNFFG is done at random.
@@ -199,7 +199,7 @@ parameterized. Once parameterized different values can be passed while
 instantiating the forwarding graph using the same VNFFGD template.
 The value of a parameterized attribute can be specified like *{get_input foo}*
 in the TOSCA VNFFGD template. The corresponding param-file in the following
-YAML format can be provided in the vnffg-create command,
+YAML format can be provided in the NANY-create command,
 
 .. code-block:: console
 
@@ -212,12 +212,12 @@ VNFFG command with parameter file:
 
 .. code-block:: console
 
-   apmec vnffg-create --vnffgd-name vnffgd-param --vnf-mapping VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',\
-   VNFD2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' --param-file vnffg-param-file.yaml myvnffg
+   apmec NANY-create --NANYD-name NANYD-param --mea-mapping VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',\
+   VNFD2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' --param-file NANY-param-file.yaml myNANY
 
 
 See `VNFFGD template samples with parameter support <https://github.com/
-openstack/apmec/tree/master/samples/tosca-templates/vnffgd>`_.
+openstack/apmec/tree/master/samples/tosca-templates/NANYD>`_.
 
 Viewing a VNFFG
 ~~~~~~~~~~~~~~~
@@ -225,7 +225,7 @@ Viewing a VNFFG
 A VNFFG once created is instantiated as multiple sub-components.  These
 components include the VNFFG itself, which relies on a Network Forwarding
 Path (NFP).  The NFP is then composed of a Service Function Chain (SFC) and
-a Classifier.  The main command to view a VNFFG is 'apmec vnffg-show,
+a Classifier.  The main command to view a VNFFG is 'apmec NANY-show,
 however there are several commands available in order to view the
 sub-components for a rendered VNFFG:
 
@@ -248,5 +248,5 @@ Known Issues and Limitations
 - NSH attributes not yet supported
 - Symmetrical is not supported by driver yet
 
-.. _VNF1: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-mead1.yaml
-.. _VNF2: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-mead2.yaml
+.. _VNF1: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/NANYD/tosca-NANY-mead1.yaml
+.. _VNF2: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/NANYD/tosca-NANY-mead2.yaml

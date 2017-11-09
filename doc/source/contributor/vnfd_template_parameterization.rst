@@ -264,12 +264,12 @@ Key Summary
    in the parameters value file.
 #. Supply a parameters value file in yaml format each time during VNF
    deployment with different values for the parameters.
-#. An example of a vnf-create python-apmecclient command specifying a
+#. An example of a mea-create python-apmecclient command specifying a
    parameterized template and parameter values file would like below:
 
    .. code-block:: console
 
-      apmec vnf-create --mead-name <mead_name> --param-file <param_yaml_file> <vnf_name>
+      apmec mea-create --mead-name <mead_name> --param-file <param_yaml_file> <mea_name>
 
 #. Specifying a parameter values file during VNF creation is also supported in
    Horizon UI.

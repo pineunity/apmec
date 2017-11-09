@@ -564,13 +564,13 @@ class Controller(object):
                 continue
             for rule in attr_vals['validate']:
                 # skip validating mead_id when mead_template is specified to
-                # create vnf
-                if (resource == 'vnf') and ('mead_template' in body['vnf'])\
+                # create mea
+                if (resource == 'mea') and ('mead_template' in body['mea'])\
                         and (attr == "mead_id") and is_create:
                     continue
-                # skip validating vnffgd_id when vnffgd_template is provided
-                if (resource == 'vnffg') and ('vnffgd_template' in body['vnffg'])\
-                        and (attr == 'vnffgd_id') and is_create:
+                # skip validating NANYD_id when NANYD_template is provided
+                if (resource == 'NANY') and ('NANYD_template' in body['NANY'])\
+                        and (attr == 'NANYD_id') and is_create:
                     continue
                 # skip validating nsd_id when nsd_template is provided
                 if (resource == 'ns') and ('nsd_template' in body['ns'])\

@@ -41,7 +41,7 @@ Each VNFFGD template will have below fields:
                Describes properties and members of a VNF Forwarding Graph.
 
 For examples, please refer sample VNFD templates available at `GitHub <https:
-//github.com/openstack/apmec/tree/master/samples/tosca-templates/vnffgd>`_.
+//github.com/openstack/apmec/tree/master/samples/tosca-templates/NANYD>`_.
 
 Node types
 ----------
@@ -136,7 +136,7 @@ section.
     tosca.groups.nfv.VNFFG
 :properties:
     Describes the properties of a VNFFG.  These include vendor, version,
-    dependent_virtual_link, connection_points, constituent_vnfs.
+    dependent_virtual_link, connection_points, constituent_meas.
     . A complete list of VNFFG properties currently
     supported by Apmec are listed in `TOSCA <http://docs.oasis-open
     .org/tosca/tosca-nfv/v1.0/csd03/tosca-nfv-v1.0-csd03
@@ -161,7 +161,7 @@ An example VNFFG shown below:
         number_of_endpoints: 2
         dependent_virtual_link: [VL1,VL2,VL3]
         connection_point: [CP1,CP2]
-        constituent_vnfs: [VNF1,VNF2]
+        constituent_meas: [VNF1,VNF2]
       members: [Forwarding_path1]
 
 number_of_endpoints
@@ -177,7 +177,7 @@ connection_point
 """"""""""""""""
 List of Connection Points defined in the Forwarding Path.
 
-constituent_vnfs
+constituent_meas
 """"""""""""""""
 List of VNFD names used in this Forwarding Graph (also defined in Forwarding
 Path).
@@ -226,5 +226,5 @@ composed of a Forwarding Path and a VNFFG.  A full VNFFGD is shown below:
           number_of_endpoints: 2
           dependent_virtual_link: [VL12,VL22]
           connection_point: [CP12,CP22]
-          constituent_vnfs: [VNFD1,VNFD2]
+          constituent_meas: [VNFD1,VNFD2]
         members: [Forwarding_path1]

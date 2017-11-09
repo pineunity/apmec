@@ -30,7 +30,7 @@ import sqlalchemy as sa
 
 
 def upgrade(active_plugins=None, options=None):
-    for table in ['vims', 'vnf', 'mead']:
+    for table in ['vims', 'mea', 'mead']:
         op.add_column(table,
                       sa.Column('deleted_at', sa.DateTime(), nullable=True))
 

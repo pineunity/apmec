@@ -1,5 +1,5 @@
 {
-    "vnfs": [
+    "meas": [
         {
             "status": "ACTIVE",
             "description": "OpenWRT VNFD with parameterized VDU name",

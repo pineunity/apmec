@@ -38,7 +38,7 @@ resources:
       period: 600
       evaluation_periods: 1
       threshold: 50
-      matching_metadata: {'metadata.user_metadata.vnf': SG1}
+      matching_metadata: {'metadata.user_metadata.mea': SG1}
       comparison_operator: gt
   vdu_lcpu_usage_scaling_in:
     type: OS::Aodh::Alarm
@@ -49,5 +49,5 @@ resources:
       period: 600
       evaluation_periods: 1
       threshold: 10
-      matching_metadata: {'metadata.user_metadata.vnf': SG1}
+      matching_metadata: {'metadata.user_metadata.mea': SG1}
       comparison_operator: lt

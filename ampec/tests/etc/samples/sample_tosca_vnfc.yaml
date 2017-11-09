@@ -1,16 +1,16 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 metadata:
-    template_name: sample-tosca-mead-for-vnfc
+    template_name: sample-tosca-mead-for-meac
 
 topology_template:
   node_templates:
-    firewall_vnfc:
+    firewall_meac:
       type: tosca.nodes.nfv.VNFC.Apmec
       requirements:
         - host: VDU1
       interfaces:
         Standard:
-            create: install_vnfc.sh
+            create: install_meac.sh
 
     VDU1:
       type: tosca.nodes.nfv.VDU.Apmec

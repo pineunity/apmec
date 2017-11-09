@@ -103,7 +103,7 @@ class TestOpenStack(base.TestCase):
                 '-d1337add-d5a1-4fd4-9447-bb9243c8460b',
                 'template': self.hot_ipparam_template}
 
-    def _get_expected_vnf_wait_obj(self, param_values=''):
+    def _get_expected_mea_wait_obj(self, param_values=''):
         return {'status': 'PENDING_CREATE',
                 'instance_id': None,
                 'name': u'test_openwrt',
@@ -125,7 +125,7 @@ class TestOpenStack(base.TestCase):
                 'id': 'eb84260e-5ff7-4332-b032-50a14d6c1123',
                 'description': u'OpenWRT with services'}
 
-    def _get_expected_vnf_update_obj(self):
+    def _get_expected_mea_update_obj(self):
         return {'status': 'PENDING_CREATE', 'instance_id': None, 'name':
             u'test_openwrt', 'tenant_id':
         u'ad7ebc56538745a08ef7c5e97f8bd437', 'mead_id':
@@ -141,7 +141,7 @@ class TestOpenStack(base.TestCase):
             'id': 'eb84260e-5ff7-4332-b032-50a14d6c1123', 'description':
                 u'OpenWRT with services'}
 
-    def _get_expected_active_vnf(self):
+    def _get_expected_active_mea(self):
         return {'status': 'ACTIVE',
                 'instance_id': None,
                 'name': u'test_openwrt',
@@ -164,26 +164,26 @@ class TestOpenStack(base.TestCase):
                 'description': u'OpenWRT with services'}
 
     def test_delete(self):
-        vnf_id = '4a4c2d44-8a52-4895-9a75-9d1c76c3e738'
+        mea_id = '4a4c2d44-8a52-4895-9a75-9d1c76c3e738'
         self.infra_driver.delete(plugin=None, context=self.context,
-                                vnf_id=vnf_id,
+                                mea_id=mea_id,
                                 auth_attr=utils.get_vim_auth_obj())
-        self.heat_client.delete.assert_called_once_with(vnf_id)
+        self.heat_client.delete.assert_called_once_with(mea_id)
 
     def test_update(self):
-        vnf_obj = utils.get_dummy_vnf_config_attr()
-        vnf_config_obj = utils.get_dummy_vnf_update_config()
-        expected_vnf_update = self._get_expected_vnf_update_obj()
-        vnf_id = '4a4c2d44-8a52-4895-9a75-9d1c76c3e738'
+        mea_obj = utils.get_dummy_mea_config_attr()
+        mea_config_obj = utils.get_dummy_mea_update_config()
+        expected_mea_update = self._get_expected_mea_update_obj()
+        mea_id = '4a4c2d44-8a52-4895-9a75-9d1c76c3e738'
         self.infra_driver.update(plugin=None, context=self.context,
-                                 vnf_id=vnf_id, vnf_dict=vnf_obj,
-                                 vnf=vnf_config_obj,
+                                 mea_id=mea_id, mea_dict=mea_obj,
+                                 mea=mea_config_obj,
                                  auth_attr=utils.get_vim_auth_obj())
-        expected_vnf_update['attributes']['config'] = yaml.safe_load(
-            expected_vnf_update['attributes']['config'])
-        vnf_obj['attributes']['config'] = yaml.safe_load(vnf_obj['attributes'][
+        expected_mea_update['attributes']['config'] = yaml.safe_load(
+            expected_mea_update['attributes']['config'])
+        mea_obj['attributes']['config'] = yaml.safe_load(mea_obj['attributes'][
             'config'])
-        self.assertEqual(expected_vnf_update, vnf_obj)
+        self.assertEqual(expected_mea_update, mea_obj)
 
     def _get_expected_fields_tosca(self, template):
         return {'stack_name':
@@ -192,7 +192,7 @@ class TestOpenStack(base.TestCase):
                 '-5ff7-4332-b032-50a14d6c1123',
                 'template': _get_template(template)}
 
-    def _get_expected_tosca_vnf(self,
+    def _get_expected_tosca_mea(self,
                                 tosca_tpl_name,
                                 hot_tpl_name,
                                 param_values='',
@@ -247,16 +247,16 @@ class TestOpenStack(base.TestCase):
 
         return dvc
 
-    def _get_dummy_tosca_vnf(self, template, input_params=''):
+    def _get_dummy_tosca_mea(self, template, input_params=''):
 
         tosca_template = _get_template(template)
-        vnf = utils.get_dummy_device_obj()
+        mea = utils.get_dummy_device_obj()
         dtemplate = self._get_expected_mead(tosca_template)
 
-        vnf['mead'] = dtemplate
-        vnf['attributes'] = {}
-        vnf['attributes']['param_values'] = input_params
-        return vnf
+        mea['mead'] = dtemplate
+        mea['attributes'] = {}
+        mea['attributes']['param_values'] = input_params
+        return mea
 
     def _test_assert_equal_for_tosca_templates(self,
                                                tosca_tpl_name,
@@ -265,16 +265,16 @@ class TestOpenStack(base.TestCase):
                                                files=None,
                                                is_monitor=True,
                                                multi_vdus=False):
-        vnf = self._get_dummy_tosca_vnf(tosca_tpl_name, input_params)
+        mea = self._get_dummy_tosca_mea(tosca_tpl_name, input_params)
         expected_result = '4a4c2d44-8a52-4895-9a75-9d1c76c3e738'
         expected_fields = self._get_expected_fields_tosca(hot_tpl_name)
-        expected_vnf = self._get_expected_tosca_vnf(tosca_tpl_name,
+        expected_mea = self._get_expected_tosca_mea(tosca_tpl_name,
                                                     hot_tpl_name,
                                                     input_params,
                                                     is_monitor,
                                                     multi_vdus)
         result = self.infra_driver.create(plugin=None, context=self.context,
-                                         vnf=vnf,
+                                         mea=mea,
                                          auth_attr=utils.get_vim_auth_obj())
         actual_fields = self.heat_client.create.call_args[0][0]
         actual_fields["template"] = yaml.safe_load(actual_fields["template"])
@@ -290,24 +290,24 @@ class TestOpenStack(base.TestCase):
                 expected_fields["files"][k] = yaml.safe_load(_get_template(v))
 
         self.assertEqual(expected_fields, actual_fields)
-        vnf["attributes"]["heat_template"] = yaml.safe_load(
-            vnf["attributes"]["heat_template"])
+        mea["attributes"]["heat_template"] = yaml.safe_load(
+            mea["attributes"]["heat_template"])
         self.heat_client.create.assert_called_once_with(expected_fields)
         self.assertEqual(expected_result, result)
 
         if files:
             expected_fields["files"] = {}
             for k, v in files.items():
-                expected_vnf["attributes"][k] = yaml.safe_load(
+                expected_mea["attributes"][k] = yaml.safe_load(
                     _get_template(v))
-                vnf["attributes"][k] = yaml.safe_load(
-                    vnf["attributes"][k])
-            expected_vnf["attributes"]['scaling_group_names'] = {
+                mea["attributes"][k] = yaml.safe_load(
+                    mea["attributes"][k])
+            expected_mea["attributes"]['scaling_group_names'] = {
                 'SP1': 'SP1_group'}
-            vnf["attributes"]['scaling_group_names'] = json.loads(
-                vnf["attributes"]['scaling_group_names']
+            mea["attributes"]['scaling_group_names'] = json.loads(
+                mea["attributes"]['scaling_group_names']
             )
-        self.assertEqual(expected_vnf, vnf)
+        self.assertEqual(expected_mea, mea)
 
     def test_create_tosca(self):
         # self.skipTest("Not ready yet")
@@ -407,10 +407,10 @@ class TestOpenStack(base.TestCase):
         )
 
     def test_get_resource_info(self):
-        vnf_obj = self._get_expected_active_vnf()
+        mea_obj = self._get_expected_active_mea()
         self.assertRaises(mem.InfraDriverUnreachable,
                           self.infra_driver.get_resource_info,
-                          plugin=None, context=self.context, vnf_info=vnf_obj,
+                          plugin=None, context=self.context, mea_info=mea_obj,
                           auth_attr=utils.get_vim_auth_obj(),
                           region_name=None)
 

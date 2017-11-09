@@ -174,7 +174,7 @@ def get_vdu_metadata(template):
 
 
 @log.log
-def pre_process_alarm_resources(vnf, template, vdu_metadata):
+def pre_process_alarm_resources(mea, template, vdu_metadata):
     alarm_resources = dict()
     matching_metadata = dict()
     alarm_actions = dict()
@@ -182,7 +182,7 @@ def pre_process_alarm_resources(vnf, template, vdu_metadata):
         if (policy.type_definition.is_derived_from(MONITORING)):
             matching_metadata =\
                 _process_matching_metadata(vdu_metadata, policy)
-            alarm_actions = _process_alarm_actions(vnf, policy)
+            alarm_actions = _process_alarm_actions(mea, policy)
     alarm_resources['matching_metadata'] = matching_metadata
     alarm_resources['alarm_actions'] = alarm_actions
     return alarm_resources
@@ -197,22 +197,22 @@ def _process_matching_metadata(metadata, policy):
         is_matched = False
         for vdu_name, metadata_dict in metadata['vdus'].items():
             if trigger_dict['metadata'] ==\
-                    metadata_dict['metering.vnf']:
+                    metadata_dict['metering.mea']:
                 is_matched = True
         if not is_matched:
             raise mem.MetadataNotMatched()
         matching_mtdata[trigger_name] = dict()
-        matching_mtdata[trigger_name]['metadata.user_metadata.vnf'] =\
+        matching_mtdata[trigger_name]['metadata.user_metadata.mea'] =\
             trigger_dict['metadata']
     return matching_mtdata
 
 
-def _process_alarm_actions(vnf, policy):
+def _process_alarm_actions(mea, policy):
     # process  alarm url here
     triggers = policy.entity_tpl['triggers']
     alarm_actions = dict()
     for trigger_name, trigger_dict in triggers.items():
-        alarm_url = vnf['attributes'].get(trigger_name)
+        alarm_url = mea['attributes'].get(trigger_name)
         if alarm_url:
             alarm_url = str(alarm_url)
             LOG.debug('Alarm url in heat %s', alarm_url)

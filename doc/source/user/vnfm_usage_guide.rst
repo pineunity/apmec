@@ -63,7 +63,7 @@ creating VNFs in Apmec.
 
 .. code-block:: console
 
-   apmec vnf-create --mead-name <VNFD-FILE-NAME> <VNF-NAME>
+   apmec mea-create --mead-name <VNFD-FILE-NAME> <VNF-NAME>
 
 
 Example
@@ -72,7 +72,7 @@ Example
 .. code-block:: console
 
     apmec mead-create --mead-file sample-mead-hello-world.yaml hello-world-mead
-    apmec vnf-create --mead-name hello-world-mead hw-vnf
+    apmec mea-create --mead-name hello-world-mead hw-mea
 
 Direct VNF Instantiation
 ------------------------
@@ -82,7 +82,7 @@ onboarding the template into Apmec VNFD Catalog.
 
 .. code-block:: console
 
-   apmec vnf-create --mead-template <VNFD-FILE-NAME> <VNF-NAME>
+   apmec mea-create --mead-template <VNFD-FILE-NAME> <VNF-NAME>
 
 This method is recommended when NFV Catalog is maintained outside Apmec and
 Apmec is primarily used as a NFV workflow engine.
@@ -92,7 +92,7 @@ Example
 
 .. code-block:: console
 
-    apmec vnf-create --mead-template sample-mead-hello-world.yaml hw-vnf
+    apmec mea-create --mead-template sample-mead-hello-world.yaml hw-mea
 
 .. note ::
 
@@ -116,8 +116,8 @@ Status of various VNFM resources can be checked by following commands.
 
    apmec vim-list
    apmec mead-list
-   apmec vnf-list
-   apmec vnf-show <VNF_ID>
+   apmec mea-list
+   apmec mea-show <VNF_ID>
    apmec mead-show <VNFD_ID>
 
 ..
@@ -129,6 +129,6 @@ VNFs and VNFDs can be deleted as shown below.
 
 .. code-block:: console
 
-   apmec vnf-delete <VNF_ID/NAME>
+   apmec mea-delete <VNF_ID/NAME>
    apmec mead-delete <VNFD_ID/NAME>
 ..

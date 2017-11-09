@@ -96,7 +96,7 @@ class NS(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     description = sa.Column(sa.Text, nullable=True)
 
     # Dict of VNF details that network service launches
-    vnf_ids = sa.Column(sa.TEXT(65535), nullable=True)
+    mea_ids = sa.Column(sa.TEXT(65535), nullable=True)
 
     # Dict of mgmt urls that network servic launches
     mgmt_urls = sa.Column(sa.TEXT(65535), nullable=True)
@@ -161,7 +161,7 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
         LOG.debug('ns_db %s', ns_db)
         res = {}
         key_list = ('id', 'tenant_id', 'nsd_id', 'name', 'description',
-                    'vnf_ids', 'status', 'mgmt_urls', 'error_reason',
+                    'mea_ids', 'status', 'mgmt_urls', 'error_reason',
                     'vim_id', 'created_at', 'updated_at')
         res.update((key, ns_db[key]) for key in key_list)
         return self._fields(res, fields)
@@ -263,7 +263,7 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
                            tenant_id=tenant_id,
                            name=name,
                            description=nsd_db.description,
-                           vnf_ids=None,
+                           mea_ids=None,
                            status=constants.PENDING_CREATE,
                            mgmt_urls=None,
                            nsd_id=nsd_id,
@@ -290,19 +290,19 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
         LOG.debug('ns ID %s', ns_id)
         output = ast.literal_eval(mistral_obj.output)
         mgmt_urls = dict()
-        vnf_ids = dict()
+        mea_ids = dict()
         if len(output) > 0:
             for mead_name, mead_val in iteritems(mead_dict):
                 for instance in mead_val['instances']:
                     if 'mgmt_url_' + instance in output:
                         mgmt_urls[instance] = ast.literal_eval(
                             output['mgmt_url_' + instance].strip())
-                        vnf_ids[instance] = output['vnf_id_' + instance]
-            vnf_ids = str(vnf_ids)
+                        mea_ids[instance] = output['mea_id_' + instance]
+            mea_ids = str(mea_ids)
             mgmt_urls = str(mgmt_urls)
 
-        if not vnf_ids:
-            vnf_ids = None
+        if not mea_ids:
+            mea_ids = None
         if not mgmt_urls:
             mgmt_urls = None
         status = constants.ACTIVE if mistral_obj.state == 'SUCCESS' \
@@ -310,7 +310,7 @@ class NSPluginDb(network_service.NSPluginBase, db_base.CommonDbMixin):
         with context.session.begin(subtransactions=True):
             ns_db = self._get_resource(context, NS,
                                        ns_id)
-            ns_db.update({'vnf_ids': vnf_ids})
+            ns_db.update({'mea_ids': mea_ids})
             ns_db.update({'mgmt_urls': mgmt_urls})
             ns_db.update({'status': status})
             ns_db.update({'error_reason': error_reason})

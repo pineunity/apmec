@@ -115,8 +115,8 @@ Apmec provides following CLI for scaling.
 
 .. code-block::console
 
-**apmec vnf-scale --vnf-id <vnf-id>**
-                  **--vnf-name <vnf name>**
+**apmec mea-scale --mea-id <mea-id>**
+                  **--mea-name <mea name>**
                   **--scaling-policy-name <policy name>**
                   **--scaling-type <type>**
 
@@ -124,15 +124,15 @@ Here,
 
 * scaling-policy-name - Policy name defined in scaling VNFD
 * scaling-type - in or out
-* vnf-id - scaling VNF id
-* vnf-name - scaling VNF name
+* mea-id - scaling VNF id
+* mea-name - scaling VNF name
 
 For example, to scale-out policy 'sp1' defined above, this cli could be used
 as below:
 
 .. code-block::console
 
-**apmec vnf-scale --vnf-name sample-vnf**
+**apmec mea-scale --mea-name sample-mea**
                   **--scaling-policy-name sp1**
                   **--scaling-type out**
 
@@ -141,7 +141,7 @@ How to scale VNF using REST API
 
 Apmec provides following REST API for scaling.
 
-**POST on v1.0/vnfs/<vnf-id>/actions**
+**POST on v1.0/meas/<mea-id>/actions**
 
 with body
 
@@ -153,7 +153,7 @@ Here,
 
 * scaling-policy-name - Policy name defined in scaling VNFD
 * scaling-type - in or out
-* vnf-id - scaling VNF id
+* mea-id - scaling VNF id
 
 Response http status codes:
 

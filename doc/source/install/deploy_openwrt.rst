@@ -163,7 +163,7 @@ succeed.
 
 .. code-block:: console
 
-    apmec vnf-create --mead-name <VNFD_NAME> <NAME>
+    apmec mea-create --mead-name <VNFD_NAME> <NAME>
 ..
 
 This VNF will contains all the firewall rules that VNFD contains
@@ -174,6 +174,6 @@ by using 'cat /etc/config/firewall' in VNF.
 
 .. code-block:: console
 
-    apmec vnf-list
-    apmec vnf-show <VNF_ID>
+    apmec mea-list
+    apmec mea-show <VNF_ID>
 ..

@@ -25,7 +25,7 @@ from apmec import context
 from apmec.db.common_services import common_services_db_plugin
 from apmec.db.meo import meo_db
 from apmec.db.meo import ns_db
-from apmec.db.meo import vnffg_db
+from apmec.db.meo import NANY_db
 from apmec.extensions import meo
 from apmec.manager import ApmecManager
 from apmec.meo import meo_plugin
@@ -100,12 +100,12 @@ class FakeVNFMPlugin(mock.Mock):
 
     def __init__(self):
         super(FakeVNFMPlugin, self).__init__()
-        self.vnf1_mead_id = 'eb094833-995e-49f0-a047-dfb56aaf7c4e'
-        self.vnf1_vnf_id = '91e32c20-6d1f-47a4-9ba7-08f5e5effe07'
-        self.vnf3_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
-        self.vnf2_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
-        self.vnf3_vnf_id = '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'
-        self.vnf3_update_vnf_id = '10f66bc5-b2f1-45b7-a7cd-6dd6ad0017f5'
+        self.mea1_mead_id = 'eb094833-995e-49f0-a047-dfb56aaf7c4e'
+        self.mea1_mea_id = '91e32c20-6d1f-47a4-9ba7-08f5e5effe07'
+        self.mea3_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
+        self.mea2_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
+        self.mea3_mea_id = '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'
+        self.mea3_update_mea_id = '10f66bc5-b2f1-45b7-a7cd-6dd6ad0017f5'
 
         self.cp11_id = 'd18c8bae-898a-4932-bff8-d5eac981a9c9'
         self.cp12_id = 'c8906342-3e30-4b2a-9401-a251a7a9b5dd'
@@ -114,80 +114,80 @@ class FakeVNFMPlugin(mock.Mock):
 
     def get_mead(self, *args, **kwargs):
         if 'VNF1' in args:
-            return {'id': self.vnf1_mead_id,
+            return {'id': self.mea1_mead_id,
                     'name': 'VNF1',
                     'attributes': {'mead': _get_template(
                                    'test-nsd-mead1.yaml')}}
         elif 'VNF2' in args:
-            return {'id': self.vnf3_mead_id,
+            return {'id': self.mea3_mead_id,
                     'name': 'VNF2',
                     'attributes': {'mead': _get_template(
                                    'test-nsd-mead2.yaml')}}
 
     def get_meads(self, *args, **kwargs):
         if {'name': ['VNF1']} in args:
-            return [{'id': self.vnf1_mead_id}]
+            return [{'id': self.mea1_mead_id}]
         elif {'name': ['VNF3']} in args:
-            return [{'id': self.vnf3_mead_id}]
+            return [{'id': self.mea3_mead_id}]
         else:
             return []
 
-    def get_vnfs(self, *args, **kwargs):
-        if {'mead_id': [self.vnf1_mead_id]} in args:
-            return [{'id': self.vnf1_vnf_id}]
-        elif {'mead_id': [self.vnf3_mead_id]} in args:
-            return [{'id': self.vnf3_vnf_id}]
+    def get_meas(self, *args, **kwargs):
+        if {'mead_id': [self.mea1_mead_id]} in args:
+            return [{'id': self.mea1_mea_id}]
+        elif {'mead_id': [self.mea3_mead_id]} in args:
+            return [{'id': self.mea3_mea_id}]
         else:
             return None
 
-    def get_vnf(self, *args, **kwargs):
-        if self.vnf1_vnf_id in args:
-            return self.get_dummy_vnf1()
-        elif self.vnf3_vnf_id in args:
-            return self.get_dummy_vnf3()
-        elif self.vnf3_update_vnf_id in args:
-            return self.get_dummy_vnf3_update()
+    def get_mea(self, *args, **kwargs):
+        if self.mea1_mea_id in args:
+            return self.get_dummy_mea1()
+        elif self.mea3_mea_id in args:
+            return self.get_dummy_mea3()
+        elif self.mea3_update_mea_id in args:
+            return self.get_dummy_mea3_update()
 
-    def get_vnf_resources(self, *args, **kwargs):
-        if self.vnf1_vnf_id in args:
-            return self.get_dummy_vnf1_details()
-        elif self.vnf3_vnf_id in args:
-            return self.get_dummy_vnf3_details()
-        elif self.vnf3_update_vnf_id in args:
-            return self.get_dummy_vnf3_update_details()
+    def get_mea_resources(self, *args, **kwargs):
+        if self.mea1_mea_id in args:
+            return self.get_dummy_mea1_details()
+        elif self.mea3_mea_id in args:
+            return self.get_dummy_mea3_details()
+        elif self.mea3_update_mea_id in args:
+            return self.get_dummy_mea3_update_details()
 
-    def get_dummy_vnf1_details(self):
+    def get_dummy_mea1_details(self):
         return [{'name': 'CP11', 'id': self.cp11_id},
                 {'name': 'CP12', 'id': self.cp12_id}]
 
-    def get_dummy_vnf3_details(self):
+    def get_dummy_mea3_details(self):
         return [{'name': 'CP32', 'id': self.cp32_id}]
 
-    def get_dummy_vnf3_update_details(self):
+    def get_dummy_mea3_update_details(self):
         return [{'name': 'CP32', 'id': self.cp32_update_id}]
 
-    def get_dummy_vnf1(self):
-        return {'description': 'dummy_vnf_description',
-                'mead_id': self.vnf1_mead_id,
+    def get_dummy_mea1(self):
+        return {'description': 'dummy_mea_description',
+                'mead_id': self.mea1_mead_id,
                 'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                'name': 'dummy_vnf1',
+                'name': 'dummy_mea1',
                 'attributes': {}}
 
-    def get_dummy_vnf3(self):
-        return {'description': 'dummy_vnf_description',
-                'mead_id': self.vnf3_mead_id,
+    def get_dummy_mea3(self):
+        return {'description': 'dummy_mea_description',
+                'mead_id': self.mea3_mead_id,
                 'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                'name': 'dummy_vnf2',
+                'name': 'dummy_mea2',
                 'attributes': {}}
 
-    def get_dummy_vnf3_update(self):
-        return {'description': 'dummy_vnf_description',
-                'mead_id': self.vnf3_mead_id,
+    def get_dummy_mea3_update(self):
+        return {'description': 'dummy_mea_description',
+                'mead_id': self.mea3_mead_id,
                 'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                 'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                'name': 'dummy_vnf_update',
+                'name': 'dummy_mea_update',
                 'attributes': {}}
 
 
@@ -197,7 +197,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         self.addCleanup(mock.patch.stopall)
         self.context = context.get_admin_context()
         self._mock_driver_manager()
-        mock.patch('apmec.meo.meo_plugin.NfvoPlugin._get_vim_from_vnf',
+        mock.patch('apmec.meo.meo_plugin.NfvoPlugin._get_vim_from_mea',
                    side_effect=dummy_get_vim).start()
         self.meo_plugin = meo_plugin.NfvoPlugin()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
@@ -358,105 +358,105 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             res_state=mock.ANY, res_type=constants.RES_TYPE_VIM,
             tstamp=mock.ANY)
 
-    def _insert_dummy_vnffg_template(self):
+    def _insert_dummy_NANY_template(self):
         session = self.context.session
-        vnffg_template = vnffg_db.VnffgTemplate(
+        NANY_template = NANY_db.VnffgTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
             description='fake_template_description',
-            template={u'vnffgd': utils.vnffgd_tosca_template},
+            template={u'NANYD': utils.NANYD_tosca_template},
             template_source='onboarded')
-        session.add(vnffg_template)
+        session.add(NANY_template)
         session.flush()
-        return vnffg_template
+        return NANY_template
 
-    def _insert_dummy_vnffg_template_inline(self):
+    def _insert_dummy_NANY_template_inline(self):
         session = self.context.session
-        vnffg_template = vnffg_db.VnffgTemplate(
+        NANY_template = NANY_db.VnffgTemplate(
             id='11da9f20-9347-4283-bc68-eb98061ef8f7',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
-            name='dummy_vnffgd_inline',
-            description='dummy_vnffgd_description_inline',
-            template={u'vnffgd': utils.vnffgd_tosca_template},
+            name='dummy_NANYD_inline',
+            description='dummy_NANYD_description_inline',
+            template={u'NANYD': utils.NANYD_tosca_template},
             template_source='inline')
-        session.add(vnffg_template)
+        session.add(NANY_template)
         session.flush()
-        return vnffg_template
+        return NANY_template
 
-    def _insert_dummy_vnffg_param_template(self):
+    def _insert_dummy_NANY_param_template(self):
         session = self.context.session
-        vnffg_template = vnffg_db.VnffgTemplate(
+        NANY_template = NANY_db.VnffgTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
             description='fake_template_description',
-            template={u'vnffgd': utils.vnffgd_tosca_param_template})
-        session.add(vnffg_template)
+            template={u'NANYD': utils.NANYD_tosca_param_template})
+        session.add(NANY_template)
         session.flush()
-        return vnffg_template
+        return NANY_template
 
-    def _insert_dummy_vnffg_str_param_template(self):
+    def _insert_dummy_NANY_str_param_template(self):
         session = self.context.session
-        vnffg_template = vnffg_db.VnffgTemplate(
+        NANY_template = NANY_db.VnffgTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
             description='fake_template_description',
-            template={u'vnffgd': utils.vnffgd_tosca_str_param_template})
-        session.add(vnffg_template)
+            template={u'NANYD': utils.NANYD_tosca_str_param_template})
+        session.add(NANY_template)
         session.flush()
-        return vnffg_template
+        return NANY_template
 
-    def _insert_dummy_vnffg_multi_param_template(self):
+    def _insert_dummy_NANY_multi_param_template(self):
         session = self.context.session
-        vnffg_template = vnffg_db.VnffgTemplate(
+        NANY_template = NANY_db.VnffgTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
             description='fake_template_description',
-            template={u'vnffgd': utils.vnffgd_tosca_multi_param_template})
-        session.add(vnffg_template)
+            template={u'NANYD': utils.NANYD_tosca_multi_param_template})
+        session.add(NANY_template)
         session.flush()
-        return vnffg_template
+        return NANY_template
 
-    def _insert_dummy_vnffg(self):
+    def _insert_dummy_NANY(self):
         session = self.context.session
-        vnffg = vnffg_db.Vnffg(
+        NANY = NANY_db.Vnffg(
             id='ffc1a59b-65bb-4874-94d3-84f639e63c74',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
-            name='dummy_vnffg',
-            description="fake vnffg",
-            vnffgd_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
+            name='dummy_NANY',
+            description="fake NANY",
+            NANYD_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             status='ACTIVE',
-            vnf_mapping={'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
+            mea_mapping={'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
                          'VNF3': '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'})
-        session.add(vnffg)
-        nfp = vnffg_db.VnffgNfp(
+        session.add(NANY)
+        nfp = NANY_db.VnffgNfp(
             id='768f76a7-9025-4acd-b51c-0da609759983',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             status="ACTIVE",
             name='Forwarding_path1',
-            vnffg_id='ffc1a59b-65bb-4874-94d3-84f639e63c74',
+            NANY_id='ffc1a59b-65bb-4874-94d3-84f639e63c74',
             path_id=51,
             symmetrical=False)
         session.add(nfp)
-        sfc = vnffg_db.VnffgChain(
+        sfc = NANY_db.VnffgChain(
             id='f28e33bc-1061-4762-b942-76060bbd59c4',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             symmetrical=False,
             chain=[{'connection_points': [
                 'd18c8bae-898a-4932-bff8-d5eac981a9c9',
                 'c8906342-3e30-4b2a-9401-a251a7a9b5dd'],
-                'name': 'dummy_vnf1'},
+                'name': 'dummy_mea1'},
                 {'connection_points': ['3d1bd2a2-bf0e-44d1-87af-a2c6b2cad3ed'],
-                 'name': 'dummy_vnf2'}],
+                 'name': 'dummy_mea2'}],
             path_id=51,
             status='ACTIVE',
             nfp_id='768f76a7-9025-4acd-b51c-0da609759983',
             instance_id='bcfb295e-578e-405b-a349-39f06b25598c')
         session.add(sfc)
-        fc = vnffg_db.VnffgClassifier(
+        fc = NANY_db.VnffgClassifier(
             id='a85f21b5-f446-43f0-86f4-d83bdc5590ab',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             status='ACTIVE',
@@ -464,9 +464,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             chain_id='f28e33bc-1061-4762-b942-76060bbd59c4',
             nfp_id='768f76a7-9025-4acd-b51c-0da609759983')
         session.add(fc)
-        match = vnffg_db.ACLMatchCriteria(
+        match = NANY_db.ACLMatchCriteria(
             id='bdb0f2db-d4c2-42a2-a1df-426079ecc443',
-            vnffgc_id='a85f21b5-f446-43f0-86f4-d83bdc5590ab',
+            NANYc_id='a85f21b5-f446-43f0-86f4-d83bdc5590ab',
             eth_src=None, eth_dst=None, eth_type=None, vlan_id=None,
             vlan_pcp=None, mpls_label=None, mpls_tc=None, ip_dscp=None,
             ip_ecn=None, ip_src_prefix=None, ip_dst_prefix='192.168.1.2/24',
@@ -480,216 +480,216 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             ipv6_nd_target=None, ipv6_nd_sll=None, ipv6_nd_tll=None)
         session.add(match)
         session.flush()
-        return vnffg
+        return NANY
 
     def test_validate_tosca(self):
-        template = utils.vnffgd_tosca_template
+        template = utils.NANYD_tosca_template
         self.meo_plugin.validate_tosca(template)
 
     def test_validate_tosca_missing_tosca_ver(self):
-        template = utils.vnffgd_template
+        template = utils.NANYD_template
         self.assertRaises(meo.ToscaParserFailed,
                           self.meo_plugin.validate_tosca,
                           template)
 
     def test_validate_tosca_invalid(self):
-        template = utils.vnffgd_invalid_tosca_template
+        template = utils.NANYD_invalid_tosca_template
         self.assertRaises(meo.ToscaParserFailed,
                           self.meo_plugin.validate_tosca,
                           template)
 
-    def test_validate_vnffg_properties(self):
-        template = {'vnffgd': utils.vnffgd_tosca_template}
-        self.meo_plugin.validate_vnffg_properties(template)
+    def test_validate_NANY_properties(self):
+        template = {'NANYD': utils.NANYD_tosca_template}
+        self.meo_plugin.validate_NANY_properties(template)
 
-    def test_validate_vnffg_properties_wrong_number(self):
-        template = {'vnffgd': utils.vnffgd_wrong_cp_number_template}
+    def test_validate_NANY_properties_wrong_number(self):
+        template = {'NANYD': utils.NANYD_wrong_cp_number_template}
         self.assertRaises(meo.VnffgdWrongEndpointNumber,
-                          self.meo_plugin.validate_vnffg_properties,
+                          self.meo_plugin.validate_NANY_properties,
                           template)
 
-    def test_create_vnffgd(self):
-        vnffgd_obj = utils.get_dummy_vnffgd_obj()
-        result = self.meo_plugin.create_vnffgd(self.context, vnffgd_obj)
+    def test_create_NANYD(self):
+        NANYD_obj = utils.get_dummy_NANYD_obj()
+        result = self.meo_plugin.create_NANYD(self.context, NANYD_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('template', result)
         self.assertIn('template_source', result)
         self.assertEqual('onboarded', result['template_source'])
 
-    def test_create_vnffgd_inline(self):
-        vnffgd_obj = utils.get_dummy_vnffgd_obj_inline()
-        result = self.meo_plugin.create_vnffgd(self.context, vnffgd_obj)
+    def test_create_NANYD_inline(self):
+        NANYD_obj = utils.get_dummy_NANYD_obj_inline()
+        result = self.meo_plugin.create_NANYD(self.context, NANYD_obj)
         self.assertIsNotNone(result)
         self.assertIn('id', result)
         self.assertIn('template', result)
         self.assertEqual('inline', result['template_source'])
 
-    def test_create_vnffg_abstract_types(self):
+    def test_create_NANY_abstract_types(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
-            self._insert_dummy_vnffg_template()
-            vnffg_obj = utils.get_dummy_vnffg_obj()
-            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
+            self._insert_dummy_NANY_template()
+            NANY_obj = utils.get_dummy_NANY_obj()
+            result = self.meo_plugin.create_NANY(self.context, NANY_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
             self.assertEqual('PENDING_CREATE', result['status'])
             self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
                                                            name=mock.ANY,
-                                                           vnfs=mock.ANY,
+                                                           meas=mock.ANY,
                                                            fc_id=mock.ANY,
                                                            auth_attr=mock.ANY,
                                                            symmetrical=mock.ANY
                                                            )
 
-    @mock.patch('apmec.meo.meo_plugin.NfvoPlugin.create_vnffgd')
-    def test_create_vnffg_abstract_types_inline(self, mock_create_vnffgd):
+    @mock.patch('apmec.meo.meo_plugin.NfvoPlugin.create_NANYD')
+    def test_create_NANY_abstract_types_inline(self, mock_create_NANYD):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
-            mock_create_vnffgd.return_value = {'id':
+            mock_create_NANYD.return_value = {'id':
                     '11da9f20-9347-4283-bc68-eb98061ef8f7'}
-            self._insert_dummy_vnffg_template_inline()
-            vnffg_obj = utils.get_dummy_vnffg_obj_inline()
-            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
+            self._insert_dummy_NANY_template_inline()
+            NANY_obj = utils.get_dummy_NANY_obj_inline()
+            result = self.meo_plugin.create_NANY(self.context, NANY_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
             self.assertEqual('PENDING_CREATE', result['status'])
-            self.assertEqual('dummy_vnffg_inline', result['name'])
-            mock_create_vnffgd.assert_called_once_with(mock.ANY, mock.ANY)
+            self.assertEqual('dummy_NANY_inline', result['name'])
+            mock_create_NANYD.assert_called_once_with(mock.ANY, mock.ANY)
             self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
                                                            name=mock.ANY,
-                                                           vnfs=mock.ANY,
+                                                           meas=mock.ANY,
                                                            fc_id=mock.ANY,
                                                            auth_attr=mock.ANY,
                                                            symmetrical=mock.ANY
                                                            )
 
-    def test_create_vnffg_param_values(self):
+    def test_create_NANY_param_values(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
-            self._insert_dummy_vnffg_param_template()
-            vnffg_obj = utils.get_dummy_vnffg_param_obj()
-            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
+            self._insert_dummy_NANY_param_template()
+            NANY_obj = utils.get_dummy_NANY_param_obj()
+            result = self.meo_plugin.create_NANY(self.context, NANY_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
             self.assertEqual('PENDING_CREATE', result['status'])
             self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
                                                            name=mock.ANY,
-                                                           vnfs=mock.ANY,
+                                                           meas=mock.ANY,
                                                            fc_id=mock.ANY,
                                                            auth_attr=mock.ANY,
                                                            symmetrical=mock.ANY
                                                            )
 
     @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_id')
-    def test_create_vnffg_param_value_format_error(self, mock_get_by_id):
+    def test_create_NANY_param_value_format_error(self, mock_get_by_id):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_id.value = get_by_id()
-            vnffg_obj = utils.get_dummy_vnffg_str_param_obj()
+            NANY_obj = utils.get_dummy_NANY_str_param_obj()
             self.assertRaises(meo.VnffgParamValueFormatError,
-                              self.meo_plugin.create_vnffg,
-                              self.context, vnffg_obj)
+                              self.meo_plugin.create_NANY,
+                              self.context, NANY_obj)
 
-    def test_create_vnffg_template_param_not_parse(self):
+    def test_create_NANY_template_param_not_parse(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            self._insert_dummy_vnffg_multi_param_template()
-            vnffg_obj = utils.get_dummy_vnffg_param_obj()
+            self._insert_dummy_NANY_multi_param_template()
+            NANY_obj = utils.get_dummy_NANY_param_obj()
             self.assertRaises(meo.VnffgTemplateParamParsingException,
-                              self.meo_plugin.create_vnffg,
-                              self.context, vnffg_obj)
+                              self.meo_plugin.create_NANY,
+                              self.context, NANY_obj)
 
-    def test_create_vnffg_param_value_not_use(self):
+    def test_create_NANY_param_value_not_use(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            self._insert_dummy_vnffg_param_template()
-            vnffg_obj = utils.get_dummy_vnffg_multi_param_obj()
+            self._insert_dummy_NANY_param_template()
+            NANY_obj = utils.get_dummy_NANY_multi_param_obj()
             self.assertRaises(meo.VnffgParamValueNotUsed,
-                              self.meo_plugin.create_vnffg,
-                              self.context, vnffg_obj)
+                              self.meo_plugin.create_NANY,
+                              self.context, NANY_obj)
 
-    def test_create_vnffg_vnf_mapping(self):
+    def test_create_NANY_mea_mapping(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
-            self._insert_dummy_vnffg_template()
-            vnffg_obj = utils.get_dummy_vnffg_obj_vnf_mapping()
-            result = self.meo_plugin.create_vnffg(self.context, vnffg_obj)
+            self._insert_dummy_NANY_template()
+            NANY_obj = utils.get_dummy_NANY_obj_mea_mapping()
+            result = self.meo_plugin.create_NANY(self.context, NANY_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
             self.assertIn('status', result)
             self.assertEqual('PENDING_CREATE', result['status'])
             self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
                                                            name=mock.ANY,
-                                                           vnfs=mock.ANY,
+                                                           meas=mock.ANY,
                                                            fc_id=mock.ANY,
                                                            auth_attr=mock.ANY,
                                                            symmetrical=mock.ANY
                                                            )
 
-    def test_update_vnffg_nonexistent_vnf(self):
+    def test_update_NANY_nonexistent_mea(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
-            self._insert_dummy_vnffg_template()
-            vnffg = self._insert_dummy_vnffg()
-            updated_vnffg = utils.get_dummy_vnffg_obj_vnf_mapping()
-            updated_vnffg['vnffg']['symmetrical'] = True
-            updated_vnf_mapping = \
+            self._insert_dummy_NANY_template()
+            NANY = self._insert_dummy_NANY()
+            updated_NANY = utils.get_dummy_NANY_obj_mea_mapping()
+            updated_NANY['NANY']['symmetrical'] = True
+            updated_mea_mapping = \
                 {'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
                  'VNF3': '5c7f5631-9e74-46e8-b3d2-397c0eda9d0b'}
-            updated_vnffg['vnffg']['vnf_mapping'] = updated_vnf_mapping
+            updated_NANY['NANY']['mea_mapping'] = updated_mea_mapping
             self.assertRaises(meo.VnffgInvalidMappingException,
-                              self.meo_plugin.update_vnffg,
-                              self.context, vnffg['id'], updated_vnffg)
+                              self.meo_plugin.update_NANY,
+                              self.context, NANY['id'], updated_NANY)
 
-    def test_update_vnffg(self):
+    def test_update_NANY(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
-            self._insert_dummy_vnffg_template()
-            vnffg = self._insert_dummy_vnffg()
-            updated_vnffg = utils.get_dummy_vnffg_obj_vnf_mapping()
-            updated_vnffg['vnffg']['symmetrical'] = True
-            updated_vnf_mapping = \
+            self._insert_dummy_NANY_template()
+            NANY = self._insert_dummy_NANY()
+            updated_NANY = utils.get_dummy_NANY_obj_mea_mapping()
+            updated_NANY['NANY']['symmetrical'] = True
+            updated_mea_mapping = \
                 {'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
                  'VNF3': '10f66bc5-b2f1-45b7-a7cd-6dd6ad0017f5'}
-            updated_vnffg['vnffg']['vnf_mapping'] = updated_vnf_mapping
-            self.meo_plugin.update_vnffg(self.context, vnffg['id'],
-                                          updated_vnffg)
+            updated_NANY['NANY']['mea_mapping'] = updated_mea_mapping
+            self.meo_plugin.update_NANY(self.context, NANY['id'],
+                                          updated_NANY)
             self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
-                                                           vnfs=mock.ANY,
+                                                           meas=mock.ANY,
                                                            fc_ids=mock.ANY,
                                                            chain_id=mock.ANY,
                                                            auth_attr=mock.ANY,
                                                            symmetrical=True)
 
-    def test_delete_vnffg(self):
-        self._insert_dummy_vnffg_template()
-        vnffg = self._insert_dummy_vnffg()
-        self.meo_plugin.delete_vnffg(self.context, vnffg['id'])
+    def test_delete_NANY(self):
+        self._insert_dummy_NANY_template()
+        NANY = self._insert_dummy_NANY()
+        self.meo_plugin.delete_NANY(self.context, NANY['id'])
         self._driver_manager.invoke.assert_called_with(mock.ANY, mock.ANY,
                                                        fc_id=mock.ANY,
                                                        auth_attr=mock.ANY)
@@ -715,8 +715,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
-            meads={'tosca.nodes.nfv.VNF1': 'vnf1',
-                   'tosca.nodes.nfv.VNF2': 'vnf2'},
+            meads={'tosca.nodes.nfv.VNF1': 'mea1',
+                   'tosca.nodes.nfv.VNF2': 'mea2'},
             description='fake_nsd_template_description',
             deleted_at=datetime.min,
             template_source='onboarded')
@@ -752,8 +752,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             id='be18005d-5656-4d81-b499-6af4d4d8437f',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='dummy_NSD',
-            meads={'tosca.nodes.nfv.VNF1': 'vnf1',
-                   'tosca.nodes.nfv.VNF2': 'vnf2'},
+            meads={'tosca.nodes.nfv.VNF1': 'mea1',
+                   'tosca.nodes.nfv.VNF2': 'mea2'},
             description='dummy_nsd_description',
             deleted_at=datetime.min,
             template_source='inline')

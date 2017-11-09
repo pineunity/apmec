@@ -13,7 +13,7 @@
 #    under the License.
 #
 
-"""add onboarded status for vnffgd and nsd
+"""add onboarded status for NANYD and nsd
 
 Revision ID: e9a1e47fb0b5
 Revises: f5c1c3b0f6b4
@@ -30,11 +30,11 @@ import sqlalchemy as sa
 
 
 def upgrade(active_plugins=None, options=None):
-    op.add_column('vnffgtemplates',
+    op.add_column('NANYtemplates',
                   sa.Column('template_source',
                             sa.String(length=255),
                             server_default='onboarded'))
-    op.execute("UPDATE vnffgtemplates set template_source='onboarded'"
+    op.execute("UPDATE NANYtemplates set template_source='onboarded'"
         " WHERE template_source is NULL")
 
     op.add_column('nsd',

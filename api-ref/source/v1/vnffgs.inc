@@ -9,12 +9,12 @@ Manages VNF Forwarding Graphs (VNFFGs).
 The VNFFG feature is used to orchestrate and manage traffic through VNFs.
 For more information about VNFFG, see
 `VNF Forwarding Graph
-<https://docs.openstack.org/apmec/latest/user/vnffg_usage_guide.html>`_.
+<https://docs.openstack.org/apmec/latest/user/NANY_usage_guide.html>`_.
 
 Create VNFFG
 ============
 
-.. rest_method::  POST /v1.0/vnffgs
+.. rest_method::  POST /v1.0/NANYs
 
 Creates a VNFFG.
 
@@ -38,15 +38,15 @@ Request Parameters
 .. rest_parameters:: parameters.yaml
 
   - tenant_id: tenant_id_opt
-  - vnffgd_id: vnffgd_id
+  - NANYD_id: NANYD_id
   - name: name
-  - vnf_mapping: vnf_mapping_opt
+  - mea_mapping: mea_mapping_opt
   - symmetrical: symmetrical_opt
 
 Request Example
 ---------------
 
-.. literalinclude:: samples/vnffgs/vnffgs-create-request.json
+.. literalinclude:: samples/NANYs/NANYs-create-request.json
    :language: javascript
 
 Response Parameters
@@ -54,26 +54,26 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffg: vnffg
-  - forwarding_paths: vnffg_forwarding_paths
-  - status: vnffg_status
+  - NANY: NANY
+  - forwarding_paths: NANY_forwarding_paths
+  - status: NANY_status
   - description: description
   - tenant_id: tenant_id
-  - vnffgd_id: vnffgd_id
-  - vnf_mapping: vnf_mapping
-  - id: vnffg_id
+  - NANYD_id: NANYD_id
+  - mea_mapping: mea_mapping
+  - id: NANY_id
   - name: name
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnffgs/vnffgs-create-response.json
+.. literalinclude:: samples/NANYs/NANYs-create-response.json
    :language: javascript
 
 List VNFFGs
 ===========
 
-.. rest_method::  GET /v1.0/vnffgs
+.. rest_method::  GET /v1.0/NANYs
 
 Lists VNFFGs.
 
@@ -94,26 +94,26 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffgs: vnffgs
-  - forwarding_paths: vnffg_forwarding_paths
-  - status: vnffg_status
+  - NANYs: NANYs
+  - forwarding_paths: NANY_forwarding_paths
+  - status: NANY_status
   - description: description
   - tenant_id: tenant_id
-  - vnffgd_id: vnffgd_id
-  - vnf_mapping: vnf_mapping
-  - id: vnffg_id
+  - NANYD_id: NANYD_id
+  - mea_mapping: mea_mapping
+  - id: NANY_id
   - name: name
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnffgs/vnffgs-list-response.json
+.. literalinclude:: samples/NANYs/NANYs-list-response.json
    :language: javascript
 
 Show VNFFG
 ==========
 
-.. rest_method::  GET /v1.0/vnffgs/{vnffg_id}
+.. rest_method::  GET /v1.0/NANYs/{NANY_id}
 
 Shows information of a given VNFFG.
 
@@ -135,33 +135,33 @@ Request Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffg_id: vnffg_id_path
+  - NANY_id: NANY_id_path
 
 Response Parameters
 -------------------
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffg: vnffg
-  - forwarding_paths: vnffg_forwarding_paths
-  - status: vnffg_status
+  - NANY: NANY
+  - forwarding_paths: NANY_forwarding_paths
+  - status: NANY_status
   - description: description
   - tenant_id: tenant_id
-  - vnffgd_id: vnffgd_id
-  - vnf_mapping: vnf_mapping
-  - id: vnffg_id
+  - NANYD_id: NANYD_id
+  - mea_mapping: mea_mapping
+  - id: NANY_id
   - name: name
 
 Response Example
 ----------------
 
-.. literalinclude:: samples/vnffgs/vnffgs-show-response.json
+.. literalinclude:: samples/NANYs/NANYs-show-response.json
    :language: javascript
 
 Delete VNFFG
 ============
 
-.. rest_method::  DELETE /v1.0/vnffgs/{vnffg_id}
+.. rest_method::  DELETE /v1.0/NANYs/{NANY_id}
 
 Deletes a given VNFFG.
 
@@ -184,4 +184,4 @@ Request Parameters
 
 .. rest_parameters:: parameters.yaml
 
-  - vnffg_id: vnffg_id_path
+  - NANY_id: NANY_id_path

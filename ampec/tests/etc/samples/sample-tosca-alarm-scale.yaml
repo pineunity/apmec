@@ -18,7 +18,7 @@ topology_template:
         image: cirros-0.3.5-x86_64-disk
         mgmt_driver: noop
         availability_zone: nova
-        metadata: {metering.vnf: SG1}
+        metadata: {metering.mea: SG1}
 
     CP1:
       type: tosca.nodes.nfv.CP.Apmec

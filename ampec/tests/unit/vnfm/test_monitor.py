@@ -63,7 +63,7 @@ class TestVNFMonitor(testtools.TestCase):
             common_services_db_plugin.CommonServicesPluginDb()
         self.addCleanup(p.stop)
 
-    def test_to_hosting_vnf(self):
+    def test_to_hosting_mea(self):
         test_device_dict = {
             'id': MOCK_DEVICE_ID,
             'mgmt_url': '{"vdu1": "a.b.c.d"}',
@@ -79,15 +79,15 @@ class TestVNFMonitor(testtools.TestCase):
             'management_ip_addresses': {
                 'vdu1': 'a.b.c.d'
             },
-            'vnf': test_device_dict,
+            'mea': test_device_dict,
             'monitoring_policy': MOCK_VNF_DEVICE['monitoring_policy']
         }
-        output_dict = monitor.VNFMonitor.to_hosting_vnf(test_device_dict,
+        output_dict = monitor.VNFMonitor.to_hosting_mea(test_device_dict,
                                                 action_cb)
         self.assertEqual(expected_output, output_dict)
 
     @mock.patch('apmec.mem.monitor.VNFMonitor.__run__')
-    def test_add_hosting_vnf(self, mock_monitor_run):
+    def test_add_hosting_mea(self, mock_monitor_run):
         test_device_dict = {
             'id': MOCK_DEVICE_ID,
             'mgmt_url': '{"vdu1": "a.b.c.d"}',
@@ -100,9 +100,9 @@ class TestVNFMonitor(testtools.TestCase):
         action_cb = mock.MagicMock()
         test_boot_wait = 30
         test_memonitor = monitor.VNFMonitor(test_boot_wait)
-        new_dict = test_memonitor.to_hosting_vnf(test_device_dict, action_cb)
-        test_memonitor.add_hosting_vnf(new_dict)
-        test_device_id = list(test_memonitor._hosting_vnfs.keys())[0]
+        new_dict = test_memonitor.to_hosting_mea(test_device_dict, action_cb)
+        test_memonitor.add_hosting_mea(new_dict)
+        test_device_id = list(test_memonitor._hosting_meas.keys())[0]
         self.assertEqual(MOCK_DEVICE_ID, test_device_id)
         self._cos_db_plugin.create_event.assert_called_with(
             mock.ANY, res_id=mock.ANY, res_type=constants.RES_TYPE_VNF,
@@ -111,8 +111,8 @@ class TestVNFMonitor(testtools.TestCase):
 
     @mock.patch('apmec.mem.monitor.VNFMonitor.__run__')
     def test_run_monitor(self, mock_monitor_run):
-        test_hosting_vnf = MOCK_VNF_DEVICE
-        test_hosting_vnf['vnf'] = {}
+        test_hosting_mea = MOCK_VNF_DEVICE
+        test_hosting_mea['mea'] = {}
         test_boot_wait = 30
         mock_kwargs = {
             'count': 1,
@@ -124,7 +124,7 @@ class TestVNFMonitor(testtools.TestCase):
         test_memonitor = monitor.VNFMonitor(test_boot_wait)
         self.mock_monitor_manager.invoke = mock.MagicMock()
         test_memonitor._monitor_manager = self.mock_monitor_manager
-        test_memonitor.run_monitor(test_hosting_vnf)
+        test_memonitor.run_monitor(test_hosting_mea)
         self.mock_monitor_manager\
-            .invoke.assert_called_once_with('ping', 'monitor_call', vnf={},
+            .invoke.assert_called_once_with('ping', 'monitor_call', mea={},
                                             kwargs=mock_kwargs)
