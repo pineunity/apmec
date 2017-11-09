@@ -18,8 +18,8 @@ from sqlalchemy.ext import declarative
 from sqlalchemy import orm
 
 
-class TackerBase(models.ModelBase):
-    """Base class for Tacker Models."""
+class ApmecBase(models.ModelBase):
+    """Base class for Apmec Models."""
 
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
@@ -40,7 +40,7 @@ class TackerBase(models.ModelBase):
                                                id(self), ', '.join(items))
 
 
-class TackerBaseV1(TackerBase):
+class ApmecBaseV1(ApmecBase):
 
     @declarative.declared_attr
     def __tablename__(cls):
@@ -48,4 +48,4 @@ class TackerBaseV1(TackerBase):
         return cls.__name__.lower() + 's'
 
 
-BASE = declarative.declarative_base(cls=TackerBaseV1)
+BASE = declarative.declarative_base(cls=ApmecBaseV1)

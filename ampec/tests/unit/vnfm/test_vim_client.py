@@ -33,7 +33,7 @@ class TestVIMClient(base.TestCase):
         meo_plugin.get_default_vim.side_effect = \
             orm_exc.NoResultFound()
         service_plugins.get.return_value = meo_plugin
-        with mock.patch.object(manager.TackerManager, 'get_service_plugins',
+        with mock.patch.object(manager.ApmecManager, 'get_service_plugins',
                                return_value=service_plugins):
             self.assertRaises(meo.VimDefaultNotDefined,
                               vimclient.get_vim, None)

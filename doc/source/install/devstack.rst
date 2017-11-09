@@ -21,7 +21,7 @@ Install via Devstack
 
 The devstack supports installation from different code branch by specifying
 <branch-name> below. If there is no preference, it is recommended to install
-Tacker from master branch, i.e. the <branch-name> is master. If pike branch
+Apmec from master branch, i.e. the <branch-name> is master. If pike branch
 is the target branch, the <branch-name> is stable/pike.
 
 1. Download DevStack::

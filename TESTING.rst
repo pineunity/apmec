@@ -1,4 +1,4 @@
-Testing Tacker
+Testing Apmec
 ==============
 
 Overview
@@ -55,7 +55,7 @@ There are disadvantages to running Nose - the tests are run sequentially, so
 race condition bugs will not be triggered, and the full test suite will
 take significantly longer than tox & testr. The upside is that testr has
 some rough edges when it comes to diagnosing errors and failures, and there is
-no easy way to set a breakpoint in the Tacker code, and enter an
+no easy way to set a breakpoint in the Apmec code, and enter an
 interactive debugging session while using testr.
 
 .. _nose: https://nose.readthedocs.org/en/latest/index.html
@@ -63,7 +63,7 @@ interactive debugging session while using testr.
 With `tox`
 ~~~~~~~~~~
 
-Tacker, like other OpenStack projects, uses `tox`_ for managing the virtual
+Apmec, like other OpenStack projects, uses `tox`_ for managing the virtual
 environments for running test cases. It uses `Testr`_ for managing the running
 of the test cases.
 
@@ -74,7 +74,7 @@ Testr handles the parallel execution of series of test cases as well as
 the tracking of long-running tests and other things.
 
 Running unit tests is as easy as executing this in the root directory of the
-Tacker source code::
+Apmec source code::
 
     tox
 

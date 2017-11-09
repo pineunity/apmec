@@ -20,7 +20,7 @@ OpenStack VIM Installation
 ==========================
 
 This document describes how to install a simple OpenStack which can be
-a Tacker VIM. Since the kolla-ansible provides a good and stable way to deploy
+a Apmec VIM. Since the kolla-ansible provides a good and stable way to deploy
 an OpenStack environment, this document adopts it to finish this task.
 
 The target OpenStack consists of three nodes. Besides the OpenStack role, the
@@ -222,17 +222,17 @@ Prepare OpenStack
 After installation, OpenStack administrator needs to:
 
 *  Initialized the flavors that the platform will support. Most
-   Tacker sample TOSCA templates will ask Tacker to create Flavor
+   Apmec sample TOSCA templates will ask Apmec to create Flavor
    on demand. If not, the specified flavor in templates must exist
    in OpenStack.
 
-*  Upload related images. Tacker repo's sample TOSCA templates are
+*  Upload related images. Apmec repo's sample TOSCA templates are
    referring to cirros image named 'cirros-0.3.5-x86_64-disk', so
-   this image should uploaded into OpenStack before Tacker uses it.
+   this image should uploaded into OpenStack before Apmec uses it.
 
 In additions, following steps are needed:
 
-1. Create projects and users which can be used by Tacker:
+1. Create projects and users which can be used by Apmec:
 
 This is a simple task for any OpenStack administrator, but one thing to pay
 attention to is that the user must have 'admin' and 'heat_stack_owner'
@@ -247,9 +247,9 @@ roles on the user's project.
 Most sample TOSCA templates assume there are three Neutron networks in
 target OpenStack that the VIM user can use:
 
-*  net_mgmt, which is a network Tacker system can access to. Some Tacker
-   features, such as monitor policies, need Tacker to access started VNF
-   virtual machines. For Tacker to access VNF via net_mgmt, net_mgmt can
+*  net_mgmt, which is a network Apmec system can access to. Some Apmec
+   features, such as monitor policies, need Apmec to access started VNF
+   virtual machines. For Apmec to access VNF via net_mgmt, net_mgmt can
    be a provider network.
 
 *  net0 and net1, which are two business networks which VNFs will use.

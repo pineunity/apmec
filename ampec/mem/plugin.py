@@ -111,7 +111,7 @@ class MEMMgmtMixin(object):
 class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
     """MEMPlugin which supports MEM framework.
 
-    Plugin which supports Tacker framework
+    Plugin which supports Apmec framework
     """
     OPTS_INFRA_DRIVER = [
         cfg.ListOpt(

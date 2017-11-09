@@ -62,7 +62,7 @@ class BaseTestCase(testtools.TestCase):
 
     def cleanup_core_plugin(self):
         """Ensure that the core plugin is deallocated."""
-        nm = manager.TackerManager
+        nm = manager.ApmecManager
         if not nm.has_instance():
             return
 
@@ -161,7 +161,7 @@ class BaseTestCase(testtools.TestCase):
             stderr = self.useFixture(fixtures.StringStream('stderr')).stream
             self.useFixture(fixtures.MonkeyPatch('sys.stderr', stderr))
         self.useFixture(fixtures.MonkeyPatch(
-            'apmec.common.exceptions.TackerException.use_fatal_exceptions',
+            'apmec.common.exceptions.ApmecException.use_fatal_exceptions',
             fake_use_fatal_exceptions))
 
         self.useFixture(fixtures.MonkeyPatch(

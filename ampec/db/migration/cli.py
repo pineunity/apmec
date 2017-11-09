@@ -169,7 +169,7 @@ def main():
     )
     config.set_main_option('script_location',
                            'apmec.db.migration:alembic_migrations')
-    # attach the Tacker conf to the Alembic conf
+    # attach the Apmec conf to the Alembic conf
     config.apmec_config = CONF
 
     CONF()

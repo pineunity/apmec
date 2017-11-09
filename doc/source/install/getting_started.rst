@@ -26,7 +26,7 @@ Registering default OpenStack VIM
 =================================
 1.) Get one account on the OpenStack VIM.
 
-In Tacker MANO system, the VNF can be onboarded to one target OpenStack, which
+In Apmec MANO system, the VNF can be onboarded to one target OpenStack, which
 is also called VIM. Get one account on this OpenStack. For example, the below
 is the account information collected in file vim-config.yaml::
 
@@ -67,7 +67,7 @@ Onboarding sample VNF
    topology_template:
      node_templates:
        VDU1:
-         type: tosca.nodes.nfv.VDU.Tacker
+         type: tosca.nodes.nfv.VDU.Apmec
          capabilities:
            nfv_compute:
              properties:
@@ -83,7 +83,7 @@ Onboarding sample VNF
              param1: key2
 
        CP1:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            management: true
            order: 0
@@ -98,7 +98,7 @@ Onboarding sample VNF
          type: tosca.nodes.nfv.VL
          properties:
            network_name: net_mgmt
-           vendor: Tacker
+           vendor: Apmec
 
 ..
 

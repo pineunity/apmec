@@ -15,11 +15,11 @@
 # @author Mark McClain (DreamHost)
 
 The migrations in the alembic/versions contain the changes needed to migrate
-from older Tacker releases to newer versions. A migration occurs by executing
+from older Apmec releases to newer versions. A migration occurs by executing
 a script that details the changes needed to upgrade the database. The
 migration scripts are ordered so that multiple scripts can run sequentially to
-update the database. The scripts are executed by Tacker's migration wrapper
-which uses the Alembic library to manage the migration.  Tacker supports
+update the database. The scripts are executed by Apmec's migration wrapper
+which uses the Alembic library to manage the migration.  Apmec supports
 migration from Folsom or later.
 
 
@@ -52,7 +52,7 @@ $ apmec-db-manage --config-file /path/to/apmec.conf \
 
 
 DEVELOPERS:
-A database migration script is required when you submit a change to Tacker
+A database migration script is required when you submit a change to Apmec
 that alters the database model definition.  The migration script is a special
 python file that includes code to upgrade the database to match the
 changes in the model definition. Alembic will execute these scripts in order to

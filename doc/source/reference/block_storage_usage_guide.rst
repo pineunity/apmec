@@ -18,14 +18,14 @@ Orchestrating VNFs with attached Volumes
 =========================================
 
 To support persistent volumes to VNF, TOSCA NFV profile supports new type
-of nodes. Tacker has now feature of parsing of those new nodes and creation
+of nodes. Apmec has now feature of parsing of those new nodes and creation
 of cinder volumes  which are attached to the VDUs.
 
 
 Prerequisites
 ~~~~~~~~~~~~~
 To have persistent volume support to VDUs, we must enable cinder service in
-addition to the other services that needed by Tacker.
+addition to the other services that needed by Apmec.
 
 VNFD Changes
 ~~~~~~~~~~~~
@@ -43,7 +43,7 @@ To add volume, we need to add the below node to the VNFD:
 .. code-block:: yaml
 
   VB1:
-    type: tosca.nodes.BlockStorage.Tacker
+    type: tosca.nodes.BlockStorage.Apmec
     properties:
       size: 1 GB
 
@@ -76,7 +76,7 @@ With these additions, the new VNFD looks like below:
   topology_template:
     node_templates:
       VDU1:
-        type: tosca.nodes.nfv.VDU.Tacker
+        type: tosca.nodes.nfv.VDU.Apmec
         capabilities:
           nfv_compute:
             properties:
@@ -92,7 +92,7 @@ With these additions, the new VNFD looks like below:
             param1: key2
 
       CP1:
-        type: tosca.nodes.nfv.CP.Tacker
+        type: tosca.nodes.nfv.CP.Apmec
         properties:
           management: true
           order: 0
@@ -104,7 +104,7 @@ With these additions, the new VNFD looks like below:
               node: VDU1
 
       VB1:
-        type: tosca.nodes.BlockStorage.Tacker
+        type: tosca.nodes.BlockStorage.Apmec
         properties:
           size: 1 GB
 
@@ -122,4 +122,4 @@ With these additions, the new VNFD looks like below:
         type: tosca.nodes.nfv.VL
         properties:
           network_name: net_mgmt
-          vendor: Tacker
+          vendor: Apmec

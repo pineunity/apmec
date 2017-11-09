@@ -1,7 +1,7 @@
 # Gérald LONLAS <g.lonlas@gmail.com>, 2016. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: Tacker Release Notes 0.7.1\n"
+"Project-Id-Version: Apmec Release Notes 0.7.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-23 03:02+0000\n"
 "MIME-Version: 1.0\n"
@@ -44,5 +44,5 @@ msgstr "Note de release pour Newton"
 msgid "Other Notes"
 msgstr "Autres notes"
 
-msgid "Tacker Release Notes"
+msgid "Apmec Release Notes"
 msgstr "Note de release pour Tracker"

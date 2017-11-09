@@ -44,7 +44,7 @@ class MEAMonitorPing(abstract_driver.MEAMonitorAbstractDriver):
         return 'ping'
 
     def get_description(self):
-        return 'Tacker MEAMonitor Ping Driver'
+        return 'Apmec MEAMonitor Ping Driver'
 
     def monitor_url(self, plugin, context, mea):
         LOG.debug('monitor_url %s', mea)

@@ -15,10 +15,10 @@
       under the License.
 
 ===============================
-Welcome to Tacker Documentation
+Welcome to Apmec Documentation
 ===============================
 
-Tacker is an OpenStack service for NFV Orchestration with a general purpose
+Apmec is an OpenStack service for NFV Orchestration with a general purpose
 VNF Manager to deploy and operate Virtual Network Functions (VNFs) and
 Network Services on an NFV Platform. It is based on ETSI MANO Architectural
 Framework.
@@ -26,12 +26,12 @@ Framework.
 Installation
 ============
 
-For Tacker to work, the system consists of two parts, one is apmec system
-and another is VIM systems. Tacker system can be installed
+For Apmec to work, the system consists of two parts, one is apmec system
+and another is VIM systems. Apmec system can be installed
 (here just some ways are listed):
 
 * via devstack, which is usually used by developers
-* via Tacker source code manually
+* via Apmec source code manually
 * via Kolla installation
 
 
@@ -45,8 +45,8 @@ and another is VIM systems. Tacker system can be installed
 Target VIM installation
 =======================
 
-Most of time, the target VIM existed for Tacker to manage. This section shows
-us how to prepare a target VIM for Tacker.
+Most of time, the target VIM existed for Apmec to manage. This section shows
+us how to prepare a target VIM for Apmec.
 
 .. toctree::
    :maxdepth: 1
@@ -104,7 +104,7 @@ API Documentation
 
    contributor/api/mano_api.rst
 
-Contributing to Tacker
+Contributing to Apmec
 ======================
 
 .. toctree::
@@ -128,9 +128,9 @@ Project Info
 ============
 
 * **Free software:** under the `Apache license <http://www.apache.org/licenses/LICENSE-2.0>`_
-* **Tacker Service:** http://git.openstack.org/cgit/openstack/apmec
-* **Tacker Client Library:** http://git.openstack.org/cgit/openstack/python-apmecclient
-* **Tacker Service Bugs:** http://bugs.launchpad.net/apmec
+* **Apmec Service:** http://git.openstack.org/cgit/openstack/apmec
+* **Apmec Client Library:** http://git.openstack.org/cgit/openstack/python-apmecclient
+* **Apmec Service Bugs:** http://bugs.launchpad.net/apmec
 * **Client Bugs:** https://bugs.launchpad.net/python-apmecclient
 * **Blueprints:** https://blueprints.launchpad.net/apmec
 

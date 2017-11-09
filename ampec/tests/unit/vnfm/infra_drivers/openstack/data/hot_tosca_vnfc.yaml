@@ -19,7 +19,7 @@ resources:
   firewall_vnfc_create_config:
     type: OS::Heat::SoftwareConfig
     properties:
-      config: 'echo "Test case for Tacker";'
+      config: 'echo "Test case for Apmec";'
       group: script
   firewall_vnfc_create_deploy:
     type: OS::Heat::SoftwareDeployment

@@ -5,7 +5,7 @@ metadata:
 topology_template:
   node_templates:
     firewall_vnfc:
-      type: tosca.nodes.nfv.VNFC.Tacker
+      type: tosca.nodes.nfv.VNFC.Apmec
       requirements:
         - host: VDU1
       interfaces:
@@ -13,7 +13,7 @@ topology_template:
             create: install_vnfc.sh
 
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         flavor: m1.small
         mgmt_driver: noop
@@ -25,7 +25,7 @@ topology_template:
           type: tosca.artifacts.Deployment.Image.VM
           file: https://github.com/bharaththiruveedula/dotfiles/raw/master/fedora-sw.qcow2
     CP1:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -39,4 +39,4 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: private
-        vendor: Tacker
+        vendor: Apmec

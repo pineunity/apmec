@@ -444,7 +444,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         """
         chain_list = []
         prev_forwarder = None
-        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         # Build the list of logical chain representation
         logical_chain = self._get_nfp_attribute(template_db.template,
                                                 nfp_name, 'path')
@@ -536,7 +536,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         :param vnf_members: list of constituent VNFs from a VNFFG
         :return: dict of VNFD:VNF_ID mappings
         """
-        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         new_mapping = dict()
 
         for vnfd in vnf_members:
@@ -589,7 +589,7 @@ class VnffgPluginDbMixin(vnffg.VNFFGPluginBase, db_base.CommonDbMixin):
         :return: None
         """
         LOG.debug('validating vim for vnfs %s', vnfs)
-        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         vim_id = None
         for vnf in vnfs:
             vnf_dict = mem_plugin.get_vnf(context, vnf)

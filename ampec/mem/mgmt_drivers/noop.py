@@ -30,7 +30,7 @@ class DeviceMgmtNoop(abstract_driver.DeviceMGMTAbstractDriver):
         return 'noop'
 
     def get_description(self):
-        return 'Tacker MEAMgmt Noop Driver'
+        return 'Apmec MEAMgmt Noop Driver'
 
     def mgmt_url(self, plugin, context, mea):
         LOG.debug('mgmt_url %s', mea)

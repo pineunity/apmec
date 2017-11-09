@@ -44,7 +44,7 @@ class NfvoPluginDb(meo.NFVOPluginBase, db_base.CommonDbMixin):
 
     @property
     def _core_plugin(self):
-        return manager.TackerManager.get_plugin()
+        return manager.ApmecManager.get_plugin()
 
     def _make_vim_dict(self, vim_db, fields=None, mask_password=True):
         res = dict((key, vim_db[key]) for key in VIM_ATTRIBUTES)

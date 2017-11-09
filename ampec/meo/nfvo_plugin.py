@@ -441,7 +441,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         :param vnf_id: VNF ID
         :return: VIM or VIM properties if fields are provided
         """
-        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         vim_id = mem_plugin.get_vnf(context, vnf_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
@@ -539,7 +539,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         nsd['vnfds'] = dict()
         LOG.debug('nsd_dict: %s', inner_nsd_dict)
 
-        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         vnfd_imports = inner_nsd_dict['imports']
         inner_nsd_dict['imports'] = []
         new_files = []
@@ -617,7 +617,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
 
         nsd = self.get_nsd(context, ns['ns']['nsd_id'])
         nsd_dict = yaml.safe_load(nsd['attributes']['nsd'])
-        mem_plugin = manager.TackerManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
         onboarded_vnfds = mem_plugin.get_vnfds(context, [])
         region_name = ns.setdefault('placement_attr', {}).get(
             'region_name', None)

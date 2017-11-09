@@ -295,14 +295,14 @@ class NoSortingHelper(SortingHelper):
     pass
 
 
-class TackerController(object):
-    """Base controller class for Tacker API."""
+class ApmecController(object):
+    """Base controller class for Apmec API."""
     # _resource_name will be redefined in sub concrete controller
     _resource_name = None
 
     def __init__(self, plugin):
         self._plugin = plugin
-        super(TackerController, self).__init__()
+        super(ApmecController, self).__init__()
 
     def _prepare_request_body(self, body, params):
         """Verifies required parameters are in request body.
@@ -336,14 +336,14 @@ def convert_exception_to_http_exc(e, faults, language):
     serializer = wsgi.JSONDictSerializer()
     e = translate(e, language)
     body = serializer.serialize(
-        {'TackerError': get_exception_data(e)})
+        {'ApmecError': get_exception_data(e)})
     kwargs = {'body': body, 'content_type': 'application/json'}
     if isinstance(e, exc.HTTPException):
         # already an HTTP error, just update with content type and body
         e.body = body
         e.content_type = kwargs['content_type']
         return e
-    if isinstance(e, (exceptions.TackerException, netaddr.AddrFormatError,
+    if isinstance(e, (exceptions.ApmecException, netaddr.AddrFormatError,
                       oslo_policy.PolicyNotAuthorized)):
         for fault in faults:
             if isinstance(e, fault):
@@ -368,14 +368,14 @@ def convert_exception_to_http_exc(e, faults, language):
             'processing your request.')
     msg = translate(msg, language)
     kwargs['body'] = serializer.serialize(
-        {'TackerError': get_exception_data(exc.HTTPInternalServerError(msg))})
+        {'ApmecError': get_exception_data(exc.HTTPInternalServerError(msg))})
     return exc.HTTPInternalServerError(**kwargs)
 
 
 def get_exception_data(e):
     """Extract the information about an exception.
 
-    Tacker client for the v1 API expects exceptions to have 'type', 'message'
+    Apmec client for the v1 API expects exceptions to have 'type', 'message'
     and 'detail' attributes.This information is extracted and converted into a
     dictionary.
 
@@ -400,7 +400,7 @@ def translate(translatable, locale):
               was not translated
     """
     localize = oslo_i18n.translate
-    if isinstance(translatable, exceptions.TackerException):
+    if isinstance(translatable, exceptions.ApmecException):
         translatable.msg = localize(translatable.msg, locale)
     elif isinstance(translatable, exc.HTTPError):
         translatable.detail = localize(translatable.detail, locale)

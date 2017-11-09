@@ -20,7 +20,7 @@
 #    under the License.
 
 """
-Installation script for Tacker's development virtualenv
+Installation script for Apmec's development virtualenv
 """
 from __future__ import print_function
 
@@ -32,12 +32,12 @@ import install_venv_common as install_venv
 
 def print_help():
     help = """
- Tacker development environment setup is complete.
+ Apmec development environment setup is complete.
 
- Tacker development uses virtualenv to track and manage Python dependencies
+ Apmec development uses virtualenv to track and manage Python dependencies
  while in development and testing.
 
- To activate the Tacker virtualenv for the extent of your current shell
+ To activate the Apmec virtualenv for the extent of your current shell
  session you can run:
 
  $ . .venv/bin/activate
@@ -58,7 +58,7 @@ def main(argv):
     pip_requires = os.path.join(root, 'requirements.txt')
     test_requires = os.path.join(root, 'test-requirements.txt')
     py_version = "python%s.%s" % (sys.version_info[0], sys.version_info[1])
-    project = 'Tacker'
+    project = 'Apmec'
     install = install_venv.InstallVenv(root, venv, pip_requires, test_requires,
                                        py_version, project)
     options = install.parse_args(argv)

@@ -10,7 +10,7 @@ Enhanced Placement Awareness Usage Guide
 Overview
 --------
 
-OpenStack Tacker supports TOSCA VNFD templates that allow specifying
+OpenStack Apmec supports TOSCA VNFD templates that allow specifying
 requirements for a VNF that leverages features of a compute node such as
 NUMA topology, SR-IOV, Huge pages and CPU pinning. This allows for Enhanced
 Platform Awareness(EPA) placement of a VNF that has high performance and low
@@ -130,7 +130,7 @@ created as part of the VDU properties using **availability_zone** property.
 .. code-block:: yaml
 
   vdu1:
-    type: tosca.nodes.nfv.VDU.Tacker
+    type: tosca.nodes.nfv.VDU.Apmec
     capabilities:
       nfv_compute:
         properties:
@@ -142,10 +142,10 @@ created as part of the VDU properties using **availability_zone** property.
       availability_zone: NFV-AZ
       image: cirros
 
-Deploying EPA TOSCA templates using Tacker
+Deploying EPA TOSCA templates using Apmec
 ------------------------------------------
 
-Once OpenStack/Devstack along with Tacker has been successfully installed,
+Once OpenStack/Devstack along with Apmec has been successfully installed,
 deploy a sample EPA template such as tosca-vnfd-hugepages.yaml from location
 below:
 https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd

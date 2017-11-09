@@ -55,19 +55,19 @@ class InvalidServiceType(exceptions.InvalidInput):
     message = _('invalid service type %(service_type)s')
 
 
-class VNFCreateFailed(exceptions.TackerException):
+class VNFCreateFailed(exceptions.ApmecException):
     message = _('creating VNF based on %(mead_id)s failed')
 
 
-class VNFCreateWaitFailed(exceptions.TackerException):
+class VNFCreateWaitFailed(exceptions.ApmecException):
     message = _('%(reason)s')
 
 
-class VNFScaleWaitFailed(exceptions.TackerException):
+class VNFScaleWaitFailed(exceptions.ApmecException):
     message = _('%(reason)s')
 
 
-class VNFDeleteWaitFailed(exceptions.TackerException):
+class VNFDeleteWaitFailed(exceptions.ApmecException):
     message = _('%(reason)s')
 
 
@@ -95,7 +95,7 @@ class HeatTranslatorFailed(exceptions.InvalidInput):
     message = _("heat-translator failed: - %(error_msg_details)s")
 
 
-class HeatClientException(exceptions.TackerException):
+class HeatClientException(exceptions.ApmecException):
     message = _("%(msg)s")
 
 
@@ -457,7 +457,7 @@ class Vnfm(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_namespace(cls):
-        return 'http://wiki.openstack.org/Tacker'
+        return 'http://wiki.openstack.org/Apmec'
 
     @classmethod
     def get_updated(cls):
@@ -473,7 +473,7 @@ class Vnfm(extensions.ExtensionDescriptor):
         resources = resource_helper.build_resource_info(
             plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.VNFM,
             translate_name=True)
-        plugin = manager.TackerManager.get_service_plugins()[
+        plugin = manager.ApmecManager.get_service_plugins()[
             constants.VNFM]
         for collection_name in SUB_RESOURCE_ATTRIBUTE_MAP:
             parent = SUB_RESOURCE_ATTRIBUTE_MAP[collection_name]['parent']
@@ -518,7 +518,7 @@ class VNFMPluginBase(service_base.NFVPluginBase):
         return constants.VNFM
 
     def get_plugin_description(self):
-        return 'Tacker VNF Manager plugin'
+        return 'Apmec VNF Manager plugin'
 
     @abc.abstractmethod
     def create_mead(self, context, mead):

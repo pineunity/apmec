@@ -533,7 +533,7 @@ class ExtensionManager(object):
     def _load_all_extensions_from_path(self, path):
         # Sorting the extension list makes the order in which they
         # are loaded predictable across a cluster of load-balanced
-        # Tacker Servers
+        # Apmec Servers
         for f in sorted(os.listdir(path)):
             try:
                 LOG.debug('Loading extension file: %s', f)
@@ -570,10 +570,10 @@ class ExtensionManager(object):
 
 
 class RequestExtension(object):
-    """Extend requests and responses of core Tacker OpenStack API controllers.
+    """Extend requests and responses of core Apmec OpenStack API controllers.
 
     Provide a way to add data to responses and handle custom request data
-    that is sent to core Tacker OpenStack API controllers.
+    that is sent to core Apmec OpenStack API controllers.
     """
 
     def __init__(self, method, url_route, handler):
@@ -584,7 +584,7 @@ class RequestExtension(object):
 
 
 class ActionExtension(object):
-    """Add custom actions to core Tacker OpenStack API controllers."""
+    """Add custom actions to core Apmec OpenStack API controllers."""
 
     def __init__(self, collection, action_name, handler):
         self.collection = collection
@@ -593,7 +593,7 @@ class ActionExtension(object):
 
 
 class ResourceExtension(object):
-    """Add top level resources to the OpenStack API in Tacker."""
+    """Add top level resources to the OpenStack API in Apmec."""
 
     def __init__(self, collection, controller, parent=None, path_prefix="",
                  collection_actions={}, member_actions={}, attr_map={}):

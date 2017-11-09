@@ -29,7 +29,7 @@ automatically.
 TOSCA schema for scaling policy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tacker defines TOSCA schema for the scaling policy as given below:
+Apmec defines TOSCA schema for the scaling policy as given below:
 
 .. code-block:: yaml
 
@@ -95,10 +95,10 @@ and vdu2 are already defined VDUs.
              targets: [vdu1, vdu2]
 
 
-Deploying scaling TOSCA template using Tacker
+Deploying scaling TOSCA template using Apmec
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once OpenStack/Devstack along with Tacker has been successfully installed,
+Once OpenStack/Devstack along with Apmec has been successfully installed,
 deploy a sample scaling template from location given
 below:
 https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd
@@ -111,7 +111,7 @@ https://docs.openstack.org/apmec/latest/install/getting_started.html
 How to scale VNF using CLI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tacker provides following CLI for scaling.
+Apmec provides following CLI for scaling.
 
 .. code-block::console
 
@@ -139,7 +139,7 @@ as below:
 How to scale VNF using REST API
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tacker provides following REST API for scaling.
+Apmec provides following REST API for scaling.
 
 **POST on v1.0/vnfs/<vnf-id>/actions**
 

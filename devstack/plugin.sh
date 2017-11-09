@@ -12,20 +12,20 @@ echo_summary "apmec's plugin.sh was called..."
 if is_service_enabled apmec; then
     if [[ "$1" == "stack" && "$2" == "install" ]]; then
         # Perform installation of service source
-        echo_summary "Installing Tacker"
+        echo_summary "Installing Apmec"
         install_apmec
 
     elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
         # Configure after the other layer 1 and 2 services have been configured
-        echo_summary "Configuring Tacker"
+        echo_summary "Configuring Apmec"
         configure_apmec
         create_apmec_accounts
 
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
         # Initialize and start the apmec service
-        echo_summary "Initializing Tacker"
+        echo_summary "Initializing Apmec"
         init_apmec
-        echo_summary "Starting Tacker API and conductor"
+        echo_summary "Starting Apmec API and conductor"
         start_apmec
         echo_summary "Installing apmec horizon"
         apmec_horizon_install

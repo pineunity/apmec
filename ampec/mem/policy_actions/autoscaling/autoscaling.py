@@ -40,7 +40,7 @@ class MEAActionAutoscaling(abstract_action.AbstractPolicyAction):
         return 'autoscaling'
 
     def get_description(self):
-        return 'Tacker MEA auto-scaling policy'
+        return 'Apmec MEA auto-scaling policy'
 
     def execute_action(self, plugin, context, mea_dict, args):
         mea_id = mea_dict['id']

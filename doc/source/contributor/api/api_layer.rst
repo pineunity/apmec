@@ -1,8 +1,8 @@
-Tacker WSGI/HTTP API layer
+Apmec WSGI/HTTP API layer
 ===========================
 
-This section will cover the internals of Tacker's HTTP API, and the classes
-in Tacker that can be used to create Extensions to the Tacker API.
+This section will cover the internals of Apmec's HTTP API, and the classes
+in Apmec that can be used to create Extensions to the Apmec API.
 
 Python web applications interface with webservers through the Python Web
 Server Gateway Interface (WSGI) - defined in `PEP 333 <http://legacy.python.org/dev/peps/pep-0333/>`_
@@ -10,14 +10,14 @@ Server Gateway Interface (WSGI) - defined in `PEP 333 <http://legacy.python.org/
 Startup
 -------
 
-Tackers's WSGI server is started from the `server module <http://git.openstack.org/cgit/openstack/apmec/tree/apmec/service.py>`_
+Apmecs's WSGI server is started from the `server module <http://git.openstack.org/cgit/openstack/apmec/tree/apmec/service.py>`_
 and the entry point `serve_wsgi` is called to build an instance of the
-`TackerApiService`_, which is then returned to the server module,
+`ApmecApiService`_, which is then returned to the server module,
 which spawns a `Eventlet`_ `GreenPool`_ that will run the WSGI
 application and respond to requests from clients.
 
 
-.. _TackerApiService: http://git.openstack.org/cgit/openstack/apmec/tree/apmec/service.py
+.. _ApmecApiService: http://git.openstack.org/cgit/openstack/apmec/tree/apmec/service.py
 
 .. _Eventlet: http://eventlet.net/
 
@@ -26,7 +26,7 @@ application and respond to requests from clients.
 WSGI Application
 ----------------
 
-During the building of the TackerApiService, the `_run_wsgi` function
+During the building of the ApmecApiService, the `_run_wsgi` function
 creates a WSGI application using the `load_paste_app` function inside
 `config.py`_ - which parses `api-paste.ini`_ - in order to create a WSGI app
 using `Paste`_'s `deploy`_.
@@ -35,7 +35,7 @@ The api-paste.ini file defines the WSGI applications and routes - using the
 `Paste INI file format`_.
 
 The INI file directs paste to instantiate the `APIRouter`_ class of
-Tacker, which contains several methods that map VNFM resources (such as
+Apmec, which contains several methods that map VNFM resources (such as
 vnfd, vnf) to URLs, and the controller for each resource.
 
 
@@ -54,7 +54,7 @@ vnfd, vnf) to URLs, and the controller for each resource.
 Further reading
 ---------------
 
-Tacker wsgi is based on neutron's extension. The following doc is still
+Apmec wsgi is based on neutron's extension. The following doc is still
 relevant.
 
 `Yong Sheng Gong: Deep Dive into Neutron <http://www.slideshare.net/gongys2004/inside-neutron-2>`_

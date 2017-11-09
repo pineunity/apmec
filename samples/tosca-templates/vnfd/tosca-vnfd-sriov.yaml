@@ -8,13 +8,13 @@ metadata:
 topology_template:
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: ubuntu
         flavor: numa-sriov
 
     CP1:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         order: 0
@@ -25,7 +25,7 @@ topology_template:
             node: VDU1
 
     CP2:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         order: 1
         type: sriov
@@ -39,10 +39,10 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net_mgmt
-        vendor: Tacker
+        vendor: Apmec
 
     VL2:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: sr3010
-        vendor: Tacker
+        vendor: Apmec

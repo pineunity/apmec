@@ -27,7 +27,7 @@ from apmec.db.meo import meo_db
 from apmec.db.meo import ns_db
 from apmec.db.meo import vnffg_db
 from apmec.extensions import meo
-from apmec.manager import TackerManager
+from apmec.manager import ApmecManager
 from apmec.meo import meo_plugin
 from apmec.plugins.common import constants
 from apmec.tests.unit.db import base as db_base
@@ -526,7 +526,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         self.assertEqual('inline', result['template_source'])
 
     def test_create_vnffg_abstract_types(self):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
@@ -548,7 +548,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     @mock.patch('apmec.meo.meo_plugin.NfvoPlugin.create_vnffgd')
     def test_create_vnffg_abstract_types_inline(self, mock_create_vnffgd):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
@@ -573,7 +573,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            )
 
     def test_create_vnffg_param_values(self):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
@@ -595,7 +595,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_id')
     def test_create_vnffg_param_value_format_error(self, mock_get_by_id):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_id.value = get_by_id()
@@ -605,7 +605,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                               self.context, vnffg_obj)
 
     def test_create_vnffg_template_param_not_parse(self):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             self._insert_dummy_vnffg_multi_param_template()
@@ -615,7 +615,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                               self.context, vnffg_obj)
 
     def test_create_vnffg_param_value_not_use(self):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             self._insert_dummy_vnffg_param_template()
@@ -625,7 +625,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                               self.context, vnffg_obj)
 
     def test_create_vnffg_vnf_mapping(self):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
@@ -646,7 +646,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            )
 
     def test_update_vnffg_nonexistent_vnf(self):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
@@ -664,7 +664,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                               self.context, vnffg['id'], updated_vnffg)
 
     def test_update_vnffg(self):
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
@@ -800,7 +800,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     def test_create_nsd(self):
         nsd_obj = utils.get_dummy_nsd_obj()
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             result = self.meo_plugin.create_nsd(self.context, nsd_obj)
@@ -817,7 +817,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
     def test_create_nsd_inline(self):
         nsd_obj = utils.get_dummy_nsd_obj_inline()
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             result = self.meo_plugin.create_nsd(self.context, nsd_obj)
@@ -843,7 +843,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             'project_domain_name': 'dummy_domain',
             'project_name': 'dummy_project'
         }
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_name.return_value = get_by_name()
@@ -871,7 +871,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             'project_domain_name': 'dummy_domain',
             'project_name': 'dummy_project'
         }
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_name.return_value = get_by_name()
@@ -902,7 +902,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             'project_domain_name': 'dummy_domain',
             'project_name': 'dummy_project'
         }
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_name.return_value = get_by_name()
@@ -926,7 +926,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             'project_name': 'dummy_project'
         }
 
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_name.return_value = get_by_name()
@@ -952,7 +952,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             'project_name': 'dummy_project'
         }
 
-        with patch.object(TackerManager, 'get_service_plugins') as \
+        with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
             mock_get_by_name.return_value = get_by_name()

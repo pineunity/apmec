@@ -31,7 +31,7 @@ follow-on enhancements like:
 Creating the NSD
 ~~~~~~~~~~~~~~~~
 
-Once OpenStack along with Tacker has been successfully installed,
+Once OpenStack along with Apmec has been successfully installed,
 deploy a sample VNFD templates using vnf1.yaml and vnf2.yaml as mentioned in
 reference section.
 
@@ -82,7 +82,7 @@ Creating the NS
 To create a NS, you must have onboarded corresponding NSD and
 VNFDS(which NS is substituting)
 
-Tacker provides the following CLI to create NS:
+Apmec provides the following CLI to create NS:
 
 ::
 
@@ -130,7 +130,7 @@ VNF1 sample template for nsd named vnfd1.yaml:
        forwarder2: [CP14, forwarder]
    node_templates:
      VDU1:
-       type: tosca.nodes.nfv.VDU.Tacker
+       type: tosca.nodes.nfv.VDU.Apmec
        properties:
          image: cirros-0.3.5-x86_64-disk
          flavor: m1.tiny
@@ -140,7 +140,7 @@ VNF1 sample template for nsd named vnfd1.yaml:
            param0: key1
            param1: key2
      CP11:
-       type: tosca.nodes.nfv.CP.Tacker
+       type: tosca.nodes.nfv.CP.Apmec
        properties:
          management: true
          anti_spoofing_protection: false
@@ -149,7 +149,7 @@ VNF1 sample template for nsd named vnfd1.yaml:
              node: VDU1
 
      VDU2:
-       type: tosca.nodes.nfv.VDU.Tacker
+       type: tosca.nodes.nfv.VDU.Apmec
        properties:
          image: cirros-0.3.5-x86_64-disk
          flavor: m1.medium
@@ -159,7 +159,7 @@ VNF1 sample template for nsd named vnfd1.yaml:
            param0: key1
            param1: key2
      CP13:
-       type: tosca.nodes.nfv.CP.Tacker
+       type: tosca.nodes.nfv.CP.Apmec
        properties:
          management: true
          anti_spoofing_protection: false
@@ -169,7 +169,7 @@ VNF1 sample template for nsd named vnfd1.yaml:
          - virtualBinding:
              node: VDU2
      CP14:
-       type: tosca.nodes.nfv.CP.Tacker
+       type: tosca.nodes.nfv.CP.Apmec
        properties:
          management: true
          anti_spoofing_protection: false
@@ -180,12 +180,12 @@ VNF1 sample template for nsd named vnfd1.yaml:
        type: tosca.nodes.nfv.VL
        properties:
          network_name: net_mgmt
-         vendor: Tacker
+         vendor: Apmec
      VL2:
        type: tosca.nodes.nfv.VL
        properties:
          network_name: net0
-         vendor: Tacker
+         vendor: Apmec
 
 VNF2 sample template for nsd named vnfd2.yaml:
 
@@ -206,7 +206,7 @@ VNF2 sample template for nsd named vnfd2.yaml:
         forwarder1: [CP21, forwarder]
     node_templates:
       VDU1:
-        type: tosca.nodes.nfv.VDU.Tacker
+        type: tosca.nodes.nfv.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           flavor: m1.tiny
@@ -216,7 +216,7 @@ VNF2 sample template for nsd named vnfd2.yaml:
             param0: key1
             param1: key2
       CP21:
-        type: tosca.nodes.nfv.CP.Tacker
+        type: tosca.nodes.nfv.CP.Apmec
         properties:
           management: true
           anti_spoofing_protection: false
@@ -226,14 +226,14 @@ VNF2 sample template for nsd named vnfd2.yaml:
           - virtualBinding:
               node: VDU1
       VDU2:
-        type: tosca.nodes.nfv.VDU.Tacker
+        type: tosca.nodes.nfv.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           flavor: m1.medium
           availability_zone: nova
           mgmt_driver: noop
       CP22:
-        type: tosca.nodes.nfv.CP.Tacker
+        type: tosca.nodes.nfv.CP.Apmec
         properties:
           management: true
           anti_spoofing_protection: false
@@ -246,11 +246,11 @@ VNF2 sample template for nsd named vnfd2.yaml:
         type: tosca.nodes.nfv.VL
         properties:
           network_name: net_mgmt
-          vendor: Tacker
+          vendor: Apmec
       VL2:
         type: tosca.nodes.nfv.VL
         properties:
           network_name: net0
-          vendor: Tacker
+          vendor: Apmec
 
 

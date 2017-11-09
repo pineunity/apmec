@@ -17,8 +17,8 @@
 Multisite VIM Usage
 ===================
 
-A single Tacker controller node can be used to manage multiple Openstack sites
-without having the need to deploy Tacker server on each of these sites. Tacker
+A single Apmec controller node can be used to manage multiple Openstack sites
+without having the need to deploy Apmec server on each of these sites. Apmec
 allows users to deploy VNFs in multiple OpenStack sites using the multisite VIM
 feature. OpenStack versions starting from Kilo are supported with this feature.
 
@@ -33,7 +33,7 @@ Preparing the OpenStack site
 
 Register a new OpenStack VIM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To register a new OpenStack VIM inside Tacker.
+To register a new OpenStack VIM inside Apmec.
 
 ::
 
@@ -108,9 +108,9 @@ VNF in a specify region  within that VIM.
 Updating a VIM
 ~~~~~~~~~~~~~~
 
-Tacker allows for updating VIM authorization parameters such as 'username',
+Apmec allows for updating VIM authorization parameters such as 'username',
 'password' and 'project_name' and 'ids' after it has been registered. To update
-'username' and password' for a given VIM user within Tacker:
+'username' and password' for a given VIM user within Apmec:
 
 ::
 
@@ -140,7 +140,7 @@ Features
 ~~~~~~~~
 * VIMs are shared across tenants -- As an admin operator, the user can register
   a VIM once and allow tenants to deploy VNFs on the registered VIM.
-* Pluggable driver module framework allowing Tacker to interact with multiple
+* Pluggable driver module framework allowing Apmec to interact with multiple
   VIM types.
 * Compatible for OpenStack versions starting from Kilo.
 * Supports keystone versions v2.0 and v3.

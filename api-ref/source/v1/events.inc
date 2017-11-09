@@ -6,7 +6,7 @@ Events
 
 Lists and shows captured events.
 
-Tacker currently supports events for following resource types:
+Apmec currently supports events for following resource types:
 
 - VNFD
 - VNF

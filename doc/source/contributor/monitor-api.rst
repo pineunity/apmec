@@ -1,4 +1,4 @@
-Tacker Monitoring Framework
+Apmec Monitoring Framework
 ============================
 
 This section will introduce apmec monitoring framework and describes the
@@ -13,7 +13,7 @@ various actions that a user can take when a specific event occurs.
 Introduction
 -------------
 
-Tacker monitoring framework provides the NFV operators and VNF vendors to
+Apmec monitoring framework provides the NFV operators and VNF vendors to
 write a pluggable driver that monitors the various status conditions of the
 VNF entities it deploys and manages.
 

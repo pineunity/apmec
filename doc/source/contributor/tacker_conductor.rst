@@ -15,10 +15,10 @@
       under the License.
 
 ================
-Tacker conductor
+Apmec conductor
 ================
 
-Tacker conductor is a component which is used to communicate with other
+Apmec conductor is a component which is used to communicate with other
 components via message RPC. In the conductor, the RPC server sides can
 access the apmec base on behalf of them.
 
@@ -26,7 +26,7 @@ access the apmec base on behalf of them.
 To start
 ==============
 
-Tacker conductor can be started via python console entry script
+Apmec conductor can be started via python console entry script
 'apmec-conductor':
 
 .. code-block:: console
@@ -56,7 +56,7 @@ and then start the second instance:
 Rabbitmq queues
 ===============
 
-Tacker conductor is listening on three queues:
+Apmec conductor is listening on three queues:
 
 .. code-block:: console
 

@@ -205,7 +205,7 @@ htmlhelp_basename = 'apmecdoc'
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'Tacker.tex', u'OpenStack NFV Orchestration API Documentation',
+    ('index', 'Apmec.tex', u'OpenStack NFV Orchestration API Documentation',
      u'OpenStack Foundation', 'manual'),
 ]
 

@@ -89,7 +89,7 @@ class APIv2TestBase(base.BaseTestCase):
     def setUp(self):
         super(APIv2TestBase, self).setUp()
         self.skip("Not ready yet")
-        plugin = 'apmec.apmec_plugin_base_v2.TackerPluginBaseV2'
+        plugin = 'apmec.apmec_plugin_base_v2.ApmecPluginBaseV2'
         # Ensure existing ExtensionManager is not used
         extensions.PluginAwareExtensionManager._instance = None
         # Create the default configurations
@@ -101,8 +101,8 @@ class APIv2TestBase(base.BaseTestCase):
         self._plugin_patcher = mock.patch(plugin, autospec=True)
         self.plugin = self._plugin_patcher.start()
         instance = self.plugin.return_value
-        instance._TackerPluginBaseV2__native_pagination_support = True
-        instance._TackerPluginBaseV2__native_sorting_support = True
+        instance._ApmecPluginBaseV2__native_pagination_support = True
+        instance._ApmecPluginBaseV2__native_sorting_support = True
 
         api = router.APIRouter()
         self.api = webtest.TestApp(api)
@@ -449,8 +449,8 @@ class APIv2TestCase(APIv2TestBase):
 
     def test_emulated_sort(self):
         instance = self.plugin.return_value
-        instance._TackerPluginBaseV2__native_pagination_support = False
-        instance._TackerPluginBaseV2__native_sorting_support = False
+        instance._ApmecPluginBaseV2__native_pagination_support = False
+        instance._ApmecPluginBaseV2__native_sorting_support = False
         instance.get_networks.return_value = []
         api = webtest.TestApp(router.APIRouter())
         api.get(_get_path('networks'), {'sort_key': ['name', 'status'],
@@ -461,8 +461,8 @@ class APIv2TestCase(APIv2TestBase):
 
     def test_emulated_sort_without_sort_field(self):
         instance = self.plugin.return_value
-        instance._TackerPluginBaseV2__native_pagination_support = False
-        instance._TackerPluginBaseV2__native_sorting_support = False
+        instance._ApmecPluginBaseV2__native_pagination_support = False
+        instance._ApmecPluginBaseV2__native_sorting_support = False
         instance.get_networks.return_value = []
         api = webtest.TestApp(router.APIRouter())
         api.get(_get_path('networks'), {'sort_key': ['name', 'status'],
@@ -480,7 +480,7 @@ class APIv2TestCase(APIv2TestBase):
 
     def test_emulated_pagination(self):
         instance = self.plugin.return_value
-        instance._TackerPluginBaseV2__native_pagination_support = False
+        instance._ApmecPluginBaseV2__native_pagination_support = False
         instance.get_networks.return_value = []
         api = webtest.TestApp(router.APIRouter())
         api.get(_get_path('networks'), {'limit': 10,
@@ -493,7 +493,7 @@ class APIv2TestCase(APIv2TestBase):
 
     def test_native_pagination_without_native_sorting(self):
         instance = self.plugin.return_value
-        instance._TackerPluginBaseV2__native_sorting_support = False
+        instance._ApmecPluginBaseV2__native_sorting_support = False
         self.assertRaises(n_exc.Invalid, router.APIRouter)
 
     def test_native_pagination_without_allow_sorting(self):
@@ -1295,7 +1295,7 @@ class ExtensionTestCase(base.BaseTestCase):
     def setUp(self):
         super(ExtensionTestCase, self).setUp()
         self.skip("Not ready yet")
-        plugin = 'apmec.apmec_plugin_base_v2.TackerPluginBaseV2'
+        plugin = 'apmec.apmec_plugin_base_v2.ApmecPluginBaseV2'
 
         # Ensure existing ExtensionManager is not used
         extensions.PluginAwareExtensionManager._instance = None
@@ -1316,7 +1316,7 @@ class ExtensionTestCase(base.BaseTestCase):
         self.plugin = self._plugin_patcher.start()
 
         # Instantiate mock plugin and enable the V2attributes extension
-        manager.TackerManager.get_plugin().supported_extension_aliases = (
+        manager.ApmecManager.get_plugin().supported_extension_aliases = (
             ["v2attrs"])
 
         api = router.APIRouter()

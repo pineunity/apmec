@@ -167,7 +167,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
 
     @property
     def _core_plugin(self):
-        return manager.TackerManager.get_plugin()
+        return manager.ApmecManager.get_plugin()
 
     def subnet_id_to_network_id(self, context, subnet_id):
         subnet = self._core_plugin.get_subnet(context, subnet_id)

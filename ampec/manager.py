@@ -75,13 +75,13 @@ def validate_pre_plugin_load():
     return message
 
 
-class TackerManager(object):
-    """Tacker's Manager class.
+class ApmecManager(object):
+    """Apmec's Manager class.
 
-    Tacker's Manager class is responsible for parsing a config file and
+    Apmec's Manager class is responsible for parsing a config file and
     instantiating the correct plugin that concretely implement
     apmec_plugin_base class.
-    The caller should make sure that TackerManager is a singleton.
+    The caller should make sure that ApmecManager is a singleton.
     """
     _instance = None
 

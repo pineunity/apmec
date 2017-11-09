@@ -14,7 +14,7 @@
         "description": "Sample VNFFG template",
         "node_templates": {
           "Forwarding_path1": {
-            "type": "tosca.nodes.nfv.FP.Tacker",
+            "type": "tosca.nodes.nfv.FP.Apmec",
             "description": "creates path (CP12->CP22)",
             "properties": {
               "id": 51,

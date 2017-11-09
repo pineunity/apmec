@@ -18,7 +18,7 @@
 VNF Manager User Guide
 ======================
 
-Tacker VNF Manager (VNFM) component manages the life-cycle of a Virtual Network
+Apmec VNF Manager (VNFM) component manages the life-cycle of a Virtual Network
 Function (VNF). VNFM takes care of deployment, monitoring, scaling and removal
 of VNFs on a Virtual Infrastructure Manager (VIM).
 
@@ -26,7 +26,7 @@ of VNFs on a Virtual Infrastructure Manager (VIM).
 Onboarding VNF
 ==============
 
-TOSCA VNFD templates can be onboarded to Tacker VNFD Catalog using following
+TOSCA VNFD templates can be onboarded to Apmec VNFD Catalog using following
 command:
 
 .. code-block:: console
@@ -40,17 +40,17 @@ command:
 Deploying VNF
 =============
 
-There are two ways to create a VNF in Tacker.
+There are two ways to create a VNF in Apmec.
 
-#. Using Tacker Catalog
+#. Using Apmec Catalog
 #. Direct VNF Instantiation
 
-Using Tacker Catalog
+Using Apmec Catalog
 --------------------
 
-In this method, a TOSCA VNFD template is first onboarded into Tacker VNFD
+In this method, a TOSCA VNFD template is first onboarded into Apmec VNFD
 catalog. This VNFD is then used to create VNF. This is most common way of
-creating VNFs in Tacker.
+creating VNFs in Apmec.
 
    i). Onboard a TOSCA VNFD template.
 
@@ -78,14 +78,14 @@ Direct VNF Instantiation
 ------------------------
 
 In this method, VNF is created directly from the TOSCA template without
-onboarding the template into Tacker VNFD Catalog.
+onboarding the template into Apmec VNFD Catalog.
 
 .. code-block:: console
 
    apmec vnf-create --vnfd-template <VNFD-FILE-NAME> <VNF-NAME>
 
-This method is recommended when NFV Catalog is maintained outside Tacker and
-Tacker is primarily used as a NFV workflow engine.
+This method is recommended when NFV Catalog is maintained outside Apmec and
+Apmec is primarily used as a NFV workflow engine.
 
 Example
 ~~~~~~~

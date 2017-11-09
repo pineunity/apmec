@@ -3,7 +3,7 @@ API Extensions
 ==============
 
 API extensions is the standard way of introducing new functionality
-to the Tacker project, it allows plugins to determine if they wish
+to the Apmec project, it allows plugins to determine if they wish
 to support the functionality or not.
 
 Examples

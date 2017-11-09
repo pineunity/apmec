@@ -37,7 +37,7 @@ Here is the sample template:
 
      node_templates:
        VDU1:
-         type: tosca.nodes.nfv.VDU.Tacker
+         type: tosca.nodes.nfv.VDU.Apmec
          properties:
            image: cirros-0.3.5-x86_64-disk
            flavor: m1.tiny
@@ -48,7 +48,7 @@ Here is the sample template:
              param1: key2
 
        CP1:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            management: True
            anti_spoofing_protection: false
@@ -59,7 +59,7 @@ Here is the sample template:
                node: VDU1
 
        CP2:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            anti_spoofing_protection: false
          requirements:
@@ -69,7 +69,7 @@ Here is the sample template:
                node: VDU1
 
        CP3:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            anti_spoofing_protection: false
          requirements:
@@ -82,19 +82,19 @@ Here is the sample template:
          type: tosca.nodes.nfv.VL
          properties:
            network_name: net_mgmt
-           vendor: Tacker
+           vendor: Apmec
 
        VL2:
          type: tosca.nodes.nfv.VL
          properties:
            network_name: net0
-           vendor: Tacker
+           vendor: Apmec
 
        VL3:
          type: tosca.nodes.nfv.VL
          properties:
            network_name: net1
-           vendor: Tacker
+           vendor: Apmec
 
 
 Parameterized VNFD template
@@ -168,7 +168,7 @@ Here is the sample template:
 
      node_templates:
        VDU1:
-         type: tosca.nodes.nfv.VDU.Tacker
+         type: tosca.nodes.nfv.VDU.Apmec
          properties:
            image: { get_input: image_name}
            flavor: {get_input: flavor}
@@ -179,7 +179,7 @@ Here is the sample template:
              param1: key2
 
        CP1:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            management: { get_input: management }
            anti_spoofing_protection: false
@@ -190,7 +190,7 @@ Here is the sample template:
                node: VDU1
 
        CP2:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            anti_spoofing_protection: false
          requirements:
@@ -200,7 +200,7 @@ Here is the sample template:
                node: VDU1
 
        CP3:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            anti_spoofing_protection: false
          requirements:
@@ -243,7 +243,7 @@ VNF deploy.
     management: True
     pkt_in_network: net0
     pkt_out_network: net1
-    vendor: Tacker
+    vendor: Apmec
 
 
 .. note::

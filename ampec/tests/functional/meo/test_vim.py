@@ -24,7 +24,7 @@ from apmecclient.common import exceptions
 SECRET_PASSWORD = '***'
 
 
-class VimTestCreate(base.BaseTackerTest):
+class VimTestCreate(base.BaseApmecTest):
 
     def _test_create_delete_vim(self, vim_file, name, description, vim_type,
                                 version=None):

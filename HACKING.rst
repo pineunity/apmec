@@ -1,11 +1,11 @@
-Tacker Style Commandments
+Apmec Style Commandments
 =========================
 
 - Step 1: Read the OpenStack Style Commandments
   https://docs.openstack.org/hacking/latest/
 - Step 2: Read on
 
-Tacker Specific Commandments
+Apmec Specific Commandments
 ----------------------------
 
 - [N320] Validate that LOG messages, except debug ones, have translations

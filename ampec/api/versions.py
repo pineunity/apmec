@@ -29,7 +29,7 @@ class Versions(object):
 
     @webob.dec.wsgify(RequestClass=wsgi.Request)
     def __call__(self, req):
-        """Respond to a request for all Tacker API versions."""
+        """Respond to a request for all Apmec API versions."""
         version_objs = [
             {
                 "id": "v1.0",

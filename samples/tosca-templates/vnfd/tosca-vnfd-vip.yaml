@@ -10,7 +10,7 @@ metadata:
 topology_template:
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       capabilities:
         nfv_compute:
           properties:
@@ -26,7 +26,7 @@ topology_template:
           param1: key2
 
     CP1:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: true
@@ -43,7 +43,7 @@ topology_template:
             node: VDU1
 
     VDU2:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       capabilities:
         nfv_compute:
           properties:
@@ -59,7 +59,7 @@ topology_template:
           param1: key2
 
     CP2:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: true
@@ -76,7 +76,7 @@ topology_template:
             node: VDU2
 
     VCP:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: true
@@ -91,4 +91,4 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net1
-        vendor: Tacker
+        vendor: Apmec

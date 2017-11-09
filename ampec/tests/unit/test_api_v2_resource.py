@@ -121,10 +121,10 @@ class ResourceTestCase(base.BaseTestCase):
     def test_unmapped_apmec_error_with_json(self):
         msg = u'\u7f51\u7edc'
 
-        class TestException(n_exc.TackerException):
+        class TestException(n_exc.ApmecException):
             message = msg
         expected_res = {'body': {
-            'TackerError': {
+            'ApmecError': {
                 'type': 'TestException',
                 'message': msg,
                 'detail': ''}}}
@@ -146,7 +146,7 @@ class ResourceTestCase(base.BaseTestCase):
         mock_translation.return_value = msg_translation
         msg = _('Unmapped error')
 
-        class TestException(n_exc.TackerException):
+        class TestException(n_exc.ApmecException):
             message = msg
 
         controller = mock.MagicMock()
@@ -164,10 +164,10 @@ class ResourceTestCase(base.BaseTestCase):
     def test_mapped_apmec_error_with_json(self):
         msg = u'\u7f51\u7edc'
 
-        class TestException(n_exc.TackerException):
+        class TestException(n_exc.ApmecException):
             message = msg
         expected_res = {'body': {
-            'TackerError': {
+            'ApmecError': {
                 'type': 'TestException',
                 'message': msg,
                 'detail': ''}}}
@@ -191,7 +191,7 @@ class ResourceTestCase(base.BaseTestCase):
         mock_translation.return_value = msg_translation
         msg = _('Unmapped error')
 
-        class TestException(n_exc.TackerException):
+        class TestException(n_exc.ApmecException):
             message = msg
 
         controller = mock.MagicMock()
@@ -225,14 +225,14 @@ class ResourceTestCase(base.BaseTestCase):
         # verify that the exception structure is the one expected
         # by the python-apmecclient
         self.assertEqual(exc.HTTPGatewayTimeout().explanation,
-                         res.json['TackerError']['message'])
+                         res.json['ApmecError']['message'])
         self.assertEqual('HTTPGatewayTimeout',
-                         res.json['TackerError']['type'])
-        self.assertEqual('', res.json['TackerError']['detail'])
+                         res.json['ApmecError']['type'])
+        self.assertEqual('', res.json['ApmecError']['detail'])
         self.assertEqual(exc.HTTPGatewayTimeout.code, res.status_int)
 
     def test_unhandled_error_with_json(self):
-        expected_res = {'body': {'TackerError':
+        expected_res = {'body': {'ApmecError':
                                  {'detail': '',
                                   'message':
                                       _('Request Failed: internal server error'
@@ -272,7 +272,7 @@ class ResourceTestCase(base.BaseTestCase):
 
     def _test_error_log_level(self, map_webob_exc, expect_log_info=False,
                               use_fault_map=True):
-        class TestException(n_exc.TackerException):
+        class TestException(n_exc.ApmecException):
             message = 'Test Exception'
 
         controller = mock.MagicMock()

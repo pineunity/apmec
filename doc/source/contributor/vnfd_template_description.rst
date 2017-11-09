@@ -7,7 +7,7 @@ This document explains VNFD template structure and its various fields based
 on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-nfv/
 v1.0/tosca-nfv-v1.0.html>`_.
 
-The behavioural and deployment information of a VNF in Tacker is defined in a
+The behavioural and deployment information of a VNF in Apmec is defined in a
 template known as VNF Descriptor (VNFD). The template is based on TOSCA
 standards and is written in YAML. It is on-boarded in a VNF catalog.
 
@@ -58,16 +58,16 @@ Virtual Deployment Unit is a basic part of VNF. It is the VM that hosts the
 network function.
 
 :type:
-    tosca.nodes.nfv.VDU.Tacker
+    tosca.nodes.nfv.VDU.Apmec
 :properties:
     Describes the properties like image to be used in VDU, availability zone in
     which VDU is to be spawned, management driver to be used to manage the VDU,
     flavor describing physical properties for the VDU to be spawned, monitoring
     policies for the VDU, providing user data in form of custom commands to the
-    VDU. A complete list of VDU properties currently supported by Tacker are
+    VDU. A complete list of VDU properties currently supported by Apmec are
     listed `here <https://github.com/openstack/apmec/blob/master/apmec/tosca/
     lib/apmec_nfv_defs.yaml>`_ under **properties** section of
-    **tosca.nodes.nfv.VDU.Tacker** field
+    **tosca.nodes.nfv.VDU.Apmec** field
 
 Specifying VDU properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -79,7 +79,7 @@ availability zone can be described as:
   topology_template:
     node_templates:
       VDU1:
-        type: tosca.nodes.nfv.VDU.Tacker
+        type: tosca.nodes.nfv.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           availability_zone: nova
@@ -99,7 +99,7 @@ OpenStack specific **flavors** can also be used to describe VDU configuration.
   topology_template:
     node_templates:
       VDU1:
-        type: tosca.nodes.nfv.VDU.Tacker
+        type: tosca.nodes.nfv.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           flavor: m1.tiny
@@ -119,7 +119,7 @@ It can be re-spawned in case ping fails. This is described under
 
     ..
       VDU1:
-        type: tosca.nodes.nfv.VDU.Tacker
+        type: tosca.nodes.nfv.VDU.Apmec
         properties:
           monitoring_policy:
             name: ping
@@ -142,7 +142,7 @@ template as user data.
 
   ..
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         user_data_format: RAW
         user_data: |
@@ -161,7 +161,7 @@ Specifying external image
 :artifacts:
     To specify an image via a file or an external link
 
-An image URL can be specified as **artifacts**. Tacker will specify the image
+An image URL can be specified as **artifacts**. Apmec will specify the image
 location in HOT (Heat Template) and pass it to heat-api. Heat will then spawn
 the VDU with that image.
 
@@ -169,7 +169,7 @@ the VDU with that image.
 
   ..
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       artifacts:
         VNFImage:
           type: tosca.artifacts.Deployment.Image.VM
@@ -189,7 +189,7 @@ can be specified as below. Thread and core counts can be specified as shown.
 
   ..
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       capabilities:
         nfv_compute:
           properties:
@@ -350,7 +350,7 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
       VDU1:
         ..
       CP1:
-        type: tosca.nodes.nfv.CP.Tacker
+        type: tosca.nodes.nfv.CP.Apmec
         properties:
           mac_address: fa:40:08:a0:de:0a
           ip_address: 10.10.1.12
@@ -367,7 +367,7 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
           - virtualBinding:
               node: VDU1
       CP2:
-        type: tosca.nodes.nfv.CP.Tacker
+        type: tosca.nodes.nfv.CP.Apmec
         properties:
           type: vnic
           anti_spoofing_protection: false
@@ -384,7 +384,7 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
         ..
 
 :type:
-    tosca.nodes.nfv.CP.Tacker
+    tosca.nodes.nfv.CP.Apmec
 
 :properties:
 
@@ -489,7 +489,7 @@ An example of assign floating ip to VDU
       VDU1:
         ..
       CP1:
-        type: tosca.nodes.nfv.CP.Tacker
+        type: tosca.nodes.nfv.CP.Apmec
         properties:
           management: true
         requirements:
@@ -567,7 +567,7 @@ a template which mentions all node types with all available options.
      topology_template:
       node_templates:
         VDU:
-          type: tosca.nodes.nfv.VDU.Tacker
+          type: tosca.nodes.nfv.VDU.Apmec
           capabilities:
             nfv_compute:
               properties:
@@ -613,7 +613,7 @@ a template which mentions all node types with all available options.
               type: tosca.artifacts.Deployment.Image.VM
               file: file to be used for image
         CP:
-          type: tosca.nodes.nfv.CP.Tacker
+          type: tosca.nodes.nfv.CP.Apmec
           properties:
             management: [true, false]
             anti_spoofing_protection: [true, false]

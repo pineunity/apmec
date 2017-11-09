@@ -8,7 +8,7 @@ metadata:
 topology_template:
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       capabilities:
         nfv_compute:
           properties:
@@ -20,7 +20,7 @@ topology_template:
         mgmt_driver: noop
 
     CP1:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
       requirements:
@@ -33,7 +33,7 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net_mgmt
-        vendor: Tacker
+        vendor: Apmec
 
     FIP1:
       type: tosca.nodes.network.FloatingIP

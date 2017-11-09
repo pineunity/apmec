@@ -102,7 +102,7 @@ class _ContextWrapper(object):
     This intercepts RPC calls and sets the timeout value to the globally
     adapting value for each method. An oslo messaging timeout results in
     a doubling of the timeout value for the method on which it timed out.
-    There currently is no logic to reduce the timeout since busy Tacker
+    There currently is no logic to reduce the timeout since busy Apmec
     servers are more frequently the cause of timeouts rather than lost
     messages.
     """

@@ -14,7 +14,7 @@ features. From apmec home directory, testcases are located at
 apmec/tests/functional.
 
 Writing a testcase:A testcase is written by declaring a class name derived from
-class base.BaseTackerTest. BaseTackerTest is class declared in
+class base.BaseApmecTest. BaseApmecTest is class declared in
 apmec/tests/functional/vnfd/base.py.
 
 A testcase body typically looks as below:
@@ -22,7 +22,7 @@ A testcase body typically looks as below:
 
 .. code-block:: python
 
- class vnfClassName(base.BaseTackerTest):
+ class vnfClassName(base.BaseApmecTest):
 
    def test_create_delete(self):
 
@@ -34,7 +34,7 @@ A testcase body typically looks as below:
 
 
 In above example test class 'vnfClassName' is derived from
-base.BaseTackerTest. Testcases typically has sections to setup, test, validate
+base.BaseApmecTest. Testcases typically has sections to setup, test, validate
 results and finally cleanup.
 
 Input yaml files: These are input files used in testcases for operations like
@@ -46,12 +46,12 @@ These packages are installed during devstack installation. If there are any
 new packages needed for functional test make sure they are added in
 test-requirements.txt.
 
-Asserting values in testcase: The base class BaseTackerTest
+Asserting values in testcase: The base class BaseApmecTest
 inherits base.TestCase which has inbuild assert functions which can be used in
 testcase.
 Eg: assertIsNotNone, assertEqual
 
-Tacker-client: In base.py we instantiate apmecclient object which has apis to
+Apmec-client: In base.py we instantiate apmecclient object which has apis to
 create/delete/list vnfd/vnf once given the necessary parameters.
 Verify apmecclient/v1_0/client.py for all the apmec related apis supported.
 

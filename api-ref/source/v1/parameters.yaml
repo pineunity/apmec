@@ -691,7 +691,7 @@ vnf_mapping_opt:
     A ``vnf_mapping`` object which contains mappings from VNFD name
     to VNF instance ID. This is used to declare which exact VNF
     instance to be used for each VNFD in the Forwarding Path definition.
-    If no vnf mappings are provided, then Tacker attempts to search
+    If no vnf mappings are provided, then Apmec attempts to search
     for VNF instance derived from each VNFDs.
   in: body
   required: false

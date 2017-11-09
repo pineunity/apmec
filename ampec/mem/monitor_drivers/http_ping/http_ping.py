@@ -45,7 +45,7 @@ class MEAMonitorHTTPPing(abstract_driver.MEAMonitorAbstractDriver):
         return 'HTTP ping'
 
     def get_description(self):
-        return 'Tacker HTTP Ping Driver for MEA'
+        return 'Apmec HTTP Ping Driver for MEA'
 
     def monitor_url(self, plugin, context, vnf):
         LOG.debug('monitor_url %s', vnf)

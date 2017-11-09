@@ -39,7 +39,7 @@ class CommonServicesPluginDb(common_services.CommonServicesPluginBase,
 
     @property
     def _core_plugin(self):
-        return manager.TackerManager.get_plugin()
+        return manager.ApmecManager.get_plugin()
 
     def _make_event_dict(self, event_db, fields=None):
         res = dict((key, event_db[key]) for key in EVENT_ATTRIBUTES)

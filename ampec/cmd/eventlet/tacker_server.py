@@ -42,7 +42,7 @@ def main():
                    " the '--config-file' option!"))
 
     try:
-        apmec_api = service.serve_wsgi(service.TackerApiService)
+        apmec_api = service.serve_wsgi(service.ApmecApiService)
         launcher = common_service.launch(cfg.CONF, apmec_api,
                                          workers=cfg.CONF.api_workers or None)
         launcher.wait()

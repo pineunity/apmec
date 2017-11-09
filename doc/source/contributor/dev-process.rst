@@ -1,7 +1,7 @@
-Tacker Development Process
+Apmec Development Process
 ==========================
 
-Enhancement to Tacker functionality can be done using one of the following
+Enhancement to Apmec functionality can be done using one of the following
 two development process options. The choice depends on the complexity of the
 enhancement.
 
@@ -9,7 +9,7 @@ Request for Enhancement (RFE) Process
 =====================================
 
 The developer, or an operator, can write up the requested enhancement in a
-Tacker launchpad [#]_ bug.
+Apmec launchpad [#]_ bug.
 
 * The requester need to mark the bug with "RFE" tag.
 * The bug will be in the initial "New" state.
@@ -28,7 +28,7 @@ Tacker launchpad [#]_ bug.
 This process is recommended for smaller enhancements that can be described
 easily and it is relatively easy to implement in a short period of time.
 
-Blueprint and Tacker-Specs process
+Blueprint and Apmec-Specs process
 ==================================
 
 The developer, or an operator, can write up the requested enhancement by
@@ -42,7 +42,7 @@ submitting a patchset to the apmec-spec repository [#]_.
 * The patchset will be merged into the apmecs-specs repository if the
   apmec-core team decides this is a valid feature enhancement. A patchset
   may also be rejected with clear reasoning.
-* Tacker core team will also mark the blueprint Definition field to Approved.
+* Apmec core team will also mark the blueprint Definition field to Approved.
 * Developer submits one or more patchsets to implement the enhancement. The
   commit message should use "Implements: blueprint <blueprint-name>" using
   the same name as the blueprint name.

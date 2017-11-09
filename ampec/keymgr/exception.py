@@ -18,26 +18,26 @@ Exception for keymgr
 """
 
 from apmec._i18n import _
-from apmec.common.exceptions import TackerException
+from apmec.common.exceptions import ApmecException
 
 
-class Forbidden(TackerException):
+class Forbidden(ApmecException):
     message = _("You are not authorized to complete this action.")
 
 
-class KeyManagerError(TackerException):
+class KeyManagerError(ApmecException):
     message = _("Key manager error: %(reason)s")
 
 
-class ManagedObjectNotFoundError(TackerException):
+class ManagedObjectNotFoundError(ApmecException):
     message = _("Key not found, uuid: %(uuid)s")
 
 
-class AuthTypeInvalidError(TackerException):
+class AuthTypeInvalidError(ApmecException):
     message = _("Invalid auth_type was specified, auth_type: %(type)s")
 
 
-class InsufficientCredentialDataError(TackerException):
+class InsufficientCredentialDataError(ApmecException):
     message = _('Insufficient credential data was provided, either '
                 '"token" must be set in the passed conf, or a context '
                 'with an "auth_token" property must be passed.')

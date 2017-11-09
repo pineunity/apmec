@@ -1,8 +1,8 @@
 *******************
-Tacker API Overview
+Apmec API Overview
 *******************
 
-Tacker API provides REST API end-points based on `ETSI NFV MANO standards`_.
+Apmec API provides REST API end-points based on `ETSI NFV MANO standards`_.
 The two new resources introduced are 'vnfd' and 'vnf' for
 describing the 'mem' extension. The resources request and response formats are
 described in below sections.
@@ -12,11 +12,11 @@ described in below sections.
 API versions
 ============
 
-Lists information for Tacker API version.
+Lists information for Apmec API version.
 
 **GET /**
 
-List API versions - Lists information about Tacker API version.
+List API versions - Lists information about Apmec API version.
 
 ::
 
@@ -117,7 +117,7 @@ Create vnfd - Create a vnfd entry based on the vnfd template.
             "tenant_id": "bb6a3be1021a4746ab727a6c9296e797",
             "description": "OpenWRT router",
             "attributes": {
-                "vnfd": "description: OpenWRT with services\nmetadata: {template_name: OpenWRT}\ntopology_template:\n  node_templates:\n    CP1:\n      properties: {anti_spoofing_protection: false, management: true, order: 0}\n      requirements:\n      - virtualLink: {node: VL1}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Tacker\n    CP2:\n      properties: {anti_spoofing_protection: false, order: 1}\n      requirements:\n      - virtualLink: {node: VL2}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Tacker\n    CP3:\n      properties: {anti_spoofing_protection: false, order: 2}\n      requirements:\n      - virtualLink: {node: VL3}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Tacker\n    VDU1:\n      capabilities:\n        nfv_compute:\n          properties: {disk_size: 1 GB, mem_size: 512 MB, num_cpus: 1}\n      properties:\n        config: 'param0: key1\n\n          param1: key2\n\n          '\n        image: OpenWRT\n        mgmt_driver: openwrt\n        monitoring_policy:\n          actions: {failure: respawn}\n          name: ping\n          parameters: {count: 3, interval: 10}\n      type: tosca.nodes.nfv.VDU.Tacker\n    VL1:\n      properties: {network_name: net_mgmt, vendor: Tacker}\n      type: tosca.nodes.nfv.VL\n    VL2:\n      properties: {network_name: net0, vendor: Tacker}\n      type: tosca.nodes.nfv.VL\n    VL3:\n      properties: {network_name: net1, vendor: Tacker}\n      type: tosca.nodes.nfv.VL\ntosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n"
+                "vnfd": "description: OpenWRT with services\nmetadata: {template_name: OpenWRT}\ntopology_template:\n  node_templates:\n    CP1:\n      properties: {anti_spoofing_protection: false, management: true, order: 0}\n      requirements:\n      - virtualLink: {node: VL1}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    CP2:\n      properties: {anti_spoofing_protection: false, order: 1}\n      requirements:\n      - virtualLink: {node: VL2}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    CP3:\n      properties: {anti_spoofing_protection: false, order: 2}\n      requirements:\n      - virtualLink: {node: VL3}\n      - virtualBinding: {node: VDU1}\n      type: tosca.nodes.nfv.CP.Apmec\n    VDU1:\n      capabilities:\n        nfv_compute:\n          properties: {disk_size: 1 GB, mem_size: 512 MB, num_cpus: 1}\n      properties:\n        config: 'param0: key1\n\n          param1: key2\n\n          '\n        image: OpenWRT\n        mgmt_driver: openwrt\n        monitoring_policy:\n          actions: {failure: respawn}\n          name: ping\n          parameters: {count: 3, interval: 10}\n      type: tosca.nodes.nfv.VDU.Apmec\n    VL1:\n      properties: {network_name: net_mgmt, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\n    VL2:\n      properties: {network_name: net0, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\n    VL3:\n      properties: {network_name: net1, vendor: Apmec}\n      type: tosca.nodes.nfv.VL\ntosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0\n"
             },
             "name": "OpenWRT"
         }

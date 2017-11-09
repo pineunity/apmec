@@ -17,7 +17,7 @@
 VNF Forwarding Graph
 ====================
 
-VNF Forwarding Graph or VNFFG feature in Tacker is used to orchestrate and
+VNF Forwarding Graph or VNFFG feature in Apmec is used to orchestrate and
 manage traffic through VNFs.  In short, abstract VNFFG TOSCA definitions are
 rendered into Service Function Chains (SFCs) and Classifiers.  The SFC makes
 up an ordered list of VNFs for traffic to traverse, while the classifier
@@ -30,7 +30,7 @@ Forwarding Graph Descriptors (VNFFGD). Please see the `devref guide
 how a VNFFGD is defined.
 
 VNFFG can be instantiated from VNFFGD or directly from VNFFGD template by
-separate Tacker commands.  This action will build the chain and classifier
+separate Apmec commands.  This action will build the chain and classifier
 necessary to realize the VNFFG.
 
 Prerequisites
@@ -39,7 +39,7 @@ Prerequisites
 VNFFG with OpenStack VIM relies on Neutron Networking-sfc to create SFC and
 Classifiers.  Therefore it is required to install `networking-sfc
 <https://github.com/openstack/networking-sfc>`_ project
-in order to use Tacker VNFFG.  Networking-sfc also requires at least OVS 2.5
+in order to use Apmec VNFFG.  Networking-sfc also requires at least OVS 2.5
 .0, so also ensure that is installed.  See the full `Networking-sfc guide
 <https://docs.openstack.org/networking-sfc/latest/>`_.
 
@@ -62,7 +62,7 @@ Firstly, HTTP client and HTTP server must be launched.
 Creating the VNFFGD
 ~~~~~~~~~~~~~~~~~~~
 
-Once OpenStack/Devstack along with Tacker has been successfully installed,
+Once OpenStack/Devstack along with Apmec has been successfully installed,
 deploy a sample VNFFGD template such as the one `here <https://github.com/
 openstack/apmec/tree/master/samples/tosca-templates/vnffgd/
 tosca-vnffgd-sample.yaml>`_.
@@ -99,7 +99,7 @@ OpenStack commands like bellow:
 This is required due to a limitation of Neutron networking-sfc and only
 applies to an OpenStack VIM.
 
-Tacker provides the following CLI to create a VNFFGD:
+Apmec provides the following CLI to create a VNFFGD:
 
 .. code-block:: console
 
@@ -127,7 +127,7 @@ Refer the 'Getting Started' link below on how to create a VNFD and deploy
 
 https://docs.openstack.org/apmec/latest/install/getting_started.html
 
-Tacker provides the following CLI to create VNFFG from VNFFGD:
+Apmec provides the following CLI to create VNFFG from VNFFGD:
 
 .. code-block:: console
 
@@ -159,7 +159,7 @@ Here,
 
 VNF Mapping is used to declare which exact VNF instance to be used for
 each VNF in the Forwarding Path. The following command would list VNFs
-in Tacker and then map each VNFD defined in the VNFFGD Forwarding Path
+in Apmec and then map each VNFD defined in the VNFFGD Forwarding Path
 to the desired VNF instance:
 
 .. code-block:: console
@@ -176,7 +176,7 @@ to the desired VNF instance:
    apmec vnffg-create --vnffgd-name myvnffgd --vnf-mapping \
       VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',VNF2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myvnffg
 
-Alternatively, if no vnf-mapping is provided then Tacker VNFFG will attempt
+Alternatively, if no vnf-mapping is provided then Apmec VNFFG will attempt
 to search for VNF instances derived from the given VNFDs in the VNFFGD.  If
 multiple VNF instances exist for a given VNFD, the VNF instance chosen to be
 used in the VNFFG is done at random.

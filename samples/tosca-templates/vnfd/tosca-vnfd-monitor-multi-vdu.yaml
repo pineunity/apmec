@@ -8,7 +8,7 @@ metadata:
 topology_template:
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       capabilities:
         nfv_compute:
           properties:
@@ -34,7 +34,7 @@ topology_template:
 
 
     CP11:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         order: 0
@@ -46,7 +46,7 @@ topology_template:
             node: VDU1
 
     CP12:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         order: 1
         anti_spoofing_protection: false
@@ -57,7 +57,7 @@ topology_template:
             node: VDU1
 
     CP13:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         order: 2
         anti_spoofing_protection: false
@@ -68,7 +68,7 @@ topology_template:
             node: VDU1
 
     VDU2:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.medium
@@ -89,7 +89,7 @@ topology_template:
 
 
     CP21:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         order: 0
@@ -100,7 +100,7 @@ topology_template:
             node: VDU2
 
     CP22:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         order: 1
         anti_spoofing_protection: false
@@ -111,7 +111,7 @@ topology_template:
             node: VDU2
 
     CP23:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         order: 2
         anti_spoofing_protection: false
@@ -122,7 +122,7 @@ topology_template:
             node: VDU2
 
     VDU3:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.tiny
@@ -142,7 +142,7 @@ topology_template:
             failure: respawn
 
     CP31:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         order: 0
@@ -153,7 +153,7 @@ topology_template:
             node: VDU3
 
     CP32:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         order: 1
         anti_spoofing_protection: false
@@ -164,7 +164,7 @@ topology_template:
             node: VDU3
 
     CP33:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         order: 2
         anti_spoofing_protection: false
@@ -178,16 +178,16 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net_mgmt
-        vendor: Tacker
+        vendor: Apmec
 
     VL2:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net0
-        vendor: Tacker
+        vendor: Apmec
 
     VL3:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net1
-        vendor: Tacker
+        vendor: Apmec

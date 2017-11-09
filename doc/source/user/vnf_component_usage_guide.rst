@@ -1,8 +1,8 @@
 ========================
-VNF Component in Tacker
+VNF Component in Apmec
 ========================
 
-This section will cover how to deploy `vnf component` in Tacker with the
+This section will cover how to deploy `vnf component` in Apmec with the
 examples of how to write VNF descriptors.
 
 
@@ -11,21 +11,21 @@ Sample TOSCA with vnfc
 
 The following example shows vnfc resource using TOSCA template.
 The target (VDU1) of the 'firewall_vnfc' in this example need to be
-described firstly like other TOSCA templates in Tacker.
+described firstly like other TOSCA templates in Apmec.
 
 .. code-block:: yaml
 
      topology_template:
        node_templates:
          firewall_vnfc:
-           type: tosca.nodes.nfv.VNFC.Tacker
+           type: tosca.nodes.nfv.VNFC.Apmec
            requirements:
              - host: VDU1
            interfaces:
              Standard:
                create: install_vnfc.sh
 
-Every vnfc node must be of type 'tosca.nodes.nfv.VNFC.Tacker'. It takes
+Every vnfc node must be of type 'tosca.nodes.nfv.VNFC.Apmec'. It takes
 two parameters:
 
 1) requirements: This node will accept list of hosts on which VNFC has to be
@@ -37,7 +37,7 @@ two parameters:
 
 How to setup environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-To make use of VNFC in Tacker, we have to upload the image to the glance in
+To make use of VNFC in Apmec, we have to upload the image to the glance in
 which heat-config and heat-config agents are installed. The installation steps
 can be referred `here <https://github.com/openstack/heat-templates/blob/master/
 hot/software-config/elements/README.rst>`_. The tool

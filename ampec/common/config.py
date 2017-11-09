@@ -14,7 +14,7 @@
 #    under the License.
 
 """
-Routines for configuring Tacker
+Routines for configuring Apmec
 """
 
 import os
@@ -41,7 +41,7 @@ core_opts = [
     cfg.StrOpt('api_extensions_path', default="",
                help=_("The path for API extensions")),
     cfg.ListOpt('service_plugins', default=['meo', 'mem'],
-                help=_("The service plugins Tacker will use")),
+                help=_("The service plugins Apmec will use")),
     cfg.StrOpt('policy_file', default="policy.json",
                help=_("The policy file to use")),
     cfg.StrOpt('auth_strategy', default='keystone',
@@ -57,13 +57,13 @@ core_opts = [
                       "in a single response, value was 'infinite' "
                       "or negative integer means no limit")),
     cfg.HostAddressOpt('host', default=utils.get_hostname(),
-                       help=_("The hostname Tacker is running on")),
+                       help=_("The hostname Apmec is running on")),
 ]
 
 core_cli_opts = [
     cfg.StrOpt('state_path',
                default='/var/lib/apmec',
-               help=_("Where to store Tacker state files. "
+               help=_("Where to store Apmec state files. "
                       "This directory must be writable by "
                       "the agent.")),
 ]

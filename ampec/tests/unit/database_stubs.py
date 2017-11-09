@@ -22,8 +22,8 @@ from apmec.db import api as db
 LOG = logging.getLogger(__name__)
 
 
-class TackerDB(object):
-    """Class conisting of methods to call Tacker db methods."""
+class ApmecDB(object):
+    """Class conisting of methods to call Apmec db methods."""
     def get_all_networks(self, tenant_id):
         """Get all networks."""
         nets = []

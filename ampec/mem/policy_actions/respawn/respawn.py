@@ -42,7 +42,7 @@ class MEAActionRespawn(abstract_action.AbstractPolicyAction):
         return 'respawn'
 
     def get_description(self):
-        return 'Tacker MEA respawning policy'
+        return 'Apmec MEA respawning policy'
 
     def execute_action(self, plugin, context, mea_dict, args):
         mea_id = mea_dict['id']

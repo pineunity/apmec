@@ -35,7 +35,7 @@ class VimClient(object):
         Initiate the NFVO plugin, request VIM information for the provided
         VIM id and validate region
         """
-        meo_plugin = manager.TackerManager.get_service_plugins().get(
+        meo_plugin = manager.ApmecManager.get_service_plugins().get(
             constants.NFVO)
 
         if not vim_id:

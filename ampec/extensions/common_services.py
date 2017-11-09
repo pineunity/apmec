@@ -25,16 +25,16 @@ from apmec.plugins.common import constants
 from apmec.services import service_base
 
 
-class EventCreationFailureException(exceptions.TackerException):
+class EventCreationFailureException(exceptions.ApmecException):
     message = _("Failed to create an event: %(error_str)s")
 
 
-class EventNotFoundException(exceptions.TackerException):
+class EventNotFoundException(exceptions.ApmecException):
     message = _("Specified Event id %(evt_id)s is invalid. Please verify and "
                 "pass a valid Event id")
 
 
-class InvalidModelException(exceptions.TackerException):
+class InvalidModelException(exceptions.ApmecException):
     message = _("Specified model is invalid, only Event model supported")
 
 
@@ -103,7 +103,7 @@ class Common_services(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_namespace(cls):
-        return 'http://wiki.openstack.org/Tacker'
+        return 'http://wiki.openstack.org/Apmec'
 
     @classmethod
     def get_updated(cls):
@@ -141,7 +141,7 @@ class CommonServicesPluginBase(service_base.NFVPluginBase):
         return constants.COMMONSERVICES
 
     def get_plugin_description(self):
-        return 'Tacker CommonServices plugin'
+        return 'Apmec CommonServices plugin'
 
     @abc.abstractmethod
     def get_event(self, context, event_id, fields=None):

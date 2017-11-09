@@ -17,14 +17,14 @@
 Alarm monitoring framework
 ==========================
 
-This document describes how to use alarm-based monitoring driver in Tacker.
+This document describes how to use alarm-based monitoring driver in Apmec.
 
 Sample TOSCA with monitoring policy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following example shows monitoring policy using TOSCA template.
 The target (VDU1) of the monitoring policy in this example need to be
-described firstly like other TOSCA templates in Tacker.
+described firstly like other TOSCA templates in Apmec.
 
 .. code-block:: yaml
 
@@ -49,10 +49,10 @@ described firstly like other TOSCA templates in Tacker.
 Alarm framework already supported the some default backend actions like
 **scaling, respawn, log, and log_and_kill**.
 
-Tacker users could change the desired action as described in the above example.
+Apmec users could change the desired action as described in the above example.
 Until now, the backend actions could be pointed to the specific policy which
 is also described in TOSCA template like scaling policy. The integration between
-alarming monitoring and scaling was also supported by Alarm monitor in Tacker:
+alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
 
 .. code-block:: yaml
 
@@ -65,7 +65,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Tacker:
     topology_template:
       node_templates:
         VDU1:
-          type: tosca.nodes.nfv.VDU.Tacker
+          type: tosca.nodes.nfv.VDU.Apmec
           capabilities:
             nfv_compute:
               properties:
@@ -79,7 +79,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Tacker:
             metadata: {metering.vnf: SG1}
 
         CP1:
-          type: tosca.nodes.nfv.CP.Tacker
+          type: tosca.nodes.nfv.CP.Apmec
           properties:
             management: true
             anti_spoofing_protection: false
@@ -89,7 +89,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Tacker:
             - virtualBinding:
                 node: VDU1
         VDU2:
-          type: tosca.nodes.nfv.VDU.Tacker
+          type: tosca.nodes.nfv.VDU.Apmec
           capabilities:
             nfv_compute:
               properties:
@@ -103,7 +103,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Tacker:
             metadata: {metering.vnf: SG1}
 
         CP2:
-          type: tosca.nodes.nfv.CP.Tacker
+          type: tosca.nodes.nfv.CP.Apmec
           properties:
             management: true
             anti_spoofing_protection: false
@@ -117,7 +117,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Tacker:
           type: tosca.nodes.nfv.VL
           properties:
             network_name: net_mgmt
-            vendor: Tacker
+            vendor: Apmec
 
       policies:
         - SP1:
@@ -171,7 +171,7 @@ metadata defined in VDU properties must be matched with metadata in monitoring p
 How to setup environment
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-If OpenStack Devstack is used to test alarm monitoring in Tacker, OpenStack
+If OpenStack Devstack is used to test alarm monitoring in Apmec, OpenStack
 Ceilometer and Aodh plugins will need to be enabled in local.conf:
 
 .. code-block::ini
@@ -188,8 +188,8 @@ How to setup alarm configuration
 
 Firstly, vnfd and vnf need to be created successfully using pre-defined TOSCA
 template for alarm monitoring. Then, in order to know whether alarm
-configuration defined in Tacker is successfully passed to Ceilometer,
-Tacker users could use CLI:
+configuration defined in Apmec is successfully passed to Ceilometer,
+Apmec users could use CLI:
 
 .. code-block:: console
 
@@ -248,7 +248,7 @@ Note: Because Ceilometer pipeline set the default interval to 600s (10 mins),
 in order to reduce this interval, users could edit "interval" value
 in **/etc/ceilometer/pipeline.yaml** file and then restart Ceilometer service.
 
-Another way could be used to check if backend action is handled well in Tacker:
+Another way could be used to check if backend action is handled well in Apmec:
 
 .. code-block::ini
 

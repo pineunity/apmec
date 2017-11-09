@@ -20,7 +20,7 @@ from apmec.api import api_common as common
 from apmec.tests import base
 
 
-class FakeController(common.TackerController):
+class FakeController(common.ApmecController):
     _resource_name = 'fake'
 
 

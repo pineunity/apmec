@@ -67,7 +67,7 @@ class Extensionattribute(extensions.ExtensionDescriptor):
     def get_resources(cls):
         """Returns Ext Resources."""
         exts = []
-        plugin = manager.TackerManager.get_plugin()
+        plugin = manager.ApmecManager.get_plugin()
         resource_name = 'ext_test_resource'
         collection_name = resource_name + "s"
         params = RESOURCE_ATTRIBUTE_MAP.get(collection_name, dict())

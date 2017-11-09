@@ -21,7 +21,7 @@ Deploying OpenWRT as VNF
 Once apmec is installed successfully, follow the steps given below to get
 started with deploying OpenWRT as VNF.
 
-1. Ensure Glance already contains OpenWRT image. Normally, Tacker tries
+1. Ensure Glance already contains OpenWRT image. Normally, Apmec tries
 to add OpenWRT image to Glance while installing via devstack. By running
 **openstack image list** to check OpenWRT image if exists. If not, download
 the image from
@@ -53,7 +53,7 @@ OpenWRT. All contents of the template file shows below:
    topology_template:
      node_templates:
        VDU1:
-         type: tosca.nodes.nfv.VDU.Tacker
+         type: tosca.nodes.nfv.VDU.Apmec
          capabilities:
            nfv_compute:
              properties:
@@ -118,7 +118,7 @@ OpenWRT. All contents of the template file shows below:
                failure: respawn
 
        CP1:
-         type: tosca.nodes.nfv.CP.Tacker
+         type: tosca.nodes.nfv.CP.Apmec
          properties:
            management: true
            anti_spoofing_protection: false
@@ -132,7 +132,7 @@ OpenWRT. All contents of the template file shows below:
          type: tosca.nodes.nfv.VL
          properties:
            network_name: net_mgmt
-           vendor: Tacker
+           vendor: Apmec
 
 ..
 

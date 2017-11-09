@@ -1,4 +1,4 @@
-Tacker Policy Framework
+Apmec Policy Framework
 =======================
 
 This section will introduce framework for apmec policy actions.
@@ -6,13 +6,13 @@ This section will introduce framework for apmec policy actions.
 * Introduction
 * How to write a new policy action
 * Event and Auditing support
-* How to combine policy actions with existing monitoring frameworks in Tacker
+* How to combine policy actions with existing monitoring frameworks in Apmec
 
 Introduction
 ------------
 
-Tacker policy actions framework provides the NFV operators and VNF vendors to
-write a pluggable action that manages their own VNFs. Currently Tacker
+Apmec policy actions framework provides the NFV operators and VNF vendors to
+write a pluggable action that manages their own VNFs. Currently Apmec
 already provided some common actions like autoscaling, respawning, and
 logging. With this framework the custom actions can be easily
 applied for the management purpose.
@@ -60,7 +60,7 @@ For example:
   _log_monitor_events(context, vnf_dict, "ActionRespawnHeat invoked")
 
 
-How to combine policy with existing monitoring framework in Tacker
+How to combine policy with existing monitoring framework in Apmec
 ------------------------------------------------------------------
 
 In the monitoring policy section, you can specify the monitors details with

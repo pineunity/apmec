@@ -40,7 +40,7 @@ class DeviceNoop(abstract_driver.DeviceAbstractDriver):
         return 'noop'
 
     def get_description(self):
-        return 'Tacker infra noop driver'
+        return 'Apmec infra noop driver'
 
     @log.log
     def create(self, **kwargs):

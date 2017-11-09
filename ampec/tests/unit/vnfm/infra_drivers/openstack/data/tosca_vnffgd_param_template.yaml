@@ -13,7 +13,7 @@ topology_template:
   node_templates:
 
     Forwarding_path1:
-      type: tosca.nodes.nfv.FP.Tacker
+      type: tosca.nodes.nfv.FP.Apmec
       description: creates path (CP11->CP12->CP32)
       properties:
         id: 51

@@ -35,7 +35,7 @@
             "topology_template": {
                 "node_templates": {
                     "VDU1": {
-                        "type": "tosca.nodes.nfv.VDU.Tacker",
+                        "type": "tosca.nodes.nfv.VDU.Apmec",
                         "capabilities": {
                             "nfv_compute": {
                                 "properties": {
@@ -44,7 +44,7 @@
                                     "disk_size": "1 GB"}}},
                         "properties": {"image": "cirros-0.3.5-x86_64-disk"}},
                     "CP1": {
-                        "type": "tosca.nodes.nfv.CP.Tacker",
+                        "type": "tosca.nodes.nfv.CP.Apmec",
                         "properties": {
                             "order": 0,
                             "management": true,
@@ -57,7 +57,7 @@
                     "VL1": {
                         "type": "tosca.nodes.nfv.VL",
                         "properties": {
-                            "vendor": "Tacker",
+                            "vendor": "Apmec",
                             "network_name": "net_mgmt"}}
                 }
             }

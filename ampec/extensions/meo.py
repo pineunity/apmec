@@ -26,54 +26,54 @@ from apmec.plugins.common import constants
 from apmec.services import service_base
 
 
-class VimUnauthorizedException(exceptions.TackerException):
+class VimUnauthorizedException(exceptions.ApmecException):
     message = _("%(message)s")
 
 
-class VimConnectionException(exceptions.TackerException):
+class VimConnectionException(exceptions.ApmecException):
     message = _("%(message)s")
 
 
-class VimInUseException(exceptions.TackerException):
+class VimInUseException(exceptions.ApmecException):
     message = _("VIM %(vim_id)s is still in use by VNF")
 
 
-class VimDefaultNotDefined(exceptions.TackerException):
+class VimDefaultNotDefined(exceptions.ApmecException):
     message = _("Default VIM is not defined.")
 
 
-class VimDefaultDuplicateException(exceptions.TackerException):
+class VimDefaultDuplicateException(exceptions.ApmecException):
     message = _("Default VIM already exists %(vim_id)s.")
 
 
-class VimNotFoundException(exceptions.TackerException):
+class VimNotFoundException(exceptions.ApmecException):
     message = _("Specified VIM id %(vim_id)s is invalid. Please verify and "
                 "pass a valid VIM id")
 
 
-class VimRegionNotFoundException(exceptions.TackerException):
+class VimRegionNotFoundException(exceptions.ApmecException):
     message = _("Unknown VIM region name %(region_name)s")
 
 
-class VimKeyNotFoundException(exceptions.TackerException):
+class VimKeyNotFoundException(exceptions.ApmecException):
     message = _("Unable to find key file for VIM %(vim_id)s")
 
 
-class VimUnsupportedResourceTypeException(exceptions.TackerException):
+class VimUnsupportedResourceTypeException(exceptions.ApmecException):
     message = _("Resource type %(type)s is unsupported by VIM")
 
 
-class VimGetResourceException(exceptions.TackerException):
+class VimGetResourceException(exceptions.ApmecException):
     message = _("Error while trying to issue %(cmd)s to find resource type "
                 "%(type)s by resource name %(name)s")
 
 
-class VimGetResourceNameNotUnique(exceptions.TackerException):
+class VimGetResourceNameNotUnique(exceptions.ApmecException):
     message = _("Getting resource id from VIM with resource name %(name)s "
                 "by %(cmd)s returns more than one")
 
 
-class VimGetResourceNotFoundException(exceptions.TackerException):
+class VimGetResourceNotFoundException(exceptions.ApmecException):
     message = _("Getting resource id from VIM with resource name %(name)s "
                 "by %(cmd)s returns nothing")
 
@@ -111,13 +111,13 @@ class VnffgdCpNotFoundException(exceptions.NotFound):
                 "Point.")
 
 
-class VnffgdCpNoForwardingException(exceptions.TackerException):
+class VnffgdCpNoForwardingException(exceptions.ApmecException):
     message = _("Specified CP %(cp_id)s in VNFD %(vnfd_name)s "
                 "does not have forwarding capability, which is required to be "
                 "included in forwarding path")
 
 
-class VnffgdWrongEndpointNumber(exceptions.TackerException):
+class VnffgdWrongEndpointNumber(exceptions.ApmecException):
     message = _("Specified number_of_endpoints %(number)s is not equal to "
                 "the number of connection_point %(cps)s")
 
@@ -130,26 +130,26 @@ class VnffgdNotFoundException(exceptions.NotFound):
     message = _('VNFFG Template %(vnffgd_id)s could not be found')
 
 
-class VnffgCreateFailed(exceptions.TackerException):
+class VnffgCreateFailed(exceptions.ApmecException):
     message = _('Creating VNFFG based on %(vnffgd_id)s failed')
 
 
-class VnffgInvalidMappingException(exceptions.TackerException):
+class VnffgInvalidMappingException(exceptions.ApmecException):
     message = _("Matching VNF Instance for VNFD %(vnfd_name)s could not be "
                 "found. Please create an instance of this VNFD before "
                 "creating/updating VNFFG.")
 
 
-class VnffgParamValueFormatError(exceptions.TackerException):
+class VnffgParamValueFormatError(exceptions.ApmecException):
     message = _("Param values %(param_value)s is not in dict format.")
 
 
-class VnffgTemplateParamParsingException(exceptions.TackerException):
+class VnffgTemplateParamParsingException(exceptions.ApmecException):
     message = _("Failed to parse VNFFG Template due to "
                 "missing input param %(get_input)s.")
 
 
-class VnffgParamValueNotUsed(exceptions.TackerException):
+class VnffgParamValueNotUsed(exceptions.ApmecException):
     message = _("Param input %(param_key)s not used.")
 
 
@@ -175,7 +175,7 @@ class VnffgVnfNotFoundException(exceptions.NotFound):
                 "be found")
 
 
-class VnffgDeleteFailed(exceptions.TackerException):
+class VnffgDeleteFailed(exceptions.ApmecException):
     message = _('Deleting VNFFG %(vnffg_id)s failed')
 
 
@@ -207,7 +207,7 @@ class NfpForwarderNotFoundException(exceptions.NotFound):
     message = _('VNFD Forwarder %(vnfd)s not found in VNF Mapping %(mapping)s')
 
 
-class NfpRequirementsException(exceptions.TackerException):
+class NfpRequirementsException(exceptions.ApmecException):
     message = _('VNFD Forwarder %(vnfd)s specified more than twice in '
                 'requirements path')
 
@@ -236,7 +236,7 @@ class NSInUse(exceptions.InUse):
     message = _('NS %(ns_id)s is still in use')
 
 
-class NoTasksException(exceptions.TackerException):
+class NoTasksException(exceptions.ApmecException):
     message = _('No tasks to run for %(action)s on %(resource)s')
 
 
@@ -770,7 +770,7 @@ class Nfvo(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_namespace(cls):
-        return 'http://wiki.openstack.org/Tacker'
+        return 'http://wiki.openstack.org/Apmec'
 
     @classmethod
     def get_updated(cls):
@@ -808,7 +808,7 @@ class NFVOPluginBase(service_base.NFVPluginBase):
         return constants.NFVO
 
     def get_plugin_description(self):
-        return 'Tacker NFV Orchestrator plugin'
+        return 'Apmec NFV Orchestrator plugin'
 
     @abc.abstractmethod
     def create_vim(self, context, vim):

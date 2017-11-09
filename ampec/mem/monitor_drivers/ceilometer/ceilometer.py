@@ -53,14 +53,14 @@ class MEAMonitorCeilometer(
         return 'ceilometer'
 
     def get_description(self):
-        return 'Tacker MEAMonitor Ceilometer Driver'
+        return 'Apmec MEAMonitor Ceilometer Driver'
 
     def _create_alarm_url(self, mea_id, mon_policy_name, mon_policy_action):
         # alarm_url = 'http://host:port/v1.0/meas/mea-uuid/monitoring-policy
         # -name/action-name?key=8785'
         host = cfg.CONF.ceilometer.host
         port = cfg.CONF.ceilometer.port
-        LOG.info("Tacker in heat listening on %(host)s:%(port)s",
+        LOG.info("Apmec in heat listening on %(host)s:%(port)s",
                  {'host': host,
                   'port': port})
         origin = "http://%(host)s:%(port)s/v1.0/meas" % {

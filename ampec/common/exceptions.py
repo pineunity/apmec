@@ -14,7 +14,7 @@
 #    under the License.
 
 """
-Tacker base exception handling.
+Apmec base exception handling.
 """
 
 from oslo_utils import excutils
@@ -23,8 +23,8 @@ import six
 from apmec._i18n import _
 
 
-class TackerException(Exception):
-    """Base Tacker Exception.
+class ApmecException(Exception):
+    """Base Apmec Exception.
 
     To correctly use this class, inherit from it and define
     a 'message' property. That message will get printf'd
@@ -34,14 +34,14 @@ class TackerException(Exception):
 
     def __init__(self, **kwargs):
         try:
-            super(TackerException, self).__init__(self.message % kwargs)
+            super(ApmecException, self).__init__(self.message % kwargs)
             self.msg = self.message % kwargs
         except Exception:
             with excutils.save_and_reraise_exception() as ctxt:
                 if not self.use_fatal_exceptions():
                     ctxt.reraise = False
                     # at least get the core message out if something happened
-                    super(TackerException, self).__init__(self.message)
+                    super(ApmecException, self).__init__(self.message)
 
     if six.PY2:
         def __unicode__(self):
@@ -58,23 +58,23 @@ class TackerException(Exception):
         return False
 
 
-class BadRequest(TackerException):
+class BadRequest(ApmecException):
     message = _('Bad %(resource)s request: %(msg)s')
 
 
-class NotFound(TackerException):
+class NotFound(ApmecException):
     pass
 
 
-class Conflict(TackerException):
+class Conflict(ApmecException):
     pass
 
 
-class NotAuthorized(TackerException):
+class NotAuthorized(ApmecException):
     message = _("Not authorized.")
 
 
-class ServiceUnavailable(TackerException):
+class ServiceUnavailable(ApmecException):
     message = _("The service is unavailable")
 
 
@@ -94,11 +94,11 @@ class PolicyFileNotFound(NotFound):
     message = _("Policy configuration policy.json could not be found")
 
 
-class PolicyInitError(TackerException):
+class PolicyInitError(ApmecException):
     message = _("Failed to init policy %(policy)s because %(reason)s")
 
 
-class PolicyCheckError(TackerException):
+class PolicyCheckError(ApmecException):
     message = _("Failed to check policy %(policy)s because %(reason)s")
 
 
@@ -106,7 +106,7 @@ class StateInvalid(BadRequest):
     message = _("Unsupported port state: %(port_state)s")
 
 
-class InUse(TackerException):
+class InUse(ApmecException):
     message = _("The resource is inuse")
 
 
@@ -118,7 +118,7 @@ class MalformedRequestBody(BadRequest):
     message = _("Malformed request body: %(reason)s")
 
 
-class Invalid(TackerException):
+class Invalid(ApmecException):
     def __init__(self, message=None):
         self.message = message
         super(Invalid, self).__init__()
@@ -150,15 +150,15 @@ class IpAddressGenerationFailure(Conflict):
     message = _("No more IP addresses available on network %(net_id)s.")
 
 
-class BridgeDoesNotExist(TackerException):
+class BridgeDoesNotExist(ApmecException):
     message = _("Bridge %(bridge)s does not exist.")
 
 
-class PreexistingDeviceFailure(TackerException):
+class PreexistingDeviceFailure(ApmecException):
     message = _("Creation failed. %(dev_name)s already exists.")
 
 
-class SudoRequired(TackerException):
+class SudoRequired(ApmecException):
     message = _("Sudo privilege is required to run this command.")
 
 
@@ -192,7 +192,7 @@ class ExtensionsNotFound(NotFound):
     message = _("Extensions not found: %(extensions)s")
 
 
-class InvalidContentType(TackerException):
+class InvalidContentType(ApmecException):
     message = _("Invalid content type %(content_type)s")
 
 
@@ -201,11 +201,11 @@ class ExternalIpAddressExhausted(BadRequest):
                 "network %(net_id)s.")
 
 
-class TooManyExternalNetworks(TackerException):
+class TooManyExternalNetworks(ApmecException):
     message = _("More than one external network exists")
 
 
-class InvalidConfigurationOption(TackerException):
+class InvalidConfigurationOption(ApmecException):
     message = _("An invalid value was provided for %(opt_name)s: "
                 "%(opt_value)s")
 
@@ -220,7 +220,7 @@ class GatewayIpInUse(InUse):
                 "by port %(port_id)s. Unable to update.")
 
 
-class NetworkVlanRangeError(TackerException):
+class NetworkVlanRangeError(ApmecException):
     message = _("Invalid network VLAN range: '%(vlan_range)s' - '%(error)s'")
 
     def __init__(self, **kwargs):
@@ -230,15 +230,15 @@ class NetworkVlanRangeError(TackerException):
         super(NetworkVlanRangeError, self).__init__(**kwargs)
 
 
-class NetworkVxlanPortRangeError(TackerException):
+class NetworkVxlanPortRangeError(ApmecException):
     message = _("Invalid network VXLAN port range: '%(vxlan_range)s'")
 
 
-class VxlanNetworkUnsupported(TackerException):
+class VxlanNetworkUnsupported(ApmecException):
     message = _("VXLAN Network unsupported.")
 
 
-class DuplicatedExtension(TackerException):
+class DuplicatedExtension(ApmecException):
     message = _("Found duplicate extension: %(alias)s")
 
 
@@ -251,7 +251,7 @@ class InvalidCIDR(BadRequest):
     message = _("Invalid CIDR %(input)s given as IP prefix")
 
 
-class MgmtDriverException(TackerException):
+class MgmtDriverException(ApmecException):
     message = _("VNF configuration failed")
 
 
@@ -277,9 +277,9 @@ class VnfPolicyTypeInvalid(BadRequest):
                 "should be one of %(valid_types)s")
 
 
-class DuplicateResourceName(TackerException):
+class DuplicateResourceName(ApmecException):
     message = _("%(resource)s with name %(name)s already exists")
 
 
-class DuplicateEntity(TackerException):
+class DuplicateEntity(ApmecException):
     message = _("%(_type)s already exist with given %(entry)s")

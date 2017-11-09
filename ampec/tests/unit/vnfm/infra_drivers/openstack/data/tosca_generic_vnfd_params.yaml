@@ -23,7 +23,7 @@ topology_template:
   node_templates:
 
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: { get_input: image }
         flavor: { get_input: flavor }
@@ -36,7 +36,7 @@ topology_template:
             interval: 10
 
     CP1:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -47,7 +47,7 @@ topology_template:
             node: VDU1
 
     CP2:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         anti_spoofing_protection: false
       requirements:
@@ -57,7 +57,7 @@ topology_template:
             node: VDU1
 
     CP3:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         anti_spoofing_protection: false
       requirements:
@@ -70,17 +70,17 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net_mgmt
-        vendor: Tacker
+        vendor: Apmec
 
     VL2:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: pkt_in
-        vendor: Tacker
+        vendor: Apmec
 
     VL3:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: pkt_out
-        vendor: Tacker
+        vendor: Apmec
 

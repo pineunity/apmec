@@ -21,10 +21,10 @@ from apmec import context
 from apmec.tests import base
 
 
-class TestTackerContext(base.BaseTestCase):
+class TestApmecContext(base.BaseTestCase):
 
     def setUp(self):
-        super(TestTackerContext, self).setUp()
+        super(TestApmecContext, self).setUp()
         self.skip("Not ready yet")
         db_api = 'apmec.db.api.get_session'
         self._db_api_session_patcher = mock.patch(db_api)

@@ -19,7 +19,7 @@
 Manual Installation
 ===================
 
-This document describes how to install and run Tacker manually.
+This document describes how to install and run Apmec manually.
 
 Pre-requisites
 ==============
@@ -45,7 +45,7 @@ is like the below:
     export OS_REGION_NAME=RegionOne
 
 
-Installing Tacker server
+Installing Apmec server
 ========================
 
 .. note::
@@ -104,7 +104,7 @@ c). Create apmec service.
 .. code-block:: console
 
    openstack service create --name apmec \
-       --description "Tacker Project" nfv-orchestration
+       --description "Apmec Project" nfv-orchestration
 ..
 
 d). Provide an endpoint to apmec service.
@@ -234,7 +234,7 @@ If you are using keystone v2 then,
 
 ..
 
-9). Populate Tacker database:
+9). Populate Apmec database:
 
 .. code-block:: console
 
@@ -243,7 +243,7 @@ If you are using keystone v2 then,
 ..
 
 
-Install Tacker client
+Install Apmec client
 =====================
 
 1). Clone apmec-client repository.
@@ -262,7 +262,7 @@ Install Tacker client
    sudo python setup.py install
 ..
 
-Install Tacker horizon
+Install Apmec horizon
 ======================
 
 
@@ -297,7 +297,7 @@ Install Tacker horizon
    sudo service apache2 restart
 ..
 
-Starting Tacker server
+Starting Apmec server
 ======================
 
 1).Open a new console and launch apmec-server. A separate terminal is

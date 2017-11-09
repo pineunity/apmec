@@ -24,12 +24,12 @@ https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html to set
 up the docker environment that is used by kolla ansible.
 
 To install via Kolla Ansible, the version of Kolla Ansible should be consistent
-with the target Tacker system. For example, stable/pike branch of Kolla Ansible
-should be used to install stable/pike branch of Tacker. Here the stable/pike
-branch version will be used to show how to install Tacker with Kolla Ansible.
+with the target Apmec system. For example, stable/pike branch of Kolla Ansible
+should be used to install stable/pike branch of Apmec. Here the stable/pike
+branch version will be used to show how to install Apmec with Kolla Ansible.
 
-Kolla can be used to install multiple nodes system, but Tacker server is not
-ready for multiple nodes deployment yet, so only an all-in-one Tacker is
+Kolla can be used to install multiple nodes system, but Apmec server is not
+ready for multiple nodes deployment yet, so only an all-in-one Apmec is
 installed in this document.
 
 
@@ -59,7 +59,7 @@ If the needed version has already been published at pypi site
 ..
 
 
-Install Tacker
+Install Apmec
 ~~~~~~~~~~~~~~
 
 1. Edit kolla ansible's configuration file /etc/kolla/globals.yml:
@@ -149,9 +149,9 @@ With this command, the "admin-openrc.sh" will be generated at
 
 5. Check the related containers are started and running:
 
-Tacker system consists of some containers. Following is a sample output.
+Apmec system consists of some containers. Following is a sample output.
 The containers fluentd, cron and kolla_toolbox are from kolla, please see
-kolla ansible documentation for their usage. Others are from Tacker system
+kolla ansible documentation for their usage. Others are from Apmec system
 components.
 
 .. code-block:: console
@@ -187,7 +187,7 @@ components.
 ..
 
 
-7. Check the Tacker server is running well:
+7. Check the Apmec server is running well:
 
 .. code-block:: console
 

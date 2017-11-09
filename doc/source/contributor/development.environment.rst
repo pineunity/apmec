@@ -19,7 +19,7 @@ Setting Up a Development Environment
 ====================================
 
 This page describes how to setup a working Python development
-environment that can be used in developing Tacker on Ubuntu, Fedora or
+environment that can be used in developing Apmec on Ubuntu, Fedora or
 Mac OS X. These instructions assume you're already familiar with
 Git and Gerrit, which is a code repository mirror and code review toolset
 , however if you aren't please see `this Git tutorial`_ for an introduction
@@ -29,12 +29,12 @@ code contribution to Openstack projects.
 .. _this Git tutorial: http://git-scm.com/book/en/Getting-Started
 .. _this guide: https://docs.openstack.org/infra/manual/developers.html#development-workflow
 
-If you want to be able to run Tacker in a full OpenStack environment,
+If you want to be able to run Apmec in a full OpenStack environment,
 you can use the excellent `DevStack`_ project to do so. There is a wiki page
-that describes `setting up Tacker using DevStack`_.
+that describes `setting up Apmec using DevStack`_.
 
 .. _DevStack: https://git.openstack.org/cgit/openstack-dev/devstack
-.. _setting up Tacker using Devstack: https://wiki.openstack.org/wiki/Tacker/Installation
+.. _setting up Apmec using Devstack: https://wiki.openstack.org/wiki/Apmec/Installation
 
 Getting the code
 ----------------

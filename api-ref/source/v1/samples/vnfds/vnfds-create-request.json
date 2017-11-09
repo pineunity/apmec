@@ -18,7 +18,7 @@
         "topology_template": {
           "node_templates": {
             "VDU1": {
-              "type": "tosca.nodes.nfv.VDU.Tacker",
+              "type": "tosca.nodes.nfv.VDU.Apmec",
               "capabilities": {
                 "nfv_compute": {
                   "properties": {
@@ -33,7 +33,7 @@
               }
             },
             "CP1": {
-              "type": "tosca.nodes.nfv.CP.Tacker",
+              "type": "tosca.nodes.nfv.CP.Apmec",
               "properties": {
                 "order": 0,
                 "management": true,
@@ -55,7 +55,7 @@
             "VL1": {
               "type": "tosca.nodes.nfv.VL",
               "properties": {
-                "vendor": "Tacker",
+                "vendor": "Apmec",
                 "network_name": "net_mgmt"
               }
             }

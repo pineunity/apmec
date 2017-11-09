@@ -252,7 +252,7 @@ class OwnerCheck(policy.Check):
             # NOTE(ihrachys): if import is put in global, circular
             # import failure occurs
             manager = importutils.import_module('apmec.manager')
-            f = getattr(manager.TackerManager.get_instance().plugin,
+            f = getattr(manager.ApmecManager.get_instance().plugin,
                         'get_%s' % parent_res)
             # f *must* exist, if not found it is better to let apmec
             # explode. Check will be performed with admin context

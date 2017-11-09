@@ -22,12 +22,12 @@ class VnffgAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def get_type(self):
-        """Return one of predefined type of Tacker drivers."""
+        """Return one of predefined type of Apmec drivers."""
         pass
 
     @abc.abstractmethod
     def get_name(self):
-        """Return a symbolic name for the Tacker VNFFG SFC driver."""
+        """Return a symbolic name for the Apmec VNFFG SFC driver."""
         pass
 
     @abc.abstractmethod

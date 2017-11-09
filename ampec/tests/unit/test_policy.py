@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test of Policy Engine For Tacker"""
+"""Test of Policy Engine For Apmec"""
 
 import fixtures
 import mock
@@ -222,10 +222,10 @@ FAKE_RESOURCE = {"%ss" % FAKE_RESOURCE_NAME:
                            }}}
 
 
-class TackerPolicyTestCase(base.BaseTestCase):
+class ApmecPolicyTestCase(base.BaseTestCase):
 
     def setUp(self):
-        super(TackerPolicyTestCase, self).setUp()
+        super(ApmecPolicyTestCase, self).setUp()
         self.skipTest("Not ready yet")
         policy.reset()
         policy.init()
@@ -279,8 +279,8 @@ class TackerPolicyTestCase(base.BaseTestCase):
         self.addCleanup(remove_fake_resource)
         self.context = context.Context('fake', 'fake', roles=['user'])
         plugin_klass = importutils.import_class(
-            "apmec.db.db_base_plugin_v2.TackerDbPluginV2")
-        self.manager_patcher = mock.patch('apmec.manager.TackerManager')
+            "apmec.db.db_base_plugin_v2.ApmecDbPluginV2")
+        self.manager_patcher = mock.patch('apmec.manager.ApmecManager')
         fake_manager = self.manager_patcher.start()
         fake_manager_instance = fake_manager.return_value
         fake_manager_instance.plugin = plugin_klass()
@@ -426,7 +426,7 @@ class TackerPolicyTestCase(base.BaseTestCase):
             return {'tenant_id': 'fake'}
 
         action = "create_port:mac"
-        with mock.patch.object(manager.TackerManager.get_instance().plugin,
+        with mock.patch.object(manager.ApmecManager.get_instance().plugin,
                                'get_network', new=fakegetnetwork):
             target = {'network_id': 'whatever'}
             result = policy.enforce(self.context, action, target)
@@ -441,7 +441,7 @@ class TackerPolicyTestCase(base.BaseTestCase):
         # so long that we verify that, if *f* blows up, the behavior of the
         # policy engine to propagate the exception is preserved
         action = "create_port:mac"
-        with mock.patch.object(manager.TackerManager.get_instance().plugin,
+        with mock.patch.object(manager.ApmecManager.get_instance().plugin,
                                'get_network', new=fakegetnetwork):
             target = {'network_id': 'whatever'}
             self.assertRaises(NotImplementedError,
@@ -459,7 +459,7 @@ class TackerPolicyTestCase(base.BaseTestCase):
         self.rules['admin_or_network_owner'] = common_policy.parse_rule(
             "role:admin or tenant_id:%(network_tenant_id)s")
         action = "create_port:mac"
-        with mock.patch.object(manager.TackerManager.get_instance().plugin,
+        with mock.patch.object(manager.ApmecManager.get_instance().plugin,
                                'get_network', new=fakegetnetwork):
             target = {'network_id': 'whatever'}
             result = policy.enforce(self.context, action, target)

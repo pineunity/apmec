@@ -67,7 +67,7 @@ class ExtensionExtendedAttributeTestCase(base.BaseTestCase):
         # the global attribute map
         attributes.RESOURCE_ATTRIBUTE_MAP.update(
             extattr.EXTENDED_ATTRIBUTES_2_0)
-        self.agentscheduler_dbMinxin = manager.TackerManager.get_plugin()
+        self.agentscheduler_dbMinxin = manager.ApmecManager.get_plugin()
         self.addCleanup(self.restore_attribute_map)
 
     def restore_attribute_map(self):

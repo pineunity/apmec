@@ -26,7 +26,7 @@ import time
 CONF = cfg.CONF
 
 
-class NsdTestCreate(base.BaseTackerTest):
+class NsdTestCreate(base.BaseApmecTest):
     def _test_create_tosca_mead(self, tosca_mead_file, mead_name):
         input_yaml = read_file(tosca_mead_file)
         tosca_dict = yaml.safe_load(input_yaml)

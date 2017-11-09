@@ -40,7 +40,7 @@ class MEAActionLog(abstract_action.AbstractPolicyAction):
         return 'log'
 
     def get_description(self):
-        return 'Tacker MEA logging policy'
+        return 'Apmec MEA logging policy'
 
     def execute_action(self, plugin, context, vnf_dict, args):
         vnf_id = vnf_dict['id']
@@ -58,7 +58,7 @@ class MEAActionLogAndKill(abstract_action.AbstractPolicyAction):
         return 'log_and_kill'
 
     def get_description(self):
-        return 'Tacker MEA log_and_kill policy'
+        return 'Apmec MEA log_and_kill policy'
 
     def execute_action(self, plugin, context, vnf_dict, args):
         _log_monitor_events(context,

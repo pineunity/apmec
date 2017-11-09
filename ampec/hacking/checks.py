@@ -19,7 +19,7 @@ import pep8
 """
 Guidelines for writing new hacking checks
 
- - Use only for Tacker specific tests. OpenStack general tests
+ - Use only for Apmec specific tests. OpenStack general tests
    should be submitted to the common 'hacking' module.
  - Pick numbers in the range N3xx. Find the current test with
    the highest allocated number and then pick the next value.

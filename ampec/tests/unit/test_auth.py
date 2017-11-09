@@ -20,9 +20,9 @@ from apmec import auth
 from apmec.tests import base
 
 
-class TackerKeystoneContextTestCase(base.BaseTestCase):
+class ApmecKeystoneContextTestCase(base.BaseTestCase):
     def setUp(self):
-        super(TackerKeystoneContextTestCase, self).setUp()
+        super(ApmecKeystoneContextTestCase, self).setUp()
         self.skip("Not ready yet")
 
         @webob.dec.wsgify
@@ -31,7 +31,7 @@ class TackerKeystoneContextTestCase(base.BaseTestCase):
             return webob.Response()
 
         self.context = None
-        self.middleware = auth.TackerKeystoneContext(fake_app)
+        self.middleware = auth.ApmecKeystoneContext(fake_app)
         self.request = webob.Request.blank('/')
         self.request.headers['X_AUTH_TOKEN'] = 'testauthtoken'
 

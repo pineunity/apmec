@@ -5,7 +5,7 @@ metadata:
 topology_template:
   node_templates:
     firewall_vnfc:
-      type: tosca.nodes.nfv.VNFC.Tacker
+      type: tosca.nodes.nfv.VNFC.Apmec
       requirements:
         - host: VDU1
         - host: VDU2
@@ -14,7 +14,7 @@ topology_template:
             create: /home/bharatht/install_vnfc.sh
 
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: fedora-software-config
         flavor: m1.small
@@ -25,7 +25,7 @@ topology_template:
           param1: key2
 
     CP1:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -35,7 +35,7 @@ topology_template:
         - virtualBinding:
             node: VDU1
     VDU2:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: fedora-software-config
         flavor: m1.small
@@ -46,7 +46,7 @@ topology_template:
           param1: key2
 
     CP2:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -60,4 +60,4 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: private
-        vendor: Tacker
+        vendor: Apmec

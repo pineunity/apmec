@@ -8,7 +8,7 @@ metadata:
 topology_template:
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.tiny
@@ -26,7 +26,7 @@ topology_template:
             interval: 10
 
     CP1:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         order: 0
@@ -38,7 +38,7 @@ topology_template:
             node: VDU1
 
     VDU2:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.tiny
@@ -56,7 +56,7 @@ topology_template:
             interval: 10
 
     CP2:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         order: 0
@@ -71,4 +71,4 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net_mgmt
-        vendor: Tacker
+        vendor: Apmec

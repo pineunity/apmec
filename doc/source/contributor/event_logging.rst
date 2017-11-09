@@ -4,17 +4,17 @@
 
  http://creativecommons.org/licenses/by/3.0/legalcode
 
-Tacker Resource Events Usage Guide
+Apmec Resource Events Usage Guide
 ==================================
 
 Overview
 --------
 
-OpenStack Tacker supports capturing resource event information when the
+OpenStack Apmec supports capturing resource event information when the
 apmec resources undergo  create, update, delete, scale and monitor
 operations. This information becomes useful to an admin for audit purposes.
 
-Tacker Resources supporting Events
+Apmec Resources supporting Events
 ----------------------------------
 As of Newton release, events information is captured for below:
 
@@ -24,7 +24,7 @@ As of Newton release, events information is captured for below:
 
 - VIM
 
-Tacker supported event types
+Apmec supported event types
 ----------------------------
 Below are the event types that are currently supported:
 
@@ -43,11 +43,11 @@ The above can be used as filters when listing events using apmec client.
 Accessing Events
 ----------------
 
-Tacker supports display of events to an end user via
+Apmec supports display of events to an end user via
 
 - Horizon UI - a separate events tab per resource displays associated events.
 
-- Tacker Client - supports below commands:
+- Apmec Client - supports below commands:
     - event-show: Show detailed info for a given event ID.
     - events-list: Lists all events for all resources.
     - vim-events-list: List events that belong to a given VIM.
@@ -55,9 +55,9 @@ Tacker supports display of events to an end user via
     - vnfd-events-list: List events that belong to a given VNFD.
 
 NOTE: For more details on the syntax of these CLIs, refer to
-`Tacker CLI reference guide <http://docs.openstack.org/cli-reference/apmec.html>`_
+`Apmec CLI reference guide <http://docs.openstack.org/cli-reference/apmec.html>`_
 
-Tacker Client command usage examples to access resource lifecycle events
+Apmec Client command usage examples to access resource lifecycle events
 ------------------------------------------------------------------------
 
 1. The following command displays all the state transitions that occurred on
@@ -203,7 +203,7 @@ Miscellaneous events command examples:
   +----------------+------------------------------------------------------------------------------------------+
 
 
-Note for Tacker developers
+Note for Apmec developers
 --------------------------
 
 If as a developer, you are creating new resources and would like to capture

@@ -7,7 +7,7 @@ This document explains VNFFGD template structure and its various fields based
 on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-nfv/
 v1.0/tosca-nfv-v1.0.html>`_.
 
-The behavioural and deployment information of a VNFFG in Tacker is defined in a
+The behavioural and deployment information of a VNFFG in Apmec is defined in a
 template known as VNFFG Descriptor (VNFFGD). The template is based on TOSCA
 standards and is written in YAML. It is on-boarded in a VNFFG catalog.
 
@@ -45,7 +45,7 @@ For examples, please refer sample VNFD templates available at `GitHub <https:
 
 Node types
 ----------
-For Tacker purposes a VNFFGD only includes **Forwarding Path**.  In a full
+For Apmec purposes a VNFFGD only includes **Forwarding Path**.  In a full
 Network Services Descriptor (NSD), it would include information about each
 VNFD as well.  However until that implementation, VNFD is described in a
 separate template.  Only a single Forwarding Path is currently supported.
@@ -58,15 +58,15 @@ well as the classifier that will eventually be created to form a path
 through a set of VNFs.
 
 :type:
-    tosca.nodes.nfv.FP.Tacker
+    tosca.nodes.nfv.FP.Apmec
 :properties:
     Describes the properties of a FP.  These include id (path ID), policy
     (traffic match policy to flow through the path), and path (chain of
     VNFs/Connection Points). A complete list of VNFFG properties currently
-    supported by Tacker are listed `here <https://github
+    supported by Apmec are listed `here <https://github
     .com/openstack/apmec/blob/master/apmec/
     tosca/lib/apmec_nfv_defs.yaml>`_ under **properties** section of
-    **tosca.nodes.nfv.FP.Tacker** field.
+    **tosca.nodes.nfv.FP.Apmec** field.
 
 Specifying FP properties
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -77,7 +77,7 @@ An example FP shown below:
   node_templates:
 
     Forwarding_path1:
-      type: tosca.nodes.nfv.FP.Tacker
+      type: tosca.nodes.nfv.FP.Apmec
       description: creates path (CP11->CP12->CP32)
       properties:
         id: 51
@@ -124,7 +124,7 @@ interpreted as both the ingress and egress port for traffic.
 
 Groups
 ------
-In Tacker and TOSCA, the VNFFG itself is described in this section.  There
+In Apmec and TOSCA, the VNFFG itself is described in this section.  There
 may only be a single VNFFG described in each VNFFGD under this section.
 
 VNFFG
@@ -138,7 +138,7 @@ section.
     Describes the properties of a VNFFG.  These include vendor, version,
     dependent_virtual_link, connection_points, constituent_vnfs.
     . A complete list of VNFFG properties currently
-    supported by Tacker are listed in `TOSCA <http://docs.oasis-open
+    supported by Apmec are listed in `TOSCA <http://docs.oasis-open
     .org/tosca/tosca-nfv/v1.0/csd03/tosca-nfv-v1.0-csd03
     .html#_Toc447714727>`_.
 :members:
@@ -199,7 +199,7 @@ composed of a Forwarding Path and a VNFFG.  A full VNFFGD is shown below:
     node_templates:
 
       Forwarding_path1:
-        type: tosca.nodes.nfv.FP.Tacker
+        type: tosca.nodes.nfv.FP.Apmec
         description: creates path (CP12->CP22)
         properties:
           id: 51

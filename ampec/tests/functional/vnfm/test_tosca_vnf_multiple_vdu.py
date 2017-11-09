@@ -25,7 +25,7 @@ from apmec.tosca import utils as toscautils
 CONF = cfg.CONF
 
 
-class VnfTestToscaMultipleVDU(base.BaseTackerTest):
+class VnfTestToscaMultipleVDU(base.BaseApmecTest):
     def test_create_delete_tosca_mea_with_multiple_vdus(self):
         input_yaml = read_file('sample-tosca-mead-multi-vdu.yaml')
         tosca_dict = yaml.safe_load(input_yaml)

@@ -14,7 +14,7 @@ topology_template:
       forwarder1: [CP21, forwarder]
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.tiny
@@ -25,7 +25,7 @@ topology_template:
           param1: key2
 
     CP21:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -36,7 +36,7 @@ topology_template:
             node: VDU1
 
     VDU2:
-      type: tosca.nodes.nfv.VDU.Tacker
+      type: tosca.nodes.nfv.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.medium
@@ -47,7 +47,7 @@ topology_template:
           param1: key2
 
     CP22:
-      type: tosca.nodes.nfv.CP.Tacker
+      type: tosca.nodes.nfv.CP.Apmec
       requirements:
         - virtualLink:
             node: VL2
@@ -58,11 +58,11 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net_mgmt
-        vendor: Tacker
+        vendor: Apmec
 
     VL2:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net0
-        vendor: Tacker
+        vendor: Apmec
 
