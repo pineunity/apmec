@@ -183,13 +183,13 @@ node_types:
         required: false
 
       placement_policy:
-#        type: tosca.policies.tacker.Placement
+#        type: tosca.policies.apmec.Placement
         type: string
         required: false
 
       monitoring_policy:
-#        type: tosca.policies.tacker.Monitoring
-#        type: tosca.datatypes.tacker.MonitoringType
+#        type: tosca.policies.apmec.Monitoring
+#        type: tosca.datatypes.apmec.MonitoringType
         type: map
         required: false
 
@@ -236,7 +236,7 @@ node_types:
       allowed_address_pairs:
         type: list
         entry_schema:
-          type: tosca.datatypes.tacker.VirtualIP
+          type: tosca.datatypes.apmec.VirtualIP
         required: false
       security_groups:
         type: list
