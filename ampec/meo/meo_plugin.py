@@ -54,10 +54,10 @@ MISTRAL_RETRY_WAIT = 6
 
 
 def config_opts():
-    return [('meo_vim', NfvoPlugin.OPTS)]
+    return [('meo_vim', MeoPlugin.OPTS)]
 
 
-class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
+class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.VnffgPluginDbMixin,
                  ns_db.NSPluginDb):
     """MEO reference plugin for MEO extension
 
@@ -79,7 +79,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
     cfg.CONF.register_opts(OPTS, 'meo_vim')
 
     def __init__(self):
-        super(NfvoPlugin, self).__init__()
+        super(MeoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self._vim_drivers = driver_manager.DriverManager(
             'apmec.meo.vim.drivers',
@@ -111,7 +111,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                                      'register_vim',
                                      context=context,
                                      vim_obj=vim_obj)
-            res = super(NfvoPlugin, self).create_vim(context, vim_obj)
+            res = super(MeoPlugin, self).create_vim(context, vim_obj)
         except Exception:
             with excutils.save_and_reraise_exception():
                 self._vim_drivers.invoke(vim_type,
@@ -159,7 +159,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                     if old_key_type == 'barbican_key':
                         old_auth_need_delete = True
 
-            vim_obj = super(NfvoPlugin, self).update_vim(
+            vim_obj = super(MeoPlugin, self).update_vim(
                 context, vim_id, vim_obj)
             if old_auth_need_delete:
                 try:
@@ -196,7 +196,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
             vim_monitor_utils.delete_vim_monitor(context, auth_dict, vim_obj)
         except Exception:
             LOG.exception("Failed to remove vim monitor")
-        super(NfvoPlugin, self).delete_vim(context, vim_id)
+        super(MeoPlugin, self).delete_vim(context, vim_id)
 
     @log.log
     def monitor_vim(self, context, vim_obj):
@@ -281,7 +281,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
 
             self.validate_NANY_properties(template['template'])
 
-        return super(NfvoPlugin, self).create_NANYD(context, NANYD)
+        return super(MeoPlugin, self).create_NANYD(context, NANYD)
 
     @log.log
     def create_NANY(self, context, NANY):
@@ -299,11 +299,11 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
             NANY_info['NANYD_id'] = \
                 self.create_NANYD(context, NANYD).get('id')
 
-        NANY_dict = super(NfvoPlugin, self)._create_NANY_pre(context, NANY)
-        nfp = super(NfvoPlugin, self).get_nfp(context,
+        NANY_dict = super(MeoPlugin, self)._create_NANY_pre(context, NANY)
+        nfp = super(MeoPlugin, self).get_nfp(context,
                                               NANY_dict['forwarding_paths'])
-        sfc = super(NfvoPlugin, self).get_sfc(context, nfp['chain_id'])
-        match = super(NfvoPlugin, self).get_classifier(context,
+        sfc = super(MeoPlugin, self).get_sfc(context, nfp['chain_id'])
+        match = super(MeoPlugin, self).get_classifier(context,
                                                        nfp['classifier_id'],
                                                        fields='match')['match']
         # grab the first MEA to check it's VIM type
@@ -330,28 +330,28 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         except Exception:
             with excutils.save_and_reraise_exception():
                 self.delete_NANY(context, NANY_id=NANY_dict['id'])
-        super(NfvoPlugin, self)._create_NANY_post(context, sfc_id, fc_id,
+        super(MeoPlugin, self)._create_NANY_post(context, sfc_id, fc_id,
                                                    NANY_dict)
-        super(NfvoPlugin, self)._create_NANY_status(context, NANY_dict)
+        super(MeoPlugin, self)._create_NANY_status(context, NANY_dict)
         return NANY_dict
 
     @log.log
     def update_NANY(self, context, NANY_id, NANY):
-        NANY_dict = super(NfvoPlugin, self)._update_NANY_pre(context,
+        NANY_dict = super(MeoPlugin, self)._update_NANY_pre(context,
                                                                NANY_id)
         new_NANY = NANY['NANY']
         LOG.debug('NANY update: %s', NANY)
-        nfp = super(NfvoPlugin, self).get_nfp(context,
+        nfp = super(MeoPlugin, self).get_nfp(context,
                                               NANY_dict['forwarding_paths'])
-        sfc = super(NfvoPlugin, self).get_sfc(context, nfp['chain_id'])
+        sfc = super(MeoPlugin, self).get_sfc(context, nfp['chain_id'])
 
-        fc = super(NfvoPlugin, self).get_classifier(context,
+        fc = super(MeoPlugin, self).get_classifier(context,
                                                     nfp['classifier_id'])
         template_db = self._get_resource(context, NANY_db.VnffgTemplate,
                                          NANY_dict['NANYD_id'])
         mea_members = self._get_NANY_property(template_db.template,
                                                'constituent_meas')
-        new_NANY['mea_mapping'] = super(NfvoPlugin, self)._get_mea_mapping(
+        new_NANY['mea_mapping'] = super(MeoPlugin, self)._get_mea_mapping(
             context, new_NANY.get('mea_mapping'), mea_members)
         template_id = NANY_dict['NANYD_id']
         template_db = self._get_resource(context, NANY_db.VnffgTemplate,
@@ -360,7 +360,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         # and symmetrical.  Therefore we need to figure out the new chain if
         # it was updated by new mea_mapping.  Symmetrical is handled by driver.
 
-        chain = super(NfvoPlugin, self)._create_port_chain(context,
+        chain = super(MeoPlugin, self)._create_port_chain(context,
                                                            new_NANY[
                                                                'mea_mapping'],
                                                            template_db,
@@ -389,28 +389,28 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         except Exception:
             with excutils.save_and_reraise_exception():
                 NANY_dict['status'] = constants.ERROR
-                super(NfvoPlugin, self)._update_NANY_post(context, NANY_id,
+                super(MeoPlugin, self)._update_NANY_post(context, NANY_id,
                                                            constants.ERROR)
-        super(NfvoPlugin, self)._update_NANY_post(context, NANY_id,
+        super(MeoPlugin, self)._update_NANY_post(context, NANY_id,
                                                    constants.ACTIVE, new_NANY)
         # update chain
-        super(NfvoPlugin, self)._update_sfc_post(context, sfc['id'],
+        super(MeoPlugin, self)._update_sfc_post(context, sfc['id'],
                                                  constants.ACTIVE, sfc)
         # update classifier - this is just updating status until functional
         # updates are supported to classifier
-        super(NfvoPlugin, self)._update_classifier_post(context, fc['id'],
+        super(MeoPlugin, self)._update_classifier_post(context, fc['id'],
                                                         constants.ACTIVE)
         return NANY_dict
 
     @log.log
     def delete_NANY(self, context, NANY_id):
-        NANY_dict = super(NfvoPlugin, self)._delete_NANY_pre(context,
+        NANY_dict = super(MeoPlugin, self)._delete_NANY_pre(context,
                                                                NANY_id)
-        nfp = super(NfvoPlugin, self).get_nfp(context,
+        nfp = super(MeoPlugin, self).get_nfp(context,
                                               NANY_dict['forwarding_paths'])
-        sfc = super(NfvoPlugin, self).get_sfc(context, nfp['chain_id'])
+        sfc = super(MeoPlugin, self).get_sfc(context, nfp['chain_id'])
 
-        fc = super(NfvoPlugin, self).get_classifier(context,
+        fc = super(MeoPlugin, self).get_classifier(context,
                                                     nfp['classifier_id'])
         vim_obj = self._get_vim_from_mea(context,
                                          list(NANY_dict[
@@ -429,9 +429,9 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         except Exception:
             with excutils.save_and_reraise_exception():
                 NANY_dict['status'] = constants.ERROR
-                super(NfvoPlugin, self)._delete_NANY_post(context, NANY_id,
+                super(MeoPlugin, self)._delete_NANY_post(context, NANY_id,
                                                            True)
-        super(NfvoPlugin, self)._delete_NANY_post(context, NANY_id, False)
+        super(MeoPlugin, self)._delete_NANY_post(context, NANY_id, False)
         return NANY_dict
 
     def _get_vim_from_mea(self, context, mea_id):
@@ -529,7 +529,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         nsd['nsd']['template_source'] = template_source
 
         self._parse_template_input(context, nsd)
-        return super(NfvoPlugin, self).create_nsd(
+        return super(MeoPlugin, self).create_nsd(
             context, nsd)
 
     def _parse_template_input(self, context, nsd):
@@ -692,7 +692,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
             raise ex
-        ns_dict = super(NfvoPlugin, self).create_ns(context, ns)
+        ns_dict = super(MeoPlugin, self).create_ns(context, ns)
 
         def _create_ns_wait(self_obj, ns_id, execution_id):
             exec_state = "RUNNING"
@@ -729,7 +729,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                                      'delete_workflow',
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
-            super(NfvoPlugin, self).create_ns_post(context, ns_id, exec_obj,
+            super(MeoPlugin, self).create_ns_post(context, ns_id, exec_obj,
                                                    mead_dict, error_reason)
 
         self.spawn_n(_create_ns_wait, self, ns_dict['id'],
@@ -764,7 +764,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
 
     @log.log
     def delete_ns(self, context, ns_id):
-        ns = super(NfvoPlugin, self).get_ns(context, ns_id)
+        ns = super(MeoPlugin, self).get_ns(context, ns_id)
         vim_res = self.vim_client.get_vim(context, ns['vim_id'])
         driver_type = vim_res['vim_type']
         workflow = None
@@ -795,7 +795,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                                          auth_dict=self.get_auth_dict(context))
 
                 raise ex
-        super(NfvoPlugin, self).delete_ns(context, ns_id)
+        super(MeoPlugin, self).delete_ns(context, ns_id)
 
         def _delete_ns_wait(ns_id, execution_id):
             exec_state = "RUNNING"
@@ -832,11 +832,11 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                                      'delete_workflow',
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
-            super(NfvoPlugin, self).delete_ns_post(context, ns_id, exec_obj,
+            super(MeoPlugin, self).delete_ns_post(context, ns_id, exec_obj,
                                                    error_reason)
         if workflow:
             self.spawn_n(_delete_ns_wait, ns['id'], mistral_execution.id)
         else:
-            super(NfvoPlugin, self).delete_ns_post(
+            super(MeoPlugin, self).delete_ns_post(
                 context, ns_id, None, None)
         return ns['id']

@@ -191,15 +191,15 @@ class FakeMEMPlugin(mock.Mock):
                 'attributes': {}}
 
 
-class TestNfvoPlugin(db_base.SqlTestCase):
+class TestMeoPlugin(db_base.SqlTestCase):
     def setUp(self):
-        super(TestNfvoPlugin, self).setUp()
+        super(TestMeoPlugin, self).setUp()
         self.addCleanup(mock.patch.stopall)
         self.context = context.get_admin_context()
         self._mock_driver_manager()
-        mock.patch('apmec.meo.meo_plugin.NfvoPlugin._get_vim_from_mea',
+        mock.patch('apmec.meo.meo_plugin.MeoPlugin._get_vim_from_mea',
                    side_effect=dummy_get_vim).start()
-        self.meo_plugin = meo_plugin.NfvoPlugin()
+        self.meo_plugin = meo_plugin.MeoPlugin()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
@@ -546,7 +546,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            symmetrical=mock.ANY
                                                            )
 
-    @mock.patch('apmec.meo.meo_plugin.NfvoPlugin.create_NANYD')
+    @mock.patch('apmec.meo.meo_plugin.MeoPlugin.create_NANYD')
     def test_create_NANY_abstract_types_inline(self, mock_create_NANYD):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
@@ -593,7 +593,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            symmetrical=mock.ANY
                                                            )
 
-    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_id')
+    @mock.patch.object(meo_plugin.MeoPlugin, '_get_by_id')
     def test_create_NANY_param_value_format_error(self, mock_get_by_id):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
@@ -831,9 +831,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('created_at', result)
             self.assertIn('updated_at', result)
 
-    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.MeoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.MeoPlugin, '_get_by_name')
     def test_create_ns(self, mock_get_by_name, mock_get_vimi, mock_auth_dict):
         self._insert_dummy_ns_template()
         self._insert_dummy_vim()
@@ -857,10 +857,10 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('status', result)
             self.assertIn('tenant_id', result)
 
-    @mock.patch('apmec.meo.meo_plugin.NfvoPlugin.create_nsd')
-    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch('apmec.meo.meo_plugin.MeoPlugin.create_nsd')
+    @mock.patch.object(meo_plugin.MeoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.MeoPlugin, '_get_by_name')
     def test_create_ns_inline(self, mock_get_by_name, mock_get_vimi,
                               mock_auth_dict, mock_create_nsd):
         self._insert_dummy_ns_template_inline()
@@ -889,9 +889,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('tenant_id', result)
             mock_create_nsd.assert_called_once_with(mock.ANY, mock.ANY)
 
-    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.MeoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.MeoPlugin, '_get_by_name')
     def test_create_ns_workflow_no_task_exception(
             self, mock_get_by_name, mock_get_vimi, mock_auth_dict):
         self._insert_dummy_ns_template()
@@ -912,9 +912,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                               self.meo_plugin.create_ns,
                               self.context, ns_obj)
 
-    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.MeoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.MeoPlugin, '_get_by_name')
     def test_delete_ns(self, mock_get_by_name, mock_get_vim, mock_auth_dict):
         self._insert_dummy_vim()
         self._insert_dummy_ns_template()
@@ -934,9 +934,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                 'ba6bf017-f6f7-45f1-a280-57b073bf78ea')
             self.assertIsNotNone(result)
 
-    @mock.patch.object(meo_plugin.NfvoPlugin, 'get_auth_dict')
+    @mock.patch.object(meo_plugin.MeoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
-    @mock.patch.object(meo_plugin.NfvoPlugin, '_get_by_name')
+    @mock.patch.object(meo_plugin.MeoPlugin, '_get_by_name')
     @mock.patch("apmec.db.meo.ns_db.NSPluginDb.delete_ns_post")
     def test_delete_ns_no_task_exception(
             self, mock_delete_ns_post, mock_get_by_name, mock_get_vim,

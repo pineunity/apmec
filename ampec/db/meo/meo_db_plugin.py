@@ -36,10 +36,10 @@ VIM_ATTRIBUTES = ('id', 'type', 'tenant_id', 'name', 'description',
 VIM_AUTH_ATTRIBUTES = ('auth_url', 'vim_project', 'password', 'auth_cred')
 
 
-class NfvoPluginDb(meo.MEOPluginBase, db_base.CommonDbMixin):
+class MeoPluginDb(meo.MEOPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
-        super(NfvoPluginDb, self).__init__()
+        super(MeoPluginDb, self).__init__()
         self._cos_db_plg = common_services_db_plugin.CommonServicesPluginDb()
 
     @property

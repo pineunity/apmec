@@ -755,7 +755,7 @@ RESOURCE_ATTRIBUTE_MAP = {
 }
 
 
-class Nfvo(extensions.ExtensionDescriptor):
+class Meo(extensions.ExtensionDescriptor):
     @classmethod
     def get_name(cls):
         return 'NFV Orchestrator'
@@ -791,7 +791,7 @@ class Nfvo(extensions.ExtensionDescriptor):
         return MEOPluginBase
 
     def update_attributes_map(self, attributes):
-        super(Nfvo, self).update_attributes_map(
+        super(Meo, self).update_attributes_map(
             attributes, extension_attrs_map=RESOURCE_ATTRIBUTE_MAP)
 
     def get_extended_resources(self, version):
