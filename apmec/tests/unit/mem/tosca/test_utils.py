@@ -42,7 +42,7 @@ class TestToscaUtils(testtools.TestCase):
         super(TestToscaUtils, self).setUp()
 
     def test_updateimport(self):
-        importspath = os.path.abspath('./apmec/tosca/lib/')
+        importspath = os.path.abspath('./apmec/tosca/tosca_lib/')
         file1 = importspath + '/apmec_defs.yaml'
         file2 = importspath + '/apmec_mec_defs.yaml'
         expected_imports = [file1, file2]

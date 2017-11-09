@@ -91,7 +91,7 @@ SCALE_POLICY_RESOURCE = "OS::Heat::ScalingPolicy"
 
 @log.log
 def updateimports(template):
-    path = os.path.dirname(os.path.abspath(__file__)) + '/lib/'
+    path = os.path.dirname(os.path.abspath(__file__)) + '/tosca_lib/'
     defsfile = path + 'apmec_defs.yaml'
 
     if 'imports' in template:
