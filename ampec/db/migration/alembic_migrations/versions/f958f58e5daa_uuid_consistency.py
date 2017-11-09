@@ -28,8 +28,8 @@ down_revision = 'acf941e54075'
 
 from alembic import op
 
-from tacker.db import migration
-from tacker.db import types
+from apmec.db import migration
+from apmec.db import types
 
 FK_MAP = {'vims': ('vimauths', 'devices'), 'devices': ('deviceattributes',
           'proxymgmtports'), 'devicetemplates': ('devices', 'servicetypes',

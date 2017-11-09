@@ -20,8 +20,8 @@ from alembic import script as alembic_script
 from alembic import util as alembic_util
 from oslo_config import cfg
 
-from tacker.db.migration.models import head  # noqa
-from tacker.db.migration import purge_tables
+from apmec.db.migration.models import head  # noqa
+from apmec.db.migration import purge_tables
 
 HEAD_FILENAME = 'HEAD'
 
@@ -106,7 +106,7 @@ def update_head_file(config):
 
 def purge_deleted(config, cmd):
     """Remove database records that have been previously soft deleted."""
-    purge_tables.purge_deleted(config.tacker_config,
+    purge_tables.purge_deleted(config.apmec_config,
                       CONF.command.resource,
                       CONF.command.age,
                       CONF.command.granularity)
@@ -168,9 +168,9 @@ def main():
         os.path.join(os.path.dirname(__file__), 'alembic.ini')
     )
     config.set_main_option('script_location',
-                           'tacker.db.migration:alembic_migrations')
+                           'apmec.db.migration:alembic_migrations')
     # attach the Tacker conf to the Alembic conf
-    config.tacker_config = CONF
+    config.apmec_config = CONF
 
     CONF()
     # TODO(gongysh) enable logging

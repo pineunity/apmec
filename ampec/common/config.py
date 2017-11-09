@@ -25,8 +25,8 @@ from oslo_log import log as logging
 import oslo_messaging
 from paste import deploy
 
-from tacker.common import utils
-from tacker import version
+from apmec.common import utils
+from apmec import version
 
 
 LOG = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ core_opts = [
 
 core_cli_opts = [
     cfg.StrOpt('state_path',
-               default='/var/lib/tacker',
+               default='/var/lib/apmec',
                help=_("Where to store Tacker state files. "
                       "This directory must be writable by "
                       "the agent.")),
@@ -78,7 +78,7 @@ def config_opts():
     return [(None, core_opts), (None, core_cli_opts)]
 
 # Ensure that the control exchange is set correctly
-oslo_messaging.set_transport_defaults(control_exchange='tacker')
+oslo_messaging.set_transport_defaults(control_exchange='apmec')
 
 
 def set_db_defaults():
@@ -94,13 +94,13 @@ set_db_defaults()
 
 
 def init(args, **kwargs):
-    cfg.CONF(args=args, project='tacker',
+    cfg.CONF(args=args, project='apmec',
              version='%%prog %s' % version.version_info.release_string(),
              **kwargs)
 
     # FIXME(ihrachys): if import is put in global, circular import
     # failure occurs
-    from tacker.common import rpc as n_rpc
+    from apmec.common import rpc as n_rpc
     n_rpc.init(cfg.CONF)
 
 
@@ -109,7 +109,7 @@ def setup_logging(conf):
 
     :param conf: a cfg.ConfOpts object
     """
-    product_name = "tacker"
+    product_name = "apmec"
     logging.setup(conf, product_name)
     LOG.info("Logging enabled!")
 

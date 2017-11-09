@@ -17,8 +17,8 @@ import abc
 
 from oslo_serialization import jsonutils
 
-from tacker.api import extensions
-from tacker import wsgi
+from apmec.api import extensions
+from apmec import wsgi
 
 
 class FoxInSocksController(wsgi.Controller):

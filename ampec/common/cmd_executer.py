@@ -13,7 +13,7 @@
 from oslo_log import log as logging
 import paramiko
 
-from tacker.common import exceptions
+from apmec.common import exceptions
 
 LOG = logging.getLogger(__name__)
 

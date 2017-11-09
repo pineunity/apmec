@@ -25,10 +25,10 @@ import six
 import webob.dec
 import webob.exc
 
-from tacker.common import exceptions
-import tacker.extensions
-from tacker import policy
-from tacker import wsgi
+from apmec.common import exceptions
+import apmec.extensions
+from apmec import policy
+from apmec import wsgi
 
 
 LOG = logging.getLogger(__name__)
@@ -607,9 +607,9 @@ class ResourceExtension(object):
 
 
 # Returns the extension paths from a config entry and the __path__
-# of tacker.extensions
+# of apmec.extensions
 def get_extensions_path():
-    paths = ':'.join(tacker.extensions.__path__)
+    paths = ':'.join(apmec.extensions.__path__)
     if cfg.CONF.api_extensions_path:
         paths = ':'.join([cfg.CONF.api_extensions_path, paths])
 

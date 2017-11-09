@@ -21,18 +21,18 @@ import routes
 import webob
 import webtest
 
-from tacker.api import extensions
-from tacker.common import config
-from tacker.plugins.common import constants
-from tacker.tests import base
-from tacker.tests.unit import extension_stubs as ext_stubs
-import tacker.tests.unit.extensions
-from tacker.tests.unit import testlib_api
-from tacker import wsgi
+from apmec.api import extensions
+from apmec.common import config
+from apmec.plugins.common import constants
+from apmec.tests import base
+from apmec.tests.unit import extension_stubs as ext_stubs
+import apmec.tests.unit.extensions
+from apmec.tests.unit import testlib_api
+from apmec import wsgi
 
 
 LOG = logging.getLogger(__name__)
-extensions_path = ':'.join(tacker.tests.unit.extensions.__path__)
+extensions_path = ':'.join(apmec.tests.unit.extensions.__path__)
 
 
 class ExtensionsTestApp(wsgi.Router):

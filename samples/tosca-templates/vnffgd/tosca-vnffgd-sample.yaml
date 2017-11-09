@@ -30,7 +30,7 @@ topology_template:
       type: tosca.groups.nfv.VNFFG
       description: HTTP to Corporate Net
       properties:
-        vendor: tacker
+        vendor: apmec
         version: 1.0
         number_of_endpoints: 2
         dependent_virtual_link: [VL12,VL22]

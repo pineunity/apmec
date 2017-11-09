@@ -15,8 +15,8 @@
 
 import abc
 
-from tacker.api import extensions
-from tacker import wsgi
+from apmec.api import extensions
+from apmec import wsgi
 
 
 class StubExtension(object):

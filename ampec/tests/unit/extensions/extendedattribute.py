@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from tacker.api import extensions
+from apmec.api import extensions
 
 EXTENDED_ATTRIBUTE = 'extended_attribute'
 EXTENDED_ATTRIBUTES_2_0 = {

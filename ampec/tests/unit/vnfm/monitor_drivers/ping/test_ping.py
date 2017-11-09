@@ -15,7 +15,7 @@
 import mock
 import testtools
 
-from tacker.vnfm.monitor_drivers.ping import ping
+from apmec.vnfm.monitor_drivers.ping import ping
 
 
 class TestVNFMonitorPing(testtools.TestCase):
@@ -24,7 +24,7 @@ class TestVNFMonitorPing(testtools.TestCase):
         super(TestVNFMonitorPing, self).setUp()
         self.monitor_ping = ping.VNFMonitorPing()
 
-    @mock.patch('tacker.agent.linux.utils.execute')
+    @mock.patch('apmec.agent.linux.utils.execute')
     def test_monitor_call_for_success(self, mock_utils_execute):
         test_device = {}
         test_kwargs = {
@@ -40,7 +40,7 @@ class TestVNFMonitorPing(testtools.TestCase):
         mock_utils_execute.assert_called_once_with(mock_ping_cmd,
                                                    check_exit_code=True)
 
-    @mock.patch('tacker.agent.linux.utils.execute')
+    @mock.patch('apmec.agent.linux.utils.execute')
     def test_monitor_call_for_failure(self, mock_utils_execute):
         mock_utils_execute.side_effect = RuntimeError()
         test_device = {}

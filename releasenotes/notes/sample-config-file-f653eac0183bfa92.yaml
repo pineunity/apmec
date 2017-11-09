@@ -5,4 +5,4 @@ prelude: >
 features:
     - Tacker no longer includes static example configuration file. Instead,
       use tools/generate_config_file_sample.sh to generate it. The file is
-      generated with a .sample extension under etc/tacker directory.
+      generated with a .sample extension under etc/apmec directory.

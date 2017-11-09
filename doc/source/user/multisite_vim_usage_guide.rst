@@ -37,7 +37,7 @@ To register a new OpenStack VIM inside Tacker.
 
 ::
 
- $ tacker vim-register --description 'OpenStack Liberty' --config-file vim_config.yaml Site1
+ $ apmec vim-register --description 'OpenStack Liberty' --config-file vim_config.yaml Site1
  Created a new vim:
  +----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+
  | Field          | Value                                                                                                                                                    |
@@ -73,14 +73,14 @@ The default vim needs to be registered. This is required when the optional
 argument -vim-id is not provided during vnf-create. Refer to steps described in
 `manual installation`_ to register default vim.
 
-.. _manual installation: https://docs.openstack.org/tacker/latest/install/manual_installation.html#registering-default-vim
+.. _manual installation: https://docs.openstack.org/apmec/latest/install/manual_installation.html#registering-default-vim
 
 Deploying a new VNF on registered VIM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
- $ tacker vnf-create --description 'Openwrt VNF on Site1' --vnfd-id c3cbf0c0-a492-49e3-9541-945e49e7ed7e --vim-name Site1 openwrt_VNF
+ $ apmec vnf-create --description 'Openwrt VNF on Site1' --vnfd-id c3cbf0c0-a492-49e3-9541-945e49e7ed7e --vim-name Site1 openwrt_VNF
  Created a new vnf:
  +----------------+--------------------------------------+
  | Field          | Value                                |
@@ -114,7 +114,7 @@ Tacker allows for updating VIM authorization parameters such as 'username',
 
 ::
 
- $tacker vim-update VIM0 --config-file update.yaml
+ $apmec vim-update VIM0 --config-file update.yaml
 
 update.yaml in above command will contain:
 
@@ -133,7 +133,7 @@ To delete a VIM :
 
 ::
 
- $ tacker vim-delete VIM1
+ $ apmec vim-delete VIM1
  Deleted vim: VIM1
 
 Features
@@ -151,4 +151,4 @@ Limitations
   during VIM registration.
 * Fernet keys for password encryption and decryption is stored on file systems.
   This is a limitation when multiple servers are serving behind a load balancer
-  server and the keys need to be synced across tacker server systems.
+  server and the keys need to be synced across apmec server systems.

@@ -104,6 +104,6 @@ msg_format_checkers = [
 ]
 
 
-file_black_list = ["./tacker/tests/unit",
-                   "./tacker/openstack",
-                   "./tacker/plugins/bigswitch/tests"]
+file_black_list = ["./apmec/tests/unit",
+                   "./apmec/openstack",
+                   "./apmec/plugins/bigswitch/tests"]

@@ -31,7 +31,7 @@ two parameters:
 1) requirements: This node will accept list of hosts on which VNFC has to be
    installed.
 2) interfaces: This node will accept the absolute path of shell script to be run
-   on the VDUs. This shell script should reside in the machine where tacker
+   on the VDUs. This shell script should reside in the machine where apmec
    server is running.
 
 
@@ -54,5 +54,5 @@ Known Limitations
 ~~~~~~~~~~~~~~~~~
 1) Only one VNFC is supported for one VDU. Multiple VNFC per VDU will
    be introduced in future.
-2) The shell script for vnfc has to be placed in the machine where tacker
+2) The shell script for vnfc has to be placed in the machine where apmec
    server is running.

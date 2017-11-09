@@ -15,8 +15,8 @@
 
 import testtools
 
-from tacker.tests import base
-from tacker import wsgi
+from apmec.tests import base
+from apmec import wsgi
 
 
 class ExpectedException(testtools.ExpectedException):
@@ -44,7 +44,7 @@ def create_request(path, body, content_type, method='GET',
     req.headers['Accept'] = content_type
     req.body = body
     if context:
-        req.environ['tacker.context'] = context
+        req.environ['apmec.context'] = context
     return req
 
 

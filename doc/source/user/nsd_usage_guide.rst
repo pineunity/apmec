@@ -37,9 +37,9 @@ reference section.
 
 ::
 
-  tacker vnfd-create --vnfd-file vnfd1.yaml VNFD1
+  apmec vnfd-create --vnfd-file vnfd1.yaml VNFD1
 
-  tacker vnfd-create --vnfd-file vnfd2.yaml VNFD2
+  apmec vnfd-create --vnfd-file vnfd2.yaml VNFD2
 
 The following code represents sample NSD which instantiates the above VNFs
 
@@ -62,19 +62,19 @@ The following code represents sample NSD which instantiates the above VNFs
           type: tosca.nodes.nfv.VL
           properties:
           network_name: net0
-          vendor: tacker
+          vendor: apmec
         VL2:
           type: tosca.nodes.nfv.VL
           properties:
               network_name: net_mgmt
-              vendor: tacker
+              vendor: apmec
 
 In above NSD template VL1 and VL2 are substituting the virtuallinks of VNF1.
 To onboard the above  NSD:
 
 ::
 
-   tacker nsd-create --nsd-file <nsd-file> <nsd-name>
+   apmec nsd-create --nsd-file <nsd-file> <nsd-name>
 
 Creating the NS
 ~~~~~~~~~~~~~~~~
@@ -86,14 +86,14 @@ Tacker provides the following CLI to create NS:
 
 ::
 
-    tacker ns-create --nsd-id <nsd-id> <ns-name>
+    apmec ns-create --nsd-id <nsd-id> <ns-name>
 
 Or you can create directly a NS without creating onboarded NSD before by
 following CLI command:
 
 ::
 
-    tacker ns-create --nsd-template <nsd-file> <ns-name>
+    apmec ns-create --nsd-template <nsd-file> <ns-name>
 
 Reference
 ~~~~~~~~~

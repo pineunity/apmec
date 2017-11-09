@@ -31,11 +31,11 @@ command:
 
 .. code-block:: console
 
-   tacker vnfd-create --vnfd-file <yaml file path> <VNFD-NAME>
+   apmec vnfd-create --vnfd-file <yaml file path> <VNFD-NAME>
 
 .. note::
 
-   Users can find various sample TOSCA templates at https://github.com/openstack/tacker/tree/master/samples/tosca-templates/vnfd
+   Users can find various sample TOSCA templates at https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd
 
 Deploying VNF
 =============
@@ -56,14 +56,14 @@ creating VNFs in Tacker.
 
 .. code-block:: console
 
-   tacker vnfd-create --vnfd-file <yaml file path> <VNFD-NAME>
+   apmec vnfd-create --vnfd-file <yaml file path> <VNFD-NAME>
 ..
 
   ii). Create a VNF.
 
 .. code-block:: console
 
-   tacker vnf-create --vnfd-name <VNFD-FILE-NAME> <VNF-NAME>
+   apmec vnf-create --vnfd-name <VNFD-FILE-NAME> <VNF-NAME>
 
 
 Example
@@ -71,8 +71,8 @@ Example
 
 .. code-block:: console
 
-    tacker vnfd-create --vnfd-file sample-vnfd-hello-world.yaml hello-world-vnfd
-    tacker vnf-create --vnfd-name hello-world-vnfd hw-vnf
+    apmec vnfd-create --vnfd-file sample-vnfd-hello-world.yaml hello-world-vnfd
+    apmec vnf-create --vnfd-name hello-world-vnfd hw-vnf
 
 Direct VNF Instantiation
 ------------------------
@@ -82,7 +82,7 @@ onboarding the template into Tacker VNFD Catalog.
 
 .. code-block:: console
 
-   tacker vnf-create --vnfd-template <VNFD-FILE-NAME> <VNF-NAME>
+   apmec vnf-create --vnfd-template <VNFD-FILE-NAME> <VNF-NAME>
 
 This method is recommended when NFV Catalog is maintained outside Tacker and
 Tacker is primarily used as a NFV workflow engine.
@@ -92,7 +92,7 @@ Example
 
 .. code-block:: console
 
-    tacker vnf-create --vnfd-template sample-vnfd-hello-world.yaml hw-vnf
+    apmec vnf-create --vnfd-template sample-vnfd-hello-world.yaml hw-vnf
 
 .. note ::
 
@@ -104,8 +104,8 @@ Example
 
     .. code-block:: console
 
-      tacker vnfd-list --template-source inline
-      tacker vnfd-list --template-source all
+      apmec vnfd-list --template-source inline
+      apmec vnfd-list --template-source all
 
 Finding VNFM Status
 ===================
@@ -114,11 +114,11 @@ Status of various VNFM resources can be checked by following commands.
 
 .. code-block:: console
 
-   tacker vim-list
-   tacker vnfd-list
-   tacker vnf-list
-   tacker vnf-show <VNF_ID>
-   tacker vnfd-show <VNFD_ID>
+   apmec vim-list
+   apmec vnfd-list
+   apmec vnf-list
+   apmec vnf-show <VNF_ID>
+   apmec vnfd-show <VNFD_ID>
 
 ..
 
@@ -129,6 +129,6 @@ VNFs and VNFDs can be deleted as shown below.
 
 .. code-block:: console
 
-   tacker vnf-delete <VNF_ID/NAME>
-   tacker vnfd-delete <VNFD_ID/NAME>
+   apmec vnf-delete <VNF_ID/NAME>
+   apmec vnfd-delete <VNFD_ID/NAME>
 ..

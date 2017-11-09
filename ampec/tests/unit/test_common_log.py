@@ -14,11 +14,11 @@
 
 import mock
 
-from tacker.common import log as call_log
-from tacker.tests import base
+from apmec.common import log as call_log
+from apmec.tests import base
 
 
-MODULE_NAME = 'tacker.tests.unit.test_common_log'
+MODULE_NAME = 'apmec.tests.unit.test_common_log'
 
 
 class TargetKlass(object):

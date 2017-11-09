@@ -25,8 +25,8 @@ from oslo_messaging import serializer as om_serializer
 from oslo_service import service
 from oslo_utils import excutils
 
-from tacker.common import exceptions
-from tacker import context
+from apmec.common import exceptions
+from apmec import context
 
 LOG = logging.getLogger(__name__)
 
@@ -218,7 +218,7 @@ def get_notifier(service=None, host=None, publisher_id=None):
 
 
 class RequestContextSerializer(om_serializer.Serializer):
-    """convert RPC common context int tacker Context."""
+    """convert RPC common context int apmec Context."""
 
     def __init__(self, base=None):
         super(RequestContextSerializer, self).__init__()
@@ -294,7 +294,7 @@ class Connection(object):
         self.servers = []
 
     def create_consumer(self, topic, endpoints, fanout=False,
-                        exchange='tacker', host=None):
+                        exchange='apmec', host=None):
         target = oslo_messaging.Target(
             topic=topic, server=host or cfg.CONF.host, fanout=fanout,
             exchange=exchange)
@@ -316,7 +316,7 @@ class Connection(object):
 class VoidConnection(object):
 
     def create_consumer(self, topic, endpoints, fanout=False,
-                        exchange='tacker', host=None):
+                        exchange='apmec', host=None):
         pass
 
     def consume_in_threads(self):

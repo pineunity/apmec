@@ -1,2 +1,2 @@
 #!/bin/sh
-echo "Successfully installed VNFC" > /tacker
+echo "Successfully installed VNFC" > /apmec

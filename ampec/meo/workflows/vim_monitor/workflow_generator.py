@@ -12,8 +12,8 @@
 
 from oslo_log import log as logging
 
-from tacker.mistral import workflow_generator
-from tacker.nfvo.workflows import vim_monitor
+from apmec.mistral import workflow_generator
+from apmec.nfvo.workflows import vim_monitor
 
 LOG = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
         task_dict = dict()
         task = self.wf_name + vim_monitor.PING_VIM_TASK_NAME
         task_dict[task] = {
-            'action': 'tacker.vim_ping_action',
+            'action': 'apmec.vim_ping_action',
             'input': {'count': self.input_dict_data['count'],
                       'targetip': self.input_dict_data['targetip'],
                       'vim_id': self.input_dict_data['vim_id'],

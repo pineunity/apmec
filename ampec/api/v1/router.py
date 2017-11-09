@@ -19,9 +19,9 @@ import webob
 import webob.dec
 import webob.exc
 
-from tacker.api import extensions
-from tacker.api.v1 import attributes
-from tacker import wsgi
+from apmec.api import extensions
+from apmec.api.v1 import attributes
+from apmec import wsgi
 
 
 class Index(wsgi.Application):

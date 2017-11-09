@@ -16,21 +16,21 @@
 import mock
 from webob import Request
 
-from tacker.alarm_receiver import AlarmReceiver
-from tacker.tests.unit import base
+from apmec.alarm_receiver import AlarmReceiver
+from apmec.tests.unit import base
 
 
 class TestAlarmReceiver(base.TestCase):
     def setUp(self):
         '''url:
 
-        http://tacker:9890/v1.0/vnfs/vnf-uuid/mon-policy-name/
+        http://apmec:9890/v1.0/vnfs/vnf-uuid/mon-policy-name/
         action-name/8ef785
         '''
         super(TestAlarmReceiver, self).setUp()
         self.alarmrc = AlarmReceiver(None)
         self.alarm_url = {
-            '00_base': 'http://tacker:9890/v1.0',
+            '00_base': 'http://apmec:9890/v1.0',
             '01_url_base': '/vnfs/vnf-uuid/',
             '02_vnf_id': 'vnf-uuid',
             '03_monitoring_policy_name': 'mon-policy-name',
@@ -41,7 +41,7 @@ class TestAlarmReceiver(base.TestCase):
         self.ordered_url = self._generate_alarm_url()
 
     def _generate_alarm_url(self):
-        return 'http://tacker:9890/v1.0/vnfs/vnf-uuid/mon-policy-name/'\
+        return 'http://apmec:9890/v1.0/vnfs/vnf-uuid/mon-policy-name/'\
                'action-name/8ef785'
 
     def test_handle_url(self):
@@ -51,7 +51,7 @@ class TestAlarmReceiver(base.TestCase):
         self.assertEqual(self.alarm_url['03_monitoring_policy_name'], p[4])
         self.assertEqual(self.alarm_url['04_action_name'], p[5])
 
-    @mock.patch('tacker.vnfm.monitor_drivers.token.Token.create_token')
+    @mock.patch('apmec.vnfm.monitor_drivers.token.Token.create_token')
     def test_process_request(self, mock_token):
         req = Request.blank(self.ordered_url)
         req.method = 'POST'

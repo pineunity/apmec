@@ -25,18 +25,18 @@ import webob
 from webob import exc
 import webtest
 
-from tacker.api import api_common
-from tacker.api import extensions
-from tacker.api.v1 import attributes
-from tacker.api.v1 import base as v2_base
-from tacker.api.v1 import router
-from tacker.common import exceptions as n_exc
-from tacker import context
-from tacker import manager
-from tacker import policy
-from tacker.tests import base
-from tacker.tests import fake_notifier
-from tacker.tests.unit import testlib_api
+from apmec.api import api_common
+from apmec.api import extensions
+from apmec.api.v1 import attributes
+from apmec.api.v1 import base as v2_base
+from apmec.api.v1 import router
+from apmec.common import exceptions as n_exc
+from apmec import context
+from apmec import manager
+from apmec import policy
+from apmec.tests import base
+from apmec.tests import fake_notifier
+from apmec.tests.unit import testlib_api
 
 
 ROOTDIR = os.path.dirname(os.path.dirname(__file__))
@@ -89,7 +89,7 @@ class APIv2TestBase(base.BaseTestCase):
     def setUp(self):
         super(APIv2TestBase, self).setUp()
         self.skip("Not ready yet")
-        plugin = 'tacker.tacker_plugin_base_v2.TackerPluginBaseV2'
+        plugin = 'apmec.apmec_plugin_base_v2.TackerPluginBaseV2'
         # Ensure existing ExtensionManager is not used
         extensions.PluginAwareExtensionManager._instance = None
         # Create the default configurations
@@ -520,7 +520,7 @@ class JSONV2TestCase(APIv2TestBase, testlib_api.WebTestCase):
     def _test_list(self, req_tenant_id, real_tenant_id):
         env = {}
         if req_tenant_id:
-            env = {'tacker.context': context.Context('', req_tenant_id)}
+            env = {'apmec.context': context.Context('', req_tenant_id)}
         input_dict = {'id': uuidutils.generate_uuid(),
                       'name': 'net1',
                       'admin_state_up': True,
@@ -797,7 +797,7 @@ class JSONV2TestCase(APIv2TestBase, testlib_api.WebTestCase):
     def test_create_with_keystone_env(self):
         tenant_id = _uuid()
         net_id = _uuid()
-        env = {'tacker.context': context.Context('', tenant_id)}
+        env = {'apmec.context': context.Context('', tenant_id)}
         # tenant_id should be fetched from env
         initial_input = {'network': {'name': 'net1'}}
         full_input = {'network': {'admin_state_up': True,
@@ -823,7 +823,7 @@ class JSONV2TestCase(APIv2TestBase, testlib_api.WebTestCase):
     def test_create_bad_keystone_tenant(self):
         tenant_id = _uuid()
         data = {'network': {'name': 'net1', 'tenant_id': tenant_id}}
-        env = {'tacker.context': context.Context('', tenant_id + "bad")}
+        env = {'apmec.context': context.Context('', tenant_id + "bad")}
         res = self.api.post(_get_path('networks', fmt=self.fmt),
                             self.serialize(data),
                             content_type='application/' + self.fmt,
@@ -985,7 +985,7 @@ class JSONV2TestCase(APIv2TestBase, testlib_api.WebTestCase):
                      expect_errors=False):
         env = {}
         if req_tenant_id:
-            env = {'tacker.context': context.Context('', req_tenant_id)}
+            env = {'apmec.context': context.Context('', req_tenant_id)}
         instance = self.plugin.return_value
         instance.get_network.return_value = {'tenant_id': real_tenant_id,
                                              'shared': False}
@@ -1015,10 +1015,10 @@ class JSONV2TestCase(APIv2TestBase, testlib_api.WebTestCase):
         env = {}
         shared = False
         if req_tenant_id:
-            env = {'tacker.context': context.Context('', req_tenant_id)}
+            env = {'apmec.context': context.Context('', req_tenant_id)}
             if req_tenant_id.endswith('another'):
                 shared = True
-                env['tacker.context'].roles = ['tenant_admin']
+                env['apmec.context'].roles = ['tenant_admin']
 
         data = {'tenant_id': real_tenant_id, 'shared': shared}
         instance = self.plugin.return_value
@@ -1065,7 +1065,7 @@ class JSONV2TestCase(APIv2TestBase, testlib_api.WebTestCase):
                      expect_errors=False):
         env = {}
         if req_tenant_id:
-            env = {'tacker.context': context.Context('', req_tenant_id)}
+            env = {'apmec.context': context.Context('', req_tenant_id)}
         # leave out 'name' field intentionally
         data = {'network': {'admin_state_up': True}}
         return_value = {'subnets': []}
@@ -1122,7 +1122,7 @@ class SubresourceTest(base.BaseTestCase):
         super(SubresourceTest, self).setUp()
         self.skip("Not ready yet")
 
-        plugin = 'tacker.tests.unit.test_api_v2.TestSubresourcePlugin'
+        plugin = 'apmec.tests.unit.test_api_v2.TestSubresourcePlugin'
         extensions.PluginAwareExtensionManager._instance = None
 
         # Save the global RESOURCE_ATTRIBUTE_MAP
@@ -1295,7 +1295,7 @@ class ExtensionTestCase(base.BaseTestCase):
     def setUp(self):
         super(ExtensionTestCase, self).setUp()
         self.skip("Not ready yet")
-        plugin = 'tacker.tacker_plugin_base_v2.TackerPluginBaseV2'
+        plugin = 'apmec.apmec_plugin_base_v2.TackerPluginBaseV2'
 
         # Ensure existing ExtensionManager is not used
         extensions.PluginAwareExtensionManager._instance = None

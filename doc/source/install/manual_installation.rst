@@ -64,10 +64,10 @@ Installing Tacker server
 .. code-block:: console
 
    mysql -uroot -p
-   CREATE DATABASE tacker;
-   GRANT ALL PRIVILEGES ON tacker.* TO 'tacker'@'localhost' \
+   CREATE DATABASE apmec;
+   GRANT ALL PRIVILEGES ON apmec.* TO 'apmec'@'localhost' \
        IDENTIFIED BY '<TACKERDB_PASSWORD>';
-   GRANT ALL PRIVILEGES ON tacker.* TO 'tacker'@'%' \
+   GRANT ALL PRIVILEGES ON apmec.* TO 'apmec'@'%' \
        IDENTIFIED BY '<TACKERDB_PASSWORD>';
    exit;
 ..
@@ -85,7 +85,7 @@ a). Source the admin credentials to gain access to admin-only CLI commands:
    . admin-openrc.sh
 ..
 
-b). Create tacker user with admin privileges.
+b). Create apmec user with admin privileges.
 
 .. note::
 
@@ -95,19 +95,19 @@ b). Create tacker user with admin privileges.
 
 .. code-block:: console
 
-   openstack user create --domain default --password <PASSWORD> tacker
-   openstack role add --project service --user tacker admin
+   openstack user create --domain default --password <PASSWORD> apmec
+   openstack role add --project service --user apmec admin
 ..
 
-c). Create tacker service.
+c). Create apmec service.
 
 .. code-block:: console
 
-   openstack service create --name tacker \
+   openstack service create --name apmec \
        --description "Tacker Project" nfv-orchestration
 ..
 
-d). Provide an endpoint to tacker service.
+d). Provide an endpoint to apmec service.
 
 If you are using keystone v3 then,
 
@@ -131,24 +131,24 @@ If you are using keystone v2 then,
         --internalurl 'http://<TACKER_NODE_IP>:9890/' <SERVICE-ID>
 ..
 
-3). Clone tacker repository.
+3). Clone apmec repository.
 
 .. code-block:: console
 
    cd ~/
-   git clone https://github.com/openstack/tacker -b <branch_name>
+   git clone https://github.com/openstack/apmec -b <branch_name>
 ..
 
 4). Install all requirements.
 
 .. code-block:: console
 
-   cd tacker
+   cd apmec
    sudo pip install -r requirements.txt
 ..
 
 
-5). Install tacker.
+5). Install apmec.
 
 .. code-block:: console
 
@@ -157,17 +157,17 @@ If you are using keystone v2 then,
 
 ..
 
-6). Create 'tacker' directory in '/var/log'.
+6). Create 'apmec' directory in '/var/log'.
 
 .. code-block:: console
 
-   sudo mkdir /var/log/tacker
+   sudo mkdir /var/log/apmec
 
 ..
 
-7). Generate the tacker.conf.sample using tools/generate_config_file_sample.sh
-    or 'tox -e config-gen' command. Rename the "tacker.conf.sample" file at
-    "etc/tacker/" to tacker.conf. Then edit it to ensure the below entries:
+7). Generate the apmec.conf.sample using tools/generate_config_file_sample.sh
+    or 'tox -e config-gen' command. Rename the "apmec.conf.sample" file at
+    "etc/apmec/" to apmec.conf. Then edit it to ensure the below entries:
 
 .. note::
 
@@ -186,14 +186,14 @@ If you are using keystone v2 then,
 
    [DEFAULT]
    auth_strategy = keystone
-   policy_file = /usr/local/etc/tacker/policy.json
+   policy_file = /usr/local/etc/apmec/policy.json
    debug = True
    use_syslog = False
    bind_host = <TACKER_NODE_IP>
    bind_port = 9890
    service_plugins = nfvo,vnfm
 
-   state_path = /var/lib/tacker
+   state_path = /var/lib/apmec
    ...
 
    [nfvo]
@@ -213,24 +213,24 @@ If you are using keystone v2 then,
    ...
 
    [agent]
-   root_helper = sudo /usr/local/bin/tacker-rootwrap /usr/local/etc/tacker/rootwrap.conf
+   root_helper = sudo /usr/local/bin/apmec-rootwrap /usr/local/etc/apmec/rootwrap.conf
    ...
 
    [database]
-   connection = mysql://tacker:<TACKERDB_PASSWORD>@<MYSQL_IP>:3306/tacker?charset=utf8
+   connection = mysql://apmec:<TACKERDB_PASSWORD>@<MYSQL_IP>:3306/apmec?charset=utf8
    ...
 
-   [tacker]
+   [apmec]
    monitor_driver = ping,http_ping
 
 ..
 
-8). Copy the tacker.conf file to "/usr/local/etc/tacker/" directory
+8). Copy the apmec.conf file to "/usr/local/etc/apmec/" directory
 
 .. code-block:: console
 
    sudo su
-   cp etc/tacker/tacker.conf /usr/local/etc/tacker/
+   cp etc/apmec/apmec.conf /usr/local/etc/apmec/
 
 ..
 
@@ -238,7 +238,7 @@ If you are using keystone v2 then,
 
 .. code-block:: console
 
-   /usr/local/bin/tacker-db-manage --config-file /usr/local/etc/tacker/tacker.conf upgrade head
+   /usr/local/bin/apmec-db-manage --config-file /usr/local/etc/apmec/apmec.conf upgrade head
 
 ..
 
@@ -246,19 +246,19 @@ If you are using keystone v2 then,
 Install Tacker client
 =====================
 
-1). Clone tacker-client repository.
+1). Clone apmec-client repository.
 
 .. code-block:: console
 
    cd ~/
-   git clone https://github.com/openstack/python-tackerclient -b <branch_name>
+   git clone https://github.com/openstack/python-apmecclient -b <branch_name>
 ..
 
-2). Install tacker-client.
+2). Install apmec-client.
 
 .. code-block:: console
 
-   cd python-tackerclient
+   cd python-apmecclient
    sudo python setup.py install
 ..
 
@@ -266,27 +266,27 @@ Install Tacker horizon
 ======================
 
 
-1). Clone tacker-horizon repository.
+1). Clone apmec-horizon repository.
 
 .. code-block:: console
 
    cd ~/
-   git clone https://github.com/openstack/tacker-horizon -b <branch_name>
+   git clone https://github.com/openstack/apmec-horizon -b <branch_name>
 ..
 
 2). Install horizon module.
 
 .. code-block:: console
 
-   cd tacker-horizon
+   cd apmec-horizon
    sudo python setup.py install
 ..
 
-3). Enable tacker horizon in dashboard.
+3). Enable apmec horizon in dashboard.
 
 .. code-block:: console
 
-   sudo cp tacker_horizon/enabled/* \
+   sudo cp apmec_horizon/enabled/* \
        /usr/share/openstack-dashboard/openstack_dashboard/enabled/
 ..
 
@@ -300,12 +300,12 @@ Install Tacker horizon
 Starting Tacker server
 ======================
 
-1).Open a new console and launch tacker-server. A separate terminal is
+1).Open a new console and launch apmec-server. A separate terminal is
 required because the console will be locked by a running process.
 
 .. code-block:: console
 
-   sudo python /usr/local/bin/tacker-server \
-       --config-file /usr/local/etc/tacker/tacker.conf \
-       --log-file /var/log/tacker/tacker.log
+   sudo python /usr/local/bin/apmec-server \
+       --config-file /usr/local/etc/apmec/apmec.conf \
+       --log-file /var/log/apmec/apmec.log
 ..

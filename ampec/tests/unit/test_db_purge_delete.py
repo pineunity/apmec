@@ -16,10 +16,10 @@
 import mock
 
 
-from tacker.common import exceptions
-from tacker import context
-from tacker.db.migration import purge_tables
-from tacker.tests.unit.db import base as db_base
+from apmec.common import exceptions
+from apmec import context
+from apmec.db.migration import purge_tables
+from apmec.tests.unit.db import base as db_base
 
 
 class FakeConfig(mock.Mock):
@@ -33,13 +33,13 @@ class TestDbPurgeDelete(db_base.SqlTestCase):
         self.context = context.get_admin_context()
         self._mock_config()
         mock.patch('sqlalchemy.Table').start()
-        mock.patch('tacker.db.migration.purge_tables._purge_resource_tables'
+        mock.patch('apmec.db.migration.purge_tables._purge_resource_tables'
                    ).start()
-        mock.patch('tacker.db.migration.purge_tables._purge_events_table',
+        mock.patch('apmec.db.migration.purge_tables._purge_events_table',
                    ).start()
-        mock.patch('tacker.db.migration.purge_tables.'
+        mock.patch('apmec.db.migration.purge_tables.'
                    '_generate_associated_tables_map').start()
-        mock.patch('tacker.db.migration.purge_tables.get_engine').start()
+        mock.patch('apmec.db.migration.purge_tables.get_engine').start()
 
     def _mock_config(self):
         self.config = mock.Mock(wraps=FakeConfig())

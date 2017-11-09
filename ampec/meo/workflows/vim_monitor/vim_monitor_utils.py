@@ -15,11 +15,11 @@ import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
 
-from tacker.common import rpc
-from tacker.mistral.actionrpc import kill_action as killaction
-from tacker.mistral import mistral_client
-from tacker.nfvo.workflows.vim_monitor import workflow_generator
-from tacker.vnfm import keystone
+from apmec.common import rpc
+from apmec.mistral.actionrpc import kill_action as killaction
+from apmec.mistral import mistral_client
+from apmec.nfvo.workflows.vim_monitor import workflow_generator
+from apmec.vnfm import keystone
 
 
 LOG = logging.getLogger(__name__)

@@ -8,8 +8,8 @@
                 "vnffgd": {
                     "tosca_definitions_version": "tosca_simple_profile_for_nfv_1_0_0",
                     "imports": [
-                        "/opt/stack/tacker/tacker/tosca/lib/tacker_defs.yaml",
-                        "/opt/stack/tacker/tacker/tosca/lib/tacker_nfv_defs.yaml"
+                        "/opt/stack/apmec/apmec/tosca/lib/apmec_defs.yaml",
+                        "/opt/stack/apmec/apmec/tosca/lib/apmec_nfv_defs.yaml"
                     ],
                     "description": "Sample VNFFG template",
                     "topology_template": {
@@ -58,7 +58,7 @@
                                     "Forwarding_path1"
                                 ],
                                 "properties": {
-                                    "vendor": "tacker",
+                                    "vendor": "apmec",
                                     "connection_point": [
                                         "CP12",
                                         "CP22"

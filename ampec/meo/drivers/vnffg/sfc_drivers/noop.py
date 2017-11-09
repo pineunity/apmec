@@ -15,8 +15,8 @@
 
 from oslo_log import log as logging
 from oslo_utils import uuidutils
-from tacker.common import log
-from tacker.nfvo.drivers.vnffg import abstract_vnffg_driver
+from apmec.common import log
+from apmec.nfvo.drivers.vnffg import abstract_vnffg_driver
 
 LOG = logging.getLogger(__name__)
 

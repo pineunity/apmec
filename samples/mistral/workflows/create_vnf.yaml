@@ -22,7 +22,7 @@ std.create_vnf:
   tasks:
     create_vnf:
       description: Request to create a VNF.
-      action: tacker.create_vnf body=<% $.body %>
+      action: apmec.create_vnf body=<% $.body %>
       input:
         body: <% $.body %>
       publish:
@@ -35,7 +35,7 @@ std.create_vnf:
 
     wait_vnf_active:
       description: Waits till VNF is ACTIVE.
-      action: tacker.show_vnf vnf=<% $.vnf_id %>
+      action: apmec.show_vnf vnf=<% $.vnf_id %>
       retry:
         count: 10
         delay: 10
@@ -50,4 +50,4 @@ std.create_vnf:
 
     delete_vnf:
       description: Request to delete a VNF.
-      action: tacker.delete_vnf vnf=<% $.vnf_id %>
+      action: apmec.delete_vnf vnf=<% $.vnf_id %>

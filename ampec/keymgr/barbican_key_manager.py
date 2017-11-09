@@ -22,9 +22,9 @@ from keystoneauth1 import identity
 from keystoneauth1 import session
 from oslo_log import log as logging
 
-from tacker._i18n import _
-from tacker.keymgr import exception
-from tacker.keymgr import key_manager
+from apmec._i18n import _
+from apmec.keymgr import exception
+from apmec.keymgr import key_manager
 
 
 LOG = logging.getLogger(__name__)

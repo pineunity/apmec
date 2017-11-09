@@ -18,7 +18,7 @@
 Deploying OpenWRT as VNF
 ========================
 
-Once tacker is installed successfully, follow the steps given below to get
+Once apmec is installed successfully, follow the steps given below to get
 started with deploying OpenWRT as VNF.
 
 1. Ensure Glance already contains OpenWRT image. Normally, Tacker tries
@@ -137,14 +137,14 @@ OpenWRT. All contents of the template file shows below:
 ..
 
 The above template file comes from two files. One is `tosca-vnfd-openwrt.yaml
-<https://github.com/openstack/tacker/blob/master/samples/tosca-templates/
+<https://github.com/openstack/apmec/blob/master/samples/tosca-templates/
 vnfd/tosca-vnfd-openwrt.yaml>`_ and other one is
 `tosca-config-openwrt-with-firewall.yaml
-<https://github.com/openstack/tacker/blob/master/samples/tosca-templates/
+<https://github.com/openstack/apmec/blob/master/samples/tosca-templates/
 vnfd/tosca-config-openwrt-with-firewall.yaml>`_.
 In this template file, we specify the **mgmt_driver: openwrt** which means
 this VNFD is managed by `openwrt driver
-<https://github.com/openstack/tacker/blob/master/tacker/
+<https://github.com/openstack/apmec/blob/master/apmec/
 vnfm/mgmt_drivers/openwrt/openwrt.py>`_. This driver can inject firewall rules
 which defined in VNFD into OpenWRT instance by using SSH protocol. We can
 run **cat /etc/config/firewall** to confirm the firewall rules if inject
@@ -154,7 +154,7 @@ succeed.
 
 .. code-block:: console
 
-    tacker vnfd-create \
+    apmec vnfd-create \
                        --vnfd-file tosca-vnfd-openwrt-with-firewall-rules.yaml \
                        <VNFD_NAME>
 ..
@@ -163,7 +163,7 @@ succeed.
 
 .. code-block:: console
 
-    tacker vnf-create --vnfd-name <VNFD_NAME> <NAME>
+    apmec vnf-create --vnfd-name <VNFD_NAME> <NAME>
 ..
 
 This VNF will contains all the firewall rules that VNFD contains
@@ -174,6 +174,6 @@ by using 'cat /etc/config/firewall' in VNF.
 
 .. code-block:: console
 
-    tacker vnf-list
-    tacker vnf-show <VNF_ID>
+    apmec vnf-list
+    apmec vnf-show <VNF_ID>
 ..

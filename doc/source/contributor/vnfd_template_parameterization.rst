@@ -264,14 +264,14 @@ Key Summary
    in the parameters value file.
 #. Supply a parameters value file in yaml format each time during VNF
    deployment with different values for the parameters.
-#. An example of a vnf-create python-tackerclient command specifying a
+#. An example of a vnf-create python-apmecclient command specifying a
    parameterized template and parameter values file would like below:
 
    .. code-block:: console
 
-      tacker vnf-create --vnfd-name <vnfd_name> --param-file <param_yaml_file> <vnf_name>
+      apmec vnf-create --vnfd-name <vnfd_name> --param-file <param_yaml_file> <vnf_name>
 
 #. Specifying a parameter values file during VNF creation is also supported in
    Horizon UI.
 #. Sample VNFD parameterized templates and parameter values files can be found
-   at https://github.com/openstack/tacker/tree/master/samples/tosca-templates/vnfd.
+   at https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd.

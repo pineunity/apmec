@@ -26,7 +26,7 @@ Framework.
 Installation
 ============
 
-For Tacker to work, the system consists of two parts, one is tacker system
+For Tacker to work, the system consists of two parts, one is apmec system
 and another is VIM systems. Tacker system can be installed
 (here just some ways are listed):
 
@@ -74,8 +74,8 @@ Feature Documentation
    contributor/vnfd_template_parameterization.rst
    contributor/event_logging.rst
    contributor/vnffgd_template_description.rst
-   contributor/tacker_conductor.rst
-   contributor/tacker_vim_monitoring.rst
+   contributor/apmec_conductor.rst
+   contributor/apmec_vim_monitoring.rst
    contributor/policy_actions_framework.rst
    contributor/encrypt_vim_auth_with_barbican.rst
 
@@ -121,18 +121,18 @@ Developer Info
    contributor/development.environment.rst
    contributor/api/api_layer.rst
    contributor/api/api_extensions.rst
-   contributor/tacker_functional_test.rst
+   contributor/apmec_functional_test.rst
    contributor/dashboards.rst
 
 Project Info
 ============
 
 * **Free software:** under the `Apache license <http://www.apache.org/licenses/LICENSE-2.0>`_
-* **Tacker Service:** http://git.openstack.org/cgit/openstack/tacker
-* **Tacker Client Library:** http://git.openstack.org/cgit/openstack/python-tackerclient
-* **Tacker Service Bugs:** http://bugs.launchpad.net/tacker
-* **Client Bugs:** https://bugs.launchpad.net/python-tackerclient
-* **Blueprints:** https://blueprints.launchpad.net/tacker
+* **Tacker Service:** http://git.openstack.org/cgit/openstack/apmec
+* **Tacker Client Library:** http://git.openstack.org/cgit/openstack/python-apmecclient
+* **Tacker Service Bugs:** http://bugs.launchpad.net/apmec
+* **Client Bugs:** https://bugs.launchpad.net/python-apmecclient
+* **Blueprints:** https://blueprints.launchpad.net/apmec
 
 Indices and tables
 ------------------

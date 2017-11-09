@@ -19,20 +19,20 @@ Unit tests for extension extended attribute
 
 import webob.exc as webexc
 
-import tacker
-from tacker.api import extensions
-from tacker.api.v1 import attributes
-from tacker.common import config
-from tacker import manager
-from tacker.tests import base
-from tacker.tests.unit.extensions import extendedattribute as extattr
-from tacker.tests.unit import test_api_v2
-from tacker.tests.unit import testlib_api
-from tacker import wsgi
+import apmec
+from apmec.api import extensions
+from apmec.api.v1 import attributes
+from apmec.common import config
+from apmec import manager
+from apmec.tests import base
+from apmec.tests.unit.extensions import extendedattribute as extattr
+from apmec.tests.unit import test_api_v2
+from apmec.tests.unit import testlib_api
+from apmec import wsgi
 
 _uuid = test_api_v2._uuid
 _get_path = test_api_v2._get_path
-extensions_path = ':'.join(tacker.tests.unit.extensions.__path__)
+extensions_path = ':'.join(apmec.tests.unit.extensions.__path__)
 
 
 class ExtensionExtendedAttributeTestCase(base.BaseTestCase):
@@ -40,11 +40,11 @@ class ExtensionExtendedAttributeTestCase(base.BaseTestCase):
         super(ExtensionExtendedAttributeTestCase, self).setUp()
         self.skip("Not ready yet")
         plugin = (
-            "tacker.tests.unit.test_extension_extended_attribute."
+            "apmec.tests.unit.test_extension_extended_attribute."
             "ExtensionExtendedAttributeTestPlugin"
         )
 
-        # point config file to: tacker/tests/etc/apmec.conf.test
+        # point config file to: apmec/tests/etc/apmec.conf.test
         self.config_parse()
 
         self.setup_coreplugin(plugin)

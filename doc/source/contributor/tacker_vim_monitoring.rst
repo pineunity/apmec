@@ -18,14 +18,14 @@
 Mistral workflow VIM monitoring
 ===============================
 
-For the purpose to make tacker server scale, the mistral workflow is used to
+For the purpose to make apmec server scale, the mistral workflow is used to
 re-implement the VIM monitoring feature.
 
 The main monitoring process is like this:
 
 - user registers a VIM
-- tacker server saves it into database
-- tacker server generates a mistral workflow and executes it
+- apmec server saves it into database
+- apmec server generates a mistral workflow and executes it
 - the VIM monitor mistral action is executed and do the monitoring, if there
   is status change, it will RPC call conductor
 - the conductor changes the VIM status
@@ -38,7 +38,7 @@ Firstly register a VIM:
 
 .. code-block:: console
 
-    $ tacker vim-register --config-file ~/testvim_config.yaml testvim2 -c id -c name -c status
+    $ apmec vim-register --config-file ~/testvim_config.yaml testvim2 -c id -c name -c status
     Created a new vim:
     +--------+--------------------------------------+
     | Field  | Value                                |
@@ -95,7 +95,7 @@ Of course, the VIM's state is in 'REACHABLE' status:
 
 .. code-block:: console
 
-    $ tacker vim-list --name testvim2 -c id -c name -c status
+    $ apmec vim-list --name testvim2 -c id -c name -c status
     +--------------------------------------+----------+-----------+
     | id                                   | name     | status    |
     +--------------------------------------+----------+-----------+
@@ -114,7 +114,7 @@ Each mistral VIM monitoring action is listening on three queues:
 
 .. code-block:: console
 
-    ~/tacker$ sudo rabbitmqctl list_queues | grep -i KILL_ACTION
+    ~/apmec$ sudo rabbitmqctl list_queues | grep -i KILL_ACTION
     KILL_ACTION    0
     KILL_ACTION.4406cf8f-f2af-46cc-bfb9-e00add5805b7    0
     KILL_ACTION_fanout_a8118e2e18b9443986a1b37f7b082ab9    0

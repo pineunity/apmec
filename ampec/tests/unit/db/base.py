@@ -15,10 +15,10 @@
 
 import fixtures
 
-from tacker.common import config
-from tacker.db import api as db_api
-from tacker.db import model_base
-from tacker.tests.unit import base
+from apmec.common import config
+from apmec.db import api as db_api
+from apmec.db import model_base
+from apmec.tests.unit import base
 
 
 class SqlFixture(fixtures.Fixture):

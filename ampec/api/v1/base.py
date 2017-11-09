@@ -19,12 +19,12 @@ import webob.exc
 from oslo_log import log as logging
 from oslo_utils import strutils
 
-from tacker.api import api_common
-from tacker.api.v1 import attributes
-from tacker.api.v1 import resource as wsgi_resource
-from tacker.common import exceptions
-from tacker.common import rpc as n_rpc
-from tacker import policy
+from apmec.api import api_common
+from apmec.api.v1 import attributes
+from apmec.api.v1 import resource as wsgi_resource
+from apmec.common import exceptions
+from apmec.common import rpc as n_rpc
+from apmec import policy
 
 
 LOG = logging.getLogger(__name__)
@@ -137,7 +137,7 @@ class Controller(object):
     def _view(self, context, data, fields_to_strip=None):
         """Build a view of an API resource.
 
-        :param context: the tacker context
+        :param context: the apmec context
         :param data: the object for which a view is being created
         :param fields_to_strip: attributes to remove from the view
 

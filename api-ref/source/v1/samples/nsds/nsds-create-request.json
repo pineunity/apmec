@@ -29,7 +29,7 @@
                 "network_name": {
                   "get_input": "vl1_name"
                 },
-                "vendor": "tacker"
+                "vendor": "apmec"
               }
             },
             "VNF1": {
@@ -49,7 +49,7 @@
                 "network_name": {
                   "get_input": "vl2_name"
                 },
-                "vendor": "tacker"
+                "vendor": "apmec"
               }
             }
           }

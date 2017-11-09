@@ -39,7 +39,7 @@ topology_template:
 
   policies:
     - vdu1_cpu_usage_monitoring_policy:
-        type: tosca.policies.tacker.Alarming
+        type: tosca.policies.apmec.Alarming
         triggers:
             mon_policy_multi_actions:
                 event_type:

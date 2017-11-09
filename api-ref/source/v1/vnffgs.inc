@@ -9,7 +9,7 @@ Manages VNF Forwarding Graphs (VNFFGs).
 The VNFFG feature is used to orchestrate and manage traffic through VNFs.
 For more information about VNFFG, see
 `VNF Forwarding Graph
-<https://docs.openstack.org/tacker/latest/user/vnffg_usage_guide.html>`_.
+<https://docs.openstack.org/apmec/latest/user/vnffg_usage_guide.html>`_.
 
 Create VNFFG
 ============

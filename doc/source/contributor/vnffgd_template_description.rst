@@ -41,7 +41,7 @@ Each VNFFGD template will have below fields:
                Describes properties and members of a VNF Forwarding Graph.
 
 For examples, please refer sample VNFD templates available at `GitHub <https:
-//github.com/openstack/tacker/tree/master/samples/tosca-templates/vnffgd>`_.
+//github.com/openstack/apmec/tree/master/samples/tosca-templates/vnffgd>`_.
 
 Node types
 ----------
@@ -64,8 +64,8 @@ through a set of VNFs.
     (traffic match policy to flow through the path), and path (chain of
     VNFs/Connection Points). A complete list of VNFFG properties currently
     supported by Tacker are listed `here <https://github
-    .com/openstack/tacker/blob/master/tacker/
-    tosca/lib/tacker_nfv_defs.yaml>`_ under **properties** section of
+    .com/openstack/apmec/blob/master/apmec/
+    tosca/lib/apmec_nfv_defs.yaml>`_ under **properties** section of
     **tosca.nodes.nfv.FP.Tacker** field.
 
 Specifying FP properties
@@ -106,8 +106,8 @@ Policy defines the type of match policy that will be used to distinguish
 which traffic should enter this Forwarding Path.  The only currently
 supported type is ACL (access-list).
 Please reference `tosca.nfv.datatypes.aclType
-<https://github.com/openstack/tacker/blob/master/tacker/tosca/lib/
-tacker_nfv_defs.yaml>`_ under **properties** section for more information on
+<https://github.com/openstack/apmec/blob/master/apmec/tosca/lib/
+apmec_nfv_defs.yaml>`_ under **properties** section for more information on
 supported match criteria.
 
 path
@@ -156,7 +156,7 @@ An example VNFFG shown below:
       type: tosca.groups.nfv.VNFFG
       description: HTTP to Corporate Net
       properties:
-        vendor: tacker
+        vendor: apmec
         version: 1.0
         number_of_endpoints: 2
         dependent_virtual_link: [VL1,VL2,VL3]
@@ -221,7 +221,7 @@ composed of a Forwarding Path and a VNFFG.  A full VNFFGD is shown below:
         type: tosca.groups.nfv.VNFFG
         description: HTTP to Corporate Net
         properties:
-          vendor: tacker
+          vendor: apmec
           version: 1.0
           number_of_endpoints: 2
           dependent_virtual_link: [VL12,VL22]

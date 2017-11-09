@@ -13,4 +13,4 @@ std.delete_vnfd:
   tasks:
     delete_vnfd:
       description: Request to delete a VNFD.
-      action: tacker.delete_vnfd vnfd=<% $.vnfd_id %>
+      action: apmec.delete_vnfd vnfd=<% $.vnfd_id %>

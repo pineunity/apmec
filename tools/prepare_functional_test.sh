@@ -1,5 +1,5 @@
 # This script is used to prepare functional test env after devstack
-# installation of tacker
+# installation of apmec
 
 DEVSTACK_DIR=${DEVSTACK_DIR:-~/devstack}
 TACKER_DIR=$(dirname "$0")/..
@@ -13,7 +13,7 @@ if [ ! -f ${DEVSTACK_DIR}/openrc ]; then
 fi
 
 . $DEVSTACK_DIR/openrc admin admin
-. ${TACKER_DIR}/tacker/tests/contrib/post_test_hook_lib.sh
+. ${TACKER_DIR}/apmec/tests/contrib/post_test_hook_lib.sh
 
 fixup_quota
 add_key_if_not_exist

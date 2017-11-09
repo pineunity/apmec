@@ -19,9 +19,9 @@ from sqlalchemy import orm
 from sqlalchemy import schema
 from sqlalchemy import sql
 
-from tacker.db import model_base
-from tacker.db import models_v1
-from tacker.db import types
+from apmec.db import model_base
+from apmec.db import models_v1
+from apmec.db import types
 
 
 class Vim(model_base.BASE,

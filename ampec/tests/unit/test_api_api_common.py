@@ -16,8 +16,8 @@
 from testtools import matchers
 from webob import exc
 
-from tacker.api import api_common as common
-from tacker.tests import base
+from apmec.api import api_common as common
+from apmec.tests import base
 
 
 class FakeController(common.TackerController):

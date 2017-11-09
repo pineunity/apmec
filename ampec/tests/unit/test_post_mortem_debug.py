@@ -18,8 +18,8 @@ import sys
 import mock
 from six import moves
 
-from tacker.tests import base
-from tacker.tests import post_mortem_debug
+from apmec.tests import base
+from apmec.tests import post_mortem_debug
 
 
 class TestTesttoolsExceptionHandler(base.BaseTestCase):

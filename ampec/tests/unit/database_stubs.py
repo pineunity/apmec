@@ -17,7 +17,7 @@
 
 from oslo_log import log as logging
 
-from tacker.db import api as db
+from apmec.db import api as db
 
 LOG = logging.getLogger(__name__)
 

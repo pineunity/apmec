@@ -17,7 +17,7 @@ import abc
 
 import six
 
-from tacker.api import extensions
+from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -29,7 +29,7 @@ class NFVPluginBase(extensions.PluginInterface):
     def get_plugin_type(self):
         """Return one of predefined service types.
 
-        See tacker/plugins/common/constants.py
+        See apmec/plugins/common/constants.py
         """
         pass
 

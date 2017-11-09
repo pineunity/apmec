@@ -20,8 +20,8 @@ Utility methods for working with WSGI servers redux
 from oslo_log import log as logging
 import webob.dec
 
-from tacker.api import api_common
-from tacker import wsgi
+from apmec.api import api_common
+from apmec import wsgi
 
 
 LOG = logging.getLogger(__name__)

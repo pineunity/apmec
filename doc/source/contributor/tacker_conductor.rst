@@ -20,27 +20,27 @@ Tacker conductor
 
 Tacker conductor is a component which is used to communicate with other
 components via message RPC. In the conductor, the RPC server sides can
-access the tacker base on behalf of them.
+access the apmec base on behalf of them.
 
 
 To start
 ==============
 
 Tacker conductor can be started via python console entry script
-'tacker-conductor':
+'apmec-conductor':
 
 .. code-block:: console
 
-   tacker-conductor --config-file /etc/tacker/tacker.conf
+   apmec-conductor --config-file /etc/apmec/apmec.conf
 
 ..
 
-we can easily start many tacker-conductor instances with different 'host' value
+we can easily start many apmec-conductor instances with different 'host' value
 in the configuration file:
 
 .. code-block:: console
 
-   test@ubuntu64:~/devstack$ grep 'host = secondinstance' /etc/tacker/tacker2.conf
+   test@ubuntu64:~/devstack$ grep 'host = secondinstance' /etc/apmec/apmec2.conf
    host = secondinstance
 
 ..
@@ -49,7 +49,7 @@ and then start the second instance:
 
 .. code-block:: console
 
-   tacker-conductor --config-file /etc/tacker/tacker2.conf
+   apmec-conductor --config-file /etc/apmec/apmec2.conf
 
 ..
 
@@ -60,7 +60,7 @@ Tacker conductor is listening on three queues:
 
 .. code-block:: console
 
-    test@ubuntu64:~/tacker$ sudo rabbitmqctl list_queues | grep CONDUCTOR
+    test@ubuntu64:~/apmec$ sudo rabbitmqctl list_queues | grep CONDUCTOR
     TACKER_CONDUCTOR	0
     TACKER_CONDUCTOR.ubuntu64	0
     TACKER_CONDUCTOR_fanout_0ea005c0b666488485a7b3689eb70168	0

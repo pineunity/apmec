@@ -20,7 +20,7 @@ Tacker base exception handling.
 from oslo_utils import excutils
 import six
 
-from tacker._i18n import _
+from apmec._i18n import _
 
 
 class TackerException(Exception):

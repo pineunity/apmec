@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VNFC_IMAGE=/tmp/tacker_vnfc_images
+VNFC_IMAGE=/tmp/apmec_vnfc_images
 rm -rf $VNFC_IMAGE
 mkdir $VNFC_IMAGE
 

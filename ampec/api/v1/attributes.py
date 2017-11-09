@@ -20,7 +20,7 @@ from oslo_log import log as logging
 from oslo_utils import uuidutils
 import six
 
-from tacker.common import exceptions as n_exc
+from apmec.common import exceptions as n_exc
 
 
 LOG = logging.getLogger(__name__)

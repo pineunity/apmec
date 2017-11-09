@@ -1,7 +1,7 @@
 Tacker Monitoring Framework
 ============================
 
-This section will introduce tacker monitoring framework and describes the
+This section will introduce apmec monitoring framework and describes the
 various actions that a user can take when a specific event occurs.
 
 * Introduction
@@ -20,18 +20,18 @@ VNF entities it deploys and manages.
 How to write a new monitor driver
 ----------------------------------
 
-A monitor driver for tacker is a python module which contains a class that
+A monitor driver for apmec is a python module which contains a class that
 inherits from
-"tacker.vnfm.monitor_drivers.abstract_driver.VNFMonitorAbstractDriver". If the
+"apmec.vnfm.monitor_drivers.abstract_driver.VNFMonitorAbstractDriver". If the
 driver depends/imports more than one module, then create a new python package
-under tacker/vnfm/monitor_drivers folder. After this we have to mention our
+under apmec/vnfm/monitor_drivers folder. After this we have to mention our
 driver path in setup.cfg file in root directory.
 
 For example:
 ::
 
-  tacker.tacker.monitor_drivers =
-      ping = tacker.vnfm.monitor_drivers.ping.ping:VNFMonitorPing
+  apmec.apmec.monitor_drivers =
+      ping = apmec.vnfm.monitor_drivers.ping.ping:VNFMonitorPing
 
 Following methods need to be overridden in the new driver:
 
@@ -74,7 +74,7 @@ For example:
           failure: respawn
 
 In this  example, we have an event called 'failure'. So whenever monitor_call
-returns 'failure' tacker will respawn the VNF.
+returns 'failure' apmec will respawn the VNF.
 
 
 Actions

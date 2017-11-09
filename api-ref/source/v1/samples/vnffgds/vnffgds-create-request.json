@@ -52,7 +52,7 @@
                                 "Forwarding_path1"
                             ],
                             "properties": {
-                                "vendor": "tacker",
+                                "vendor": "apmec",
                                 "connection_point": [
                                     "CP12",
                                     "CP22"

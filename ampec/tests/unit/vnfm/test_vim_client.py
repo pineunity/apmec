@@ -13,10 +13,10 @@ import mock
 
 from sqlalchemy.orm import exc as orm_exc
 
-from tacker.extensions import nfvo
-from tacker import manager
-from tacker.tests.unit import base
-from tacker.vnfm import vim_client
+from apmec.extensions import nfvo
+from apmec import manager
+from apmec.tests.unit import base
+from apmec.vnfm import vim_client
 
 
 class TestVIMClient(base.TestCase):

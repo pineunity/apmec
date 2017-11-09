@@ -16,8 +16,8 @@
 
 import sqlalchemy as sa
 
-from tacker.db import model_base
-from tacker.db import types
+from apmec.db import model_base
+from apmec.db import types
 
 
 class Event(model_base.BASE):

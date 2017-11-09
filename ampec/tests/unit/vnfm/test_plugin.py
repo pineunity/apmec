@@ -20,15 +20,15 @@ from mock import patch
 from oslo_utils import uuidutils
 import yaml
 
-from tacker import context
-from tacker.db.common_services import common_services_db_plugin
-from tacker.db.nfvo import nfvo_db
-from tacker.db.vnfm import vnfm_db
-from tacker.extensions import vnfm
-from tacker.plugins.common import constants
-from tacker.tests.unit.db import base as db_base
-from tacker.tests.unit.db import utils
-from tacker.vnfm import plugin
+from apmec import context
+from apmec.db.common_services import common_services_db_plugin
+from apmec.db.nfvo import nfvo_db
+from apmec.db.vnfm import vnfm_db
+from apmec.extensions import vnfm
+from apmec.plugins.common import constants
+from apmec.tests.unit.db import base as db_base
+from apmec.tests.unit.db import utils
+from apmec.vnfm import plugin
 
 
 class FakeDriverManager(mock.Mock):
@@ -67,7 +67,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._mock_green_pool()
         self._insert_dummy_vim()
         self.vnfm_plugin = plugin.VNFMPlugin()
-        mock.patch('tacker.db.common_services.common_services_db_plugin.'
+        mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
         self._cos_db_plugin =\
@@ -80,14 +80,14 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         fake_device_manager = mock.Mock()
         fake_device_manager.return_value = self._device_manager
         self._mock(
-            'tacker.common.driver_manager.DriverManager', fake_device_manager)
+            'apmec.common.driver_manager.DriverManager', fake_device_manager)
 
     def _mock_vim_client(self):
         self.vim_client = mock.Mock(wraps=FakeVimClient())
         fake_vim_client = mock.Mock()
         fake_vim_client.return_value = self.vim_client
         self._mock(
-            'tacker.vnfm.vim_client.VimClient', fake_vim_client)
+            'apmec.vnfm.vim_client.VimClient', fake_vim_client)
 
     def _stub_get_vim(self):
         vim_obj = {'vim_id': '6261579e-d6f3-49ad-8bc3-a9cb974778ff',
@@ -109,14 +109,14 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         fake_vnf_monitor = mock.Mock()
         fake_vnf_monitor.return_value = self._vnf_monitor
         self._mock(
-            'tacker.vnfm.monitor.VNFMonitor', fake_vnf_monitor)
+            'apmec.vnfm.monitor.VNFMonitor', fake_vnf_monitor)
 
     def _mock_vnf_alarm_monitor(self):
         self._vnf_alarm_monitor = mock.Mock(wraps=FakeVNFMonitor())
         fake_vnf_alarm_monitor = mock.Mock()
         fake_vnf_alarm_monitor.return_value = self._vnf_alarm_monitor
         self._mock(
-            'tacker.vnfm.monitor.VNFAlarmMonitor', fake_vnf_alarm_monitor)
+            'apmec.vnfm.monitor.VNFAlarmMonitor', fake_vnf_alarm_monitor)
 
     def _insert_dummy_device_template(self):
         session = self.context.session
@@ -218,9 +218,9 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         session.add(vim_auth_db)
         session.flush()
 
-    @mock.patch('tacker.vnfm.plugin.toscautils.updateimports')
-    @mock.patch('tacker.vnfm.plugin.ToscaTemplate')
-    @mock.patch('tacker.vnfm.plugin.toscautils.get_mgmt_driver')
+    @mock.patch('apmec.vnfm.plugin.toscautils.updateimports')
+    @mock.patch('apmec.vnfm.plugin.ToscaTemplate')
+    @mock.patch('apmec.vnfm.plugin.toscautils.get_mgmt_driver')
     def test_create_vnfd(self, mock_get_mgmt_driver, mock_tosca_template,
                         mock_update_imports):
         mock_get_mgmt_driver.return_value = 'dummy_mgmt_driver'
@@ -279,7 +279,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('tacker.vnfm.plugin.VNFMPlugin.create_vnfd')
+    @mock.patch('apmec.vnfm.plugin.VNFMPlugin.create_vnfd')
     def test_create_vnf_from_template(self, mock_create_vnfd):
         self._insert_dummy_device_template_inline()
         mock_create_vnfd.return_value = {'id':
@@ -439,7 +439,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             self.context, vnf_id, trigger_request)
         self.assertEqual(expected_result, trigger_result)
 
-    @patch('tacker.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_respawn(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
             utils.vnfd_alarm_respawn_tosca_template)
@@ -447,7 +447,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_respawning",
                                       action_value="respawn")
 
-    @patch('tacker.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_scale(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
             utils.vnfd_alarm_scale_tosca_template)
@@ -455,7 +455,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_vnf_trigger(policy_name="vdu_hcpu_usage_scaling_out",
                                       action_value="SP1-out")
 
-    @patch('tacker.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
     def test_create_vnf_trigger_multi_actions(self, mock_get_vnf):
         dummy_vnf = self._get_dummy_active_vnf(
             utils.vnfd_alarm_multi_actions_tosca_template)
@@ -463,7 +463,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_vnf_trigger(policy_name="mon_policy_multi_actions",
                                       action_value="respawn&log")
 
-    @patch('tacker.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
+    @patch('apmec.db.vnfm.vnfm_db.VNFMPluginDb.get_vnf')
     def test_get_vnf_policies(self, mock_get_vnf):
         vnf_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
         dummy_vnf = self._get_dummy_active_vnf(

@@ -19,8 +19,8 @@ import sys
 
 import mock
 
-from tacker.db.migration import cli
-from tacker.tests import base
+from apmec.db.migration import cli
+from apmec.tests import base
 
 
 class TestCli(base.BaseTestCase):

@@ -22,9 +22,9 @@ from six import iteritems
 from six.moves.urllib import parse as urllib_parse
 from webob import exc
 
-from tacker.common import constants
-from tacker.common import exceptions
-from tacker import wsgi
+from apmec.common import constants
+from apmec.common import exceptions
+from apmec import wsgi
 
 LOG = logging.getLogger(__name__)
 

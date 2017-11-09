@@ -21,7 +21,7 @@ VNF resources in terms of CPU core and memory are hardcoded in VNFD template
 through image flavor settings. This result in either provisioning VNF for
 typical usage or for maximum usage. The former leads to service disruption
 when load exceeds provisioned capacity. And the later leads to underutilized
-resources and waste during normal system load. So tacker provides a
+resources and waste during normal system load. So apmec provides a
 way to seamlessly scale the number of VNFs on demand either manually or
 automatically.
 
@@ -33,7 +33,7 @@ Tacker defines TOSCA schema for the scaling policy as given below:
 
 .. code-block:: yaml
 
-  tosca.policies.tacker.Scaling:
+  tosca.policies.apmec.Scaling:
     derived_from: tosca.policies.Scaling
     description: Defines policy for scaling the given targets.
     properties:
@@ -79,7 +79,7 @@ and vdu2 are already defined VDUs.
 
         sp1:
 
-          type: tosca.policies.tacker.Scaling
+          type: tosca.policies.apmec.Scaling
 
           description: Simple VDU scaling
 
@@ -101,11 +101,11 @@ Deploying scaling TOSCA template using Tacker
 Once OpenStack/Devstack along with Tacker has been successfully installed,
 deploy a sample scaling template from location given
 below:
-https://github.com/openstack/tacker/tree/master/samples/tosca-templates/vnfd
+https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd
 
 Refer the 'Getting Started' link below on how to create a VNFD and deploy a
 VNF:
-https://docs.openstack.org/tacker/latest/install/getting_started.html
+https://docs.openstack.org/apmec/latest/install/getting_started.html
 
 
 How to scale VNF using CLI
@@ -115,7 +115,7 @@ Tacker provides following CLI for scaling.
 
 .. code-block::console
 
-**tacker vnf-scale --vnf-id <vnf-id>**
+**apmec vnf-scale --vnf-id <vnf-id>**
                   **--vnf-name <vnf name>**
                   **--scaling-policy-name <policy name>**
                   **--scaling-type <type>**
@@ -132,7 +132,7 @@ as below:
 
 .. code-block::console
 
-**tacker vnf-scale --vnf-name sample-vnf**
+**apmec vnf-scale --vnf-name sample-vnf**
                   **--scaling-policy-name sp1**
                   **--scaling-type out**
 

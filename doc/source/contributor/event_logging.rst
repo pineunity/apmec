@@ -11,7 +11,7 @@ Overview
 --------
 
 OpenStack Tacker supports capturing resource event information when the
-tacker resources undergo  create, update, delete, scale and monitor
+apmec resources undergo  create, update, delete, scale and monitor
 operations. This information becomes useful to an admin for audit purposes.
 
 Tacker Resources supporting Events
@@ -38,7 +38,7 @@ Below are the event types that are currently supported:
 
 - UPDATE
 
-The above can be used as filters when listing events using tacker client.
+The above can be used as filters when listing events using apmec client.
 
 Accessing Events
 ----------------
@@ -55,7 +55,7 @@ Tacker supports display of events to an end user via
     - vnfd-events-list: List events that belong to a given VNFD.
 
 NOTE: For more details on the syntax of these CLIs, refer to
-`Tacker CLI reference guide <http://docs.openstack.org/cli-reference/tacker.html>`_
+`Tacker CLI reference guide <http://docs.openstack.org/cli-reference/apmec.html>`_
 
 Tacker Client command usage examples to access resource lifecycle events
 ------------------------------------------------------------------------
@@ -67,7 +67,7 @@ is VNF's uuid.
 
 .. code-block:: console
 
-  tacker vnf-events-list --resource_id <resource_id>
+  apmec vnf-events-list --resource_id <resource_id>
 
   +----+---------------+-------------------+-------------------+------------+-------------------+---------------------+
   | id | resource_type | resource_id       | resource_state    | event_type | timestamp         | event_details       |
@@ -102,7 +102,7 @@ site. The sample output illustrates a VIM that is reachable. Note, the
 
 .. code-block:: console
 
-  tacker vim-events-list --resource_id <resource_id>
+  apmec vim-events-list --resource_id <resource_id>
 
   +----+---------------+---------------------+----------------+------------+---------------------+---------------+
   | id | resource_type | resource_id         | resource_state | event_type | timestamp           | event_details |
@@ -121,7 +121,7 @@ Miscellaneous events command examples:
 
 .. code-block:: console
 
-  tacker events-list
+  apmec events-list
 
   +----+---------------+-----------------+----------------+------------+-----------------+-----------------+
   | id | resource_type | resource_id     | resource_state | event_type | timestamp       | event_details   |
@@ -155,7 +155,7 @@ Miscellaneous events command examples:
 
 .. code-block:: console
 
-  tacker events-list --event_type CREATE
+  apmec events-list --event_type CREATE
 
   +----+---------------+-----------------+----------------+------------+-----------------+-----------------+
   | id | resource_type | resource_id     | resource_state | event_type | timestamp       | event_details   |
@@ -187,7 +187,7 @@ Miscellaneous events command examples:
 
 .. code-block:: console
 
-  tacker event-show 5
+  apmec event-show 5
 
   +----------------+------------------------------------------------------------------------------------------+
   | Field          | Value                                                                                    |
@@ -210,8 +210,8 @@ If as a developer, you are creating new resources and would like to capture
 event information for resource operations such as create, update, delete,
 scale and monitor, you would need to :
 
-- Import the module tacker.db.common_services.common_services_db to use the
+- Import the module apmec.db.common_services.common_services_db to use the
   create_event() method for logging events.
 
-- Make edits in the file tacker/plugins/common/constants.py if you would need
+- Make edits in the file apmec/plugins/common/constants.py if you would need
   to create new event types.

@@ -18,8 +18,8 @@ import os
 import mock
 from oslo_config import cfg
 
-from tacker.common import config  # noqa
-from tacker.tests import base
+from apmec.common import config  # noqa
+from apmec.tests import base
 
 
 class ConfigurationTest(base.BaseTestCase):
@@ -36,7 +36,7 @@ class ConfigurationTest(base.BaseTestCase):
                                     '..', '..', '..')
         absolute_dir = os.path.abspath(relative_dir)
         self.assertEqual(absolute_dir, cfg.CONF.state_path)
-        self.assertEqual('tacker', cfg.CONF.control_exchange)
+        self.assertEqual('apmec', cfg.CONF.control_exchange)
 
     def test_load_paste_app_not_found(self):
         self.config(api_paste_config='no_such_file.conf')

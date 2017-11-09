@@ -24,15 +24,15 @@ from sqlalchemy import orm
 from sqlalchemy.orm import exc as orm_exc
 from sqlalchemy import schema
 
-from tacker.common import exceptions
-from tacker.db.common_services import common_services_db_plugin
-from tacker.db import db_base
-from tacker.db import model_base
-from tacker.db import models_v1
-from tacker.db import types
-from tacker.extensions import nfvo
-from tacker.extensions.nfvo_plugins import network_service
-from tacker.plugins.common import constants
+from apmec.common import exceptions
+from apmec.db.common_services import common_services_db_plugin
+from apmec.db import db_base
+from apmec.db import model_base
+from apmec.db import models_v1
+from apmec.db import types
+from apmec.extensions import nfvo
+from apmec.extensions.nfvo_plugins import network_service
+from apmec.plugins.common import constants
 
 LOG = logging.getLogger(__name__)
 _ACTIVE_UPDATE = (constants.ACTIVE, constants.PENDING_UPDATE)

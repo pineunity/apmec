@@ -50,7 +50,7 @@ html_theme_path = [openstackdocstheme.get_html_theme_path()]
 html_theme_options = {
     "sidebar_mode": "toc",
 }
-html_context = {'bug_project': 'tacker', 'bug_tag': 'api-ref'}
+html_context = {'bug_project': 'apmec', 'bug_tag': 'api-ref'}
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -70,7 +70,7 @@ copyright = u'2016-present, OpenStack Foundation'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from tacker.version import version_info
+from apmec.version import version_info
 # The full version, including alpha/beta/rc tags.
 release = version_info.release_string()
 # The short X.Y version.
@@ -190,7 +190,7 @@ except Exception:
 # html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'tackerdoc'
+htmlhelp_basename = 'apmecdoc'
 
 
 # -- Options for LaTeX output -------------------------------------------------

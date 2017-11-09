@@ -29,7 +29,7 @@ from alembic import op
 import sqlalchemy as sa
 ${imports if imports else ""}
 
-from tacker.db import migration
+from apmec.db import migration
 
 
 def upgrade(active_plugins=None, options=None):

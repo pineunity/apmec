@@ -15,9 +15,9 @@
 
 import abc
 
-from tacker.api import extensions
-from tacker.api.v1 import base
-from tacker import manager
+from apmec.api import extensions
+from apmec.api.v1 import base
+from apmec import manager
 
 
 # Attribute Map

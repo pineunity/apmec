@@ -17,7 +17,7 @@ import os
 import testtools
 import yaml
 
-from tacker.tosca import utils as toscautils
+from apmec.tosca import utils as toscautils
 from toscaparser import tosca_template
 from translator.hot import tosca_translator
 
@@ -42,9 +42,9 @@ class TestToscaUtils(testtools.TestCase):
         super(TestToscaUtils, self).setUp()
 
     def test_updateimport(self):
-        importspath = os.path.abspath('./tacker/tosca/lib/')
-        file1 = importspath + '/tacker_defs.yaml'
-        file2 = importspath + '/tacker_nfv_defs.yaml'
+        importspath = os.path.abspath('./apmec/tosca/lib/')
+        file1 = importspath + '/apmec_defs.yaml'
+        file2 = importspath + '/apmec_nfv_defs.yaml'
         expected_imports = [file1, file2]
         self.assertEqual(expected_imports, self.vnfd_dict['imports'])
 
@@ -179,7 +179,7 @@ class TestToscaUtils(testtools.TestCase):
         actual_flavor_dict = toscautils.get_flavor_dict(tosca)
         self.assertEqual(expected_flavor_dict, actual_flavor_dict)
 
-    def test_tacker_conf_heat_extra_specs_all_numa_count(self):
+    def test_apmec_conf_heat_extra_specs_all_numa_count(self):
         tosca_fes_all_numa_count = _get_template(
             'tosca_flavor_all_numa_count.yaml')
         vnfd_dict = yaml.safe_load(tosca_fes_all_numa_count)
@@ -237,9 +237,9 @@ class TestToscaUtils(testtools.TestCase):
                                      'vnfd1.yaml')
         param = {'substitution_mappings': {
                  'VL2': {'type': 'tosca.nodes.nfv.VL', 'properties': {
-                         'network_name': 'net0', 'vendor': 'tacker'}},
+                         'network_name': 'net0', 'vendor': 'apmec'}},
                  'VL1': {'type': 'tosca.nodes.nfv.VL', 'properties': {
-                         'network_name': 'net_mgmt', 'vendor': 'tacker'}},
+                         'network_name': 'net_mgmt', 'vendor': 'apmec'}},
                  'requirements': {'virtualLink2': 'VL2',
                                   'virtualLink1': 'VL1'}}}
         template = yaml.safe_load(tosca_sb_map)

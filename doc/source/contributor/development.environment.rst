@@ -41,8 +41,8 @@ Getting the code
 
 Grab the code::
 
-    git clone git://git.openstack.org/openstack/tacker.git
-    cd tacker
+    git clone git://git.openstack.org/openstack/apmec.git
+    cd apmec
 
 
 .. include:: ../../../TESTING.rst

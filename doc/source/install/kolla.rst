@@ -91,11 +91,11 @@ Install Tacker
     enable_nova: "no"
     enable_barbican: "yes"
     enable_mistral: "yes"
-    enable_tacker: "yes"
+    enable_apmec: "yes"
     enable_heat: "no"
     enable_openvswitch: "no"
     enable_horizon: "yes"
-    enable_horizon_tacker: "{{ enable_tacker | bool }}"
+    enable_horizon_apmec: "{{ enable_apmec | bool }}"
 
 ..
 
@@ -126,7 +126,7 @@ With this command, /etc/kolla/passwords.yml will be populated with
 generated passwords.
 
 
-3. Run kolla ansible deploy to install tacker system:
+3. Run kolla ansible deploy to install apmec system:
 
 .. code-block:: console
 
@@ -135,7 +135,7 @@ generated passwords.
 ..
 
 
-4. Run kolla ansible post-deploy to generate tacker access environment file:
+4. Run kolla ansible post-deploy to generate apmec access environment file:
 
 .. code-block:: console
 
@@ -158,8 +158,8 @@ components.
 
     $ sudo docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Names}}"
     CONTAINER ID        IMAGE                                                    NAMES
-    78eafed848a8        gongysh/centos-source-tacker-server:5.0.0                tacker_server
-    00bbecca5950        gongysh/centos-source-tacker-conductor:5.0.0             tacker_conductor
+    78eafed848a8        gongysh/centos-source-apmec-server:5.0.0                apmec_server
+    00bbecca5950        gongysh/centos-source-apmec-conductor:5.0.0             apmec_conductor
     19eddccf8e8f        gongysh/centos-source-barbican-worker:5.0.0              barbican_worker
     6434b1d8236e        gongysh/centos-source-barbican-keystone-listener:5.0.0   barbican_keystone_listener
     48be088643f8        gongysh/centos-source-barbican-api:5.0.0                 barbican_api
@@ -178,11 +178,11 @@ components.
 ..
 
 
-6. Install tacker client:
+6. Install apmec client:
 
 .. code-block:: console
 
-    $ sudo pip install python-tackerclient
+    $ sudo pip install python-apmecclient
 
 ..
 
@@ -192,6 +192,6 @@ components.
 .. code-block:: console
 
     $ . /etc/kolla/admin-openrc.sh
-    $ tacker vim-list
+    $ apmec vim-list
 
 ..

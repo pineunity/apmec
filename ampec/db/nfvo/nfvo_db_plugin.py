@@ -19,14 +19,14 @@ from oslo_utils import uuidutils
 from sqlalchemy.orm import exc as orm_exc
 from sqlalchemy import sql
 
-from tacker.common import exceptions
-from tacker.db.common_services import common_services_db_plugin
-from tacker.db import db_base
-from tacker.db.nfvo import nfvo_db
-from tacker.db.vnfm import vnfm_db
-from tacker.extensions import nfvo
-from tacker import manager
-from tacker.plugins.common import constants
+from apmec.common import exceptions
+from apmec.db.common_services import common_services_db_plugin
+from apmec.db import db_base
+from apmec.db.nfvo import nfvo_db
+from apmec.db.vnfm import vnfm_db
+from apmec.extensions import nfvo
+from apmec import manager
+from apmec.plugins.common import constants
 
 
 VIM_ATTRIBUTES = ('id', 'type', 'tenant_id', 'name', 'description',

@@ -17,8 +17,8 @@ import mock
 from oslo_context import context as oslo_context
 from testtools import matchers
 
-from tacker import context
-from tacker.tests import base
+from apmec import context
+from apmec.tests import base
 
 
 class TestTackerContext(base.BaseTestCase):
@@ -26,11 +26,11 @@ class TestTackerContext(base.BaseTestCase):
     def setUp(self):
         super(TestTackerContext, self).setUp()
         self.skip("Not ready yet")
-        db_api = 'tacker.db.api.get_session'
+        db_api = 'apmec.db.api.get_session'
         self._db_api_session_patcher = mock.patch(db_api)
         self.db_api_session = self._db_api_session_patcher.start()
 
-    def test_tacker_context_create(self):
+    def test_apmec_context_create(self):
         ctx = context.Context('user_id', 'tenant_id')
         self.assertEqual('user_id', ctx.user_id)
         self.assertEqual('tenant_id', ctx.project_id)
@@ -41,12 +41,12 @@ class TestTackerContext(base.BaseTestCase):
         self.assertIsNone(ctx.user_name)
         self.assertIsNone(ctx.tenant_name)
 
-    def test_tacker_context_create_logs_unknown_kwarg(self):
+    def test_apmec_context_create_logs_unknown_kwarg(self):
         with mock.patch.object(context.LOG, 'debug') as mock_log:
             context.Context('user_id', 'tenant_id', foo=None)
         self.assertEqual(1, mock_log.call_count)
 
-    def test_tacker_context_create_with_name(self):
+    def test_apmec_context_create_with_name(self):
         ctx = context.Context('user_id', 'tenant_id',
                               tenant_name='tenant_name', user_name='user_name')
         # Check name is set
@@ -56,11 +56,11 @@ class TestTackerContext(base.BaseTestCase):
         self.assertEqual('user_id', ctx.user)
         self.assertEqual('tenant_id', ctx.tenant)
 
-    def test_tacker_context_create_with_request_id(self):
+    def test_apmec_context_create_with_request_id(self):
         ctx = context.Context('user_id', 'tenant_id', request_id='req_id_xxx')
         self.assertEqual('req_id_xxx', ctx.request_id)
 
-    def test_tacker_context_to_dict(self):
+    def test_apmec_context_to_dict(self):
         ctx = context.Context('user_id', 'tenant_id')
         ctx_dict = ctx.to_dict()
         self.assertEqual('user_id', ctx_dict['user_id'])
@@ -72,7 +72,7 @@ class TestTackerContext(base.BaseTestCase):
         self.assertIsNone(ctx_dict['tenant_name'])
         self.assertIsNone(ctx_dict['project_name'])
 
-    def test_tacker_context_to_dict_with_name(self):
+    def test_apmec_context_to_dict_with_name(self):
         ctx = context.Context('user_id', 'tenant_id',
                               tenant_name='tenant_name', user_name='user_name')
         ctx_dict = ctx.to_dict()
@@ -80,7 +80,7 @@ class TestTackerContext(base.BaseTestCase):
         self.assertEqual('tenant_name', ctx_dict['tenant_name'])
         self.assertEqual('tenant_name', ctx_dict['project_name'])
 
-    def test_tacker_context_admin_to_dict(self):
+    def test_apmec_context_admin_to_dict(self):
         self.db_api_session.return_value = 'fakesession'
         ctx = context.get_admin_context()
         ctx_dict = ctx.to_dict()
@@ -89,22 +89,22 @@ class TestTackerContext(base.BaseTestCase):
         self.assertIsNotNone(ctx.session)
         self.assertNotIn('session', ctx_dict)
 
-    def test_tacker_context_admin_without_session_to_dict(self):
+    def test_apmec_context_admin_without_session_to_dict(self):
         ctx = context.get_admin_context_without_session()
         ctx_dict = ctx.to_dict()
         self.assertIsNone(ctx_dict['user_id'])
         self.assertIsNone(ctx_dict['tenant_id'])
         self.assertFalse(hasattr(ctx, 'session'))
 
-    def test_tacker_context_with_load_roles_true(self):
+    def test_apmec_context_with_load_roles_true(self):
         ctx = context.get_admin_context()
         self.assertIn('admin', ctx.roles)
 
-    def test_tacker_context_with_load_roles_false(self):
+    def test_apmec_context_with_load_roles_false(self):
         ctx = context.get_admin_context(load_admin_roles=False)
         self.assertFalse(ctx.roles)
 
-    def test_tacker_context_elevated_retains_request_id(self):
+    def test_apmec_context_elevated_retains_request_id(self):
         ctx = context.Context('user_id', 'tenant_id')
         self.assertFalse(ctx.is_admin)
         req_id_before = ctx.request_id
@@ -113,7 +113,7 @@ class TestTackerContext(base.BaseTestCase):
         self.assertTrue(elevated_ctx.is_admin)
         self.assertEqual(req_id_before, elevated_ctx.request_id)
 
-    def test_tacker_context_overwrite(self):
+    def test_apmec_context_overwrite(self):
         ctx1 = context.Context('user_id', 'tenant_id')
         self.assertEqual(oslo_context.get_current().request_id,
                          ctx1.request_id)
@@ -130,7 +130,7 @@ class TestTackerContext(base.BaseTestCase):
         self.assertEqual(oslo_context.get_current().request_id,
                          ctx2.request_id)
 
-    def test_tacker_context_get_admin_context_not_update_local_store(self):
+    def test_apmec_context_get_admin_context_not_update_local_store(self):
         ctx = context.Context('user_id', 'tenant_id')
         req_id_before = oslo_context.get_current().request_id
         self.assertEqual(req_id_before, ctx.request_id)

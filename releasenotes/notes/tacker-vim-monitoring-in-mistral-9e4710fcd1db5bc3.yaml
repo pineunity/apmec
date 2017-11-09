@@ -2,9 +2,9 @@
 features:
   - |
     Vim monitoring via mistral workflow is used to replace old in-place vim
-    monitoring in tacker server.
-    Mistral is an integral part of tacker MANO system. To make full use of it,
-    and make the tacker server scale well, the feature creates a mistral
+    monitoring in apmec server.
+    Mistral is an integral part of apmec MANO system. To make full use of it,
+    and make the apmec server scale well, the feature creates a mistral
     workflow and execute it. The mistral workflow action task then monitors
-    ( currently, pings) the vim, and notifies the tacker conductor to
+    ( currently, pings) the vim, and notifies the apmec conductor to
     update the VIM status.

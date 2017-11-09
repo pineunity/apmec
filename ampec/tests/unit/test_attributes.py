@@ -15,9 +15,9 @@
 
 import testtools
 
-from tacker.api.v1 import attributes
-from tacker.common import exceptions as n_exc
-from tacker.tests import base
+from apmec.api.v1 import attributes
+from apmec.common import exceptions as n_exc
+from apmec.tests import base
 
 
 class TestAttributes(base.BaseTestCase):

@@ -35,13 +35,13 @@ from oslo_log import versionutils
 from oslo_utils import importutils
 from stevedore import driver
 
-from tacker._i18n import _
-from tacker.common import constants as q_const
+from apmec._i18n import _
+from apmec.common import constants as q_const
 
 
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 LOG = logging.getLogger(__name__)
-SYNCHRONIZED_PREFIX = 'tacker-'
+SYNCHRONIZED_PREFIX = 'apmec-'
 MEM_UNITS = {
     "MB": {
         "MB": {
@@ -85,21 +85,21 @@ def find_config_file(options, config_file):
     root = os.path.join(dir_to_common, '..', '..', '..', '..')
     # Handle standard directory search for the config file
     config_file_dirs = [fix_path(os.path.join(os.getcwd(), 'etc')),
-                        fix_path(os.path.join('~', '.tacker-venv', 'etc',
-                                              'tacker')),
+                        fix_path(os.path.join('~', '.apmec-venv', 'etc',
+                                              'apmec')),
                         fix_path('~'),
                         os.path.join(cfg.CONF.state_path, 'etc'),
-                        os.path.join(cfg.CONF.state_path, 'etc', 'tacker'),
+                        os.path.join(cfg.CONF.state_path, 'etc', 'apmec'),
                         fix_path(os.path.join('~', '.local',
-                                              'etc', 'tacker')),
-                        '/usr/etc/tacker',
-                        '/usr/local/etc/tacker',
-                        '/etc/tacker/',
+                                              'etc', 'apmec')),
+                        '/usr/etc/apmec',
+                        '/usr/local/etc/apmec',
+                        '/etc/apmec/',
                         '/etc']
 
     if 'plugin' in options:
         config_file_dirs = [
-            os.path.join(x, 'tacker', 'plugins', options['plugin'])
+            os.path.join(x, 'apmec', 'plugins', options['plugin'])
             for x in config_file_dirs
         ]
 

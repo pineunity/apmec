@@ -20,11 +20,11 @@ from oslo_utils import uuidutils
 from webob import exc
 import webtest
 
-from tacker.api import extensions
-from tacker.api.v1 import attributes
-from tacker.tests.unit import test_api_v2
-from tacker.tests.unit import test_extensions
-from tacker.tests.unit import testlib_api
+from apmec.api import extensions
+from apmec.api.v1 import attributes
+from apmec.tests.unit import test_api_v2
+from apmec.tests.unit import test_extensions
+from apmec.tests.unit import testlib_api
 
 
 class ExtensionTestCase(testlib_api.WebTestCase):

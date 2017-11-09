@@ -1,5 +1,5 @@
-To generate the sample tacker configuration files, run the following
-command from the top level of the tacker directory:
+To generate the sample apmec configuration files, run the following
+command from the top level of the apmec directory:
 
 tox -e config-gen
 

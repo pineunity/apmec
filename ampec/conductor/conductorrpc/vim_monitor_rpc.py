@@ -15,13 +15,13 @@
 
 import oslo_messaging
 
-from tacker.common import topics
+from apmec.common import topics
 
 
 class VIMUpdateRPC(object):
 
     target = oslo_messaging.Target(
-        exchange='tacker',
+        exchange='apmec',
         topic=topics.TOPIC_CONDUCTOR,
         fanout=False,
         version='1.0')

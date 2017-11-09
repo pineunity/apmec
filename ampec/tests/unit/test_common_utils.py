@@ -14,8 +14,8 @@
 
 import testtools
 
-from tacker.common import utils
-from tacker.tests import base
+from apmec.common import utils
+from apmec.tests import base
 
 
 class TestDict2Tuples(base.BaseTestCase):

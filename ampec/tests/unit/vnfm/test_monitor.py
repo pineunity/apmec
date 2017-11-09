@@ -18,9 +18,9 @@ import mock
 from oslo_utils import timeutils
 import testtools
 
-from tacker.db.common_services import common_services_db_plugin
-from tacker.plugins.common import constants
-from tacker.vnfm import monitor
+from apmec.db.common_services import common_services_db_plugin
+from apmec.plugins.common import constants
+from apmec.vnfm import monitor
 
 MOCK_DEVICE_ID = 'a737497c-761c-11e5-89c3-9cb6541d805d'
 MOCK_VNF_DEVICE = {
@@ -54,9 +54,9 @@ class TestVNFMonitor(testtools.TestCase):
 
     def setUp(self):
         super(TestVNFMonitor, self).setUp()
-        p = mock.patch('tacker.common.driver_manager.DriverManager')
+        p = mock.patch('apmec.common.driver_manager.DriverManager')
         self.mock_monitor_manager = p.start()
-        mock.patch('tacker.db.common_services.common_services_db_plugin.'
+        mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
         self._cos_db_plugin =\
@@ -86,7 +86,7 @@ class TestVNFMonitor(testtools.TestCase):
                                                 action_cb)
         self.assertEqual(expected_output, output_dict)
 
-    @mock.patch('tacker.vnfm.monitor.VNFMonitor.__run__')
+    @mock.patch('apmec.vnfm.monitor.VNFMonitor.__run__')
     def test_add_hosting_vnf(self, mock_monitor_run):
         test_device_dict = {
             'id': MOCK_DEVICE_ID,
@@ -109,7 +109,7 @@ class TestVNFMonitor(testtools.TestCase):
             res_state=mock.ANY, evt_type=constants.RES_EVT_MONITOR,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('tacker.vnfm.monitor.VNFMonitor.__run__')
+    @mock.patch('apmec.vnfm.monitor.VNFMonitor.__run__')
     def test_run_monitor(self, mock_monitor_run):
         test_hosting_vnf = MOCK_VNF_DEVICE
         test_hosting_vnf['vnf'] = {}

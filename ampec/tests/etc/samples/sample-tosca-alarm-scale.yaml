@@ -39,7 +39,7 @@ topology_template:
 
   policies:
     - SP1:
-        type: tosca.policies.tacker.Scaling
+        type: tosca.policies.apmec.Scaling
         targets: [VDU1]
         properties:
           increment: 1
@@ -49,7 +49,7 @@ topology_template:
           default_instances: 2
 
     - vdu_cpu_usage_monitoring_policy:
-        type: tosca.policies.tacker.Alarming
+        type: tosca.policies.apmec.Alarming
         triggers:
             vdu_hcpu_usage_scaling_out:
                 event_type:

@@ -23,9 +23,9 @@ import testtools
 import webob
 import webob.exc
 
-from tacker.common import exceptions as exception
-from tacker.tests import base
-from tacker import wsgi
+from apmec.common import exceptions as exception
+from apmec.tests import base
+from apmec import wsgi
 
 CONF = cfg.CONF
 

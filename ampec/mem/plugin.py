@@ -25,27 +25,27 @@ from oslo_utils import excutils
 from oslo_utils import uuidutils
 from toscaparser.tosca_template import ToscaTemplate
 
-from tacker.api.v1 import attributes
-from tacker.common import driver_manager
-from tacker.common import exceptions
-from tacker.common import utils
-from tacker.db.mem import mem_db
-from tacker.extensions import mem
-from tacker.plugins.common import constants
-from tacker.mem.mgmt_drivers import constants as mgmt_constants
-from tacker.mem import monitor
-from tacker.mem import vim_client
+from apmec.api.v1 import attributes
+from apmec.common import driver_manager
+from apmec.common import exceptions
+from apmec.common import utils
+from apmec.db.mem import mem_db
+from apmec.extensions import mem
+from apmec.plugins.common import constants
+from apmec.mem.mgmt_drivers import constants as mgmt_constants
+from apmec.mem import monitor
+from apmec.mem import vim_client
 
-from tacker.tosca import utils as toscautils
+from apmec.tosca import utils as toscautils
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
 
 
 def config_opts():
-    return [('tacker', MEMMgmtMixin.OPTS),
-            ('tacker', MEMPlugin.OPTS_INFRA_DRIVER),
-            ('tacker', MEMPlugin.OPTS_POLICY_ACTION)]
+    return [('apmec', MEMMgmtMixin.OPTS),
+            ('apmec', MEMPlugin.OPTS_INFRA_DRIVER),
+            ('apmec', MEMPlugin.OPTS_POLICY_ACTION)]
 
 
 class MEMMgmtMixin(object):
@@ -54,16 +54,16 @@ class MEMMgmtMixin(object):
             'mgmt_driver', default=['noop', 'openwrt'],
             help=_('MGMT driver to communicate with '
                    'Hosting VNF/logical service '
-                   'instance tacker plugin will use')),
+                   'instance apmec plugin will use')),
         cfg.IntOpt('boot_wait', default=30,
             help=_('Time interval to wait for VM to boot'))
     ]
-    cfg.CONF.register_opts(OPTS, 'tacker')
+    cfg.CONF.register_opts(OPTS, 'apmec')
 
     def __init__(self):
         super(MEMMgmtMixin, self).__init__()
         self._mgmt_manager = driver_manager.DriverManager(
-            'tacker.tacker.mgmt.drivers', cfg.CONF.tacker.mgmt_driver)
+            'apmec.apmec.mgmt.drivers', cfg.CONF.apmec.mgmt_driver)
 
     def _invoke(self, vnf_dict, **kwargs):
         method = inspect.stack()[1][3]
@@ -116,31 +116,31 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
     OPTS_INFRA_DRIVER = [
         cfg.ListOpt(
             'infra_driver', default=['noop', 'openstack'],
-            help=_('Hosting vnf drivers tacker plugin will use')),
+            help=_('Hosting vnf drivers apmec plugin will use')),
     ]
-    cfg.CONF.register_opts(OPTS_INFRA_DRIVER, 'tacker')
+    cfg.CONF.register_opts(OPTS_INFRA_DRIVER, 'apmec')
 
     OPTS_POLICY_ACTION = [
         cfg.ListOpt(
             'policy_action', default=['autoscaling', 'respawn',
                                       'log', 'log_and_kill'],
-            help=_('Hosting vnf drivers tacker plugin will use')),
+            help=_('Hosting vnf drivers apmec plugin will use')),
     ]
-    cfg.CONF.register_opts(OPTS_POLICY_ACTION, 'tacker')
+    cfg.CONF.register_opts(OPTS_POLICY_ACTION, 'apmec')
 
     supported_extension_aliases = ['mem']
 
     def __init__(self):
         super(MEMPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
-        self.boot_wait = cfg.CONF.tacker.boot_wait
+        self.boot_wait = cfg.CONF.apmec.boot_wait
         self.vim_client = vim_client.VimClient()
         self._vnf_manager = driver_manager.DriverManager(
-            'tacker.tacker.mem.drivers',
-            cfg.CONF.tacker.infra_driver)
+            'apmec.apmec.mem.drivers',
+            cfg.CONF.apmec.infra_driver)
         self._vnf_action = driver_manager.DriverManager(
-            'tacker.tacker.policy.actions',
-            cfg.CONF.tacker.policy_action)
+            'apmec.apmec.policy.actions',
+            cfg.CONF.apmec.policy_action)
         self._vnf_monitor = monitor.MEMonitor(self.boot_wait)
         self._vnf_alarm_monitor = monitor.VNFAlarmMonitor()
 
@@ -192,7 +192,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         inner_vnfd_dict = yaml.safe_load(vnfd_yaml)
         LOG.debug('vnfd_dict: %s', inner_vnfd_dict)
 
-        # Prepend the tacker_defs.yaml import file with the full
+        # Prepend the apmec_defs.yaml import file with the full
         # path to the file
         toscautils.updateimports(inner_vnfd_dict)
 
@@ -385,7 +385,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             LOG.debug('unknown vim driver '
                       '%(infra_driver)s in %(drivers)s',
                       {'infra_driver': infra_driver,
-                       'drivers': cfg.CONF.tacker.infra_driver})
+                       'drivers': cfg.CONF.apmec.infra_driver})
             raise mem.InvalidInfraDriver(vim_name=infra_driver)
 
         vnf_dict = self._create_vnf(context, vnf_info, vim_auth, infra_driver)

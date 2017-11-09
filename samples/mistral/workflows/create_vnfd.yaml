@@ -15,7 +15,7 @@ std.create_vnfd:
   tasks:
     create_vnfd:
       description: Request to create a VNFD.
-      action: tacker.create_vnfd body=<% $.body %>
+      action: apmec.create_vnfd body=<% $.body %>
       input:
         body: <% $.body %>
       publish:

@@ -15,7 +15,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-# If ../tacker/__init__.py exists, add ../ to Python search path, so that
+# If ../apmec/__init__.py exists, add ../ to Python search path, so that
 # it will override what happens to be installed in /usr/(local/)lib/python...
 
 import sys
@@ -24,13 +24,13 @@ from oslo_config import cfg
 import oslo_i18n
 from oslo_service import service as common_service
 
-from tacker import _i18n
+from apmec import _i18n
 _i18n.enable_lazy()
-from tacker.common import config
-from tacker import service
+from apmec.common import config
+from apmec import service
 
 
-oslo_i18n.install("tacker")
+oslo_i18n.install("apmec")
 
 
 def main():
@@ -38,12 +38,12 @@ def main():
     config.init(sys.argv[1:])
     if not cfg.CONF.config_file:
         sys.exit(_("ERROR: Unable to find configuration file via the default"
-                   " search paths (~/.tacker/, ~/, /etc/tacker/, /etc/) and"
+                   " search paths (~/.apmec/, ~/, /etc/apmec/, /etc/) and"
                    " the '--config-file' option!"))
 
     try:
-        tacker_api = service.serve_wsgi(service.TackerApiService)
-        launcher = common_service.launch(cfg.CONF, tacker_api,
+        apmec_api = service.serve_wsgi(service.TackerApiService)
+        launcher = common_service.launch(cfg.CONF, apmec_api,
                                          workers=cfg.CONF.api_workers or None)
         launcher.wait()
     except KeyboardInterrupt:

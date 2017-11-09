@@ -16,8 +16,8 @@
 from oslo_middleware import request_id
 import webob
 
-from tacker import auth
-from tacker.tests import base
+from apmec import auth
+from apmec.tests import base
 
 
 class TackerKeystoneContextTestCase(base.BaseTestCase):
@@ -27,7 +27,7 @@ class TackerKeystoneContextTestCase(base.BaseTestCase):
 
         @webob.dec.wsgify
         def fake_app(req):
-            self.context = req.environ['tacker.context']
+            self.context = req.environ['apmec.context']
             return webob.Response()
 
         self.context = None

@@ -14,8 +14,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from tacker.common import log
-from tacker.db.common_services import common_services_db_plugin
+from apmec.common import log
+from apmec.db.common_services import common_services_db_plugin
 
 
 class CommonServicesPlugin(common_services_db_plugin.CommonServicesPluginDb):

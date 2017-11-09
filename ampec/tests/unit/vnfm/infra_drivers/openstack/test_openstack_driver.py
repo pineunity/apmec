@@ -15,14 +15,14 @@
 
 import mock
 
-from tacker.extensions import vnfm
-from tacker.tests.unit import base
-from tacker.vnfm.infra_drivers.openstack import openstack
+from apmec.extensions import vnfm
+from apmec.tests.unit import base
+from apmec.vnfm.infra_drivers.openstack import openstack
 
 
 class TestOpenStack(base.TestCase):
 
-    @mock.patch("tacker.vnfm.infra_drivers.openstack.heat_client.HeatClient")
+    @mock.patch("apmec.vnfm.infra_drivers.openstack.heat_client.HeatClient")
     def test_create_wait_with_heat_connection_exception(self, mocked_hc):
         stack = {"stack_status", "CREATE_IN_PROGRESS"}
         mocked_hc.get.side_effect = [stack, Exception("any stuff")]
@@ -31,7 +31,7 @@ class TestOpenStack(base.TestCase):
                           openstack_driver.create_wait,
                           None, None, {}, 'vnf_id', None)
 
-    @mock.patch("tacker.vnfm.infra_drivers.openstack.heat_client.HeatClient")
+    @mock.patch("apmec.vnfm.infra_drivers.openstack.heat_client.HeatClient")
     def test_delete_wait_with_heat_connection_exception(self, mocked_hc):
         stack = {"stack_status", "DELETE_IN_PROGRESS"}
         mocked_hc.get.side_effect = [stack, Exception("any stuff")]

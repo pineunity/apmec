@@ -17,8 +17,8 @@
 Exception for keymgr
 """
 
-from tacker._i18n import _
-from tacker.common.exceptions import TackerException
+from apmec._i18n import _
+from apmec.common.exceptions import TackerException
 
 
 class Forbidden(TackerException):

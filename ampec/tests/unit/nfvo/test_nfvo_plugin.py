@@ -21,18 +21,18 @@ from oslo_utils import uuidutils
 
 from mock import patch
 
-from tacker import context
-from tacker.db.common_services import common_services_db_plugin
-from tacker.db.nfvo import nfvo_db
-from tacker.db.nfvo import ns_db
-from tacker.db.nfvo import vnffg_db
-from tacker.extensions import nfvo
-from tacker.manager import TackerManager
-from tacker.nfvo import nfvo_plugin
-from tacker.plugins.common import constants
-from tacker.tests.unit.db import base as db_base
-from tacker.tests.unit.db import utils
-from tacker.vnfm import vim_client
+from apmec import context
+from apmec.db.common_services import common_services_db_plugin
+from apmec.db.nfvo import nfvo_db
+from apmec.db.nfvo import ns_db
+from apmec.db.nfvo import vnffg_db
+from apmec.extensions import nfvo
+from apmec.manager import TackerManager
+from apmec.nfvo import nfvo_plugin
+from apmec.plugins.common import constants
+from apmec.tests.unit.db import base as db_base
+from apmec.tests.unit.db import utils
+from apmec.vnfm import vim_client
 
 SECRET_PASSWORD = '***'
 DUMMY_NS_2 = 'ba6bf017-f6f7-45f1-a280-57b073bf78ef'
@@ -197,10 +197,10 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         self.addCleanup(mock.patch.stopall)
         self.context = context.get_admin_context()
         self._mock_driver_manager()
-        mock.patch('tacker.meo.nfvo_plugin.NfvoPlugin._get_vim_from_vnf',
+        mock.patch('apmec.meo.nfvo_plugin.NfvoPlugin._get_vim_from_vnf',
                    side_effect=dummy_get_vim).start()
         self.nfvo_plugin = nfvo_plugin.NfvoPlugin()
-        mock.patch('tacker.db.common_services.common_services_db_plugin.'
+        mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
         self._cos_db_plugin =\
@@ -213,7 +213,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         fake_driver_manager = mock.Mock()
         fake_driver_manager.return_value = self._driver_manager
         self._mock(
-            'tacker.common.driver_manager.DriverManager', fake_driver_manager)
+            'apmec.common.driver_manager.DriverManager', fake_driver_manager)
 
     def _insert_dummy_vim(self):
         session = self.context.session
@@ -529,7 +529,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            mock.patch('tacker.common.driver_manager.DriverManager',
+            mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_template()
             vnffg_obj = utils.get_dummy_vnffg_obj()
@@ -546,12 +546,12 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                                                            symmetrical=mock.ANY
                                                            )
 
-    @mock.patch('tacker.meo.nfvo_plugin.NfvoPlugin.create_vnffgd')
+    @mock.patch('apmec.meo.nfvo_plugin.NfvoPlugin.create_vnffgd')
     def test_create_vnffg_abstract_types_inline(self, mock_create_vnffgd):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            mock.patch('tacker.common.driver_manager.DriverManager',
+            mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             mock_create_vnffgd.return_value = {'id':
                     '11da9f20-9347-4283-bc68-eb98061ef8f7'}
@@ -576,7 +576,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            mock.patch('tacker.common.driver_manager.DriverManager',
+            mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_param_template()
             vnffg_obj = utils.get_dummy_vnffg_param_obj()
@@ -628,7 +628,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            mock.patch('tacker.common.driver_manager.DriverManager',
+            mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_template()
             vnffg_obj = utils.get_dummy_vnffg_obj_vnf_mapping()
@@ -649,7 +649,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            mock.patch('tacker.common.driver_manager.DriverManager',
+            mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_template()
             vnffg = self._insert_dummy_vnffg()
@@ -667,7 +667,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         with patch.object(TackerManager, 'get_service_plugins') as \
                 mock_plugins:
             mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
-            mock.patch('tacker.common.driver_manager.DriverManager',
+            mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_vnffg_template()
             vnffg = self._insert_dummy_vnffg()
@@ -703,9 +703,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                     'net0, description: name of VL2 virtuallink, type: string'
                     '}\n  node_templates:\n    VL1:\n      properties:\n     '
                     '   network_name: {get_input: vl1_name}\n        vendor: '
-                    'tacker\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
+                    'apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
                     'properties:\n        network_name: {get_input: vl2_name}'
-                    '\n        vendor: tacker\n      type: tosca.nodes.nfv.VL'
+                    '\n        vendor: apmec\n      type: tosca.nodes.nfv.VL'
                     '\n    VNF1:\n      requirements:\n      - {virtualLink1: '
                     'VL1}\n      - {virtualLink2: VL2}\n      type: tosca.node'
                     's.nfv.VNF1\n    VNF2: {type: tosca.nodes.nfv.VNF2}\ntosca'
@@ -740,9 +740,9 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                     'net0, description: name of VL2 virtuallink, type: string'
                     '}\n  node_templates:\n    VL1:\n      properties:\n     '
                     '   network_name: {get_input: vl1_name}\n        vendor: '
-                    'tacker\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
+                    'apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
                     'properties:\n        network_name: {get_input: vl2_name}'
-                    '\n        vendor: tacker\n      type: tosca.nodes.nfv.VL'
+                    '\n        vendor: apmec\n      type: tosca.nodes.nfv.VL'
                     '\n    VNF1:\n      requirements:\n      - {virtualLink1: '
                     'VL1}\n      - {virtualLink2: VL2}\n      type: tosca.node'
                     's.nfv.VNF1\n    VNF2: {type: tosca.nodes.nfv.VNF2}\ntosca'
@@ -857,7 +857,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             self.assertIn('status', result)
             self.assertIn('tenant_id', result)
 
-    @mock.patch('tacker.meo.nfvo_plugin.NfvoPlugin.create_nsd')
+    @mock.patch('apmec.meo.nfvo_plugin.NfvoPlugin.create_nsd')
     @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
     @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
@@ -937,7 +937,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     @mock.patch.object(nfvo_plugin.NfvoPlugin, 'get_auth_dict')
     @mock.patch.object(vim_client.VimClient, 'get_vim')
     @mock.patch.object(nfvo_plugin.NfvoPlugin, '_get_by_name')
-    @mock.patch("tacker.db.meo.ns_db.NSPluginDb.delete_ns_post")
+    @mock.patch("apmec.db.meo.ns_db.NSPluginDb.delete_ns_post")
     def test_delete_ns_no_task_exception(
             self, mock_delete_ns_post, mock_get_by_name, mock_get_vim,
             mock_auth_dict):

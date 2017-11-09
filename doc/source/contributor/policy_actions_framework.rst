@@ -1,7 +1,7 @@
 Tacker Policy Framework
 =======================
 
-This section will introduce framework for tacker policy actions.
+This section will introduce framework for apmec policy actions.
 
 * Introduction
 * How to write a new policy action
@@ -20,18 +20,18 @@ applied for the management purpose.
 How to write a new policy action
 --------------------------------
 
-A policy action for tacker is a python module which contains a class that
+A policy action for apmec is a python module which contains a class that
 inherits from
-"tacker.vnfm.policy_actions.abstract_action.AbstractPolicyAction". If the
+"apmec.vnfm.policy_actions.abstract_action.AbstractPolicyAction". If the
 driver depends/imports more than one module, then create a new python package
-under tacker/vnfm/policy_actions folder. After this we have to mention our
+under apmec/vnfm/policy_actions folder. After this we have to mention our
 driver path in setup.cfg file in root directory.
 
 For example:
 ::
 
-  tacker.tacker.policy.actions =
-    respawn = tacker.vnfm.policy_actions.respawn.respawn:VNFActionRespawn
+  apmec.apmec.policy.actions =
+    respawn = apmec.vnfm.policy_actions.respawn.respawn:VNFActionRespawn
 
 Following methods need to be overridden in the new action:
 
@@ -74,7 +74,7 @@ Example Template
 
   policies:
       - vdu1_cpu_usage_monitoring_policy:
-          type: tosca.policies.tacker.Alarming
+          type: tosca.policies.apmec.Alarming
           triggers:
             resize_compute:
                 event_type:

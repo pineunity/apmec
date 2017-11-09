@@ -28,7 +28,7 @@ down_revision = '4ee19c8a6d0a'
 import sqlalchemy as sa
 
 from alembic import op
-from tacker.db.types import Json
+from apmec.db.types import Json
 
 
 def upgrade(active_plugins=None, options=None):

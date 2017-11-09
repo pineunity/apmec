@@ -25,7 +25,7 @@ decides which traffic should go through them.
 
 Similar to how VNFs are described by VNFDs, VNFFGs are described by VNF
 Forwarding Graph Descriptors (VNFFGD). Please see the `devref guide
-<https://github.com/openstack/tacker/blob/master/doc/source/contributor
+<https://github.com/openstack/apmec/blob/master/doc/source/contributor
 /vnffgd_template_description.rst>`_ on VNFFGD to learn more about
 how a VNFFGD is defined.
 
@@ -64,7 +64,7 @@ Creating the VNFFGD
 
 Once OpenStack/Devstack along with Tacker has been successfully installed,
 deploy a sample VNFFGD template such as the one `here <https://github.com/
-openstack/tacker/tree/master/samples/tosca-templates/vnffgd/
+openstack/apmec/tree/master/samples/tosca-templates/vnffgd/
 tosca-vnffgd-sample.yaml>`_.
 
 .. note::
@@ -103,7 +103,7 @@ Tacker provides the following CLI to create a VNFFGD:
 
 .. code-block:: console
 
-   tacker vnffgd-create --vnffgd-file <vnffgd-file> <vnffgd-name>
+   apmec vnffgd-create --vnffgd-file <vnffgd-file> <vnffgd-name>
 
 
 Creating the VNFFG
@@ -116,22 +116,22 @@ same Connection Point definitions as the ones you declared in your VNFFGD.
 
 .. code-block:: console
 
-   tacker vnfd-create --vnfd-file tosca-vnffg-vnfd1.yaml VNFD1
-   tacker vnf-create --vnfd-name VNFD1 VNF1
+   apmec vnfd-create --vnfd-file tosca-vnffg-vnfd1.yaml VNFD1
+   apmec vnf-create --vnfd-name VNFD1 VNF1
 
-   tacker vnfd-create --vnfd-file tosca-vnffg-vnfd2.yaml VNFD2
-   tacker vnf-create --vnfd-name VNFD2 VNF2
+   apmec vnfd-create --vnfd-file tosca-vnffg-vnfd2.yaml VNFD2
+   apmec vnf-create --vnfd-name VNFD2 VNF2
 
 Refer the 'Getting Started' link below on how to create a VNFD and deploy
 2 VNFs: `VNF1`_ and `VNF2`_.
 
-https://docs.openstack.org/tacker/latest/install/getting_started.html
+https://docs.openstack.org/apmec/latest/install/getting_started.html
 
 Tacker provides the following CLI to create VNFFG from VNFFGD:
 
 .. code-block:: console
 
-   tacker vnffg-create --vnffgd-name <vnffgd-name> \
+   apmec vnffg-create --vnffgd-name <vnffgd-name> \
           --vnf-mapping <vnf-mapping> --symmetrical <boolean> <vnffg-name>
 
 or you can create directly VNFFG from vnffgd template without initiating
@@ -139,14 +139,14 @@ VNFFGD.
 
 .. code-block:: console
 
-   tacker vnffg-create --vnffgd-template <vnffgd-template> \
+   apmec vnffg-create --vnffgd-template <vnffgd-template> \
       --vnf-mapping <vnf-mapping> --symmetrical <boolean> <vnffg-name>
 
 If you use a parameterized vnffg template:
 
 .. code-block:: console
 
-   tacker vnffg-create --vnffgd-name <vnffgd-name> \
+   apmec vnffg-create --vnffgd-name <vnffgd-name> \
       --param-file <param-file> --vnf-mapping <vnf-mapping> \
       --symmetrical <boolean> <vnffg-name>
 
@@ -164,7 +164,7 @@ to the desired VNF instance:
 
 .. code-block:: console
 
-   tacker vnf-list
+   apmec vnf-list
 
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
    | id                                   | name | mgmt_url                  | status | vim_id                               | vnfd_id                              |
@@ -173,7 +173,7 @@ to the desired VNF instance:
    | 91e32c20-6d1f-47a4-9ba7-08f5e5effe07 | VNF1 | {"VDU1": "192.168.1.7"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | 27795330-62a7-406d-9443-2daad76e674b |
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
 
-   tacker vnffg-create --vnffgd-name myvnffgd --vnf-mapping \
+   apmec vnffg-create --vnffgd-name myvnffgd --vnf-mapping \
       VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',VNF2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myvnffg
 
 Alternatively, if no vnf-mapping is provided then Tacker VNFFG will attempt
@@ -212,12 +212,12 @@ VNFFG command with parameter file:
 
 .. code-block:: console
 
-   tacker vnffg-create --vnffgd-name vnffgd-param --vnf-mapping VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',\
+   apmec vnffg-create --vnffgd-name vnffgd-param --vnf-mapping VNFD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',\
    VNFD2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' --param-file vnffg-param-file.yaml myvnffg
 
 
 See `VNFFGD template samples with parameter support <https://github.com/
-openstack/tacker/tree/master/samples/tosca-templates/vnffgd>`_.
+openstack/apmec/tree/master/samples/tosca-templates/vnffgd>`_.
 
 Viewing a VNFFG
 ~~~~~~~~~~~~~~~
@@ -225,18 +225,18 @@ Viewing a VNFFG
 A VNFFG once created is instantiated as multiple sub-components.  These
 components include the VNFFG itself, which relies on a Network Forwarding
 Path (NFP).  The NFP is then composed of a Service Function Chain (SFC) and
-a Classifier.  The main command to view a VNFFG is 'tacker vnffg-show,
+a Classifier.  The main command to view a VNFFG is 'apmec vnffg-show,
 however there are several commands available in order to view the
 sub-components for a rendered VNFFG:
 
 .. code-block:: console
 
-   tacker nfp-list
-   tacker nfp-show <nfp id>
-   tacker chain-list
-   tacker chain-show <chain id>
-   tacker classifier-list
-   tacker classifier-show <classifier id>
+   apmec nfp-list
+   apmec nfp-show <nfp id>
+   apmec chain-list
+   apmec chain-show <chain id>
+   apmec classifier-list
+   apmec classifier-show <classifier id>
 
 Known Issues and Limitations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -248,5 +248,5 @@ Known Issues and Limitations
 - NSH attributes not yet supported
 - Symmetrical is not supported by driver yet
 
-.. _VNF1: https://github.com/openstack/tacker/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-vnfd1.yaml
-.. _VNF2: https://github.com/openstack/tacker/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-vnfd2.yaml
+.. _VNF1: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-vnfd1.yaml
+.. _VNF2: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/vnffgd/tosca-vnffg-vnfd2.yaml

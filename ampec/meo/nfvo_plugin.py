@@ -29,22 +29,22 @@ from oslo_utils import uuidutils
 from tempfile import mkstemp
 from toscaparser.tosca_template import ToscaTemplate
 
-from tacker._i18n import _
-from tacker.common import driver_manager
-from tacker.common import log
-from tacker.common import utils
-from tacker.db.nfvo import nfvo_db_plugin
-from tacker.db.nfvo import ns_db
-from tacker.db.nfvo import vnffg_db
-from tacker.extensions import common_services as cs
-from tacker.extensions import nfvo
-from tacker.keymgr import API as KEYMGR_API
-from tacker import manager
-from tacker.nfvo.workflows.vim_monitor import vim_monitor_utils
-from tacker.plugins.common import constants
-from tacker.vnfm import vim_client
+from apmec._i18n import _
+from apmec.common import driver_manager
+from apmec.common import log
+from apmec.common import utils
+from apmec.db.nfvo import nfvo_db_plugin
+from apmec.db.nfvo import ns_db
+from apmec.db.nfvo import vnffg_db
+from apmec.extensions import common_services as cs
+from apmec.extensions import nfvo
+from apmec.keymgr import API as KEYMGR_API
+from apmec import manager
+from apmec.nfvo.workflows.vim_monitor import vim_monitor_utils
+from apmec.plugins.common import constants
+from apmec.vnfm import vim_client
 
-from tacker.tosca import utils as toscautils
+from apmec.tosca import utils as toscautils
 from toscaparser import tosca_template
 
 LOG = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
         super(NfvoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self._vim_drivers = driver_manager.DriverManager(
-            'tacker.meo.vim.drivers',
+            'apmec.meo.vim.drivers',
             cfg.CONF.nfvo_vim.vim_drivers)
         self.vim_client = vim_client.VimClient()
 
@@ -559,7 +559,7 @@ class NfvoPlugin(nfvo_db_plugin.NfvoPluginDb, vnffg_db.VnffgPluginDbMixin,
             os.close(fd)
             new_files.append(temp_path)
             inner_nsd_dict['imports'].append(temp_path)
-        # Prepend the tacker_defs.yaml import file with the full
+        # Prepend the apmec_defs.yaml import file with the full
         # path to the file
         toscautils.updateimports(inner_nsd_dict)
 

@@ -24,13 +24,13 @@ from oslo_serialization import jsonutils as json
 from oslo_utils import importutils
 from six.moves.urllib import request as urlrequest
 
-import tacker
-from tacker.api.v1 import attributes
-from tacker.common import exceptions
-from tacker import context
-from tacker import manager
-from tacker import policy
-from tacker.tests import base
+import apmec
+from apmec.api.v1 import attributes
+from apmec.common import exceptions
+from apmec import context
+from apmec import manager
+from apmec import policy
+from apmec.tests import base
 
 
 class PolicyFileTestCase(base.BaseTestCase):
@@ -47,7 +47,7 @@ class PolicyFileTestCase(base.BaseTestCase):
         def fake_find_config_file(_1, _2):
             return self.tempdir.join('policy')
 
-        with mock.patch.object(tacker.common.utils,
+        with mock.patch.object(apmec.common.utils,
                                'find_config_file',
                                new=fake_find_config_file):
             tmpfilename = fake_find_config_file(None, None)
@@ -272,15 +272,15 @@ class TackerPolicyTestCase(base.BaseTestCase):
         def remove_fake_resource():
             del attributes.RESOURCE_ATTRIBUTE_MAP["%ss" % FAKE_RESOURCE_NAME]
 
-        self.patcher = mock.patch.object(tacker.policy,
+        self.patcher = mock.patch.object(apmec.policy,
                                          'init',
                                          new=fakepolicyinit)
         self.patcher.start()
         self.addCleanup(remove_fake_resource)
         self.context = context.Context('fake', 'fake', roles=['user'])
         plugin_klass = importutils.import_class(
-            "tacker.db.db_base_plugin_v2.TackerDbPluginV2")
-        self.manager_patcher = mock.patch('tacker.manager.TackerManager')
+            "apmec.db.db_base_plugin_v2.TackerDbPluginV2")
+        self.manager_patcher = mock.patch('apmec.manager.TackerManager')
         fake_manager = self.manager_patcher.start()
         fake_manager_instance = fake_manager.return_value
         fake_manager_instance.plugin = plugin_klass()

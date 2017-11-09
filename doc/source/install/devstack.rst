@@ -29,7 +29,7 @@ is the target branch, the <branch-name> is stable/pike.
     $ git clone https://git.openstack.org/openstack-dev/devstack -b <branch-name>
     $ cd devstack
 
-2. Enable tacker related devstack plugins in ``local.conf`` file::
+2. Enable apmec related devstack plugins in ``local.conf`` file::
 
     [[local|localrc]]
     ############################################################
@@ -58,7 +58,7 @@ is the target branch, the <branch-name> is stable/pike.
     enable_plugin networking-sfc ${GIT_BASE}/openstack/networking-sfc $TACKER_BRANCH
     enable_plugin barbican ${GIT_BASE}/openstack/barbican $TACKER_BRANCH
     enable_plugin mistral ${GIT_BASE}/openstack/mistral $TACKER_BRANCH
-    enable_plugin tacker ${GIT_BASE}/openstack/tacker $TACKER_BRANCH
+    enable_plugin apmec ${GIT_BASE}/openstack/apmec $TACKER_BRANCH
 
 3. Run ``stack.sh``::
 

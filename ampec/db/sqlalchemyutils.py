@@ -17,7 +17,7 @@ from six import moves
 import sqlalchemy
 from sqlalchemy.orm.properties import RelationshipProperty
 
-from tacker.common import exceptions as n_exc
+from apmec.common import exceptions as n_exc
 
 
 def paginate_query(query, model, limit, sorts, marker_obj=None):

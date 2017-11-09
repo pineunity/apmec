@@ -148,8 +148,8 @@ Deploying EPA TOSCA templates using Tacker
 Once OpenStack/Devstack along with Tacker has been successfully installed,
 deploy a sample EPA template such as tosca-vnfd-hugepages.yaml from location
 below:
-https://github.com/openstack/tacker/tree/master/samples/tosca-templates/vnfd
+https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd
 
 Refer the 'Getting Started' link below on how to create a VNFD and deploy a
 VNF:
-https://docs.openstack.org/tacker/latest/install/getting_started.html
+https://docs.openstack.org/apmec/latest/install/getting_started.html

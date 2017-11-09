@@ -12,13 +12,13 @@
 
 import oslo_messaging
 
-from tacker.common import topics
+from apmec.common import topics
 
 
 class MistralActionKillRPC(object):
 
     target = oslo_messaging.Target(
-        exchange='tacker',
+        exchange='apmec',
         topic=topics.TOPIC_ACTION_KILL,
         fanout=False,
         version='1.0')

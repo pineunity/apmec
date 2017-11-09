@@ -193,7 +193,7 @@ Then edit it to contain all of the OpenStack nodes.
     all_vim_nodes
 
     [storage:children]
-    #if the tacker needs volume feature, put related nodes here
+    #if the apmec needs volume feature, put related nodes here
 
 4. Run kolla ansible deploy to install OpenStack system:
 
@@ -204,7 +204,7 @@ Then edit it to contain all of the OpenStack nodes.
 ..
 
 
-5. Run kolla ansible post-deploy to generate tacker access environment file:
+5. Run kolla ansible post-deploy to generate apmec access environment file:
 
 .. code-block:: console
 

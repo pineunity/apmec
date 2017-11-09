@@ -22,8 +22,8 @@ from six import iteritems
 from sqlalchemy.orm import exc as orm_exc
 from sqlalchemy import sql
 
-from tacker.common import exceptions as n_exc
-from tacker.db import sqlalchemyutils
+from apmec.common import exceptions as n_exc
+from apmec.db import sqlalchemyutils
 
 LOG = logging.getLogger(__name__)
 

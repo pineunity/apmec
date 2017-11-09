@@ -27,7 +27,7 @@ Guidelines for writing new hacking checks
    on the N3xx value.
  - List the new rule in the top level HACKING.rst file
  - Add test cases for each new rule to
-   tacker/tests/unit/test_hacking.py
+   apmec/tests/unit/test_hacking.py
 
 """
 
@@ -37,7 +37,7 @@ log_translation = re.compile(
 
 def validate_log_translations(logical_line, physical_line, filename):
     # Translations are not required in the test directory
-    if "tacker/tests" in filename:
+    if "apmec/tests" in filename:
         return
     if pep8.noqa(physical_line):
         return

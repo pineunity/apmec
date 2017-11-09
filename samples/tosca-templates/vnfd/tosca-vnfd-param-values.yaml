@@ -6,5 +6,5 @@
  management: 'true',
  pkt_in_network: 'net0',
  pkt_out_network: 'net1',
- vendor: 'tacker'
+ vendor: 'apmec'
 }

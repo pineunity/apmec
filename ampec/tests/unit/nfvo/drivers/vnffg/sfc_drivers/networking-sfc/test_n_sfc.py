@@ -15,10 +15,10 @@ import mock
 
 from oslo_utils import uuidutils
 
-from tacker import context
-from tacker.nfvo.drivers.vim import openstack_driver
-from tacker.tests.unit import base
-from tacker.tests.unit.db import utils
+from apmec import context
+from apmec.nfvo.drivers.vim import openstack_driver
+from apmec.tests.unit import base
+from apmec.tests.unit.db import utils
 
 
 class FakeNeutronClient(mock.Mock):
@@ -115,7 +115,7 @@ class TestChainSFC(base.TestCase):
         fake_neutron_client = mock.Mock()
         fake_neutron_client.return_value = self.neutron_client
         self._mock(
-            'tacker.meo.drivers.vim.openstack_driver.'
+            'apmec.meo.drivers.vim.openstack_driver.'
             'NeutronClient',
             fake_neutron_client)
 

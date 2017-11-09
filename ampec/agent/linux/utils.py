@@ -25,7 +25,7 @@ from eventlet import greenthread
 from oslo_log import log as logging
 from oslo_utils import excutils
 
-from tacker.common import utils
+from apmec.common import utils
 
 
 LOG = logging.getLogger(__name__)

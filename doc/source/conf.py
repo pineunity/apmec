@@ -37,7 +37,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'tacker'
+project = u'apmec'
 copyright = u'2013, OpenStack Foundation'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
@@ -51,7 +51,7 @@ add_module_names = True
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
-modindex_common_prefix = ['tacker.']
+modindex_common_prefix = ['apmec.']
 
 # -- Options for HTML output --------------------------------------------------
 
@@ -86,6 +86,6 @@ latex_documents = [
 #intersphinx_mapping = {'http://docs.python.org/': None}
 
 # -- Options for openstackdocstheme -------------------------------------------
-repository_name = 'openstack/tacker'
-bug_project = 'tacker'
+repository_name = 'openstack/apmec'
+bug_project = 'apmec'
 bug_tag = ''

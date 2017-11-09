@@ -17,10 +17,10 @@ from keystoneauth1 import exceptions
 import mock
 from oslo_config import cfg
 
-from tacker.extensions import nfvo
-from tacker.nfvo.drivers.vim import openstack_driver
-from tacker.tests.unit import base
-from tacker.tests.unit.db import utils
+from apmec.extensions import nfvo
+from apmec.nfvo.drivers.vim import openstack_driver
+from apmec.tests.unit import base
+from apmec.tests.unit.db import utils
 
 OPTS = [cfg.StrOpt('user_domain_id',
                    default='default',
@@ -74,14 +74,14 @@ class TestOpenstack_Driver(base.TestCase):
         fake_keystone = mock.Mock()
         fake_keystone.return_value = self.keystone
         self._mock(
-            'tacker.vnfm.keystone.Keystone', fake_keystone)
+            'apmec.vnfm.keystone.Keystone', fake_keystone)
 
     def _mock_keymgr(self):
         self.keymgr = mock.Mock(wraps=FakeKeymgrAPI())
         fake_keymgr = mock.Mock()
         fake_keymgr.return_value = self.keymgr
         self._mock(
-            'tacker.keymgr.barbican_key_manager.BarbicanKeyManager',
+            'apmec.keymgr.barbican_key_manager.BarbicanKeyManager',
             fake_keymgr)
 
     def get_vim_obj(self):
@@ -150,8 +150,8 @@ class TestOpenstack_Driver(base.TestCase):
         mock_fernet_obj.encrypt.assert_called_once_with(mock.ANY)
         file_mock().write.assert_called_once_with('test_fernet_key')
 
-    @mock.patch('tacker.meo.drivers.vim.openstack_driver.os.remove')
-    @mock.patch('tacker.meo.drivers.vim.openstack_driver.os.path'
+    @mock.patch('apmec.meo.drivers.vim.openstack_driver.os.remove')
+    @mock.patch('apmec.meo.drivers.vim.openstack_driver.os.path'
                 '.join')
     def test_deregister_vim(self, mock_os_path, mock_os_remove):
         vim_obj = self.get_vim_obj()

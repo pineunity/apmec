@@ -15,10 +15,10 @@
 
 from oslo_config import cfg
 
-from tacker.api import extensions
-from tacker.api.v1 import base
-from tacker import manager
-from tacker.plugins.common import constants
+from apmec.api import extensions
+from apmec.api.v1 import base
+from apmec import manager
+from apmec.plugins.common import constants
 
 
 def build_plural_mappings(special_mappings, resource_map):

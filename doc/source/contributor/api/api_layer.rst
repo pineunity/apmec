@@ -10,14 +10,14 @@ Server Gateway Interface (WSGI) - defined in `PEP 333 <http://legacy.python.org/
 Startup
 -------
 
-Tackers's WSGI server is started from the `server module <http://git.openstack.org/cgit/openstack/tacker/tree/tacker/service.py>`_
+Tackers's WSGI server is started from the `server module <http://git.openstack.org/cgit/openstack/apmec/tree/apmec/service.py>`_
 and the entry point `serve_wsgi` is called to build an instance of the
 `TackerApiService`_, which is then returned to the server module,
 which spawns a `Eventlet`_ `GreenPool`_ that will run the WSGI
 application and respond to requests from clients.
 
 
-.. _TackerApiService: http://git.openstack.org/cgit/openstack/tacker/tree/tacker/service.py
+.. _TackerApiService: http://git.openstack.org/cgit/openstack/apmec/tree/apmec/service.py
 
 .. _Eventlet: http://eventlet.net/
 
@@ -39,11 +39,11 @@ Tacker, which contains several methods that map VNFM resources (such as
 vnfd, vnf) to URLs, and the controller for each resource.
 
 
-.. _config.py: http://git.openstack.org/cgit/openstack/tacker/tree/tacker/common/config.py
+.. _config.py: http://git.openstack.org/cgit/openstack/apmec/tree/apmec/common/config.py
 
-.. _api-paste.ini: http://git.openstack.org/cgit/openstack/tacker/tree/etc/tacker/api-paste.ini
+.. _api-paste.ini: http://git.openstack.org/cgit/openstack/apmec/tree/etc/apmec/api-paste.ini
 
-.. _APIRouter: http://git.openstack.org/cgit/openstack/tacker/tree/tacker/api/v1/router.py
+.. _APIRouter: http://git.openstack.org/cgit/openstack/apmec/tree/apmec/api/v1/router.py
 
 .. _Paste: http://pythonpaste.org/
 

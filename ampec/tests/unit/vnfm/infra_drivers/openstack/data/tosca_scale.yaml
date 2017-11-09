@@ -34,7 +34,7 @@ topology_template:
 
   policies:
     - SP1:
-        type: tosca.policies.tacker.Scaling
+        type: tosca.policies.apmec.Scaling
         targets: [VDU1]
         properties:
           increment: 1

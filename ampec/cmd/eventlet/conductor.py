@@ -10,7 +10,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from tacker.conductor import conductor_server
+from apmec.conductor import conductor_server
 
 
 def main():

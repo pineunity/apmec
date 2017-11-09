@@ -17,7 +17,7 @@ from oslo_utils import timeutils
 from oslo_utils import uuidutils
 import sqlalchemy as sa
 
-from tacker.db import types
+from apmec.db import types
 
 
 class HasTenant(object):

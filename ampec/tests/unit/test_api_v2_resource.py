@@ -18,11 +18,11 @@ import oslo_i18n
 from webob import exc
 import webtest
 
-from tacker.api.v1 import resource as wsgi_resource
-from tacker.common import exceptions as n_exc
-from tacker import context
-from tacker.tests import base
-from tacker import wsgi
+from apmec.api.v1 import resource as wsgi_resource
+from apmec.common import exceptions as n_exc
+from apmec import context
+from apmec.tests import base
+from apmec import wsgi
 
 
 class RequestTestCase(base.BaseTestCase):
@@ -84,13 +84,13 @@ class RequestTestCase(base.BaseTestCase):
         result = request.best_match_content_type()
         self.assertEqual("application/json", result)
 
-    def test_context_with_tacker_context(self):
+    def test_context_with_apmec_context(self):
         self.skip("Not ready yet")
         ctxt = context.Context('fake_user', 'fake_tenant')
-        self.req.environ['tacker.context'] = ctxt
+        self.req.environ['apmec.context'] = ctxt
         self.assertEqual(ctxt, self.req.context)
 
-    def test_context_without_tacker_context(self):
+    def test_context_without_apmec_context(self):
         self.assertTrue(self.req.context.is_admin)
 
     def test_best_match_language(self):
@@ -118,7 +118,7 @@ class RequestTestCase(base.BaseTestCase):
 
 class ResourceTestCase(base.BaseTestCase):
 
-    def test_unmapped_tacker_error_with_json(self):
+    def test_unmapped_apmec_error_with_json(self):
         msg = u'\u7f51\u7edc'
 
         class TestException(n_exc.TackerException):
@@ -141,7 +141,7 @@ class ResourceTestCase(base.BaseTestCase):
                          wsgi.JSONDeserializer().deserialize(res.body))
 
     @mock.patch('oslo_i18n.translate')
-    def test_unmapped_tacker_error_localized(self, mock_translation):
+    def test_unmapped_apmec_error_localized(self, mock_translation):
         msg_translation = 'Translated error'
         mock_translation.return_value = msg_translation
         msg = _('Unmapped error')
@@ -161,7 +161,7 @@ class ResourceTestCase(base.BaseTestCase):
         self.assertIn(msg_translation,
                       str(wsgi.JSONDeserializer().deserialize(res.body)))
 
-    def test_mapped_tacker_error_with_json(self):
+    def test_mapped_apmec_error_with_json(self):
         msg = u'\u7f51\u7edc'
 
         class TestException(n_exc.TackerException):
@@ -186,7 +186,7 @@ class ResourceTestCase(base.BaseTestCase):
                          wsgi.JSONDeserializer().deserialize(res.body))
 
     @mock.patch('oslo_i18n.translate')
-    def test_mapped_tacker_error_localized(self, mock_translation):
+    def test_mapped_apmec_error_localized(self, mock_translation):
         msg_translation = 'Translated error'
         mock_translation.return_value = msg_translation
         msg = _('Unmapped error')
@@ -223,7 +223,7 @@ class ResourceTestCase(base.BaseTestCase):
     def test_http_error(self):
         res = self._make_request_with_side_effect(exc.HTTPGatewayTimeout())
         # verify that the exception structure is the one expected
-        # by the python-tackerclient
+        # by the python-apmecclient
         self.assertEqual(exc.HTTPGatewayTimeout().explanation,
                          res.json['TackerError']['message'])
         self.assertEqual('HTTPGatewayTimeout',

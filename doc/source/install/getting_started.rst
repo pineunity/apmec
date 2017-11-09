@@ -18,8 +18,8 @@
 Getting Started
 ===============
 
-Once tacker is installed successfully, follow the steps given below to get
-started with tacker and validate the installation.
+Once apmec is installed successfully, follow the steps given below to get
+started with apmec and validate the installation.
 
 
 Registering default OpenStack VIM
@@ -44,7 +44,7 @@ the user during vnf-create.
 
 .. code-block:: console
 
-   tacker vim-register --is-default --config-file vim-config.yaml \
+   apmec vim-register --is-default --config-file vim-config.yaml \
           --description 'my first vim' hellovim
 ..
 
@@ -105,29 +105,29 @@ Onboarding sample VNF
 .. note::
 
    You can find more sample tosca templates at
-   https://github.com/openstack/tacker/tree/master/samples/tosca-templates/vnfd.
+   https://github.com/openstack/apmec/tree/master/samples/tosca-templates/vnfd.
 
 
 2). Create a sample vnfd.
 
 .. code-block:: console
 
-   tacker vnfd-create --vnfd-file sample-vnfd.yaml samplevnfd
+   apmec vnfd-create --vnfd-file sample-vnfd.yaml samplevnfd
 ..
 
 3). Create a VNF.
 
 .. code-block:: console
 
-   tacker vnf-create --vnfd-name samplevnfd samplevnf
+   apmec vnf-create --vnfd-name samplevnfd samplevnf
 ..
 
 5). Check the status.
 
 .. code-block:: console
 
-   tacker vim-list
-   tacker vnfd-list
-   tacker vnf-list
-   tacker vnf-show samplevnf
+   apmec vim-list
+   apmec vnfd-list
+   apmec vnf-list
+   apmec vnf-show samplevnf
 ..

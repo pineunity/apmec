@@ -22,15 +22,15 @@ from oslo_service import service
 from oslo_utils import timeutils
 from sqlalchemy.orm import exc as orm_exc
 
-from tacker.common import topics
-from tacker import context as t_context
-from tacker.db.common_services import common_services_db
-from tacker.db.nfvo import nfvo_db
-from tacker.extensions import nfvo
-from tacker import manager
-from tacker.plugins.common import constants
-from tacker import service as tacker_service
-from tacker import version
+from apmec.common import topics
+from apmec import context as t_context
+from apmec.db.common_services import common_services_db
+from apmec.db.nfvo import nfvo_db
+from apmec.extensions import nfvo
+from apmec import manager
+from apmec.plugins.common import constants
+from apmec import service as apmec_service
+from apmec import version
 
 
 LOG = logging.getLogger(__name__)
@@ -68,24 +68,24 @@ class Conductor(manager.Manager):
 
 
 def init(args, **kwargs):
-    cfg.CONF(args=args, project='tacker',
+    cfg.CONF(args=args, project='apmec',
              version='%%prog %s' % version.version_info.release_string(),
              **kwargs)
 
     # FIXME(ihrachys): if import is put in global, circular import
     # failure occurs
-    from tacker.common import rpc as n_rpc
+    from apmec.common import rpc as n_rpc
     n_rpc.init(cfg.CONF)
 
 
-def main(manager='tacker.conductor.conductor_server.Conductor'):
+def main(manager='apmec.conductor.conductor_server.Conductor'):
     init(sys.argv[1:])
-    logging.setup(cfg.CONF, "tacker")
-    oslo_messaging.set_transport_defaults(control_exchange='tacker')
-    logging.setup(cfg.CONF, "tacker")
+    logging.setup(cfg.CONF, "apmec")
+    oslo_messaging.set_transport_defaults(control_exchange='apmec')
+    logging.setup(cfg.CONF, "apmec")
     cfg.CONF.log_opt_values(LOG, logging.DEBUG)
-    server = tacker_service.Service.create(
-        binary='tacker-conductor',
+    server = apmec_service.Service.create(
+        binary='apmec-conductor',
         topic=topics.TOPIC_CONDUCTOR,
         manager=manager)
     service.launch(cfg.CONF, server).wait()

@@ -27,7 +27,7 @@ import pickle
 from alembic import op
 import sqlalchemy as sa
 
-from tacker.db import types
+from apmec.db import types
 
 # revision identifiers, used by Alembic.
 revision = '6e56d4474b2a'

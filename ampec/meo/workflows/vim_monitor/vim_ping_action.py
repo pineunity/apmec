@@ -14,11 +14,11 @@ from mistral.actions import base
 from oslo_config import cfg
 from oslo_log import log as logging
 
-from tacker.agent.linux import utils as linux_utils
-from tacker.common import rpc
-from tacker.common import topics
-from tacker.conductor.conductorrpc import vim_monitor_rpc
-from tacker import context as t_context
+from apmec.agent.linux import utils as linux_utils
+from apmec.common import rpc
+from apmec.common import topics
+from apmec.conductor.conductorrpc import vim_monitor_rpc
+from apmec import context as t_context
 
 LOG = logging.getLogger(__name__)
 

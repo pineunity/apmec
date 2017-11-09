@@ -21,7 +21,7 @@ from sqlalchemy import inspect
 
 from oslo_utils import timeutils
 
-from tacker.common import exceptions
+from apmec.common import exceptions
 
 
 GRANULARITY = {'days': 86400, 'hours': 3600, 'minutes': 60, 'seconds': 1}
@@ -82,7 +82,7 @@ def _purge_events_table(meta, engine, time_line):
         engine.execute(event_delete_query)
 
 
-def purge_deleted(tacker_config, table_name, age, granularity='days'):
+def purge_deleted(apmec_config, table_name, age, granularity='days'):
     try:
         age = int(age)
     except ValueError:
@@ -100,7 +100,7 @@ def purge_deleted(tacker_config, table_name, age, granularity='days'):
     age *= GRANULARITY[granularity]
 
     time_line = timeutils.utcnow() - datetime.timedelta(seconds=age)
-    engine = get_engine(tacker_config)
+    engine = get_engine(apmec_config)
     meta = sqlalchemy.MetaData()
     meta.bind = engine
     inspector = inspect(engine)
@@ -116,6 +116,6 @@ def purge_deleted(tacker_config, table_name, age, granularity='days'):
         _purge_resource_tables(table_name, meta, engine, time_line, assoc_map)
 
 
-def get_engine(tacker_config):
-    return create_engine(tacker_config.database.connection,
+def get_engine(apmec_config):
+    return create_engine(apmec_config.database.connection,
                          poolclass=pool.NullPool)

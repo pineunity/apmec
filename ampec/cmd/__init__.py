@@ -16,7 +16,7 @@ import logging as sys_logging
 
 from oslo_reports import guru_meditation_report as gmr
 
-from tacker import version
+from apmec import version
 
 # During the call to gmr.TextGuruMeditation.setup_autorun(), Guru Meditation
 # Report tries to start logging. Set a handler here to accommodate this.

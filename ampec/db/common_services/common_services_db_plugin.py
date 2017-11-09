@@ -18,11 +18,11 @@ from sqlalchemy.orm import exc as orm_exc
 
 from oslo_log import log as logging
 
-from tacker.common import log
-from tacker.db.common_services import common_services_db
-from tacker.db import db_base
-from tacker.extensions import common_services
-from tacker import manager
+from apmec.common import log
+from apmec.db.common_services import common_services_db
+from apmec.db import db_base
+from apmec.extensions import common_services
+from apmec import manager
 
 
 LOG = logging.getLogger(__name__)

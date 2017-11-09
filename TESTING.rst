@@ -6,7 +6,7 @@ Overview
 
 The unit tests are meant to cover as much code as possible and should
 be executed without the service running. They are designed to test
-the various pieces of the tacker tree to make sure any new changes
+the various pieces of the apmec tree to make sure any new changes
 don't break existing functionality.
 
 The functional tests are intended to validate actual system
@@ -99,9 +99,9 @@ For executing a specific test case, specify the name of the test case
 class separating it from the module path with a colon.
 
 For example, the following would run only the TestVNFMPlugin tests from
-tacker/tests/unit/vm/test_plugin.py::
+apmec/tests/unit/vm/test_plugin.py::
 
-      $ ./tox tacker.tests.unit.vm.test_plugin:TestVNFMPlugin
+      $ ./tox apmec.tests.unit.vm.test_plugin:TestVNFMPlugin
 
 Debugging
 ---------
@@ -117,7 +117,7 @@ after a tox run and reused for debugging::
     $ . .tox/venv/bin/activate
     $ python -m testtools.run [test module path]
 
-Tox packages and installs the tacker source tree in a given venv
+Tox packages and installs the apmec source tree in a given venv
 on every invocation, but if modifications need to be made between
 invocation (e.g. adding more pdb statements), it is recommended
 that the source tree be installed in the venv in editable mode::

@@ -21,17 +21,17 @@ from oslo_log import log as logging
 from toscaparser import properties
 from toscaparser.utils import yamlparser
 
-from tacker.common import log
-from tacker.common import utils
-from tacker.extensions import vnfm
+from apmec.common import log
+from apmec.common import utils
+from apmec.extensions import vnfm
 
 from collections import OrderedDict
 
-FAILURE = 'tosca.policies.tacker.Failure'
+FAILURE = 'tosca.policies.apmec.Failure'
 LOG = logging.getLogger(__name__)
 MONITORING = 'tosca.policies.Monitoring'
 SCALING = 'tosca.policies.Scaling'
-PLACEMENT = 'tosca.policies.tacker.Placement'
+PLACEMENT = 'tosca.policies.apmec.Placement'
 TACKERCP = 'tosca.nodes.nfv.CP.Tacker'
 TACKERVDU = 'tosca.nodes.nfv.VDU.Tacker'
 BLOCKSTORAGE = 'tosca.nodes.BlockStorage.Tacker'
@@ -92,7 +92,7 @@ SCALE_POLICY_RESOURCE = "OS::Heat::ScalingPolicy"
 @log.log
 def updateimports(template):
     path = os.path.dirname(os.path.abspath(__file__)) + '/lib/'
-    defsfile = path + 'tacker_defs.yaml'
+    defsfile = path + 'apmec_defs.yaml'
 
     if 'imports' in template:
         template['imports'].append(defsfile)
@@ -100,7 +100,7 @@ def updateimports(template):
         template['imports'] = [defsfile]
 
     if 'nfv' in template['tosca_definitions_version']:
-        nfvfile = path + 'tacker_nfv_defs.yaml'
+        nfvfile = path + 'apmec_nfv_defs.yaml'
 
         template['imports'].append(nfvfile)
 

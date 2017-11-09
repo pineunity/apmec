@@ -17,13 +17,13 @@ from logging import config as logging_config
 from alembic import context
 from sqlalchemy import create_engine, pool
 
-from tacker.db import model_base
+from apmec.db import model_base
 
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-tacker_config = config.tacker_config
+apmec_config = config.apmec_config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -44,10 +44,10 @@ def run_migrations_offline():
 
     """
     kwargs = dict()
-    if tacker_config.database.connection:
-        kwargs['url'] = tacker_config.database.connection
+    if apmec_config.database.connection:
+        kwargs['url'] = apmec_config.database.connection
     else:
-        kwargs['dialect_name'] = tacker_config.database.engine
+        kwargs['dialect_name'] = apmec_config.database.engine
     context.configure(**kwargs)
 
     with context.begin_transaction():
@@ -62,7 +62,7 @@ def run_migrations_online():
 
     """
     engine = create_engine(
-        tacker_config.database.connection,
+        apmec_config.database.connection,
         poolclass=pool.NullPool)
 
     connection = engine.connect()

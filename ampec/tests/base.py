@@ -30,15 +30,15 @@ from oslo_config import cfg
 from oslo_messaging import conffixture as messaging_conffixture
 import testtools
 
-from tacker.common import config
-from tacker.common import rpc as n_rpc
-from tacker import manager
-from tacker.tests import fake_notifier
-from tacker.tests import post_mortem_debug
+from apmec.common import config
+from apmec.common import rpc as n_rpc
+from apmec import manager
+from apmec.tests import fake_notifier
+from apmec.tests import post_mortem_debug
 
 
 CONF = cfg.CONF
-CONF.import_opt('state_path', 'tacker.common.config')
+CONF.import_opt('state_path', 'apmec.common.config')
 TRUE_STRING = ['True', '1']
 LOG_FORMAT = "%(asctime)s %(levelname)8s [%(name)s] %(message)s"
 
@@ -132,7 +132,7 @@ class BaseTestCase(testtools.TestCase):
         # suppress all but errors here
         self.useFixture(
             fixtures.FakeLogger(
-                name='tacker.api.extensions',
+                name='apmec.api.extensions',
                 format=LOG_FORMAT,
                 level=logging.ERROR,
                 nuke_handlers=capture_logs,
@@ -161,7 +161,7 @@ class BaseTestCase(testtools.TestCase):
             stderr = self.useFixture(fixtures.StringStream('stderr')).stream
             self.useFixture(fixtures.MonkeyPatch('sys.stderr', stderr))
         self.useFixture(fixtures.MonkeyPatch(
-            'tacker.common.exceptions.TackerException.use_fatal_exceptions',
+            'apmec.common.exceptions.TackerException.use_fatal_exceptions',
             fake_use_fatal_exceptions))
 
         self.useFixture(fixtures.MonkeyPatch(
@@ -173,7 +173,7 @@ class BaseTestCase(testtools.TestCase):
         self.useFixture(self.messaging_conf)
 
         self.addCleanup(n_rpc.clear_extra_exmods)
-        n_rpc.add_extra_exmods('tacker.test')
+        n_rpc.add_extra_exmods('apmec.test')
 
         self.addCleanup(n_rpc.cleanup)
         n_rpc.init(CONF)

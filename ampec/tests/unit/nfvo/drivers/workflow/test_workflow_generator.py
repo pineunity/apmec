@@ -12,9 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from tacker import context
-from tacker.nfvo.drivers.workflow import workflow_generator
-from tacker.tests.unit import base
+from apmec import context
+from apmec.nfvo.drivers.workflow import workflow_generator
+from apmec.tests.unit import base
 
 
 def get_dummy_ns():
@@ -35,12 +35,12 @@ def get_dummy_param():
     return {u'vnf1': {'substitution_mappings': {u'VL1b8587afb-60': {
             'type': 'tosca.nodes.nfv.VL', 'properties': {
                 'network_name': u'net_mgmt',
-                'vendor': 'tacker'}}, 'requirements': {
+                'vendor': 'apmec'}}, 'requirements': {
                     'virtualLink2': u'VL2b8587afb-60',
                     'virtualLink1': u'VL1b8587afb-60'}, u'VL2b8587afb-60': {
                         'type': 'tosca.nodes.nfv.VL',
                         'properties': {'network_name': u'net0',
-                            'vendor': 'tacker'}}}},
+                            'vendor': 'apmec'}}}},
             u'nsd': {u'vl2_name': u'net0', u'vl1_name': u'net_mgmt'}}
 
 
@@ -48,7 +48,7 @@ def get_dummy_create_workflow():
     return {'std.create_vnf_dummy': {'input': ['vnf'],
                 'tasks': {
                     'wait_vnf_active_VNF2': {
-                        'action': 'tacker.show_vnf vnf=<% $.vnf_id_VNF2 %>',
+                        'action': 'apmec.show_vnf vnf=<% $.vnf_id_VNF2 %>',
                         'retry': {'count': 10, 'delay': 10,
                             'continue-on': '<% $.status_VNF2 = '
                                            '"PENDING_CREATE" %>',
@@ -62,7 +62,7 @@ def get_dummy_create_workflow():
                             'delete_vnf_VNF2': '<% $.status_VNF2='
                                                '"ERROR" %>'}]},
                     'create_vnf_VNF2': {
-                        'action': 'tacker.create_vnf body=<% $.vnf.VNF2 %>',
+                        'action': 'apmec.create_vnf body=<% $.vnf.VNF2 %>',
                         'input': {'body': '<% $.vnf.VNF2 %>'},
                         'publish': {
                             'status_VNF2': '<% task(create_vnf_VNF2).'
@@ -75,7 +75,7 @@ def get_dummy_create_workflow():
                                            '.result.vnf.id %>'},
                             'on-success': ['wait_vnf_active_VNF2']},
                     'create_vnf_VNF1': {
-                        'action': 'tacker.create_vnf body=<% $.vnf.VNF1 %>',
+                        'action': 'apmec.create_vnf body=<% $.vnf.VNF1 %>',
                         'input': {'body': '<% $.vnf.VNF1 %>'},
                         'publish': {
                             'status_VNF1': '<% task(create_vnf_VNF1).'
@@ -88,7 +88,7 @@ def get_dummy_create_workflow():
                                            'result.vnf.vim_id %>'},
                         'on-success': ['wait_vnf_active_VNF1']},
                     'wait_vnf_active_VNF1': {
-                        'action': 'tacker.show_vnf vnf=<% $.vnf_id_VNF1 %>',
+                        'action': 'apmec.show_vnf vnf=<% $.vnf_id_VNF1 %>',
                         'retry': {'count': 10, 'delay': 10,
                             'continue-on': '<% $.status_VNF1 = "PENDING_'
                                            'CREATE" %>',
@@ -100,9 +100,9 @@ def get_dummy_create_workflow():
                                              'result.vnf.mgmt_url %>'},
                         'on-success': [{'delete_vnf_VNF1': '<% $.status_VNF1='
                                                            '"ERROR" %>'}]},
-                    'delete_vnf_VNF1': {'action': 'tacker.delete_vnf vnf=<% '
+                    'delete_vnf_VNF1': {'action': 'apmec.delete_vnf vnf=<% '
                                                   '$.vnf_id_VNF1%>'},
-                    'delete_vnf_VNF2': {'action': 'tacker.delete_vnf vnf=<% '
+                    'delete_vnf_VNF2': {'action': 'apmec.delete_vnf vnf=<% '
                                                   '$.vnf_id_VNF2%>'}},
                 'type': 'direct', 'output': {
                     'status_VNF1': '<% $.status_VNF1 %>',
@@ -124,7 +124,7 @@ def get_dummy_delete_workflow():
     return {'version': '2.0',
             'std.delete_vnf_dummy': {'input': ['vnf_id_VNF1'],
                 'tasks': {'delete_vnf_VNF1': {
-                    'action': 'tacker.delete_vnf vnf=<% $.vnf_id_VNF1%>'}},
+                    'action': 'apmec.delete_vnf vnf=<% $.vnf_id_VNF1%>'}},
                 'type': 'direct'}}
 
 
