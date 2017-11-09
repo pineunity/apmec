@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 
-description: VNF TOSCA template with input parameters
+description: MEA TOSCA template with input parameters
 
 metadata:
   template_name: sample-tosca-mead

@@ -1,6 +1,6 @@
 ---
 features:
-  - Added parameter support for deploying VNF Forwarding Graph
+  - Added parameter support for deploying MEA Forwarding Graph
     Descriptor templates. With this addition the user can deploy
     a NFY using an Onboarded parameterized template with
     different parameter values using parameter yaml

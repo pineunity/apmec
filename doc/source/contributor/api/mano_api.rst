@@ -41,7 +41,7 @@ Vnfds
 
 **GET /v1.0/meads**
 
-List meads - List meads stored in the VNF catalog.
+List meads - List meads stored in the MEA catalog.
 
 ::
 
@@ -149,7 +149,7 @@ Create mead - Create a mead entry based on the mead template.
 
 **DELETE /v1.0/meads/{mead_id}**
 
-Delete mead - Deletes a specified mead_id from the VNF catalog.
+Delete mead - Deletes a specified mead_id from the MEA catalog.
 
 This operation does not accept a request body and does not return a response
 body.
@@ -159,7 +159,7 @@ Vnfs
 
 **GET /v1.0/meas**
 
-List meas - Lists instantiated meas in VNF Manager.
+List meas - Lists instantiated meas in MEA Manager.
 
 ::
 
@@ -312,4 +312,4 @@ Update mea - Update a mea based on user config file or data.
 
 **DELETE /v1.0/meas/{mea_id}**
 
-Delete mea - Deletes a specified mea_id from the VNF list.
+Delete mea - Deletes a specified mea_id from the MEA list.

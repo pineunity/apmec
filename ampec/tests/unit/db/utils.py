@@ -248,8 +248,8 @@ def get_dummy_NANY_obj_mea_mapping():
                       'name': 'dummy_NANY',
                       u'attributes': {u'template': NANYD_tosca_template},
                       'mea_mapping': {
-                          'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
-                          'VNF3': '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'
+                          'MEA1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
+                          'MEA3': '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'
                       },
                       'symmetrical': False}}
 

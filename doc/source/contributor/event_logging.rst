@@ -18,7 +18,7 @@ Apmec Resources supporting Events
 ----------------------------------
 As of Newton release, events information is captured for below:
 
-- VNF
+- MEA
 
 - MEAD
 
@@ -51,7 +51,7 @@ Apmec supports display of events to an end user via
     - event-show: Show detailed info for a given event ID.
     - events-list: Lists all events for all resources.
     - vim-events-list: List events that belong to a given VIM.
-    - mea-events-list: List events that belong to a given VNF.
+    - mea-events-list: List events that belong to a given MEA.
     - mead-events-list: List events that belong to a given MEAD.
 
 NOTE: For more details on the syntax of these CLIs, refer to
@@ -61,9 +61,9 @@ Apmec Client command usage examples to access resource lifecycle events
 ------------------------------------------------------------------------
 
 1. The following command displays all the state transitions that occurred on
-a long running VNF.  The sample output illustrates a VNF that has
+a long running MEA.  The sample output illustrates a MEA that has
 successfully gone through a scale out operation. Note, the <resource_id> here
-is VNF's uuid.
+is MEA's uuid.
 
 .. code-block:: console
 
@@ -72,7 +72,7 @@ is VNF's uuid.
   +----+---------------+-------------------+-------------------+------------+-------------------+---------------------+
   | id | resource_type | resource_id       | resource_state    | event_type | timestamp         | event_details       |
   +----+---------------+-------------------+-------------------+------------+-------------------+---------------------+
-  | 13 | mea           | 9dd7b2f1-e91e-418 | PENDING_CREATE    | CREATE     | 2016-09-21        | VNF UUID assigned.  |
+  | 13 | mea           | 9dd7b2f1-e91e-418 | PENDING_CREATE    | CREATE     | 2016-09-21        | MEA UUID assigned.  |
   |    |               | 3-bcbe-           |                   |            | 20:12:37          |                     |
   |    |               | 34b80bdb18fb      |                   |            |                   |                     |
   | 14 | mea           | 9dd7b2f1-e91e-418 | PENDING_CREATE    | CREATE     | 2016-09-21        | Infra Instance ID   |
@@ -85,7 +85,7 @@ is VNF's uuid.
   |    |               |                   |                   |            |                   | "VDU2":             |
   |    |               |                   |                   |            |                   | ["10.0.0.4",        |
   |    |               |                   |                   |            |                   | "10.0.0.5"]}        |
-  | 15 | mea           | 9dd7b2f1-e91e-418 | ACTIVE            | CREATE     | 2016-09-21        | VNF status updated  |
+  | 15 | mea           | 9dd7b2f1-e91e-418 | ACTIVE            | CREATE     | 2016-09-21        | MEA status updated  |
   |    |               | 3-bcbe-           |                   |            | 20:13:09          |                     |
   |    |               | 34b80bdb18fb      |                   |            |                   |                     |
   | 16 | mea           | 9dd7b2f1-e91e-418 | PENDING_SCALE_OUT | SCALE      | 2016-09-21        |                     |
@@ -135,7 +135,7 @@ Miscellaneous events command examples:
   |  3 | mead          | afc0c662-5117-4 | Not Applicable | CREATE     | 2016-09-14      |                 |
   |    |               | 7a7-8088-02e9f8 |                |            | 05:17:30        |                 |
   |    |               | a3532b          |                |            |                 |                 |
-  |  4 | mea           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | VNF UUID        |
+  |  4 | mea           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | MEA UUID        |
   |    |               | -41cf-acb5-32ab |                |            | 17:49:24        | assigned.       |
   |    |               | 8c109265        |                |            |                 |                 |
   |  5 | mea           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | Infra Instance  |
@@ -146,7 +146,7 @@ Miscellaneous events command examples:
   |    |               |                 |                |            |                 | URL set:        |
   |    |               |                 |                |            |                 | {"VDU1": "192.1 |
   |    |               |                 |                |            |                 | 68.120.8"}      |
-  |  6 | mea           | 52adaae4-36b5   | ACTIVE         | CREATE     | 2016-09-14      | VNF status      |
+  |  6 | mea           | 52adaae4-36b5   | ACTIVE         | CREATE     | 2016-09-14      | MEA status      |
   |    |               | -41cf-acb5-32ab |                |            | 17:49:51        | updated         |
   |    |               | 8c109265        |                |            |                 |                 |
   +----+---------------+-----------------+----------------+------------+-----------------+-----------------+
@@ -166,7 +166,7 @@ Miscellaneous events command examples:
   |  3 | mead          | afc0c662-5117-4 | ACTIVE         | CREATE     | 2016-09-14      |                 |
   |    |               | 7a7-8088-02e9f8 |                |            | 05:17:30        |                 |
   |    |               | a3532b          |                |            |                 |                 |
-  |  4 | mea           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | VNF UUID        |
+  |  4 | mea           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | MEA UUID        |
   |    |               | -41cf-acb5-32ab |                |            | 17:49:24        | assigned.       |
   |    |               | 8c109265        |                |            |                 |                 |
   |  5 | mea           | 52adaae4-36b5   | PENDING_CREATE | CREATE     | 2016-09-14      | Infra Instance  |
@@ -177,7 +177,7 @@ Miscellaneous events command examples:
   |    |               |                 |                |            |                 | URL set:        |
   |    |               |                 |                |            |                 | {"VDU1": "192.1 |
   |    |               |                 |                |            |                 | 68.120.8"}      |
-  |  6 | mea           | 52adaae4-36b5   | ACTIVE         | CREATE     | 2016-09-14      | VNF status      |
+  |  6 | mea           | 52adaae4-36b5   | ACTIVE         | CREATE     | 2016-09-14      | MEA status      |
   |    |               | -41cf-acb5-32ab |                |            | 17:49:51        | updated         |
   |    |               | 8c109265        |                |            |                 |                 |
   +----+---------------+-----------------+----------------+------------+-----------------+-----------------+

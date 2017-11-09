@@ -252,19 +252,19 @@ class InvalidCIDR(BadRequest):
 
 
 class MgmtDriverException(ApmecException):
-    message = _("VNF configuration failed")
+    message = _("MEA configuration failed")
 
 
 class AlarmUrlInvalid(BadRequest):
-    message = _("Invalid alarm url for VNF %(mea_id)s")
+    message = _("Invalid alarm url for MEA %(mea_id)s")
 
 
 class TriggerNotFound(NotFound):
-    message = _("Trigger %(trigger_name)s does not exist for VNF %(mea_id)s")
+    message = _("Trigger %(trigger_name)s does not exist for MEA %(mea_id)s")
 
 
 class VnfPolicyNotFound(NotFound):
-    message = _("Policy %(policy)s does not exist for VNF %(mea_id)s")
+    message = _("Policy %(policy)s does not exist for MEA %(mea_id)s")
 
 
 class VnfPolicyActionInvalid(BadRequest):

@@ -37,7 +37,7 @@ class TestCommonServicesPlugin(db_base.SqlTestCase):
         return {
             'resource_id': '6261579e-d6f3-49ad-8bc3-a9cb974778ff',
             'resource_state': 'ACTIVE',
-            'resource_type': 'VNF',
+            'resource_type': 'MEA',
             'event_details': '',
             'event_type': 'scale_up',
             'timestamp': timeutils.parse_strtime('2016-07-20T05:43:52.765172')

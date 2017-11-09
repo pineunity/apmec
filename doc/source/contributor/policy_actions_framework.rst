@@ -11,8 +11,8 @@ This section will introduce framework for apmec policy actions.
 Introduction
 ------------
 
-Apmec policy actions framework provides the NFV operators and VNF vendors to
-write a pluggable action that manages their own VNFs. Currently Apmec
+Apmec policy actions framework provides the NFV operators and MEA vendors to
+write a pluggable action that manages their own MEAs. Currently Apmec
 already provided some common actions like autoscaling, respawning, and
 logging. With this framework the custom actions can be easily
 applied for the management purpose.
@@ -31,7 +31,7 @@ For example:
 ::
 
   apmec.apmec.policy.actions =
-    respawn = apmec.mem.policy_actions.respawn.respawn:VNFActionRespawn
+    respawn = apmec.mem.policy_actions.respawn.respawn:MEAActionRespawn
 
 Following methods need to be overridden in the new action:
 

@@ -11,9 +11,9 @@ Overview
 --------
 
 OpenStack Apmec supports TOSCA MEAD templates that allow specifying
-requirements for a VNF that leverages features of a compute node such as
+requirements for a MEA that leverages features of a compute node such as
 NUMA topology, SR-IOV, Huge pages and CPU pinning. This allows for Enhanced
-Platform Awareness(EPA) placement of a VNF that has high performance and low
+Platform Awareness(EPA) placement of a MEA that has high performance and low
 latency requirements.
 
 Configuring compute nodes to be EPA nodes
@@ -21,7 +21,7 @@ Configuring compute nodes to be EPA nodes
 
 The compute nodes requires configuration in the BIOS, Hypervisor and
 OpenStack to enable it be an EPA compute node for deploying high performance
-VNFs.
+MEAs.
 
 Below table shows the configurations needed for the different features across
 BIOS, Hypervisor and OpenStack.
@@ -105,8 +105,8 @@ Creating availability zone using compute nodes
 ----------------------------------------------
 
 Once the compute nodes have been prepared for high performance requirement
-VNF deployments, the next step would be to create an 'aggregate-list' and
-availability zone from the compute nodes identified for VNF deployments.
+MEA deployments, the next step would be to create an 'aggregate-list' and
+availability zone from the compute nodes identified for MEA deployments.
 Below commands illustrates an example of creating such an aggregate-list,
 availability zone and adding compute nodes.
 
@@ -151,5 +151,5 @@ below:
 https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead
 
 Refer the 'Getting Started' link below on how to create a MEAD and deploy a
-VNF:
+MEA:
 https://docs.openstack.org/apmec/latest/install/getting_started.html

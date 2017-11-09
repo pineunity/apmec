@@ -32,8 +32,8 @@
                 "vendor": "apmec"
               }
             },
-            "VNF1": {
-              "type": "tosca.nodes.nfv.VNF1",
+            "MEA1": {
+              "type": "tosca.nodes.nfv.MEA1",
               "requirements": [
                 {
                   "virtualLink1": "VL1"

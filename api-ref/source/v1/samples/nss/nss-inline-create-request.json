@@ -31,8 +31,8 @@
           }
         },
         "node_templates": {
-          "VNF1": {
-            "type": "tosca.nodes.nfv.VNF1",
+          "MEA1": {
+            "type": "tosca.nodes.nfv.MEA1",
             "requirements": [
               {
                 "virtualLink1": "VL1"
@@ -42,8 +42,8 @@
               }
             ]
           },
-          "VNF2": {
-            "type": "tosca.nodes.nfv.VNF2"
+          "MEA2": {
+            "type": "tosca.nodes.nfv.MEA2"
           },
           "VL1": {
             "type": "tosca.nodes.nfv.VL",
@@ -54,8 +54,8 @@
               "vendor": "apmec"
             }
           },
-          "VNF1": {
-            "type": "tosca.nodes.nfv.VNF1",
+          "MEA1": {
+            "type": "tosca.nodes.nfv.MEA1",
             "requirements": [
               {
                 "virtualLink1": "VL1"

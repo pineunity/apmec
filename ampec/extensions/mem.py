@@ -43,8 +43,8 @@ class MEADInUse(exceptions.InUse):
     message = _('MEAD %(mead_id)s is still in use')
 
 
-class VNFInUse(exceptions.InUse):
-    message = _('VNF %(mea_id)s is still in use')
+class MEAInUse(exceptions.InUse):
+    message = _('MEA %(mea_id)s is still in use')
 
 
 class InvalidInfraDriver(exceptions.InvalidInput):
@@ -55,15 +55,15 @@ class InvalidServiceType(exceptions.InvalidInput):
     message = _('invalid service type %(service_type)s')
 
 
-class VNFCreateFailed(exceptions.ApmecException):
-    message = _('creating VNF based on %(mead_id)s failed')
+class MEACreateFailed(exceptions.ApmecException):
+    message = _('creating MEA based on %(mead_id)s failed')
 
 
-class VNFCreateWaitFailed(exceptions.ApmecException):
+class MEACreateWaitFailed(exceptions.ApmecException):
     message = _('%(reason)s')
 
 
-class VNFScaleWaitFailed(exceptions.ApmecException):
+class MEAScaleWaitFailed(exceptions.ApmecException):
     message = _('%(reason)s')
 
 
@@ -79,8 +79,8 @@ class ServiceTypeNotFound(exceptions.NotFound):
     message = _('service type %(service_type_id)s could not be found')
 
 
-class VNFNotFound(exceptions.NotFound):
-    message = _('VNF %(mea_id)s could not be found')
+class MEANotFound(exceptions.NotFound):
+    message = _('MEA %(mea_id)s could not be found')
 
 
 class ParamYAMLNotWellFormed(exceptions.InvalidInput):
@@ -129,12 +129,12 @@ class FilePathMissing(exceptions.InvalidInput):
 
 
 class InfraDriverUnreachable(exceptions.ServiceUnavailable):
-    message = _("Could not retrieve VNF resource IDs and"
+    message = _("Could not retrieve MEA resource IDs and"
                 " types. Please check %(service)s status.")
 
 
-class VNFInactive(exceptions.InvalidInput):
-    message = _("VNF %(mea_id)s is not in Active state %(message)s")
+class MEAInactive(exceptions.InvalidInput):
+    message = _("MEA %(mea_id)s is not in Active state %(message)s")
 
 
 class MetadataNotMatched(exceptions.InvalidInput):
@@ -445,15 +445,15 @@ SUB_RESOURCE_ATTRIBUTE_MAP = {
 class Mem(extensions.ExtensionDescriptor):
     @classmethod
     def get_name(cls):
-        return 'VNF Manager'
+        return 'MEA Manager'
 
     @classmethod
     def get_alias(cls):
-        return 'VNFM'
+        return 'MEM'
 
     @classmethod
     def get_description(cls):
-        return "Extension for VNF Manager"
+        return "Extension for MEA Manager"
 
     @classmethod
     def get_namespace(cls):
@@ -471,10 +471,10 @@ class Mem(extensions.ExtensionDescriptor):
         plural_mappings['service_types'] = 'service_type'
         attr.PLURALS.update(plural_mappings)
         resources = resource_helper.build_resource_info(
-            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.VNFM,
+            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.MEM,
             translate_name=True)
         plugin = manager.ApmecManager.get_service_plugins()[
-            constants.VNFM]
+            constants.MEM]
         for collection_name in SUB_RESOURCE_ATTRIBUTE_MAP:
             parent = SUB_RESOURCE_ATTRIBUTE_MAP[collection_name]['parent']
 
@@ -498,7 +498,7 @@ class Mem(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_plugin_interface(cls):
-        return VNFMPluginBase
+        return MEMPluginBase
 
     def update_attributes_map(self, attributes):
         super(Mem, self).update_attributes_map(
@@ -510,15 +510,15 @@ class Mem(extensions.ExtensionDescriptor):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class VNFMPluginBase(service_base.NFVPluginBase):
+class MEMPluginBase(service_base.NFVPluginBase):
     def get_plugin_name(self):
-        return constants.VNFM
+        return constants.MEM
 
     def get_plugin_type(self):
-        return constants.VNFM
+        return constants.MEM
 
     def get_plugin_description(self):
-        return 'Apmec VNF Manager plugin'
+        return 'Apmec MEA Manager plugin'
 
     @abc.abstractmethod
     def create_mead(self, context, mead):

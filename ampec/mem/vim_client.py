@@ -32,11 +32,11 @@ class VimClient(object):
     def get_vim(self, context, vim_id=None, region_name=None):
         """Get Vim information for provided VIM id
 
-        Initiate the NFVO plugin, request VIM information for the provided
+        Initiate the MEO plugin, request VIM information for the provided
         VIM id and validate region
         """
         meo_plugin = manager.ApmecManager.get_service_plugins().get(
-            constants.NFVO)
+            constants.MEO)
 
         if not vim_id:
             LOG.debug('VIM id not provided. Attempting to find default '

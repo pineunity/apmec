@@ -17,7 +17,7 @@ topology_template:
           param0: key1
           param1: key2
       artifacts:
-        VNFImage_image_func:
+        MEAImage_image_func:
           type: tosca.artifacts.Deployment.Image.VM
           file: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
 

@@ -14,10 +14,10 @@
 .. _ref-mead:
 
 =========================================
-Orchestrating VNFs with attached Volumes
+Orchestrating MEAs with attached Volumes
 =========================================
 
-To support persistent volumes to VNF, TOSCA NFV profile supports new type
+To support persistent volumes to MEA, TOSCA NFV profile supports new type
 of nodes. Apmec has now feature of parsing of those new nodes and creation
 of cinder volumes  which are attached to the VDUs.
 

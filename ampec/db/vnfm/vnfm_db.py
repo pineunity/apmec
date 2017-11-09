@@ -51,7 +51,7 @@ CREATE_STATES = (constants.PENDING_CREATE, constants.DEAD)
 
 class MEAD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
            models_v1.Audit):
-    """Represents MEAD to create VNF."""
+    """Represents MEAD to create MEA."""
 
     __tablename__ = 'mead'
     # Descriptive name
@@ -107,7 +107,7 @@ class MEADAttribute(model_base.BASE, models_v1.HasId):
     value = sa.Column(sa.TEXT(65535), nullable=True)
 
 
-class VNF(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
+class MEA(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
           models_v1.Audit):
     """Represents meas that hosts services.
 
@@ -130,7 +130,7 @@ class VNF(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     # opaque string.
     # e.g. (driver, mgmt_url) = (ssh, ip address), ...
     mgmt_url = sa.Column(sa.String(255), nullable=True)
-    attributes = orm.relationship("VNFAttribute", backref="mea")
+    attributes = orm.relationship("MEAAttribute", backref="mea")
 
     status = sa.Column(sa.String(64), nullable=False)
     vim_id = sa.Column(types.Uuid, sa.ForeignKey('vims.id'), nullable=False)
@@ -147,7 +147,7 @@ class VNF(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     )
 
 
-class VNFAttribute(model_base.BASE, models_v1.HasId):
+class MEAAttribute(model_base.BASE, models_v1.HasId):
     """Represents kwargs necessary for spinning up VM in (key, value) pair.
 
     key value pair is adopted for being agnostic to actuall manager of VMs.
@@ -163,7 +163,7 @@ class VNFAttribute(model_base.BASE, models_v1.HasId):
     value = sa.Column(sa.TEXT(65535), nullable=True)
 
 
-class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
+class MEMPluginDb(mem.MEMPluginBase, db_base.CommonDbMixin):
 
     @property
     def _core_plugin(self):
@@ -174,7 +174,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         return subnet['network_id']
 
     def __init__(self):
-        super(VNFMPluginDb, self).__init__()
+        super(MEMPluginDb, self).__init__()
         self._cos_db_plg = common_services_db_plugin.CommonServicesPluginDb()
 
     def _get_resource(self, context, model, id):
@@ -187,8 +187,8 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                 raise mem.MEADNotFound(mead_id=id)
             elif issubclass(model, ServiceType):
                 raise mem.ServiceTypeNotFound(service_type_id=id)
-            if issubclass(model, VNF):
-                raise mem.VNFNotFound(mea_id=id)
+            if issubclass(model, MEA):
+                raise mem.MEANotFound(mea_id=id)
             else:
                 raise
 
@@ -315,7 +315,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         with context.session.begin(subtransactions=True):
             # TODO(yamahata): race. prevent from newly inserting hosting mea
             #                 that refers to this mead
-            meas_db = context.session.query(VNF).filter_by(
+            meas_db = context.session.query(MEA).filter_by(
                 mead_id=mead_id).first()
             if meas_db is not None and meas_db.deleted_at is None:
                 raise mem.MEADInUse(mead_id=mead_id)
@@ -374,13 +374,13 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
 
     def _mea_attribute_update_or_create(
             self, context, mea_id, key, value):
-        arg = (self._model_query(context, VNFAttribute).
-               filter(VNFAttribute.mea_id == mea_id).
-               filter(VNFAttribute.key == key).first())
+        arg = (self._model_query(context, MEAAttribute).
+               filter(MEAAttribute.mea_id == mea_id).
+               filter(MEAAttribute.key == key).first())
         if arg:
             arg.value = value
         else:
-            arg = VNFAttribute(
+            arg = MEAAttribute(
                 id=uuidutils.generate_uuid(), mea_id=mea_id,
                 key=key, value=value)
             context.session.add(arg)
@@ -399,7 +399,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
             with context.session.begin(subtransactions=True):
                 mead_db = self._get_resource(context, MEAD,
                                              mead_id)
-                mea_db = VNF(id=mea_id,
+                mea_db = MEA(id=mea_id,
                              tenant_id=tenant_id,
                              name=name,
                              description=mead_db.description,
@@ -412,7 +412,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                              deleted_at=datetime.min)
                 context.session.add(mea_db)
                 for key, value in attributes.items():
-                        arg = VNFAttribute(
+                        arg = MEAAttribute(
                             id=uuidutils.generate_uuid(), mea_id=mea_id,
                             key=key, value=value)
                         context.session.add(arg)
@@ -420,10 +420,10 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
             raise exceptions.DuplicateEntity(
                 _type="mea",
                 entry=e.columns)
-        evt_details = "VNF UUID assigned."
+        evt_details = "MEA UUID assigned."
         self._cos_db_plg.create_event(
             context, res_id=mea_id,
-            res_type=constants.RES_TYPE_VNF,
+            res_type=constants.RES_TYPE_MEA,
             res_state=constants.PENDING_CREATE,
             evt_type=constants.RES_EVT_CREATE,
             tstamp=mea_db[constants.RES_EVT_CREATED_FLD],
@@ -436,9 +436,9 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                          mgmt_url, mea_dict):
         LOG.debug('mea_dict %s', mea_dict)
         with context.session.begin(subtransactions=True):
-            query = (self._model_query(context, VNF).
-                     filter(VNF.id == mea_id).
-                     filter(VNF.status.in_(CREATE_STATES)).
+            query = (self._model_query(context, MEA).
+                     filter(MEA.id == mea_id).
+                     filter(MEA.status.in_(CREATE_STATES)).
                      one())
             query.update({'instance_id': instance_id, 'mgmt_url': mgmt_url})
             if instance_id is None or mea_dict['status'] == constants.ERROR:
@@ -453,35 +453,35 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                        "Mgmt URL set: %s") % (instance_id, mgmt_url)
         self._cos_db_plg.create_event(
             context, res_id=mea_dict['id'],
-            res_type=constants.RES_TYPE_VNF,
+            res_type=constants.RES_TYPE_MEA,
             res_state=mea_dict['status'],
             evt_type=constants.RES_EVT_CREATE,
             tstamp=timeutils.utcnow(), details=evt_details)
 
     def _create_mea_status(self, context, mea_id, new_status):
         with context.session.begin(subtransactions=True):
-            query = (self._model_query(context, VNF).
-                     filter(VNF.id == mea_id).
-                     filter(VNF.status.in_(CREATE_STATES)).one())
+            query = (self._model_query(context, MEA).
+                     filter(MEA.id == mea_id).
+                     filter(MEA.status.in_(CREATE_STATES)).one())
             query.update({'status': new_status})
             self._cos_db_plg.create_event(
                 context, res_id=mea_id,
-                res_type=constants.RES_TYPE_VNF,
+                res_type=constants.RES_TYPE_MEA,
                 res_state=new_status,
                 evt_type=constants.RES_EVT_CREATE,
-                tstamp=timeutils.utcnow(), details="VNF creation completed")
+                tstamp=timeutils.utcnow(), details="MEA creation completed")
 
     def _get_mea_db(self, context, mea_id, current_statuses, new_status):
         try:
             mea_db = (
-                self._model_query(context, VNF).
-                filter(VNF.id == mea_id).
-                filter(VNF.status.in_(current_statuses)).
+                self._model_query(context, MEA).
+                filter(MEA.id == mea_id).
+                filter(MEA.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise mem.VNFNotFound(mea_id=mea_id)
+            raise mem.MEANotFound(mea_id=mea_id)
         if mea_db.status == constants.PENDING_UPDATE:
-            raise mem.VNFInUse(mea_id=mea_id)
+            raise mem.MEAInUse(mea_id=mea_id)
         mea_db.update({'status': new_status})
         return mea_db
 
@@ -499,7 +499,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         updated_mea_dict = self._make_mea_dict(mea_db)
         self._cos_db_plg.create_event(
             context, res_id=updated_mea_dict['id'],
-            res_type=constants.RES_TYPE_VNF,
+            res_type=constants.RES_TYPE_MEA,
             res_state=updated_mea_dict['status'],
             evt_type=constants.RES_EVT_SCALE,
             tstamp=timeutils.utcnow())
@@ -512,7 +512,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         updated_mea_dict = self._make_mea_dict(mea_db)
         self._cos_db_plg.create_event(
             context, res_id=mea_id,
-            res_type=constants.RES_TYPE_VNF,
+            res_type=constants.RES_TYPE_MEA,
             res_state=updated_mea_dict['status'],
             evt_type=constants.RES_EVT_UPDATE,
             tstamp=timeutils.utcnow())
@@ -522,16 +522,16 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                          new_mea_dict):
         updated_time_stamp = timeutils.utcnow()
         with context.session.begin(subtransactions=True):
-            (self._model_query(context, VNF).
-             filter(VNF.id == mea_id).
-             filter(VNF.status == constants.PENDING_UPDATE).
+            (self._model_query(context, MEA).
+             filter(MEA.id == mea_id).
+             filter(MEA.status == constants.PENDING_UPDATE).
              update({'status': new_status,
                      'updated_at': updated_time_stamp}))
 
             dev_attrs = new_mea_dict.get('attributes', {})
-            (context.session.query(VNFAttribute).
-             filter(VNFAttribute.mea_id == mea_id).
-             filter(~VNFAttribute.key.in_(dev_attrs.keys())).
+            (context.session.query(MEAAttribute).
+             filter(MEAAttribute.mea_id == mea_id).
+             filter(~MEAAttribute.key.in_(dev_attrs.keys())).
              delete(synchronize_session='fetch'))
 
             for (key, value) in dev_attrs.items():
@@ -540,7 +540,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                                                          key, value)
         self._cos_db_plg.create_event(
             context, res_id=mea_id,
-            res_type=constants.RES_TYPE_VNF,
+            res_type=constants.RES_TYPE_MEA,
             res_state=new_status,
             evt_type=constants.RES_EVT_UPDATE,
             tstamp=updated_time_stamp)
@@ -553,42 +553,42 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         deleted_mea_db = self._make_mea_dict(mea_db)
         self._cos_db_plg.create_event(
             context, res_id=mea_id,
-            res_type=constants.RES_TYPE_VNF,
+            res_type=constants.RES_TYPE_MEA,
             res_state=deleted_mea_db['status'],
             evt_type=constants.RES_EVT_DELETE,
-            tstamp=timeutils.utcnow(), details="VNF delete initiated")
+            tstamp=timeutils.utcnow(), details="MEA delete initiated")
         return deleted_mea_db
 
     def _delete_mea_post(self, context, mea_dict, error, soft_delete=True):
         mea_id = mea_dict['id']
         with context.session.begin(subtransactions=True):
             query = (
-                self._model_query(context, VNF).
-                filter(VNF.id == mea_id).
-                filter(VNF.status == constants.PENDING_DELETE))
+                self._model_query(context, MEA).
+                filter(MEA.id == mea_id).
+                filter(MEA.status == constants.PENDING_DELETE))
             if error:
                 query.update({'status': constants.ERROR})
                 self._cos_db_plg.create_event(
                     context, res_id=mea_id,
-                    res_type=constants.RES_TYPE_VNF,
+                    res_type=constants.RES_TYPE_MEA,
                     res_state=constants.ERROR,
                     evt_type=constants.RES_EVT_DELETE,
                     tstamp=timeutils.utcnow(),
-                    details="VNF Delete ERROR")
+                    details="MEA Delete ERROR")
             else:
                 if soft_delete:
                     deleted_time_stamp = timeutils.utcnow()
                     query.update({'deleted_at': deleted_time_stamp})
                     self._cos_db_plg.create_event(
                         context, res_id=mea_id,
-                        res_type=constants.RES_TYPE_VNF,
+                        res_type=constants.RES_TYPE_MEA,
                         res_state=constants.PENDING_DELETE,
                         evt_type=constants.RES_EVT_DELETE,
                         tstamp=deleted_time_stamp,
-                        details="VNF Delete Complete")
+                        details="MEA Delete Complete")
                 else:
-                    (self._model_query(context, VNFAttribute).
-                     filter(VNFAttribute.mea_id == mea_id).delete())
+                    (self._model_query(context, MEAAttribute).
+                     filter(MEAAttribute.mea_id == mea_id).delete())
                     query.delete()
 
                 # Delete corresponding mead
@@ -632,17 +632,17 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
                               soft_delete=soft_delete)
 
     def get_mea(self, context, mea_id, fields=None):
-        mea_db = self._get_resource(context, VNF, mea_id)
+        mea_db = self._get_resource(context, MEA, mea_id)
         return self._make_mea_dict(mea_db, fields)
 
     def get_meas(self, context, filters=None, fields=None):
-        return self._get_collection(context, VNF, self._make_mea_dict,
+        return self._get_collection(context, MEA, self._make_mea_dict,
                                     filters=filters, fields=fields)
 
     def set_mea_error_status_reason(self, context, mea_id, new_reason):
         with context.session.begin(subtransactions=True):
-            (self._model_query(context, VNF).
-                filter(VNF.id == mea_id).
+            (self._model_query(context, MEA).
+                filter(MEA.id == mea_id).
                 update({'error_reason': new_reason}))
 
     def _mark_mea_status(self, mea_id, exclude_status, new_status):
@@ -650,9 +650,9 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
         with context.session.begin(subtransactions=True):
             try:
                 mea_db = (
-                    self._model_query(context, VNF).
-                    filter(VNF.id == mea_id).
-                    filter(~VNF.status.in_(exclude_status)).
+                    self._model_query(context, MEA).
+                    filter(MEA.id == mea_id).
+                    filter(~MEA.status.in_(exclude_status)).
                     with_lockmode('update').one())
             except orm_exc.NoResultFound:
                 LOG.warning('no mea found %s', mea_id)
@@ -661,7 +661,7 @@ class VNFMPluginDb(mem.VNFMPluginBase, db_base.CommonDbMixin):
             mea_db.update({'status': new_status})
             self._cos_db_plg.create_event(
                 context, res_id=mea_id,
-                res_type=constants.RES_TYPE_VNF,
+                res_type=constants.RES_TYPE_MEA,
                 res_state=new_status,
                 evt_type=constants.RES_EVT_MONITOR,
                 tstamp=timeutils.utcnow())

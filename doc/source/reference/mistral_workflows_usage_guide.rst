@@ -219,11 +219,11 @@ Verify MEAD details using apmec CLI
   | tenant_id     | bde60e557de840a8a837733aaa96e42e                                                                                                                                          |
   +---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-VNF resource creation with std.create_mea workflow
+MEA resource creation with std.create_mea workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Update the mead_id from the output of above execution in create_mea.json
 
-Create new execution for VNF creation.
+Create new execution for MEA creation.
 
 ::
 
@@ -263,7 +263,7 @@ Gather execution details based on execution id.
   | Updated at        | 2016-07-29 15:16:45                  |
   +-------------------+--------------------------------------+
 
-Gather VNF ID from execution output data.
+Gather MEA ID from execution output data.
 
 ::
 
@@ -278,7 +278,7 @@ Gather VNF ID from execution output data.
     "mea_id": "1c349534-a539-4d5a-b854-033f98036cd5"
   }
 
-Verify VNF details using apmec CLI
+Verify MEA details using apmec CLI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ::
 
@@ -305,11 +305,11 @@ Verify VNF details using apmec CLI
   | vim_id         | 22ac5ce6-1415-460c-badf-40ffc5091f94                                                                                                                                  |
   +----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-VNF resource deletion with std.delete_mea workflow
+MEA resource deletion with std.delete_mea workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Update the mea_id from the output of above execution in delete_mea.json
 
-Create new execution for VNF deletion.
+Create new execution for MEA deletion.
 
 ::
 
@@ -388,11 +388,11 @@ Gather execution output data from execution id.
                     "action": "apmec.delete_mea mea=<% $.mea_id %>",
                     "version": "2.0",
                     "type": "direct",
-                    "description": "Request to delete a VNF.",
+                    "description": "Request to delete a MEA.",
                     "name": "delete_mea"
                 }
             },
-            "description": "Delete a VNF.\n",
+            "description": "Delete a MEA.\n",
             "version": "2.0",
             "input": [
                 "mea_id"
@@ -408,7 +408,7 @@ MEAD resource deletion with std.delete_mead workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Update the mead_id from the output of above execution in delete_mead.json
 
-Create new execution for VNF deletion.
+Create new execution for MEA deletion.
 
 ::
 

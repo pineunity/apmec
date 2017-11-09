@@ -7,7 +7,7 @@ Virtualized Infrastructure Managers (VIMs)
 Manages Virtualized Infrastructure Managers (VIMs).
 
 The VIM is responsible for controlling and managing Network Function
-Virtualization Infrastructure (NFVI) which provides VNFs with the
+Virtualization Infrastructure (NFVI) which provides MEAs with the
 resources they need.
 
 Register VIM
@@ -182,7 +182,7 @@ Update VIM
 .. rest_method::  PUT /v1.0/vims/{vim_id}
 
 Updates a given VIM.
-Only a VIM without any associated VNFs can be updated.
+Only a VIM without any associated MEAs can be updated.
 
 Response Codes
 --------------
@@ -250,7 +250,7 @@ Delete VIM
 .. rest_method::  DELETE /v1.0/vims/{vim_id}
 
 Deletes a given VIM.
-Only a VIM without any associated VNFs can be deleted.
+Only a VIM without any associated MEAs can be deleted.
 
 Response Codes
 --------------

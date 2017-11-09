@@ -1,4 +1,4 @@
-description: Parameterized VNF descriptor for IP addresses
+description: Parameterized MEA descriptor for IP addresses
 heat_template_version: 2013-05-23
 outputs:
   mgmt_ip-vdu1:

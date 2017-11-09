@@ -15,15 +15,15 @@
       under the License.
 
 ======================
-VNF Manager User Guide
+MEA Manager User Guide
 ======================
 
-Apmec VNF Manager (VNFM) component manages the life-cycle of a Virtual Network
-Function (VNF). VNFM takes care of deployment, monitoring, scaling and removal
-of VNFs on a Virtual Infrastructure Manager (VIM).
+Apmec MEA Manager (MEM) component manages the life-cycle of a Virtual Network
+Function (MEA). MEM takes care of deployment, monitoring, scaling and removal
+of MEAs on a Virtual Infrastructure Manager (VIM).
 
 
-Onboarding VNF
+Onboarding MEA
 ==============
 
 TOSCA MEAD templates can be onboarded to Apmec MEAD Catalog using following
@@ -37,20 +37,20 @@ command:
 
    Users can find various sample TOSCA templates at https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead
 
-Deploying VNF
+Deploying MEA
 =============
 
-There are two ways to create a VNF in Apmec.
+There are two ways to create a MEA in Apmec.
 
 #. Using Apmec Catalog
-#. Direct VNF Instantiation
+#. Direct MEA Instantiation
 
 Using Apmec Catalog
 --------------------
 
 In this method, a TOSCA MEAD template is first onboarded into Apmec MEAD
-catalog. This MEAD is then used to create VNF. This is most common way of
-creating VNFs in Apmec.
+catalog. This MEAD is then used to create MEA. This is most common way of
+creating MEAs in Apmec.
 
    i). Onboard a TOSCA MEAD template.
 
@@ -59,11 +59,11 @@ creating VNFs in Apmec.
    apmec mead-create --mead-file <yaml file path> <MEAD-NAME>
 ..
 
-  ii). Create a VNF.
+  ii). Create a MEA.
 
 .. code-block:: console
 
-   apmec mea-create --mead-name <MEAD-FILE-NAME> <VNF-NAME>
+   apmec mea-create --mead-name <MEAD-FILE-NAME> <MEA-NAME>
 
 
 Example
@@ -74,15 +74,15 @@ Example
     apmec mead-create --mead-file sample-mead-hello-world.yaml hello-world-mead
     apmec mea-create --mead-name hello-world-mead hw-mea
 
-Direct VNF Instantiation
+Direct MEA Instantiation
 ------------------------
 
-In this method, VNF is created directly from the TOSCA template without
+In this method, MEA is created directly from the TOSCA template without
 onboarding the template into Apmec MEAD Catalog.
 
 .. code-block:: console
 
-   apmec mea-create --mead-template <MEAD-FILE-NAME> <VNF-NAME>
+   apmec mea-create --mead-template <MEAD-FILE-NAME> <MEA-NAME>
 
 This method is recommended when NFV Catalog is maintained outside Apmec and
 Apmec is primarily used as a NFV workflow engine.
@@ -97,7 +97,7 @@ Example
 .. note ::
 
     mead-list command will show only the onboarded MEADs. To list the MEADs
-    created internally for direct VNF instantiation, use
+    created internally for direct MEA instantiation, use
     '--template-source inline' flag. To list both onboarded and inline MEADs,
     use '--template-source all' flag. The default flag for mead-list command
     is '--template-source onboarded'.
@@ -107,28 +107,28 @@ Example
       apmec mead-list --template-source inline
       apmec mead-list --template-source all
 
-Finding VNFM Status
+Finding MEM Status
 ===================
 
-Status of various VNFM resources can be checked by following commands.
+Status of various MEM resources can be checked by following commands.
 
 .. code-block:: console
 
    apmec vim-list
    apmec mead-list
    apmec mea-list
-   apmec mea-show <VNF_ID>
+   apmec mea-show <MEA_ID>
    apmec mead-show <MEAD_ID>
 
 ..
 
-Deleting VNF and MEAD
+Deleting MEA and MEAD
 =====================
 
-VNFs and MEADs can be deleted as shown below.
+MEAs and MEADs can be deleted as shown below.
 
 .. code-block:: console
 
-   apmec mea-delete <VNF_ID/NAME>
+   apmec mea-delete <MEA_ID/NAME>
    apmec mead-delete <MEAD_ID/NAME>
 ..

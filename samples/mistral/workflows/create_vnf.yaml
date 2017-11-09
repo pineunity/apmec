@@ -5,7 +5,7 @@ std.create_mea:
   type: direct
 
   description: |
-    Create a VNF and waits till VNF is active.
+    Create a MEA and waits till MEA is active.
 
   input:
     - body
@@ -21,7 +21,7 @@ std.create_mea:
 
   tasks:
     create_mea:
-      description: Request to create a VNF.
+      description: Request to create a MEA.
       action: apmec.create_mea body=<% $.body %>
       input:
         body: <% $.body %>
@@ -34,7 +34,7 @@ std.create_mea:
         - wait_mea_active
 
     wait_mea_active:
-      description: Waits till VNF is ACTIVE.
+      description: Waits till MEA is ACTIVE.
       action: apmec.show_mea mea=<% $.mea_id %>
       retry:
         count: 10
@@ -49,5 +49,5 @@ std.create_mea:
         - delete_mea: <% $.status = 'ERROR' %>
 
     delete_mea:
-      description: Request to delete a VNF.
+      description: Request to delete a MEA.
       action: apmec.delete_mea mea=<% $.mea_id %>

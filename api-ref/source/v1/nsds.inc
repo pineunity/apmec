@@ -7,7 +7,7 @@ Network Service Descriptors (NSD)
 Manages Network Service Descriptors.
 
 NSD is a TOSCA template that describes the deployment and behaviour of a
-Network Service (NS) using a collection of VNFs. For more information, see
+Network Service (NS) using a collection of MEAs. For more information, see
 `NSD Usage Guide
 <https://docs.openstack.org/apmec/latest/user/nsd_usage_guide.html>`_.
 

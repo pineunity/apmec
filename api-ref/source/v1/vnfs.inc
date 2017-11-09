@@ -1,19 +1,19 @@
 .. -*- rst -*-
 
 ====================================
-Virtualized Network Functions (VNFs)
+Virtualized Network Functions (MEAs)
 ====================================
 
-Manages Virtualized Network Functions (VNFs) and their resources.
+Manages Virtualized Network Functions (MEAs) and their resources.
 
-The VNF takes on the responsibility for handling specific network functions.
+The MEA takes on the responsibility for handling specific network functions.
 
-Create VNF
+Create MEA
 ==========
 
 .. rest_method::  POST /v1.0/meas
 
-Creates a VNF.
+Creates a MEA.
 
 Response Codes
 --------------
@@ -83,12 +83,12 @@ Response Example
 .. literalinclude:: samples/meas/meas-create-response.json
    :language: javascript
 
-List VNFs
+List MEAs
 =========
 
 .. rest_method::  GET /v1.0/meas
 
-Lists VNFs.
+Lists MEAs.
 
 Response Codes
 --------------
@@ -133,12 +133,12 @@ Response Example
 .. literalinclude:: samples/meas/meas-list-response.json
    :language: javascript
 
-Show VNF
+Show MEA
 ========
 
 .. rest_method::  GET /v1.0/meas/{mea_id}
 
-Shows information of a given VNF.
+Shows information of a given MEA.
 
 Response Codes
 --------------
@@ -191,12 +191,12 @@ Response Example
 .. literalinclude:: samples/meas/meas-show-response.json
    :language: javascript
 
-Update VNF
+Update MEA
 ===========
 
 .. rest_method::  PUT /v1.0/meas/{mea_id}
 
-Updates a given VNF.
+Updates a given MEA.
 
 Response Codes
 --------------
@@ -259,12 +259,12 @@ Response Example
 .. literalinclude:: samples/meas/meas-update-response.json
    :language: javascript
 
-Delete VNF
+Delete MEA
 ==========
 
 .. rest_method::  DELETE /v1.0/meas/{mea_id}
 
-Deletes a given VNF.
+Deletes a given MEA.
 
 Response Codes
 --------------
@@ -287,12 +287,12 @@ Request Parameters
 
   - mea_id: mea_id_path
 
-List VNF resources
+List MEA resources
 ==================
 
 .. rest_method::  GET /v1.0/meas/{mea_id}/resources
 
-Lists resources, such as VDU/CP, of a given VNF.
+Lists resources, such as VDU/CP, of a given MEA.
 
 Response Codes
 --------------
@@ -330,12 +330,12 @@ Response Example
 .. literalinclude:: samples/meas/meas-resources-list-response.json
    :language: javascript
 
-Trigger VNF scaling
+Trigger MEA scaling
 ===================
 
 .. rest_method::  POST /v1.0/meas/{mea_id}/actions
 
-Triggers VNF scaling action.
+Triggers MEA scaling action.
 
 Response Codes
 --------------

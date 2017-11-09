@@ -198,10 +198,10 @@ msgid "Address which drivers use to trigger"
 msgstr "Dirección que los driver usan para notificar"
 
 msgid ""
-"Alarm monitoring driver to communicate with Hosting VNF/logical service "
+"Alarm monitoring driver to communicate with Hosting MEA/logical service "
 "instance apmec plugin will use"
 msgstr ""
-"Driver de monitor de alarmas para comunicar con la instancia Hosting VNF/"
+"Driver de monitor de alarmas para comunicar con la instancia Hosting MEA/"
 "servicio logico que apmec plugin usara"
 
 #, python-format
@@ -298,10 +298,10 @@ msgstr "No ha sido posible encontrar la información de descubrimiento para %s"
 
 #, python-format
 msgid ""
-"Could not retrieve VNF resource IDs and types. Please check %(service)s "
+"Could not retrieve MEA resource IDs and types. Please check %(service)s "
 "status."
 msgstr ""
-"No ha sido posible conseguir IDs y tipos del recurso VNF. Por favor "
+"No ha sido posible conseguir IDs y tipos del recurso MEA. Por favor "
 "comprueba el estado del servicio %(service)s."
 
 #, python-format
@@ -463,7 +463,7 @@ msgid "HTTP port number to send request"
 msgstr "Numero de puerto HTTP para enviar petición"
 
 msgid "Hosting mea drivers apmec plugin will use"
-msgstr "Drivers VNF de hospedaje que plugin de apmec va a usar"
+msgstr "Drivers MEA de hospedaje que plugin de apmec va a usar"
 
 msgid "How long to preserve deleted data,defaults to 90"
 msgstr "Cuánto tiempo preservar los datos eliminados, por defecto 90"
@@ -512,8 +512,8 @@ msgid "Invalid NFY template input: %(template)s"
 msgstr "Plantilla NFY insertada no valida: %(template)s"
 
 #, python-format
-msgid "Invalid alarm url for VNF %(mea_id)s"
-msgstr "Url de alarma invalida para VNF %(mea_id)s"
+msgid "Invalid alarm url for MEA %(mea_id)s"
+msgstr "Url de alarma invalida para MEA %(mea_id)s"
 
 #, python-format
 msgid "Invalid auth_type was specified, auth_type: %(type)s"
@@ -601,10 +601,10 @@ msgid "Limit must be an integer 0 or greater and not '%d'"
 msgstr "El límite debe ser un entero mayor o igual a 0 y no '%d'"
 
 msgid ""
-"MGMT driver to communicate with Hosting VNF/logical service instance apmec "
+"MGMT driver to communicate with Hosting MEA/logical service instance apmec "
 "plugin will use"
 msgstr ""
-"Driver de MGMT para comunicar con la instancia Hosting VNF/servicio logico "
+"Driver de MGMT para comunicar con la instancia Hosting MEA/servicio logico "
 "que apmec plugin usara"
 
 msgid "Malformed request body"
@@ -616,10 +616,10 @@ msgstr "Cuerpo de solicitud formado incorrectamente: %(reason)s"
 
 #, python-format
 msgid ""
-"Matching VNF Instance for MEAD %(mead_name)s could not be found. Please "
+"Matching MEA Instance for MEAD %(mead_name)s could not be found. Please "
 "create an instance of this MEAD before creating/updating NFY."
 msgstr ""
-"Instancia VNF correspondiente a MEAD %(mead_name)s no ha sido encontrada. "
+"Instancia MEA correspondiente a MEAD %(mead_name)s no ha sido encontrada. "
 "Por favor crea una instancia de este MEAD antes de crear/actualizar el NFY."
 
 msgid "Max header line to accommodate large tokens"
@@ -629,10 +629,10 @@ msgid "Metadata for alarm policy is not matched"
 msgstr "Meta datos para la política de alarmas no coincide."
 
 msgid ""
-"Monitor driver to communicate with Hosting VNF/logical service instance "
+"Monitor driver to communicate with Hosting MEA/logical service instance "
 "apmec plugin will use"
 msgstr ""
-"Driver de monitor para comunicar con la instancia Hosting VNF/servicio "
+"Driver de monitor para comunicar con la instancia Hosting MEA/servicio "
 "logico que apmec plugin usara"
 
 msgid "More than one MGMT Driver per mead is not supported"
@@ -735,8 +735,8 @@ msgid "Plugin '%s' not found."
 msgstr "No se ha encontrado el plugin '%s'."
 
 #, python-format
-msgid "Policy %(policy)s does not exist for VNF %(mea_id)s"
-msgstr "Regla %(policy)s no existe para VNF %(mea_id)s"
+msgid "Policy %(policy)s does not exist for MEA %(mea_id)s"
+msgstr "Regla %(policy)s no existe para MEA %(mea_id)s"
 
 msgid "Policy configuration policy.json could not be found"
 msgstr "No se ha podido encontrar el policy.json de configuración de política"
@@ -826,8 +826,8 @@ msgstr ""
 "servidor. No soportado en OS X."
 
 #, python-format
-msgid "Specified CP %(cp_id)s could not be found in VNF %(mea_id)s."
-msgstr "CP especificado %(cp_id)s no ha sido encontrado en VNF %(mea_id)s."
+msgid "Specified CP %(cp_id)s could not be found in MEA %(mea_id)s."
+msgstr "CP especificado %(cp_id)s no ha sido encontrado en MEA %(mea_id)s."
 
 #, python-format
 msgid ""
@@ -861,9 +861,9 @@ msgstr ""
 "VIM id valido"
 
 #, python-format
-msgid "Specified VNF instance %(mea_name)s in VNF Mapping could not be found"
+msgid "Specified MEA instance %(mea_name)s in MEA Mapping could not be found"
 msgstr ""
-"Instancia VNF %(mea_name)s especificada en VNF Mapping no ha sido encontrada"
+"Instancia MEA %(mea_name)s especificada en MEA Mapping no ha sido encontrada"
 
 #, python-format
 msgid ""
@@ -978,8 +978,8 @@ msgid "Timeline branches unable to generate timeline"
 msgstr "Las ramas de la línea de tiempo no pueden generar la línea de tiempo"
 
 #, python-format
-msgid "Trigger %(trigger_name)s does not exist for VNF %(mea_id)s"
-msgstr "Disparador %(trigger_name)s no existe para VNF %(mea_id)s"
+msgid "Trigger %(trigger_name)s does not exist for MEA %(mea_id)s"
+msgstr "Disparador %(trigger_name)s no existe para MEA %(mea_id)s"
 
 msgid "URL to database"
 msgstr "URL en base de datos"
@@ -1081,45 +1081,45 @@ msgid "User name for alarm monitoring"
 msgstr "Nombre de usuario para motorización de alarmas"
 
 #, python-format
-msgid "VIM %(vim_id)s is still in use by VNF"
-msgstr "VIM %(vim_id)s sigue en uso por VNF"
+msgid "VIM %(vim_id)s is still in use by MEA"
+msgstr "VIM %(vim_id)s sigue en uso por MEA"
 
-msgid "VIM driver for launching VNFs"
-msgstr "Driver VIM para ejecutar VNFs"
+msgid "VIM driver for launching MEAs"
+msgstr "Driver VIM para ejecutar MEAs"
 
 #, python-format
-msgid "VIM from VNF %(mea_id)s could not be found"
-msgstr "VIM de VNF %(mea_id)s no ha sido encontrado"
+msgid "VIM from MEA %(mea_id)s could not be found"
+msgstr "VIM de MEA %(mea_id)s no ha sido encontrado"
 
 #, python-format
 msgid "VIM type %(vim_name)s is not supported as an infra driver "
 msgstr "Tipo de VIM %(vim_name)s no soportado como driver de infra"
 
 #, python-format
-msgid "VNF %(mea_id)s could not be found"
-msgstr "VNF %(mea_id)s no ha sido encontrado"
+msgid "MEA %(mea_id)s could not be found"
+msgstr "MEA %(mea_id)s no ha sido encontrado"
 
 #, python-format
-msgid "VNF %(mea_id)s is not in Active state %(message)s"
-msgstr "VNF %(mea_id)s no está en estado Activo %(message)s"
+msgid "MEA %(mea_id)s is not in Active state %(message)s"
+msgstr "MEA %(mea_id)s no está en estado Activo %(message)s"
 
 #, python-format
-msgid "VNF %(mea_id)s is still in use"
-msgstr "VNF %(mea_id)s sigue en uso"
+msgid "MEA %(mea_id)s is still in use"
+msgstr "MEA %(mea_id)s sigue en uso"
 
-msgid "VNF configuration failed"
-msgstr "Fallo la configuración de VNF"
+msgid "MEA configuration failed"
+msgstr "Fallo la configuración de MEA"
 
 #, python-format
-msgid "VNF scaling failed for stack %(stack)s with error %(error)s"
-msgstr "Fallo escalado de VNF para pila %(stack)s con error %(error)s"
+msgid "MEA scaling failed for stack %(stack)s with error %(error)s"
+msgstr "Fallo escalado de MEA para pila %(stack)s con error %(error)s"
 
 #, python-format
 msgid ""
-"VNF scaling failed to complete within %{wait}s seconds while waiting for the "
+"MEA scaling failed to complete within %{wait}s seconds while waiting for the "
 "stack %(stack)s to be scaled."
 msgstr ""
-"Fallo para completar escalado de VNF en %{wait}s segundos mientras esperaba "
+"Fallo para completar escalado de MEA en %{wait}s segundos mientras esperaba "
 "a que la pila %(stack)s escalara."
 
 #, python-format
@@ -1131,8 +1131,8 @@ msgid "MEAD %(mead_id)s is still in use"
 msgstr "MEAD %(mead_id)s sigue en uso"
 
 #, python-format
-msgid "MEAD Forwarder %(mead)s not found in VNF Mapping %(mapping)s"
-msgstr "MEAD Forwarder %(mead)s no encontrado en VNF Mapping %(mapping)s"
+msgid "MEAD Forwarder %(mead)s not found in MEA Mapping %(mapping)s"
+msgstr "MEAD Forwarder %(mead)s no encontrado en MEA Mapping %(mapping)s"
 
 #, python-format
 msgid "NFY %(NANY_id)s could not be found"
@@ -1217,8 +1217,8 @@ msgstr ""
 "o Context."
 
 #, python-format
-msgid "creating VNF based on %(mead_id)s failed"
-msgstr "Fallo en la creación de VNF basado en %(mead_id)s"
+msgid "creating MEA based on %(mead_id)s failed"
+msgstr "Fallo en la creación de MEA basado en %(mead_id)s"
 
 #, python-format
 msgid ""

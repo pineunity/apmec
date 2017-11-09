@@ -19,7 +19,7 @@ Multisite VIM Usage
 
 A single Apmec controller node can be used to manage multiple Openstack sites
 without having the need to deploy Apmec server on each of these sites. Apmec
-allows users to deploy VNFs in multiple OpenStack sites using the multisite VIM
+allows users to deploy MEAs in multiple OpenStack sites using the multisite VIM
 feature. OpenStack versions starting from Kilo are supported with this feature.
 
 
@@ -29,7 +29,7 @@ Preparing the OpenStack site
 1. Create a new 'nfv' project and admin privileged 'nfv' user on the remote
    OpenStack site.
 2. Create the required neutron networks for management, packet in and packet
-   out networks that will be used by VNFs.
+   out networks that will be used by MEAs.
 
 Register a new OpenStack VIM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,12 +75,12 @@ argument -vim-id is not provided during mea-create. Refer to steps described in
 
 .. _manual installation: https://docs.openstack.org/apmec/latest/install/manual_installation.html#registering-default-vim
 
-Deploying a new VNF on registered VIM
+Deploying a new MEA on registered VIM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
- $ apmec mea-create --description 'Openwrt VNF on Site1' --mead-id c3cbf0c0-a492-49e3-9541-945e49e7ed7e --vim-name Site1 openwrt_VNF
+ $ apmec mea-create --description 'Openwrt MEA on Site1' --mead-id c3cbf0c0-a492-49e3-9541-945e49e7ed7e --vim-name Site1 openwrt_MEA
  Created a new mea:
  +----------------+--------------------------------------+
  | Field          | Value                                |
@@ -89,7 +89,7 @@ Deploying a new VNF on registered VIM
  | id             | 159ed8a5-a5a7-4f7a-be50-0f5f86603e3a |
  | instance_id    | 7b4ab046-d977-4781-9f0c-1ee9dcce01c6 |
  | mgmt_url       |                                      |
- | name           | openwrt_VNF                          |
+ | name           | openwrt_MEA                          |
  | placement_attr | {"vim_name": "Site1"}                |
  | status         | PENDING_CREATE                       |
  | tenant_id      | 8907bae480c0414d98c3519acbad1b06     |
@@ -99,11 +99,11 @@ Deploying a new VNF on registered VIM
 
 The --vim-id/--vim-name argument is optional during mea-create. If
 --vim-id/--vim-name is not specified, the default vim will
-be used to deploy VNF on the default site. We can create default vim
+be used to deploy MEA on the default site. We can create default vim
 by specifying --is-default option with vim-register command.
 
 User can optionally provide --vim-region-name during mea-create to deploy the
-VNF in a specify region  within that VIM.
+MEA in a specify region  within that VIM.
 
 Updating a VIM
 ~~~~~~~~~~~~~~
@@ -139,7 +139,7 @@ To delete a VIM :
 Features
 ~~~~~~~~
 * VIMs are shared across tenants -- As an admin operator, the user can register
-  a VIM once and allow tenants to deploy VNFs on the registered VIM.
+  a VIM once and allow tenants to deploy MEAs on the registered VIM.
 * Pluggable driver module framework allowing Apmec to interact with multiple
   VIM types.
 * Compatible for OpenStack versions starting from Kilo.
@@ -147,7 +147,7 @@ Features
 
 Limitations
 ~~~~~~~~~~~
-* VNFs of all users currently land in the 'nfv' project that is specified
+* MEAs of all users currently land in the 'nfv' project that is specified
   during VIM registration.
 * Fernet keys for password encryption and decryption is stored on file systems.
   This is a limitation when multiple servers are serving behind a load balancer

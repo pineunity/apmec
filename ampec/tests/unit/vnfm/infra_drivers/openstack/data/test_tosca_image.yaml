@@ -13,7 +13,7 @@ topology_template:
       artifacts:
         vm_image:
           type: tosca.artifacts.Deployment.Image.VM
-          file: http://URL/vRouterVNF.qcow2
+          file: http://URL/vRouterMEA.qcow2
       properties:
         flavor: m1.nano
         mgmt_driver: noop

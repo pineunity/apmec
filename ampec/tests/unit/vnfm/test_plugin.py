@@ -42,7 +42,7 @@ class FakeDriverManager(mock.Mock):
                                   'id': uuidutils.generate_uuid()}}
 
 
-class FakeVNFMonitor(mock.Mock):
+class FakeMEMonitor(mock.Mock):
     pass
 
 
@@ -54,9 +54,9 @@ class FakeVimClient(mock.Mock):
     pass
 
 
-class TestVNFMPlugin(db_base.SqlTestCase):
+class TestMEMPlugin(db_base.SqlTestCase):
     def setUp(self):
-        super(TestVNFMPlugin, self).setUp()
+        super(TestMEMPlugin, self).setUp()
         self.addCleanup(mock.patch.stopall)
         self.context = context.get_admin_context()
         self._mock_vim_client()
@@ -66,7 +66,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._mock_mea_alarm_monitor()
         self._mock_green_pool()
         self._insert_dummy_vim()
-        self.mem_plugin = plugin.VNFMPlugin()
+        self.mem_plugin = plugin.MEMPlugin()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
@@ -105,18 +105,18 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             'eventlet.GreenPool', fake_green_pool)
 
     def _mock_mea_monitor(self):
-        self._mea_monitor = mock.Mock(wraps=FakeVNFMonitor())
+        self._mea_monitor = mock.Mock(wraps=FakeMEMonitor())
         fake_mea_monitor = mock.Mock()
         fake_mea_monitor.return_value = self._mea_monitor
         self._mock(
-            'apmec.mem.monitor.VNFMonitor', fake_mea_monitor)
+            'apmec.mem.monitor.MEMonitor', fake_mea_monitor)
 
     def _mock_mea_alarm_monitor(self):
-        self._mea_alarm_monitor = mock.Mock(wraps=FakeVNFMonitor())
+        self._mea_alarm_monitor = mock.Mock(wraps=FakeMEMonitor())
         fake_mea_alarm_monitor = mock.Mock()
         fake_mea_alarm_monitor.return_value = self._mea_alarm_monitor
         self._mock(
-            'apmec.mem.monitor.VNFAlarmMonitor', fake_mea_alarm_monitor)
+            'apmec.mem.monitor.MEAAlarmMonitor', fake_mea_alarm_monitor)
 
     def _insert_dummy_device_template(self):
         session = self.context.session
@@ -157,7 +157,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_device(self):
         session = self.context.session
-        device_db = mem_db.VNF(
+        device_db = mem_db.MEA(
             id='6261579e-d6f3-49ad-8bc3-a9cb974778fe',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_device',
@@ -174,7 +174,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
 
     def _insert_scaling_attributes_mea(self):
         session = self.context.session
-        mea_attributes = mem_db.VNFAttribute(
+        mea_attributes = mem_db.MEAAttribute(
             id='7800cb81-7ed1-4cf6-8387-746468522651',
             mea_id='6261579e-d6f3-49ad-8bc3-a9cb974778fe',
             key='scaling_group_names',
@@ -276,10 +276,10 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._pool.spawn_n.assert_called_once_with(mock.ANY)
         self._cos_db_plugin.create_event.assert_called_with(
             self.context, evt_type=constants.RES_EVT_CREATE, res_id=mock.ANY,
-            res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
+            res_state=mock.ANY, res_type=constants.RES_TYPE_MEA,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('apmec.mem.plugin.VNFMPlugin.create_mead')
+    @mock.patch('apmec.mem.plugin.MEMPlugin.create_mead')
     def test_create_mea_from_template(self, mock_create_mead):
         self._insert_dummy_device_template_inline()
         mock_create_mead.return_value = {'id':
@@ -305,14 +305,14 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._cos_db_plugin.create_event.assert_called_with(
             self.context, evt_type=constants.RES_EVT_CREATE,
             res_id=mock.ANY,
-            res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
+            res_state=mock.ANY, res_type=constants.RES_TYPE_MEA,
             tstamp=mock.ANY, details=mock.ANY)
 
     def test_show_mea_details_mea_inactive(self):
         self._insert_dummy_device_template()
         mea_obj = utils.get_dummy_mea_obj()
         result = self.mem_plugin.create_mea(self.context, mea_obj)
-        self.assertRaises(mem.VNFInactive, self.mem_plugin.get_mea_resources,
+        self.assertRaises(mem.MEAInactive, self.mem_plugin.get_mea_resources,
                           self.context, result['id'])
 
     def test_show_mea_details_mea_active(self):
@@ -341,7 +341,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
                                                    mock.ANY)
         self._cos_db_plugin.create_event.assert_called_with(
             self.context, evt_type=constants.RES_EVT_DELETE, res_id=mock.ANY,
-            res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
+            res_state=mock.ANY, res_type=constants.RES_TYPE_MEA,
             tstamp=mock.ANY, details=mock.ANY)
 
     def test_update_mea(self):
@@ -362,7 +362,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
                                                    mock.ANY)
         self._cos_db_plugin.create_event.assert_called_with(
             self.context, evt_type=constants.RES_EVT_UPDATE, res_id=mock.ANY,
-            res_state=mock.ANY, res_type=constants.RES_TYPE_VNF,
+            res_state=mock.ANY, res_type=constants.RES_TYPE_MEA,
             tstamp=mock.ANY)
 
     def _get_dummy_scaling_policy(self, type):
@@ -406,7 +406,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             evt_type=constants.RES_EVT_SCALE,
             res_id='6261579e-d6f3-49ad-8bc3-a9cb974778fe',
             res_state=scale_state,
-            res_type=constants.RES_TYPE_VNF,
+            res_type=constants.RES_TYPE_MEA,
             tstamp=mock.ANY)
 
     def test_scale_mea_out(self):
@@ -439,7 +439,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
             self.context, mea_id, trigger_request)
         self.assertEqual(expected_result, trigger_result)
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
     def test_create_mea_trigger_respawn(self, mock_get_mea):
         dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_respawn_tosca_template)
@@ -447,7 +447,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_mea_trigger(policy_name="vdu_hcpu_usage_respawning",
                                       action_value="respawn")
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
     def test_create_mea_trigger_scale(self, mock_get_mea):
         dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_scale_tosca_template)
@@ -455,7 +455,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_mea_trigger(policy_name="vdu_hcpu_usage_scaling_out",
                                       action_value="SP1-out")
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
     def test_create_mea_trigger_multi_actions(self, mock_get_mea):
         dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_multi_actions_tosca_template)
@@ -463,7 +463,7 @@ class TestVNFMPlugin(db_base.SqlTestCase):
         self._test_create_mea_trigger(policy_name="mon_policy_multi_actions",
                                       action_value="respawn&log")
 
-    @patch('apmec.db.mem.mem_db.VNFMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
     def test_get_mea_policies(self, mock_get_mea):
         mea_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
         dummy_mea = self._get_dummy_active_mea(

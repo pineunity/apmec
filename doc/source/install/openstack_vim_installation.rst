@@ -248,12 +248,12 @@ Most sample TOSCA templates assume there are three Neutron networks in
 target OpenStack that the VIM user can use:
 
 *  net_mgmt, which is a network Apmec system can access to. Some Apmec
-   features, such as monitor policies, need Apmec to access started VNF
-   virtual machines. For Apmec to access VNF via net_mgmt, net_mgmt can
+   features, such as monitor policies, need Apmec to access started MEA
+   virtual machines. For Apmec to access MEA via net_mgmt, net_mgmt can
    be a provider network.
 
-*  net0 and net1, which are two business networks which VNFs will use.
-   How to connected them depends on the VNFs' business.
+*  net0 and net1, which are two business networks which MEAs will use.
+   How to connected them depends on the MEAs' business.
 
 So create these three networks accordingly. For commands to create Neutron
 networks, please refer to

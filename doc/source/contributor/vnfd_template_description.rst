@@ -1,4 +1,4 @@
-VNF Descriptor Template Guide
+MEA Descriptor Template Guide
 =============================
 Overview
 --------
@@ -7,9 +7,9 @@ This document explains MEAD template structure and its various fields based
 on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-nfv/
 v1.0/tosca-nfv-v1.0.html>`_.
 
-The behavioural and deployment information of a VNF in Apmec is defined in a
-template known as VNF Descriptor (MEAD). The template is based on TOSCA
-standards and is written in YAML. It is on-boarded in a VNF catalog.
+The behavioural and deployment information of a MEA in Apmec is defined in a
+template known as MEA Descriptor (MEAD). The template is based on TOSCA
+standards and is written in YAML. It is on-boarded in a MEA catalog.
 
 Each MEAD template will have below fields:
 
@@ -30,9 +30,9 @@ Each MEAD template will have below fields:
        template_name: A name to be given to the template.
 
     topology_template:
-       Describes the topology of the VNF under node_template field.
+       Describes the topology of the MEA under node_template field.
        node_template:
-           Describes node types of a VNF.
+           Describes node types of a MEA.
            VDU:
                Describes properties and capabilities of Virtual Deployment
                Unit.
@@ -46,7 +46,7 @@ For examples, please refer sample MEAD templates available at `GitHub <https:
 
 Node types
 ----------
-A VNF includes **VDU/s**, **connection point/s** and **virtual link/s**. Hence
+A MEA includes **VDU/s**, **connection point/s** and **virtual link/s**. Hence
 a valid MEAD must have these 3 components. Each component is referred as a
 node and can have certain type, capabilities, properties, attributes and
 requirements. These components are described under **node_templates** in the
@@ -54,7 +54,7 @@ MEAD template. **node_templates** is a child of **topology_template**.
 
 VDU
 ---
-Virtual Deployment Unit is a basic part of VNF. It is the VM that hosts the
+Virtual Deployment Unit is a basic part of MEA. It is the VM that hosts the
 network function.
 
 :type:
@@ -171,7 +171,7 @@ the VDU with that image.
     VDU1:
       type: tosca.nodes.nfv.VDU.Apmec
       artifacts:
-        VNFImage:
+        MEAImage:
           type: tosca.artifacts.Deployment.Image.VM
           file: http://download.cirros-cloud.net/0.3.5/ \
                 cirros-0.3.5-x86_64-disk.img
@@ -399,7 +399,7 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
 +-------------------------+--------+-------+-----------+----------------------+
 | anti_spoofing_protection| No     |Boolean| None      | Indicates whether    |
 |                         |        |       |           | anti_spoof rule is   |
-|                         |        |       |           | enabled for the VNF  |
+|                         |        |       |           | enabled for the MEA  |
 |                         |        |       |           | or not. Applicable   |
 |                         |        |       |           | only when CP type is |
 |                         |        |       |           | virtual NIC          |
@@ -554,7 +554,7 @@ Multiple node types can be defined in a MEAD.
 
 Summary
 -------
-To summarize MEAD is written in YAML and describes a VNF topology. It has
+To summarize MEAD is written in YAML and describes a MEA topology. It has
 three node types, each with different capabilities and requirements. Below is
 a template which mentions all node types with all available options.
 
@@ -609,7 +609,7 @@ a template which mentions all node types with all available options.
             user_data_format: format of the commands
             key_name: user key
           artifacts:
-            VNFImage:
+            MEAImage:
               type: tosca.artifacts.Deployment.Image.VM
               file: file to be used for image
         CP:

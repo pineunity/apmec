@@ -207,7 +207,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
 
     @log.log
     def deregister_vim(self, context, vim_obj):
-        """Deregister VIM from NFVO
+        """Deregister VIM from MEO
 
         Delete VIM keys from file system
         """
@@ -397,7 +397,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
             # TODO(s3wong): once scaling is in place and NFY supports it
             # that model needs to be implemented to concatenate all
             # port-pairs into the port-pair-group
-            # port pair group could include port-pairs from different VNFs
+            # port pair group could include port-pairs from different MEAs
             port_pair_group = {}
             port_pair_group['name'] = mea['name'] + '-port-pair-group'
             port_pair_group['description'] = \
@@ -405,7 +405,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
             port_pair_group['port_pairs'] = []
             if CONNECTION_POINT not in mea:
                 LOG.warning("Chain creation failed due to missing "
-                            "connection point info in VNF "
+                            "connection point info in MEA "
                             "%(meaname)s", {'meaname': mea['name']})
                 return None
             cp_list = mea[CONNECTION_POINT]
@@ -454,7 +454,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver,
         # since n-sfc driver does NOT track the ppg id
         # it will look it up (or reconstruct) from
         # networking-sfc DB --- but the caveat is that
-        # the VNF name MUST be unique
+        # the MEA name MUST be unique
         LOG.warning("n-sfc driver does not support sf chain update")
         raise NotImplementedError('sf chain update not supported')
 

@@ -4,7 +4,7 @@
         "mead_id": "a04b47d1-e8ad-4ef9-8341-eafec398ce02",
         "vim_id": "f6bd6f24-7a0e-4111-8994-e108c5ee2ff2",
         "name": "OpenWRT",
-        "description": "OpenWRT VNF",
+        "description": "OpenWRT MEA",
         "attributes": {
             "config": {
                 "vdus": {

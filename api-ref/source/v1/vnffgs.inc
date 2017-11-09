@@ -1,14 +1,14 @@
 .. -*- rst -*-
 
 ==============================
-VNF Forwarding Graphs (NFYs)
+MEA Forwarding Graphs (NFYs)
 ==============================
 
-Manages VNF Forwarding Graphs (NFYs).
+Manages MEA Forwarding Graphs (NFYs).
 
-The NFY feature is used to orchestrate and manage traffic through VNFs.
+The NFY feature is used to orchestrate and manage traffic through MEAs.
 For more information about NFY, see
-`VNF Forwarding Graph
+`MEA Forwarding Graph
 <https://docs.openstack.org/apmec/latest/user/NANY_usage_guide.html>`_.
 
 Create NFY

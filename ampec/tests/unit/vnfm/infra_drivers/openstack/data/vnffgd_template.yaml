@@ -11,11 +11,11 @@
           - ip_proto: 6
           - ip_dst_prefix: 192.168.1.2/24
     requirements:
-      - forwarder: VNF1
+      - forwarder: MEA1
         capability: CP11
-      - forwarder: VNF1
+      - forwarder: MEA1
         capability: CP12
-      - forwarder: VNF3
+      - forwarder: MEA3
         capability: CP32
 
   groups:
@@ -28,5 +28,5 @@
         number_of_endpoints: 3
         dependent_virtual_link: [VL1,VL2,VL3]
         connection_point: [CP11,CP12,CP32]
-        constituent_meas: [VNF1,VNF3]
+        constituent_meas: [MEA1,MEA3]
       members: [Forwarding_path1]

@@ -53,7 +53,7 @@ class MEMMgmtMixin(object):
         cfg.ListOpt(
             'mgmt_driver', default=['noop', 'openwrt'],
             help=_('MGMT driver to communicate with '
-                   'Hosting VNF/logical service '
+                   'Hosting MEA/logical service '
                    'instance apmec plugin will use')),
         cfg.IntOpt('boot_wait', default=30,
             help=_('Time interval to wait for VM to boot'))
@@ -142,7 +142,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             'apmec.apmec.policy.actions',
             cfg.CONF.apmec.policy_action)
         self._mea_monitor = monitor.MEMonitor(self.boot_wait)
-        self._mea_alarm_monitor = monitor.VNFAlarmMonitor()
+        self._mea_alarm_monitor = monitor.MEAAlarmMonitor()
 
     def spawn_n(self, function, *args, **kwargs):
         self._pool.spawn_n(function, *args, **kwargs)
@@ -275,8 +275,8 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                 driver_name, 'create_wait', plugin=self, context=context,
                 mea_dict=mea_dict, mea_id=instance_id,
                 auth_attr=auth_attr)
-        except mem.VNFCreateWaitFailed as e:
-            LOG.error("VNF Create failed for mea_id %s", mea_id)
+        except mem.MEACreateWaitFailed as e:
+            LOG.error("MEA Create failed for mea_id %s", mea_id)
             create_failed = True
             mea_dict['status'] = constants.ERROR
             self.set_mea_error_status_reason(context, mea_id,
@@ -299,14 +299,14 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         mea_dict['mgmt_url'] = mgmt_url
 
         kwargs = {
-            mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_CREATE_VNF,
+            mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_CREATE_MEA,
             mgmt_constants.KEY_KWARGS: {'mea': mea_dict},
         }
         new_status = constants.ACTIVE
         try:
             self.mgmt_call(context, mea_dict, kwargs)
         except exceptions.MgmtDriverException:
-            LOG.error('VNF configuration failed')
+            LOG.error('MEA configuration failed')
             new_status = constants.ERROR
             self.set_mea_error_status_reason(context, mea_id,
                                              'Unable to configure VDU')
@@ -409,7 +409,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
     def _update_mea_wait(self, context, mea_dict, vim_auth, driver_name):
         instance_id = self._instance_id(mea_dict)
         kwargs = {
-            mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_UPDATE_VNF,
+            mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_UPDATE_MEA,
             mgmt_constants.KEY_KWARGS: {'mea': mea_dict},
         }
         new_status = constants.ACTIVE
@@ -423,7 +423,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                 region_name=region_name)
             self.mgmt_call(context, mea_dict, kwargs)
         except exceptions.MgmtDriverException as e:
-            LOG.error('VNF configuration failed')
+            LOG.error('MEA configuration failed')
             new_status = constants.ERROR
             self._mea_monitor.delete_hosting_mea(mea_dict['id'])
             self.set_mea_error_status_reason(context, mea_dict['id'],
@@ -505,7 +505,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         placement_attr = mea_dict['placement_attr']
         region_name = placement_attr.get('region_name')
         kwargs = {
-            mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_DELETE_VNF,
+            mgmt_constants.KEY_ACTION: mgmt_constants.ACTION_DELETE_MEA,
             mgmt_constants.KEY_KWARGS: {'mea': mea_dict},
         }
         try:
@@ -862,7 +862,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                           'id': info.get('id')}
                         for name, info in mea_details.items()]
             return resources
-        # Raise exception when VNF.status != ACTIVE
+        # Raise exception when MEA.status != ACTIVE
         else:
-            raise mem.VNFInactive(mea_id=mea_id,
+            raise mem.MEAInactive(mea_id=mea_id,
                                    message=_(' Cannot fetch details'))

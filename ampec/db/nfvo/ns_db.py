@@ -95,7 +95,7 @@ class NS(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text, nullable=True)
 
-    # Dict of VNF details that network service launches
+    # Dict of MEA details that network service launches
     mea_ids = sa.Column(sa.TEXT(65535), nullable=True)
 
     # Dict of mgmt urls that network servic launches

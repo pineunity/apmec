@@ -1,13 +1,13 @@
 ---
 features:
-  - VNF Forwarding Graph support is available as an EXPERIMENTAL feature.
+  - MEA Forwarding Graph support is available as an EXPERIMENTAL feature.
     TOSCA NFV Profile based Forwarding Graph Descriptor can be uploaded
-    to VNF-FGD Catalog. VNF-FFGD template describes both Classifier and
+    to MEA-FGD Catalog. MEA-FFGD template describes both Classifier and
     Forwarding Path across a collection of Connection Points described in
-    MEADs. Using the template VNF FFG can be instantiated using the default
+    MEADs. Using the template MEA FFG can be instantiated using the default
     Neutron networking-sfc driver.
 issues:
-  - Logical source port need to be specified VNF-FFGD flow classifier
+  - Logical source port need to be specified MEA-FFGD flow classifier
     section. This is due to the current restriction in Neutron 
     networking-sfc flow-classifier API restriction. This behavior will
     be resolved once the underlying neutron issue is fixed.

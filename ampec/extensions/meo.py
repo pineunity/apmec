@@ -35,7 +35,7 @@ class VimConnectionException(exceptions.ApmecException):
 
 
 class VimInUseException(exceptions.ApmecException):
-    message = _("VIM %(vim_id)s is still in use by VNF")
+    message = _("VIM %(vim_id)s is still in use by MEA")
 
 
 class VimDefaultNotDefined(exceptions.ApmecException):
@@ -79,7 +79,7 @@ class VimGetResourceNotFoundException(exceptions.ApmecException):
 
 
 class VimFromVnfNotFoundException(exceptions.NotFound):
-    message = _('VIM from VNF %(mea_id)s could not be found')
+    message = _('VIM from MEA %(mea_id)s could not be found')
 
 
 class ToscaParserFailed(exceptions.InvalidInput):
@@ -135,7 +135,7 @@ class VnffgCreateFailed(exceptions.ApmecException):
 
 
 class VnffgInvalidMappingException(exceptions.ApmecException):
-    message = _("Matching VNF Instance for MEAD %(mead_name)s could not be "
+    message = _("Matching MEA Instance for MEAD %(mead_name)s could not be "
                 "found. Please create an instance of this MEAD before "
                 "creating/updating NFY.")
 
@@ -158,7 +158,7 @@ class VnffgPropertyNotFoundException(exceptions.NotFound):
 
 
 class VnffgCpNotFoundException(exceptions.NotFound):
-    message = _("Specified CP %(cp_id)s could not be found in VNF "
+    message = _("Specified CP %(cp_id)s could not be found in MEA "
                 "%(mea_id)s.")
 
 
@@ -171,7 +171,7 @@ class VnffgInUse(exceptions.InUse):
 
 
 class VnffgVnfNotFoundException(exceptions.NotFound):
-    message = _("Specified VNF instance %(mea_name)s in VNF Mapping could not "
+    message = _("Specified MEA instance %(mea_name)s in MEA Mapping could not "
                 "be found")
 
 
@@ -204,7 +204,7 @@ class NfpPolicyTypeError(exceptions.PolicyCheckError):
 
 
 class NfpForwarderNotFoundException(exceptions.NotFound):
-    message = _('MEAD Forwarder %(mead)s not found in VNF Mapping %(mapping)s')
+    message = _('MEAD Forwarder %(mead)s not found in MEA Mapping %(mapping)s')
 
 
 class NfpRequirementsException(exceptions.ApmecException):
@@ -762,7 +762,7 @@ class Nfvo(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_alias(cls):
-        return 'NFVO'
+        return 'MEO'
 
     @classmethod
     def get_description(cls):
@@ -783,12 +783,12 @@ class Nfvo(extensions.ExtensionDescriptor):
             special_mappings, RESOURCE_ATTRIBUTE_MAP)
         attr.PLURALS.update(plural_mappings)
         return resource_helper.build_resource_info(
-            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.NFVO,
+            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.MEO,
             translate_name=True)
 
     @classmethod
     def get_plugin_interface(cls):
-        return NFVOPluginBase
+        return MEOPluginBase
 
     def update_attributes_map(self, attributes):
         super(Nfvo, self).update_attributes_map(
@@ -800,12 +800,12 @@ class Nfvo(extensions.ExtensionDescriptor):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class NFVOPluginBase(service_base.NFVPluginBase):
+class MEOPluginBase(service_base.NFVPluginBase):
     def get_plugin_name(self):
-        return constants.NFVO
+        return constants.MEO
 
     def get_plugin_type(self):
-        return constants.NFVO
+        return constants.MEO
 
     def get_plugin_description(self):
         return 'Apmec NFV Orchestrator plugin'

@@ -96,10 +96,10 @@ class FakeClient(mock.Mock):
         pass
 
 
-class FakeVNFMPlugin(mock.Mock):
+class FakeMEMPlugin(mock.Mock):
 
     def __init__(self):
-        super(FakeVNFMPlugin, self).__init__()
+        super(FakeMEMPlugin, self).__init__()
         self.mea1_mead_id = 'eb094833-995e-49f0-a047-dfb56aaf7c4e'
         self.mea1_mea_id = '91e32c20-6d1f-47a4-9ba7-08f5e5effe07'
         self.mea3_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'
@@ -113,21 +113,21 @@ class FakeVNFMPlugin(mock.Mock):
         self.cp32_update_id = '064c0d99-5a61-4711-9597-2a44dc5da14b'
 
     def get_mead(self, *args, **kwargs):
-        if 'VNF1' in args:
+        if 'MEA1' in args:
             return {'id': self.mea1_mead_id,
-                    'name': 'VNF1',
+                    'name': 'MEA1',
                     'attributes': {'mead': _get_template(
                                    'test-nsd-mead1.yaml')}}
-        elif 'VNF2' in args:
+        elif 'MEA2' in args:
             return {'id': self.mea3_mead_id,
-                    'name': 'VNF2',
+                    'name': 'MEA2',
                     'attributes': {'mead': _get_template(
                                    'test-nsd-mead2.yaml')}}
 
     def get_meads(self, *args, **kwargs):
-        if {'name': ['VNF1']} in args:
+        if {'name': ['MEA1']} in args:
             return [{'id': self.mea1_mead_id}]
-        elif {'name': ['VNF3']} in args:
+        elif {'name': ['MEA3']} in args:
             return [{'id': self.mea3_mead_id}]
         else:
             return []
@@ -429,8 +429,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             description="fake NANY",
             NANYD_id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             status='ACTIVE',
-            mea_mapping={'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
-                         'VNF3': '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'})
+            mea_mapping={'MEA1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
+                         'MEA3': '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'})
         session.add(NANY)
         nfp = NANY_db.VnffgNfp(
             id='768f76a7-9025-4acd-b51c-0da609759983',
@@ -528,7 +528,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_NANY_abstract_types(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_NANY_template()
@@ -550,7 +550,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_NANY_abstract_types_inline(self, mock_create_NANYD):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             mock_create_NANYD.return_value = {'id':
@@ -575,7 +575,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_NANY_param_values(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_NANY_param_template()
@@ -597,7 +597,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_NANY_param_value_format_error(self, mock_get_by_id):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock_get_by_id.value = get_by_id()
             NANY_obj = utils.get_dummy_NANY_str_param_obj()
             self.assertRaises(meo.VnffgParamValueFormatError,
@@ -607,7 +607,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_NANY_template_param_not_parse(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             self._insert_dummy_NANY_multi_param_template()
             NANY_obj = utils.get_dummy_NANY_param_obj()
             self.assertRaises(meo.VnffgTemplateParamParsingException,
@@ -617,7 +617,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_NANY_param_value_not_use(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             self._insert_dummy_NANY_param_template()
             NANY_obj = utils.get_dummy_NANY_multi_param_obj()
             self.assertRaises(meo.VnffgParamValueNotUsed,
@@ -627,7 +627,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_create_NANY_mea_mapping(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_NANY_template()
@@ -648,7 +648,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_update_NANY_nonexistent_mea(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_NANY_template()
@@ -656,8 +656,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             updated_NANY = utils.get_dummy_NANY_obj_mea_mapping()
             updated_NANY['NANY']['symmetrical'] = True
             updated_mea_mapping = \
-                {'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
-                 'VNF3': '5c7f5631-9e74-46e8-b3d2-397c0eda9d0b'}
+                {'MEA1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
+                 'MEA3': '5c7f5631-9e74-46e8-b3d2-397c0eda9d0b'}
             updated_NANY['NANY']['mea_mapping'] = updated_mea_mapping
             self.assertRaises(meo.VnffgInvalidMappingException,
                               self.meo_plugin.update_NANY,
@@ -666,7 +666,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def test_update_NANY(self):
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock.patch('apmec.common.driver_manager.DriverManager',
                        side_effect=FakeDriverManager()).start()
             self._insert_dummy_NANY_template()
@@ -674,8 +674,8 @@ class TestNfvoPlugin(db_base.SqlTestCase):
             updated_NANY = utils.get_dummy_NANY_obj_mea_mapping()
             updated_NANY['NANY']['symmetrical'] = True
             updated_mea_mapping = \
-                {'VNF1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
-                 'VNF3': '10f66bc5-b2f1-45b7-a7cd-6dd6ad0017f5'}
+                {'MEA1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
+                 'MEA3': '10f66bc5-b2f1-45b7-a7cd-6dd6ad0017f5'}
             updated_NANY['NANY']['mea_mapping'] = updated_mea_mapping
             self.meo_plugin.update_NANY(self.context, NANY['id'],
                                           updated_NANY)
@@ -697,7 +697,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def _insert_dummy_ns_template(self):
         session = self.context.session
         attributes = {
-            u'nsd': 'imports: [VNF1, VNF2]\ntopology_template:\n  inputs:\n  '
+            u'nsd': 'imports: [MEA1, MEA2]\ntopology_template:\n  inputs:\n  '
                     '  vl1_name: {default: net_mgmt, description: name of VL1'
                     ' virtuallink, type: string}\n    vl2_name: {default: '
                     'net0, description: name of VL2 virtuallink, type: string'
@@ -706,17 +706,17 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                     'apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
                     'properties:\n        network_name: {get_input: vl2_name}'
                     '\n        vendor: apmec\n      type: tosca.nodes.nfv.VL'
-                    '\n    VNF1:\n      requirements:\n      - {virtualLink1: '
+                    '\n    MEA1:\n      requirements:\n      - {virtualLink1: '
                     'VL1}\n      - {virtualLink2: VL2}\n      type: tosca.node'
-                    's.nfv.VNF1\n    VNF2: {type: tosca.nodes.nfv.VNF2}\ntosca'
+                    's.nfv.MEA1\n    MEA2: {type: tosca.nodes.nfv.MEA2}\ntosca'
                     '_definitions_version: tosca_simple_profile_for_nfv_1_0_0'
                     '\n'}
         nsd_template = ns_db.NSD(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
-            meads={'tosca.nodes.nfv.VNF1': 'mea1',
-                   'tosca.nodes.nfv.VNF2': 'mea2'},
+            meads={'tosca.nodes.nfv.MEA1': 'mea1',
+                   'tosca.nodes.nfv.MEA2': 'mea2'},
             description='fake_nsd_template_description',
             deleted_at=datetime.min,
             template_source='onboarded')
@@ -734,7 +734,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
     def _insert_dummy_ns_template_inline(self):
         session = self.context.session
         attributes = {
-            u'nsd': 'imports: [VNF1, VNF2]\ntopology_template:\n  inputs:\n  '
+            u'nsd': 'imports: [MEA1, MEA2]\ntopology_template:\n  inputs:\n  '
                     '  vl1_name: {default: net_mgmt, description: name of VL1'
                     ' virtuallink, type: string}\n    vl2_name: {default: '
                     'net0, description: name of VL2 virtuallink, type: string'
@@ -743,17 +743,17 @@ class TestNfvoPlugin(db_base.SqlTestCase):
                     'apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
                     'properties:\n        network_name: {get_input: vl2_name}'
                     '\n        vendor: apmec\n      type: tosca.nodes.nfv.VL'
-                    '\n    VNF1:\n      requirements:\n      - {virtualLink1: '
+                    '\n    MEA1:\n      requirements:\n      - {virtualLink1: '
                     'VL1}\n      - {virtualLink2: VL2}\n      type: tosca.node'
-                    's.nfv.VNF1\n    VNF2: {type: tosca.nodes.nfv.VNF2}\ntosca'
+                    's.nfv.MEA1\n    MEA2: {type: tosca.nodes.nfv.MEA2}\ntosca'
                     '_definitions_version: tosca_simple_profile_for_nfv_1_0_0'
                     '\n'}
         nsd_template = ns_db.NSD(
             id='be18005d-5656-4d81-b499-6af4d4d8437f',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='dummy_NSD',
-            meads={'tosca.nodes.nfv.VNF1': 'mea1',
-                   'tosca.nodes.nfv.VNF2': 'mea2'},
+            meads={'tosca.nodes.nfv.MEA1': 'mea1',
+                   'tosca.nodes.nfv.MEA2': 'mea2'},
             description='dummy_nsd_description',
             deleted_at=datetime.min,
             template_source='inline')
@@ -802,7 +802,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         nsd_obj = utils.get_dummy_nsd_obj()
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             result = self.meo_plugin.create_nsd(self.context, nsd_obj)
             self.assertIsNotNone(result)
             self.assertEqual('dummy_NSD', result['name'])
@@ -819,7 +819,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         nsd_obj = utils.get_dummy_nsd_obj_inline()
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             result = self.meo_plugin.create_nsd(self.context, nsd_obj)
             self.assertIsNotNone(result)
             self.assertIn('id', result)
@@ -845,7 +845,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         }
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock_get_by_name.return_value = get_by_name()
 
             ns_obj = utils.get_dummy_ns_obj()
@@ -873,7 +873,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         }
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock_get_by_name.return_value = get_by_name()
             mock_create_nsd.return_value = {'id':
                             'be18005d-5656-4d81-b499-6af4d4d8437f'}
@@ -904,7 +904,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
         }
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock_get_by_name.return_value = get_by_name()
 
             ns_obj = utils.get_dummy_ns_obj_2()
@@ -928,7 +928,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock_get_by_name.return_value = get_by_name()
             result = self.meo_plugin.delete_ns(self.context,
                 'ba6bf017-f6f7-45f1-a280-57b073bf78ea')
@@ -954,7 +954,7 @@ class TestNfvoPlugin(db_base.SqlTestCase):
 
         with patch.object(ApmecManager, 'get_service_plugins') as \
                 mock_plugins:
-            mock_plugins.return_value = {'VNFM': FakeVNFMPlugin()}
+            mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock_get_by_name.return_value = get_by_name()
             self.meo_plugin.delete_ns(self.context,
                 DUMMY_NS_2)

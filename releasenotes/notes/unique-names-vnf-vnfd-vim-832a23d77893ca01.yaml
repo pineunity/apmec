@@ -1,4 +1,4 @@
 ---
 features:
   - Introduce uniqueness constraint on the name of Apmec resources such as
-    MEAD, VNF, VIM, etc.
+    MEAD, MEA, VIM, etc.

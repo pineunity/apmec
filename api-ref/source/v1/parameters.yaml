@@ -51,7 +51,7 @@ vim_id_path:
   type: string
 mea_id_path:
   description: |
-    The UUID of the VNF.
+    The UUID of the MEA.
   in: path
   required: true
   type: string
@@ -80,7 +80,7 @@ NANYD_id_path:
 alias:
   description: |
     The alias for the extension. For example,
-    "Commonservices", "NFVO" or "VNFM".
+    "Commonservices", "MEO" or "MEM".
   in: body
   required: true
   type: string
@@ -369,7 +369,7 @@ sfc:
 sfc_chain:
   description: |
     A ordered list of node objects to traverse. Each node includes
-    a list of CPs and correspondent VNF name. Up to 2 CPs may be
+    a list of CPs and correspondent MEA name. Up to 2 CPs may be
     listed per node. If 2 CPs are listed, the first will be
     considered the ingress port for traffic and the second will be
     the egress. If there's only one CP, then it will be considered
@@ -609,39 +609,39 @@ mea:
   type: object
 mea_attributes:
   description: |
-    VNF attributes object. This object can contain ``config``,
+    MEA attributes object. This object can contain ``config``,
     ``param_values``, ``monitoring_policy``, and ``heat_template``.
   in: body
   required: true
   type: object
 mea_attributes_opt:
   description: |
-    VNF attributes object. This object can contain ``config`` and
+    MEA attributes object. This object can contain ``config`` and
     ``param_values``.
   in: body
   required: false
   type: object
 mea_attributes_put:
   description: |
-    VNF attributes object. This object can contain ``config`` object.
+    MEA attributes object. This object can contain ``config`` object.
   in: body
   required: false
   type: object
 mea_config:
   description: |
-    VNF configuration object.
+    MEA configuration object.
   in: body
   required: true
   type: string
 mea_config_opt:
   description: |
-    VNF configuration object.
+    MEA configuration object.
   in: body
   required: false
   type: object
 mea_created_at:
   description: |
-    The date and time when the VNF was created.
+    The date and time when the MEA was created.
     The format is ``YYYY-MM-DD hh:mm:ss.ssssss``.
     For example, ``2016-09-23 09:59:27.392759``.
   in: body
@@ -649,7 +649,7 @@ mea_created_at:
   type: string
 mea_error_reason:
   description: |
-    Reason for VNF error, if any.
+    Reason for MEA error, if any.
   in: body
   required: true
   type: string
@@ -661,7 +661,7 @@ mea_heat_template:
   type: string
 mea_id:
   description: |
-    The UUID of the VNF.
+    The UUID of the MEA.
   in: body
   required: true
   type: string
@@ -673,7 +673,7 @@ mea_ids:
   type: array
 mea_instance_id:
   description: |
-    A UUID information to uniquely identify the instance of VNF.
+    A UUID information to uniquely identify the instance of MEA.
     This instance is equivalent to a Heat stack when using
     "openstack" type VIM.
   in: body
@@ -682,23 +682,23 @@ mea_instance_id:
 mea_mapping:
   description: |
     A ``mea_mapping`` object which contains mappings from MEAD name
-    to VNF instance ID.
+    to MEA instance ID.
   in: body
   required: true
   type: object
 mea_mapping_opt:
   description: |
     A ``mea_mapping`` object which contains mappings from MEAD name
-    to VNF instance ID. This is used to declare which exact VNF
+    to MEA instance ID. This is used to declare which exact MEA
     instance to be used for each MEAD in the Forwarding Path definition.
     If no mea mappings are provided, then Apmec attempts to search
-    for VNF instance derived from each MEADs.
+    for MEA instance derived from each MEADs.
   in: body
   required: false
   type: object
 mea_mgmt_url:
   description: |
-    Management URL information for the VNF.
+    Management URL information for the MEA.
   in: body
   required: true
   type: string
@@ -710,7 +710,7 @@ mea_monitoring_policy:
   type: string
 mea_param_values:
   description: |
-    VNF parameter object. These parameters will be substituted for VNF
+    MEA parameter object. These parameters will be substituted for MEA
     if the MEAD template is appropriately parameterized.
     See `MEAD Template Parameterization
     <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_
@@ -720,7 +720,7 @@ mea_param_values:
   type: string
 mea_param_values_opt:
   description: |
-    VNF parameter object. These parameters will be substituted for VNF
+    MEA parameter object. These parameters will be substituted for MEA
     if the MEAD template is appropriately parameterized.
     See `MEAD Template Parameterization
     <https://docs.openstack.org/apmec/latest/contributor/mead_template_parameterization.html>`_
@@ -730,44 +730,44 @@ mea_param_values_opt:
   type: object
 mea_placement_attr:
   description: |
-    VNF placement information object. This object includes ``region_name``
+    MEA placement information object. This object includes ``region_name``
     and ``vim_name``.
   in: body
   required: true
   type: object
 mea_placement_attr_opt:
   description: |
-    VNF placement information object. This object includes ``region_name``.
+    MEA placement information object. This object includes ``region_name``.
   in: body
   required: false
   type: object
 mea_resource_id:
   description: |
-    The UUID of the VNF resource. This is equivalent to Heat stack resource ID.
+    The UUID of the MEA resource. This is equivalent to Heat stack resource ID.
   in: body
   required: true
   type: string
 mea_resource_name:
   description: |
-    The name of the VNF resource. This is equivalent to Heat stack resource name.
+    The name of the MEA resource. This is equivalent to Heat stack resource name.
   in: body
   required: true
   type: string
 mea_resource_type:
   description: |
-    The type of the VNF resource. This is equivalent to Heat stack resource type.
+    The type of the MEA resource. This is equivalent to Heat stack resource type.
   in: body
   required: true
   type: string
 mea_resources:
   description: |
-    A list of VNF ``resource`` objects.
+    A list of MEA ``resource`` objects.
   in: body
   required: true
   type: array
 mea_scale:
   description: |
-    A VNF ``scale`` object, which contains ``policy`` and ``type``.
+    A MEA ``scale`` object, which contains ``policy`` and ``type``.
   in: body
   required: true
   type: object
@@ -787,13 +787,13 @@ mea_scale_type:
   type: string
 mea_status:
   description: |
-    Status of the VNF.
+    Status of the MEA.
   in: body
   required: true
   type: string
 mea_updated_at:
   description: |
-    The date and time when the VNF was updated.
+    The date and time when the MEA was updated.
     The format is ``YYYY-MM-DD hh:mm:ss.ssssss``.
     For example, ``2016-09-23 09:59:27.392759``.
   in: body
@@ -807,7 +807,7 @@ mead:
   type: object
 mead_attributes:
   description: |
-    Attributes necessary for spinning up VNF.
+    Attributes necessary for spinning up MEA.
   in: body
   required: true
   type: object
@@ -819,7 +819,7 @@ mead_id:
   type: string
 mead_template:
   description: |
-    Template to create VNF.
+    Template to create MEA.
   in: body
   required: false
   type: object

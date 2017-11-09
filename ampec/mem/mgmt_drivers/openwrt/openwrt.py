@@ -75,7 +75,7 @@ class DeviceMgmtOpenWRT(abstract_driver.DeviceMGMTAbstractDriver):
     @log.log
     def mgmt_call(self, plugin, context, mea, kwargs):
         if (kwargs[mgmt_constants.KEY_ACTION] !=
-                mgmt_constants.ACTION_UPDATE_VNF):
+                mgmt_constants.ACTION_UPDATE_MEA):
             return
         dev_attrs = mea.get('attributes', {})
 
@@ -97,7 +97,7 @@ class DeviceMgmtOpenWRT(abstract_driver.DeviceMGMTAbstractDriver):
                 mgmt_ip_address = mgmt_url.get(vdu, '')
                 if not mgmt_ip_address:
                     LOG.warning('tried to configure unknown mgmt '
-                                'address on VNF %(mea)s VDU %(vdu)s',
+                                'address on MEA %(mea)s VDU %(vdu)s',
                                 {'mea': mea.get('name'),
                                  'vdu': vdu})
                     continue

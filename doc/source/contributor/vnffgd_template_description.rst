@@ -38,7 +38,7 @@ Each NFYD template will have below fields:
        groups:
            Describes groupings of nodes that have an implied relationship.
            NFY:
-               Describes properties and members of a VNF Forwarding Graph.
+               Describes properties and members of a MEA Forwarding Graph.
 
 For examples, please refer sample MEAD templates available at `GitHub <https:
 //github.com/openstack/apmec/tree/master/samples/tosca-templates/NANYD>`_.
@@ -55,14 +55,14 @@ Forwarding Path
 ---------------
 Forwarding Path is a required entry in a NFYD.  It describes the chain as
 well as the classifier that will eventually be created to form a path
-through a set of VNFs.
+through a set of MEAs.
 
 :type:
     tosca.nodes.nfv.FP.Apmec
 :properties:
     Describes the properties of a FP.  These include id (path ID), policy
     (traffic match policy to flow through the path), and path (chain of
-    VNFs/Connection Points). A complete list of NFY properties currently
+    MEAs/Connection Points). A complete list of NFY properties currently
     supported by Apmec are listed `here <https://github
     .com/openstack/apmec/blob/master/apmec/
     tosca/lib/apmec_nfv_defs.yaml>`_ under **properties** section of
@@ -89,9 +89,9 @@ An example FP shown below:
             - ip_proto: 6
             - ip_dst_prefix: 192.168.1.2/24
         path:
-          - forwarder: VNF1
+          - forwarder: MEA1
             capability: CP1
-          - forwarder: VNF2
+          - forwarder: MEA2
             capability: CP2
 
 id
@@ -161,7 +161,7 @@ An example NFY shown below:
         number_of_endpoints: 2
         dependent_virtual_link: [VL1,VL2,VL3]
         connection_point: [CP1,CP2]
-        constituent_meas: [VNF1,VNF2]
+        constituent_meas: [MEA1,MEA2]
       members: [Forwarding_path1]
 
 number_of_endpoints
@@ -170,7 +170,7 @@ Number of CPs included in this NFY.
 
 dependent_virtual_link
 """"""""""""""""""""""
-The Virtual Link Descriptors (VLD) that connect each VNF/CP in this
+The Virtual Link Descriptors (VLD) that connect each MEA/CP in this
 Forwarding Graph.
 
 connection_point

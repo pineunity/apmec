@@ -19,7 +19,7 @@ Welcome to Apmec Documentation
 ===============================
 
 Apmec is an OpenStack service for NFV Orchestration with a general purpose
-VNF Manager to deploy and operate Virtual Network Functions (VNFs) and
+MEA Manager to deploy and operate Virtual Network Functions (MEAs) and
 Network Services on an NFV Platform. It is based on ETSI MANO Architectural
 Framework.
 

@@ -5,7 +5,7 @@ metadata:
 topology_template:
   node_templates:
     firewall_meac:
-      type: tosca.nodes.nfv.VNFC.Apmec
+      type: tosca.nodes.nfv.MEAC.Apmec
       requirements:
         - host: VDU1
         - host: VDU2

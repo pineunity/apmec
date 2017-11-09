@@ -34,5 +34,5 @@ resources:
     properties:
       container_format: bare
       disk_format: raw
-      location: http://URL/vRouterVNF.qcow2
+      location: http://URL/vRouterMEA.qcow2
       name: vm_image

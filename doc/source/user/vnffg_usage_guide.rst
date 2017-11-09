@@ -14,16 +14,16 @@
 .. _ref-NANY:
 
 ====================
-VNF Forwarding Graph
+MEA Forwarding Graph
 ====================
 
-VNF Forwarding Graph or NFY feature in Apmec is used to orchestrate and
-manage traffic through VNFs.  In short, abstract NFY TOSCA definitions are
+MEA Forwarding Graph or NFY feature in Apmec is used to orchestrate and
+manage traffic through MEAs.  In short, abstract NFY TOSCA definitions are
 rendered into Service Function Chains (SFCs) and Classifiers.  The SFC makes
-up an ordered list of VNFs for traffic to traverse, while the classifier
+up an ordered list of MEAs for traffic to traverse, while the classifier
 decides which traffic should go through them.
 
-Similar to how VNFs are described by MEADs, NFYs are described by VNF
+Similar to how MEAs are described by MEADs, NFYs are described by MEA
 Forwarding Graph Descriptors (NFYD). Please see the `devref guide
 <https://github.com/openstack/apmec/blob/master/doc/source/contributor
 /NANYD_template_description.rst>`_ on NFYD to learn more about
@@ -44,7 +44,7 @@ in order to use Apmec NFY.  Networking-sfc also requires at least OVS 2.5
 <https://docs.openstack.org/networking-sfc/latest/>`_.
 
 A simple example of a service chain would be one that forces all traffice
-from HTTP client to HTTP server to go through VNFs that was created by
+from HTTP client to HTTP server to go through MEAs that was created by
 NFY.
 
 Firstly, HTTP client and HTTP server must be launched.
@@ -109,7 +109,7 @@ Apmec provides the following CLI to create a NFYD:
 Creating the NFY
 ~~~~~~~~~~~~~~~~~~
 
-To create a NFY, you must have first created VNF instances of the same
+To create a NFY, you must have first created MEA instances of the same
 MEAD types listed in the NFYD.  Failure to do so will result in error when
 trying to create a NFY.  Note, the MEAD you define **must** include the
 same Connection Point definitions as the ones you declared in your NFYD.
@@ -117,13 +117,13 @@ same Connection Point definitions as the ones you declared in your NFYD.
 .. code-block:: console
 
    apmec mead-create --mead-file tosca-NANY-mead1.yaml MEAD1
-   apmec mea-create --mead-name MEAD1 VNF1
+   apmec mea-create --mead-name MEAD1 MEA1
 
    apmec mead-create --mead-file tosca-NANY-mead2.yaml MEAD2
-   apmec mea-create --mead-name MEAD2 VNF2
+   apmec mea-create --mead-name MEAD2 MEA2
 
 Refer the 'Getting Started' link below on how to create a MEAD and deploy
-2 VNFs: `VNF1`_ and `VNF2`_.
+2 MEAs: `MEA1`_ and `MEA2`_.
 
 https://docs.openstack.org/apmec/latest/install/getting_started.html
 
@@ -154,13 +154,13 @@ Here,
 
 * NANYD-name - NFYD to use to instantiate this NFY
 * param-file  - Parameter file in Yaml.
-* mea-mapping - Allows a list of logical MEAD to VNF instance mapping
+* mea-mapping - Allows a list of logical MEAD to MEA instance mapping
 * symmetrical - True/False
 
-VNF Mapping is used to declare which exact VNF instance to be used for
-each VNF in the Forwarding Path. The following command would list VNFs
+MEA Mapping is used to declare which exact MEA instance to be used for
+each MEA in the Forwarding Path. The following command would list MEAs
 in Apmec and then map each MEAD defined in the NFYD Forwarding Path
-to the desired VNF instance:
+to the desired MEA instance:
 
 .. code-block:: console
 
@@ -169,16 +169,16 @@ to the desired VNF instance:
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
    | id                                   | name | mgmt_url                  | status | vim_id                               | mead_id                              |
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
-   | 7168062e-9fa1-4203-8cb7-f5c99ff3ee1b | VNF2 | {"VDU1": "192.168.1.5"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | ea842879-5a7a-4f29-a8b0-528b2ad3b027 |
-   | 91e32c20-6d1f-47a4-9ba7-08f5e5effe07 | VNF1 | {"VDU1": "192.168.1.7"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | 27795330-62a7-406d-9443-2daad76e674b |
+   | 7168062e-9fa1-4203-8cb7-f5c99ff3ee1b | MEA2 | {"VDU1": "192.168.1.5"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | ea842879-5a7a-4f29-a8b0-528b2ad3b027 |
+   | 91e32c20-6d1f-47a4-9ba7-08f5e5effe07 | MEA1 | {"VDU1": "192.168.1.7"}   | ACTIVE | 0e70ec23-6f32-420a-a039-2cdb2c20c329 | 27795330-62a7-406d-9443-2daad76e674b |
    +--------------------------------------+------+---------------------------+--------+--------------------------------------+--------------------------------------+
 
    apmec NANY-create --NANYD-name myNANYD --mea-mapping \
-      MEAD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',VNF2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myNANY
+      MEAD1:'91e32c20-6d1f-47a4-9ba7-08f5e5effe07',MEA2:'7168062e-9fa1-4203-8cb7-f5c99ff3ee1b' myNANY
 
 Alternatively, if no mea-mapping is provided then Apmec NFY will attempt
-to search for VNF instances derived from the given MEADs in the NFYD.  If
-multiple VNF instances exist for a given MEAD, the VNF instance chosen to be
+to search for MEA instances derived from the given MEADs in the NFYD.  If
+multiple MEA instances exist for a given MEAD, the MEA instance chosen to be
 used in the NFY is done at random.
 
 The symmetrical argument is used to indicate if reverse traffic should also
@@ -248,5 +248,5 @@ Known Issues and Limitations
 - NSH attributes not yet supported
 - Symmetrical is not supported by driver yet
 
-.. _VNF1: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/NANYD/tosca-NANY-mead1.yaml
-.. _VNF2: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/NANYD/tosca-NANY-mead2.yaml
+.. _MEA1: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/NANYD/tosca-NANY-mead1.yaml
+.. _MEA2: https://github.com/openstack/apmec/blob/master/samples/tosca-templates/NANYD/tosca-NANY-mead2.yaml

@@ -1,8 +1,8 @@
 ---
 features:
-  - Add support to pass shell script to install VNF
+  - Add support to pass shell script to install MEA
     components in the tosca template
 other:
-  - Only one VNFC is supported for one VDU. Multiple VNFC per VDU will
+  - Only one MEAC is supported for one VDU. Multiple MEAC per VDU will
     be introduced in future.
   - The shell script for meac has to be placed in the machine where apmec server is running

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-VNFC_IMAGE=/tmp/apmec_meac_images
-rm -rf $VNFC_IMAGE
-mkdir $VNFC_IMAGE
+MEAC_IMAGE=/tmp/apmec_meac_images
+rm -rf $MEAC_IMAGE
+mkdir $MEAC_IMAGE
 
 pip install diskimage-builder
 pip install dib-utils
 CURRENT_DIR=`pwd`
-cd $VNFC_IMAGE
+cd $MEAC_IMAGE
 git clone https://git.openstack.org/openstack/tripleo-image-elements.git
 git clone https://git.openstack.org/openstack/heat-templates.git
 

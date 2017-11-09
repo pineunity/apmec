@@ -14,15 +14,15 @@
 .. _ref-scale:
 
 ===========
-VNF scaling
+MEA scaling
 ===========
 
-VNF resources in terms of CPU core and memory are hardcoded in MEAD template
-through image flavor settings. This result in either provisioning VNF for
+MEA resources in terms of CPU core and memory are hardcoded in MEAD template
+through image flavor settings. This result in either provisioning MEA for
 typical usage or for maximum usage. The former leads to service disruption
 when load exceeds provisioned capacity. And the later leads to underutilized
 resources and waste during normal system load. So apmec provides a
-way to seamlessly scale the number of VNFs on demand either manually or
+way to seamlessly scale the number of MEAs on demand either manually or
 automatically.
 
 
@@ -104,11 +104,11 @@ below:
 https://github.com/openstack/apmec/tree/master/samples/tosca-templates/mead
 
 Refer the 'Getting Started' link below on how to create a MEAD and deploy a
-VNF:
+MEA:
 https://docs.openstack.org/apmec/latest/install/getting_started.html
 
 
-How to scale VNF using CLI
+How to scale MEA using CLI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Apmec provides following CLI for scaling.
@@ -124,8 +124,8 @@ Here,
 
 * scaling-policy-name - Policy name defined in scaling MEAD
 * scaling-type - in or out
-* mea-id - scaling VNF id
-* mea-name - scaling VNF name
+* mea-id - scaling MEA id
+* mea-name - scaling MEA name
 
 For example, to scale-out policy 'sp1' defined above, this cli could be used
 as below:
@@ -136,7 +136,7 @@ as below:
                   **--scaling-policy-name sp1**
                   **--scaling-type out**
 
-How to scale VNF using REST API
+How to scale MEA using REST API
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Apmec provides following REST API for scaling.
@@ -153,7 +153,7 @@ Here,
 
 * scaling-policy-name - Policy name defined in scaling MEAD
 * scaling-type - in or out
-* mea-id - scaling VNF id
+* mea-id - scaling MEA id
 
 Response http status codes:
 
@@ -162,9 +162,9 @@ Response http status codes:
 * 500 - Internal server error, on scaling operation failed due to an error
 * 401 - Unauthorized
 
-VNF state transitions during scaling operation
+MEA state transitions during scaling operation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-During the scaling operation, the VNF will be moving in below state
+During the scaling operation, the MEA will be moving in below state
 transformations:
 
 * **ACTIVE -> PENDING_SCALE_IN -> ACTIVE**
@@ -180,7 +180,7 @@ Following features are not supported with scaling:
 
 * Auto-scaling feature is supported only with alarm monitors and it does
   not work with other monitors such as ping, http_ping.
-* When VNF is modelled with scaling requirement in MEAD, any config
+* When MEA is modelled with scaling requirement in MEAD, any config
   management requirement in MEAD is not supported.
 * Scaling feature does not support to selectively choose the VDU as part
   of scaling.

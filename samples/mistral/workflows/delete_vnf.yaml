@@ -5,12 +5,12 @@ std.delete_mea:
   type: direct
 
   description: |
-    Delete a VNF.
+    Delete a MEA.
 
   input:
     - mea_id
 
   tasks:
     delete_mea:
-      description: Request to delete a VNF.
+      description: Request to delete a MEA.
       action: apmec.delete_mea mea=<% $.mea_id %>

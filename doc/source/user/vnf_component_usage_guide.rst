@@ -1,9 +1,9 @@
 ========================
-VNF Component in Apmec
+MEA Component in Apmec
 ========================
 
 This section will cover how to deploy `mea component` in Apmec with the
-examples of how to write VNF descriptors.
+examples of how to write MEA descriptors.
 
 
 Sample TOSCA with meac
@@ -18,17 +18,17 @@ described firstly like other TOSCA templates in Apmec.
      topology_template:
        node_templates:
          firewall_meac:
-           type: tosca.nodes.nfv.VNFC.Apmec
+           type: tosca.nodes.nfv.MEAC.Apmec
            requirements:
              - host: VDU1
            interfaces:
              Standard:
                create: install_meac.sh
 
-Every meac node must be of type 'tosca.nodes.nfv.VNFC.Apmec'. It takes
+Every meac node must be of type 'tosca.nodes.nfv.MEAC.Apmec'. It takes
 two parameters:
 
-1) requirements: This node will accept list of hosts on which VNFC has to be
+1) requirements: This node will accept list of hosts on which MEAC has to be
    installed.
 2) interfaces: This node will accept the absolute path of shell script to be run
    on the VDUs. This shell script should reside in the machine where apmec
@@ -37,13 +37,13 @@ two parameters:
 
 How to setup environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-To make use of VNFC in Apmec, we have to upload the image to the glance in
+To make use of MEAC in Apmec, we have to upload the image to the glance in
 which heat-config and heat-config agents are installed. The installation steps
 can be referred `here <https://github.com/openstack/heat-templates/blob/master/
 hot/software-config/elements/README.rst>`_. The tool
 'tools/meac/build_image.sh' can be used to generate such a kind of image.
 
-Currently VNFC feature works by using `heat software config <https://docs.openstack.org/heat/latest/
+Currently MEAC feature works by using `heat software config <https://docs.openstack.org/heat/latest/
 template_guide/software_deployment.html#software-config-resources>`_  which
 makes use of heat API.
 
@@ -52,7 +52,7 @@ passed to VDU.
 
 Known Limitations
 ~~~~~~~~~~~~~~~~~
-1) Only one VNFC is supported for one VDU. Multiple VNFC per VDU will
+1) Only one MEAC is supported for one VDU. Multiple MEAC per VDU will
    be introduced in future.
 2) The shell script for meac has to be placed in the machine where apmec
    server is running.

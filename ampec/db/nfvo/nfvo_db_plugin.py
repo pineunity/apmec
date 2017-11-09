@@ -36,7 +36,7 @@ VIM_ATTRIBUTES = ('id', 'type', 'tenant_id', 'name', 'description',
 VIM_AUTH_ATTRIBUTES = ('auth_url', 'vim_project', 'password', 'auth_cred')
 
 
-class NfvoPluginDb(meo.NFVOPluginBase, db_base.CommonDbMixin):
+class NfvoPluginDb(meo.MEOPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
         super(NfvoPluginDb, self).__init__()
@@ -128,7 +128,7 @@ class NfvoPluginDb(meo.NFVOPluginBase, db_base.CommonDbMixin):
 
     def is_vim_still_in_use(self, context, vim_id):
         with context.session.begin(subtransactions=True):
-            meas_db = self._model_query(context, mem_db.VNF).filter_by(
+            meas_db = self._model_query(context, mem_db.MEA).filter_by(
                 vim_id=vim_id).first()
             if meas_db is not None:
                 raise meo.VimInUseException(vim_id=vim_id)

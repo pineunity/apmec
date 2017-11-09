@@ -1,13 +1,13 @@
 .. -*- rst -*-
 
 ==========================================
-VNF Forwarding Graph Descriptors (NFYDs)
+MEA Forwarding Graph Descriptors (NFYDs)
 ==========================================
 
-Manages VNF Forwarding Graph Descriptors (NFYDs).
+Manages MEA Forwarding Graph Descriptors (NFYDs).
 
 The NFYD is a template which describes information about deployment and
-behavior of VNF Forwarding Graphs (NFYs). For more information, see
+behavior of MEA Forwarding Graphs (NFYs). For more information, see
 `NFY Descriptor Template Guide
 <https://docs.openstack.org/apmec/latest/contributor/NANYD_template_description.html>`_.
 

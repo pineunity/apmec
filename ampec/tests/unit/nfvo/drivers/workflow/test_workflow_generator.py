@@ -24,9 +24,9 @@ def get_dummy_ns():
                     'mea_ids': '', u'attributes': {},
                     u'nsd_id': u'b8587afb-6099-4f56-abce-572c62e3d61d',
                     u'name': u'test_create_ns'},
-            'mead_details': {u'mea1': {'instances': ['VNF1'],
+            'mead_details': {u'mea1': {'instances': ['MEA1'],
                              'id': u'dec09ed4-f355-4ec8-a00b-8548f6575a80'},
-            u'mea2': {'instances': ['VNF2'],
+            u'mea2': {'instances': ['MEA2'],
                       'id': u'9f8f2af7-6407-4f79-a6fe-302c56172231'}},
             'placement_attr': {}}
 
@@ -47,84 +47,84 @@ def get_dummy_param():
 def get_dummy_create_workflow():
     return {'std.create_mea_dummy': {'input': ['mea'],
                 'tasks': {
-                    'wait_mea_active_VNF2': {
-                        'action': 'apmec.show_mea mea=<% $.mea_id_VNF2 %>',
+                    'wait_mea_active_MEA2': {
+                        'action': 'apmec.show_mea mea=<% $.mea_id_MEA2 %>',
                         'retry': {'count': 10, 'delay': 10,
-                            'continue-on': '<% $.status_VNF2 = '
+                            'continue-on': '<% $.status_MEA2 = '
                                            '"PENDING_CREATE" %>',
-                            'break-on': '<% $.status_VNF2 = "ERROR" %>'},
+                            'break-on': '<% $.status_MEA2 = "ERROR" %>'},
                         'publish': {
-                            'status_VNF2': '<% task(wait_mea_active_VNF2).'
+                            'status_MEA2': '<% task(wait_mea_active_MEA2).'
                                            'result.mea.status %>',
-                            'mgmt_url_VNF2': ' <% task(wait_mea_active_VNF2).'
+                            'mgmt_url_MEA2': ' <% task(wait_mea_active_MEA2).'
                                              'result.mea.mgmt_url %>'},
                         'on-success': [{
-                            'delete_mea_VNF2': '<% $.status_VNF2='
+                            'delete_mea_MEA2': '<% $.status_MEA2='
                                                '"ERROR" %>'}]},
-                    'create_mea_VNF2': {
-                        'action': 'apmec.create_mea body=<% $.mea.VNF2 %>',
-                        'input': {'body': '<% $.mea.VNF2 %>'},
+                    'create_mea_MEA2': {
+                        'action': 'apmec.create_mea body=<% $.mea.MEA2 %>',
+                        'input': {'body': '<% $.mea.MEA2 %>'},
                         'publish': {
-                            'status_VNF2': '<% task(create_mea_VNF2).'
+                            'status_MEA2': '<% task(create_mea_MEA2).'
                                            'result.mea.status %>',
-                            'vim_id_VNF2': '<% task(create_mea_VNF2).'
+                            'vim_id_MEA2': '<% task(create_mea_MEA2).'
                                            'result.mea.vim_id %>',
-                            'mgmt_url_VNF2': '<% task(create_mea_VNF2).'
+                            'mgmt_url_MEA2': '<% task(create_mea_MEA2).'
                                              'result.mea.mgmt_url %>',
-                            'mea_id_VNF2': '<% task(create_mea_VNF2)'
+                            'mea_id_MEA2': '<% task(create_mea_MEA2)'
                                            '.result.mea.id %>'},
-                            'on-success': ['wait_mea_active_VNF2']},
-                    'create_mea_VNF1': {
-                        'action': 'apmec.create_mea body=<% $.mea.VNF1 %>',
-                        'input': {'body': '<% $.mea.VNF1 %>'},
+                            'on-success': ['wait_mea_active_MEA2']},
+                    'create_mea_MEA1': {
+                        'action': 'apmec.create_mea body=<% $.mea.MEA1 %>',
+                        'input': {'body': '<% $.mea.MEA1 %>'},
                         'publish': {
-                            'status_VNF1': '<% task(create_mea_VNF1).'
+                            'status_MEA1': '<% task(create_mea_MEA1).'
                                            'result.mea.status %>',
-                            'mea_id_VNF1': '<% task(create_mea_VNF1).'
+                            'mea_id_MEA1': '<% task(create_mea_MEA1).'
                                            'result.mea.id %>',
-                            'mgmt_url_VNF1': '<% task(create_mea_VNF1).'
+                            'mgmt_url_MEA1': '<% task(create_mea_MEA1).'
                                              'result.mea.mgmt_url %>',
-                            'vim_id_VNF1': '<% task(create_mea_VNF1).'
+                            'vim_id_MEA1': '<% task(create_mea_MEA1).'
                                            'result.mea.vim_id %>'},
-                        'on-success': ['wait_mea_active_VNF1']},
-                    'wait_mea_active_VNF1': {
-                        'action': 'apmec.show_mea mea=<% $.mea_id_VNF1 %>',
+                        'on-success': ['wait_mea_active_MEA1']},
+                    'wait_mea_active_MEA1': {
+                        'action': 'apmec.show_mea mea=<% $.mea_id_MEA1 %>',
                         'retry': {'count': 10, 'delay': 10,
-                            'continue-on': '<% $.status_VNF1 = "PENDING_'
+                            'continue-on': '<% $.status_MEA1 = "PENDING_'
                                            'CREATE" %>',
-                            'break-on': '<% $.status_VNF1 = "ERROR" %>'},
+                            'break-on': '<% $.status_MEA1 = "ERROR" %>'},
                         'publish': {
-                            'status_VNF1': '<% task(wait_mea_active_VNF1).'
+                            'status_MEA1': '<% task(wait_mea_active_MEA1).'
                                            'result.mea.status %>',
-                            'mgmt_url_VNF1': ' <% task(wait_mea_active_VNF1).'
+                            'mgmt_url_MEA1': ' <% task(wait_mea_active_MEA1).'
                                              'result.mea.mgmt_url %>'},
-                        'on-success': [{'delete_mea_VNF1': '<% $.status_VNF1='
+                        'on-success': [{'delete_mea_MEA1': '<% $.status_MEA1='
                                                            '"ERROR" %>'}]},
-                    'delete_mea_VNF1': {'action': 'apmec.delete_mea mea=<% '
-                                                  '$.mea_id_VNF1%>'},
-                    'delete_mea_VNF2': {'action': 'apmec.delete_mea mea=<% '
-                                                  '$.mea_id_VNF2%>'}},
+                    'delete_mea_MEA1': {'action': 'apmec.delete_mea mea=<% '
+                                                  '$.mea_id_MEA1%>'},
+                    'delete_mea_MEA2': {'action': 'apmec.delete_mea mea=<% '
+                                                  '$.mea_id_MEA2%>'}},
                 'type': 'direct', 'output': {
-                    'status_VNF1': '<% $.status_VNF1 %>',
-                    'status_VNF2': '<% $.status_VNF2 %>',
-                    'mgmt_url_VNF2': '<% $.mgmt_url_VNF2 %>',
-                    'mgmt_url_VNF1': '<% $.mgmt_url_VNF1 %>',
-                    'vim_id_VNF2': '<% $.vim_id_VNF2 %>',
-                    'mea_id_VNF1': '<% $.mea_id_VNF1 %>',
-                    'mea_id_VNF2': '<% $.mea_id_VNF2 %>',
-                    'vim_id_VNF1': '<% $.vim_id_VNF1 %>'}},
+                    'status_MEA1': '<% $.status_MEA1 %>',
+                    'status_MEA2': '<% $.status_MEA2 %>',
+                    'mgmt_url_MEA2': '<% $.mgmt_url_MEA2 %>',
+                    'mgmt_url_MEA1': '<% $.mgmt_url_MEA1 %>',
+                    'vim_id_MEA2': '<% $.vim_id_MEA2 %>',
+                    'mea_id_MEA1': '<% $.mea_id_MEA1 %>',
+                    'mea_id_MEA2': '<% $.mea_id_MEA2 %>',
+                    'vim_id_MEA1': '<% $.vim_id_MEA1 %>'}},
             'version': '2.0'}
 
 
 def dummy_delete_ns_obj():
-    return {'mea_ids': u"{'VNF1': '5de5eca6-3e21-4bbd-a9d7-86458de75f0c'}"}
+    return {'mea_ids': u"{'MEA1': '5de5eca6-3e21-4bbd-a9d7-86458de75f0c'}"}
 
 
 def get_dummy_delete_workflow():
     return {'version': '2.0',
-            'std.delete_mea_dummy': {'input': ['mea_id_VNF1'],
-                'tasks': {'delete_mea_VNF1': {
-                    'action': 'apmec.delete_mea mea=<% $.mea_id_VNF1%>'}},
+            'std.delete_mea_dummy': {'input': ['mea_id_MEA1'],
+                'tasks': {'delete_mea_MEA1': {
+                    'action': 'apmec.delete_mea mea=<% $.mea_id_MEA1%>'}},
                 'type': 'direct'}}
 
 
@@ -133,7 +133,7 @@ class FakeMistral(object):
         pass
 
 
-class FakeNFVOPlugin(object):
+class FakeMEOPlugin(object):
 
     def __init__(self, context, client, resource, action):
         self.context = context
@@ -150,7 +150,7 @@ class TestWorkflowGenerator(base.TestCase):
         self.mistral_client = FakeMistral()
 
     def test_prepare_workflow_create(self):
-        fPlugin = FakeNFVOPlugin(context, self.mistral_client,
+        fPlugin = FakeMEOPlugin(context, self.mistral_client,
                                  resource='mea', action='create')
         fPlugin.prepare_workflow(ns=get_dummy_ns(), params=get_dummy_param())
         wf_def_values = [fPlugin.wg.definition[k] for
@@ -161,7 +161,7 @@ class TestWorkflowGenerator(base.TestCase):
                          fPlugin.wg.definition['version'])
 
     def test_prepare_workflow_delete(self):
-        fPlugin = FakeNFVOPlugin(context, self.mistral_client,
+        fPlugin = FakeMEOPlugin(context, self.mistral_client,
                                  resource='mea', action='delete')
         fPlugin.prepare_workflow(ns=dummy_delete_ns_obj())
         wf_def_values = [fPlugin.wg.definition[k] for

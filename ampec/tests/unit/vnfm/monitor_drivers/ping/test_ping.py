@@ -18,11 +18,11 @@ import testtools
 from apmec.mem.monitor_drivers.ping import ping
 
 
-class TestVNFMonitorPing(testtools.TestCase):
+class TestMEMonitorPing(testtools.TestCase):
 
     def setUp(self):
-        super(TestVNFMonitorPing, self).setUp()
-        self.monitor_ping = ping.VNFMonitorPing()
+        super(TestMEMonitorPing, self).setUp()
+        self.monitor_ping = ping.MEMonitorPing()
 
     @mock.patch('apmec.agent.linux.utils.execute')
     def test_monitor_call_for_success(self, mock_utils_execute):

@@ -59,11 +59,11 @@ def config_opts():
 
 class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                  ns_db.NSPluginDb):
-    """NFVO reference plugin for NFVO extension
+    """MEO reference plugin for MEO extension
 
-    Implements the NFVO extension and defines public facing APIs for VIM
-    operations. NFVO internally invokes the appropriate VIM driver in
-    backend based on configured VIM types. Plugin also interacts with VNFM
+    Implements the MEO extension and defines public facing APIs for VIM
+    operations. MEO internally invokes the appropriate VIM driver in
+    backend based on configured VIM types. Plugin also interacts with MEM
     extension for providing the specified VIM information
     """
     supported_extension_aliases = ['meo']
@@ -71,7 +71,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
     OPTS = [
         cfg.ListOpt(
             'vim_drivers', default=['openstack'],
-            help=_('VIM driver for launching VNFs')),
+            help=_('VIM driver for launching MEAs')),
         cfg.IntOpt(
             'monitor_interval', default=30,
             help=_('Interval to check for VIM health')),
@@ -306,8 +306,8 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         match = super(NfvoPlugin, self).get_classifier(context,
                                                        nfp['classifier_id'],
                                                        fields='match')['match']
-        # grab the first VNF to check it's VIM type
-        # we have already checked that all VNFs are in the same VIM
+        # grab the first MEA to check it's VIM type
+        # we have already checked that all MEAs are in the same VIM
         vim_obj = self._get_vim_from_mea(context,
                                          list(NANY_dict[
                                               'mea_mapping'].values())[0])
@@ -435,13 +435,13 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         return NANY_dict
 
     def _get_vim_from_mea(self, context, mea_id):
-        """Figures out VIM based on a VNF
+        """Figures out VIM based on a MEA
 
         :param context: SQL Session Context
-        :param mea_id: VNF ID
+        :param mea_id: MEA ID
         :return: VIM or VIM properties if fields are provided
         """
-        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         vim_id = mem_plugin.get_mea(context, mea_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
@@ -501,7 +501,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
 
         :param resource: resource type to find (network, subnet, etc)
         :param name: name of the resource to find its ID
-        :param mea_id: A VNF instance ID that is part of the chain to which
+        :param mea_id: A MEA instance ID that is part of the chain to which
                the classifier will apply to
         :return: ID of the resource name
         """
@@ -539,13 +539,13 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
         nsd['meads'] = dict()
         LOG.debug('nsd_dict: %s', inner_nsd_dict)
 
-        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         mead_imports = inner_nsd_dict['imports']
         inner_nsd_dict['imports'] = []
         new_files = []
         for mead_name in mead_imports:
             mead = mem_plugin.get_mead(context, mead_name)
-            # Copy VNF types and VNF names
+            # Copy MEA types and MEA names
             sm_dict = yaml.safe_load(mead['attributes']['mead'])[
                 'topology_template'][
                 'substitution_mappings']
@@ -593,13 +593,13 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
 
     @log.log
     def create_ns(self, context, ns):
-        """Create NS and corresponding VNFs.
+        """Create NS and corresponding MEAs.
 
         :param ns: ns dict which contains nsd_id and attributes
         This method has 3 steps:
         step-1: substitute all get_input params to its corresponding values
         step-2: Build params dict for substitution mappings case through which
-        VNFs will actually substitute their requirements.
+        MEAs will actually substitute their requirements.
         step-3: Create mistral workflow and execute the workflow
         """
         ns_info = ns['ns']
@@ -617,7 +617,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
 
         nsd = self.get_nsd(context, ns['ns']['nsd_id'])
         nsd_dict = yaml.safe_load(nsd['attributes']['nsd'])
-        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         onboarded_meads = mem_plugin.get_meads(context, [])
         region_name = ns.setdefault('placement_attr', {}).get(
             'region_name', None)
@@ -778,7 +778,7 @@ class NfvoPlugin(meo_db_plugin.NfvoPluginDb, NANY_db.VnffgPluginDbMixin,
                 kwargs={
                     'ns': ns})
         except meo.NoTasksException:
-            LOG.warning("No VNF deletion task(s).")
+            LOG.warning("No MEA deletion task(s).")
         if workflow:
             try:
                 mistral_execution = self._vim_drivers.invoke(

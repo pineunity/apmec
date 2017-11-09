@@ -27,7 +27,7 @@ class TestOpenStack(base.TestCase):
         stack = {"stack_status", "CREATE_IN_PROGRESS"}
         mocked_hc.get.side_effect = [stack, Exception("any stuff")]
         openstack_driver = openstack.OpenStack()
-        self.assertRaises(mem.VNFCreateWaitFailed,
+        self.assertRaises(mem.MEACreateWaitFailed,
                           openstack_driver.create_wait,
                           None, None, {}, 'mea_id', None)
 

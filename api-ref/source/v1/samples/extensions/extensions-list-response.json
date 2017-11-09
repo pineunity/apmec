@@ -2,11 +2,11 @@
     "extensions": [
         {
             "updated": "2013-11-19T10:00:00-00:00",
-            "name": "VNF Manager",
+            "name": "MEA Manager",
             "links": [],
             "namespace": "http://wiki.openstack.org/Apmec",
-            "alias": "VNFM",
-            "description": "Extension for VNF Manager"
+            "alias": "MEM",
+            "description": "Extension for MEA Manager"
         },
         {
             "updated": "2016-06-06T13:00:00-00:00",
@@ -21,7 +21,7 @@
             "name": "NFV Orchestrator",
             "links": [],
             "namespace": "http://wiki.openstack.org/Apmec",
-            "alias": "NFVO",
+            "alias": "MEO",
             "description": "Extension for NFV Orchestrator"
         }
     ]

@@ -67,5 +67,5 @@ class DeviceAbstractDriver(extensions.PluginInterface):
     @abc.abstractmethod
     def get_resource_info(self, plugin, context, mea_info, auth_attr,
                           region_name=None):
-        '''Fetches optional details of a VNF'''
+        '''Fetches optional details of a MEA'''
         pass

@@ -45,15 +45,15 @@ class VimAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def register_vim(self, context, vim_obj):
-        """Register VIM object in to NFVO plugin
+        """Register VIM object in to MEO plugin
 
-        Validate, encode and store VIM information for deploying VNFs.
+        Validate, encode and store VIM information for deploying MEAs.
         """
         pass
 
     @abc.abstractmethod
     def deregister_vim(self, context, vim_obj):
-        """Deregister VIM object from NFVO plugin
+        """Deregister VIM object from MEO plugin
 
         Cleanup VIM data and delete VIM information
         """

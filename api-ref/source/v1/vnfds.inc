@@ -7,8 +7,8 @@ Virtualized Network Function Descriptors (MEADs)
 Manages Virtualized Network Function Descriptors (MEADs).
 
 The MEAD is a template which describes information about deployment
-and behavior of Virtualized Network Functions (VNFs). For more information, see
-`VNF Descriptor Template Guide
+and behavior of Virtualized Network Functions (MEAs). For more information, see
+`MEA Descriptor Template Guide
 <https://docs.openstack.org/apmec/latest/contributor/mead_template_description.html>`_.
 
 Create MEAD
@@ -224,7 +224,7 @@ Delete MEAD
 .. rest_method::  DELETE /v1.0/meads/{mead_id}
 
 Deletes a given MEAD.
-Only a MEAD without any associated VNFs can be deleted.
+Only a MEAD without any associated MEAs can be deleted.
 
 Response Codes
 --------------

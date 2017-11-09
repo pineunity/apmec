@@ -180,7 +180,7 @@ Ceilometer and Aodh plugins will need to be enabled in local.conf:
 
 **enable_plugin aodh https://git.openstack.org/openstack/aodh master**
 
-How to monitor VNFs via alarm triggers
+How to monitor MEAs via alarm triggers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 How to setup alarm configuration
@@ -241,7 +241,7 @@ How to trigger alarms:
 As shown in the above Ceilometer command, alarm state is shown as
 "insufficient data". Alarm is triggered by Ceilometer once alarm
 state changes to "alarm".
-To make VNF instance reach to the pre-defined threshold, some
+To make MEA instance reach to the pre-defined threshold, some
 simple scripts could be used.
 
 Note: Because Ceilometer pipeline set the default interval to 600s (10 mins),

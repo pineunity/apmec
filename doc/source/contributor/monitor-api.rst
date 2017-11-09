@@ -8,21 +8,21 @@ various actions that a user can take when a specific event occurs.
 * How to write a new monitor driver
 * Events
 * Actions
-* How to write TOSCA template to monitor VNF entities
+* How to write TOSCA template to monitor MEA entities
 
 Introduction
 -------------
 
-Apmec monitoring framework provides the NFV operators and VNF vendors to
+Apmec monitoring framework provides the NFV operators and MEA vendors to
 write a pluggable driver that monitors the various status conditions of the
-VNF entities it deploys and manages.
+MEA entities it deploys and manages.
 
 How to write a new monitor driver
 ----------------------------------
 
 A monitor driver for apmec is a python module which contains a class that
 inherits from
-"apmec.mem.monitor_drivers.abstract_driver.VNFMonitorAbstractDriver". If the
+"apmec.mem.monitor_drivers.abstract_driver.MEMonitorAbstractDriver". If the
 driver depends/imports more than one module, then create a new python package
 under apmec/mem/monitor_drivers folder. After this we have to mention our
 driver path in setup.cfg file in root directory.
@@ -31,7 +31,7 @@ For example:
 ::
 
   apmec.apmec.monitor_drivers =
-      ping = apmec.mem.monitor_drivers.ping.ping:VNFMonitorPing
+      ping = apmec.mem.monitor_drivers.ping.ping:MEMonitorPing
 
 Following methods need to be overridden in the new driver:
 
@@ -52,9 +52,9 @@ Following methods need to be overridden in the new driver:
     This method must return the url of mea to monitor.
 
 ``def monitor_call(self, mea, kwargs)``
-    This method must either return boolean value 'True', if VNF is healthy.
+    This method must either return boolean value 'True', if MEA is healthy.
     Otherwise it should return an event string like 'failure' or
-    'calls-capacity-reached' based on specific VNF health condition. More
+    'calls-capacity-reached' based on specific MEA health condition. More
     details on these event is given in below section.
 
 Custom events
@@ -74,7 +74,7 @@ For example:
           failure: respawn
 
 In this  example, we have an event called 'failure'. So whenever monitor_call
-returns 'failure' apmec will respawn the VNF.
+returns 'failure' apmec will respawn the MEA.
 
 
 Actions
@@ -85,7 +85,7 @@ occurs.
 #. respawn
 #. log
 
-How to write TOSCA template to monitor VNF entities
+How to write TOSCA template to monitor MEA entities
 ----------------------------------------------------
 
 In the vdus section, under vdu you can specify the monitors details with

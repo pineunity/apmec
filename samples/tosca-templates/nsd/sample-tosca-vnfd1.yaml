@@ -2,7 +2,7 @@ tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 
 description: VirtualLinks of CP11 and CP22 will be provided by NS descriptor
 node_types:
-  tosca.nodes.nfv.VNF1:
+  tosca.nodes.nfv.MEA1:
     requirements:
       - virtualLink1:
           type: tosca.nodes.nfv.VL
@@ -18,7 +18,7 @@ node_types:
 
 topology_template:
   substitution_mappings:
-    node_type: tosca.nodes.nfv.VNF1
+    node_type: tosca.nodes.nfv.MEA1
     requirements:
       virtualLink1: [CP11, virtualLink]
       virtualLink2: [CP14, virtualLink]

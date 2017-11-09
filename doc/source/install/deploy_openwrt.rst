@@ -15,11 +15,11 @@
       under the License.
 
 ========================
-Deploying OpenWRT as VNF
+Deploying OpenWRT as MEA
 ========================
 
 Once apmec is installed successfully, follow the steps given below to get
-started with deploying OpenWRT as VNF.
+started with deploying OpenWRT as MEA.
 
 1. Ensure Glance already contains OpenWRT image. Normally, Apmec tries
 to add OpenWRT image to Glance while installing via devstack. By running
@@ -159,15 +159,15 @@ succeed.
                        <MEAD_NAME>
 ..
 
-4.Create a VNF:
+4.Create a MEA:
 
 .. code-block:: console
 
     apmec mea-create --mead-name <MEAD_NAME> <NAME>
 ..
 
-This VNF will contains all the firewall rules that MEAD contains
-by using 'cat /etc/config/firewall' in VNF.
+This MEA will contains all the firewall rules that MEAD contains
+by using 'cat /etc/config/firewall' in MEA.
 
 
 5.Check the status:
@@ -175,5 +175,5 @@ by using 'cat /etc/config/firewall' in VNF.
 .. code-block:: console
 
     apmec mea-list
-    apmec mea-show <VNF_ID>
+    apmec mea-show <MEA_ID>
 ..

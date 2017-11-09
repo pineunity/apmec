@@ -26,7 +26,7 @@ Registering default OpenStack VIM
 =================================
 1.) Get one account on the OpenStack VIM.
 
-In Apmec MANO system, the VNF can be onboarded to one target OpenStack, which
+In Apmec MANO system, the MEA can be onboarded to one target OpenStack, which
 is also called VIM. Get one account on this OpenStack. For example, the below
 is the account information collected in file vim-config.yaml::
 
@@ -38,7 +38,7 @@ is the account information collected in file vim-config.yaml::
     user_domain_name: 'Default'
 
 
-2.) Register the VIM that will be used as a default VIM for VNF deployments.
+2.) Register the VIM that will be used as a default VIM for MEA deployments.
 This will be required when the optional argument --vim-id is not provided by
 the user during mea-create.
 
@@ -50,7 +50,7 @@ the user during mea-create.
 
 
 
-Onboarding sample VNF
+Onboarding sample MEA
 =====================
 
 1). Create a sample-mead.yaml file with the following content:
@@ -115,7 +115,7 @@ Onboarding sample VNF
    apmec mead-create --mead-file sample-mead.yaml samplemead
 ..
 
-3). Create a VNF.
+3). Create a MEA.
 
 .. code-block:: console
 

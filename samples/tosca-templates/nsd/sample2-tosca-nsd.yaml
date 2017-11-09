@@ -7,9 +7,9 @@ imports:
 
 topology_template:
   node_templates:
-      VNF1:
-        type: tosca.nodes.nfv.VNF1
+      MEA1:
+        type: tosca.nodes.nfv.MEA1
 
-      VNF2:
-        type: tosca.nodes.nfv.VNF2
+      MEA2:
+        type: tosca.nodes.nfv.MEA2
 

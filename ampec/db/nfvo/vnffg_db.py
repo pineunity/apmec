@@ -64,7 +64,7 @@ CP = 'connection_points'
 
 
 class VnffgTemplate(model_base.BASE, models_v1.HasId, models_v1.HasTenant):
-    """Represents template to create a VNF Forwarding Graph."""
+    """Represents template to create a MEA Forwarding Graph."""
 
     # Descriptive name
     name = sa.Column(sa.String(255), nullable=False)
@@ -78,7 +78,7 @@ class VnffgTemplate(model_base.BASE, models_v1.HasId, models_v1.HasTenant):
 
 
 class Vnffg(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
-    """VNF Forwarding Graph Data Model"""
+    """MEA Forwarding Graph Data Model"""
 
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.String(255), nullable=True)
@@ -91,7 +91,7 @@ class Vnffg(model_base.BASE, models_v1.HasTenant, models_v1.HasId):
 
     status = sa.Column(sa.String(255), nullable=False)
 
-    # Mapping of MEAD to VNF instance names
+    # Mapping of MEAD to MEA instance names
     mea_mapping = sa.Column(types.Json)
 
     attributes = sa.Column(types.Json)
@@ -353,10 +353,10 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
 
             mea_members = self._get_NANY_property(template_db.template,
                                                    'constituent_meas')
-            LOG.debug('Constituent VNFs: %s', mea_members)
+            LOG.debug('Constituent MEAs: %s', mea_members)
             mea_mapping = self._get_mea_mapping(context, NANY.get(
                                                 'mea_mapping'), mea_members)
-            LOG.debug('VNF Mapping: %s', mea_mapping)
+            LOG.debug('MEA Mapping: %s', mea_mapping)
             # create NFP dict
             nfp_dict = self._create_nfp_pre(template_db)
             LOG.debug('NFP: %s', nfp_dict)
@@ -437,14 +437,14 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
         """Creates a list of physical port ids to represent an ordered chain
 
         :param context: SQL session context
-        :param mea_mapping: dict of MEAD to VNF instance mappings
+        :param mea_mapping: dict of MEAD to MEA instance mappings
         :param template_db: NFY Descriptor
         :param nfp_name: name of the forwarding path with chain requirements
         :return: list of port chain including mea name and list of CPs
         """
         chain_list = []
         prev_forwarder = None
-        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         # Build the list of logical chain representation
         logical_chain = self._get_nfp_attribute(template_db.template,
                                                 nfp_name, 'path')
@@ -455,7 +455,7 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
                                                          'forwarder'],
                                                          mapping=mea_mapping)
             # TODO(trozet): validate CP in MEAD has forwarding capability
-            # Find VNF resources
+            # Find MEA resources
             mea = mem_plugin.get_mea_resources(context,
                                                 mea_mapping[element[
                                                     'forwarder']]
@@ -470,7 +470,7 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
             if mea_cp is None:
                 raise meo.VnffgCpNotFoundException(cp_id=element[
                     'capability'], mea_id=mea_mapping[element['forwarder']])
-            # Check if this is a new VNF entry in the chain
+            # Check if this is a new MEA entry in the chain
             if element['forwarder'] != prev_forwarder:
                 chain_list.append({'name': mea_info['name'],
                                    CP: [mea_cp]})
@@ -529,14 +529,14 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
                     return val
 
     def _get_mea_mapping(self, context, mea_mapping, mea_members):
-        """Creates/validates a mapping of MEAD names to VNF IDs for NFP.
+        """Creates/validates a mapping of MEAD names to MEA IDs for NFP.
 
         :param context: SQL session context
-        :param mea_mapping: dict of requested MEAD:VNF_ID mappings
-        :param mea_members: list of constituent VNFs from a NFY
-        :return: dict of MEAD:VNF_ID mappings
+        :param mea_mapping: dict of requested MEAD:MEA_ID mappings
+        :param mea_members: list of constituent MEAs from a NFY
+        :return: dict of MEAD:MEA_ID mappings
         """
-        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         new_mapping = dict()
 
         for mead in mea_members:
@@ -549,24 +549,24 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
             if mead_id is None:
                 raise meo.VnffgdVnfdNotFoundException(mead_name=mead)
             else:
-                # if no VNF mapping, we need to abstractly look for instances
+                # if no MEA mapping, we need to abstractly look for instances
                 # that match MEAD
                 if mea_mapping is None or mead not in mea_mapping.keys():
-                    # find suitable VNFs from mead_id
-                    LOG.debug('Searching VNFS with id %s', mead_id)
+                    # find suitable MEAs from mead_id
+                    LOG.debug('Searching MEAS with id %s', mead_id)
                     mea_list = mem_plugin.get_meas(context,
                                                     {'mead_id': [mead_id]},
                                                     fields=['id'])
                     if len(mea_list) == 0:
                         raise meo.VnffgInvalidMappingException(mead_name=mead)
                     else:
-                        LOG.debug('Matching VNFs found %s', mea_list)
+                        LOG.debug('Matching MEAs found %s', mea_list)
                         mea_list = [mea['id'] for mea in mea_list]
                     if len(mea_list) > 1:
                         new_mapping[mead] = random.choice(mea_list)
                     else:
                         new_mapping[mead] = mea_list[0]
-                # if VNF mapping, validate instances exist and match the MEAD
+                # if MEA mapping, validate instances exist and match the MEAD
                 else:
                     mea_mead = mem_plugin.get_mea(context, mea_mapping[mead],
                                                    fields=['mead_id'])
@@ -582,14 +582,14 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
         return new_mapping
 
     def _validate_vim(self, context, meas):
-        """Validates all VNFs are in the same VIM
+        """Validates all MEAs are in the same VIM
 
         :param context: SQL Session Context
-        :param meas: List of VNF instance IDs
+        :param meas: List of MEA instance IDs
         :return: None
         """
         LOG.debug('validating vim for meas %s', meas)
-        mem_plugin = manager.ApmecManager.get_service_plugins()['VNFM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         vim_id = None
         for mea in meas:
             mea_dict = mem_plugin.get_mea(context, mea)
@@ -632,7 +632,7 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
         :param context: SQL session context
         :param criteria: input criteria name
         :param value: input value
-        :param mea_mapping: mapping of MEAD to VNF instances
+        :param mea_mapping: mapping of MEAD to MEA instances
         :return: converted dictionary
         """
 
@@ -665,7 +665,7 @@ class VnffgPluginDbMixin(NANY.NFYPluginBase, db_base.CommonDbMixin):
         :param context: SQL session context
         :param resource: resource type to find (network, subnet, etc)
         :param name: name of the resource to find its ID
-        :param mea_id: A VNF instance ID that is part of the chain to which
+        :param mea_id: A MEA instance ID that is part of the chain to which
                the classifier will apply to
         :return: ID of the resource name
         """

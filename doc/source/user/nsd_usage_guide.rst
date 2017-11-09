@@ -14,7 +14,7 @@
 .. _ref-nsd:
 
 ==========================================================
-Orchestrating VNFs using Network Services Descriptor (NSD)
+Orchestrating MEAs using Network Services Descriptor (NSD)
 ==========================================================
 
 To enable dynamic composition of network services, NFV introduces Network
@@ -22,10 +22,10 @@ Service Descriptors (NSDs) that specify the network service to be created.
 This usage guide describes lifecycle of Network service descriptors and
 services.
 
-NSD in Ocata can be used for creating multiple (related) VNFs in one shot
+NSD in Ocata can be used for creating multiple (related) MEAs in one shot
 using a single TOSCA template. This is a first (big) step into NSD, few
 follow-on enhancements like:
-1) Creating VLs / neutron networks using NSD (to support inter-VNF private VL)
+1) Creating VLs / neutron networks using NSD (to support inter-MEA private VL)
 2) NFYD support in NSD.
 
 Creating the NSD
@@ -41,7 +41,7 @@ reference section.
 
   apmec mead-create --mead-file mead2.yaml MEAD2
 
-The following code represents sample NSD which instantiates the above VNFs
+The following code represents sample NSD which instantiates the above MEAs
 
 ::
 
@@ -51,13 +51,13 @@ The following code represents sample NSD which instantiates the above VNFs
       - MEAD2
     topology_template:
       node_templates:
-        VNF1:
-          type: tosca.nodes.nfv.VNF1
+        MEA1:
+          type: tosca.nodes.nfv.MEA1
           requirements:
             - virtualLink1: VL1
             - virtualLink2: VL2
-        VNF2:
-          type: tosca.nodes.nfv.VNF2
+        MEA2:
+          type: tosca.nodes.nfv.MEA2
         VL1:
           type: tosca.nodes.nfv.VL
           properties:
@@ -69,7 +69,7 @@ The following code represents sample NSD which instantiates the above VNFs
               network_name: net_mgmt
               vendor: apmec
 
-In above NSD template VL1 and VL2 are substituting the virtuallinks of VNF1.
+In above NSD template VL1 and VL2 are substituting the virtuallinks of MEA1.
 To onboard the above  NSD:
 
 ::
@@ -98,14 +98,14 @@ following CLI command:
 Reference
 ~~~~~~~~~
 
-VNF1 sample template for nsd named mead1.yaml:
+MEA1 sample template for nsd named mead1.yaml:
 
 ::
 
  tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
  description: Demo example
  node_types:
-   tosca.nodes.nfv.VNF1:
+   tosca.nodes.nfv.MEA1:
      requirements:
        - virtualLink1:
            type: tosca.nodes.nfv.VL
@@ -121,7 +121,7 @@ VNF1 sample template for nsd named mead1.yaml:
 
  topology_template:
    substitution_mappings:
-     node_type: tosca.nodes.nfv.VNF1
+     node_type: tosca.nodes.nfv.MEA1
      requirements:
        virtualLink1: [CP11, virtualLink]
        virtualLink2: [CP14, virtualLink]
@@ -187,7 +187,7 @@ VNF1 sample template for nsd named mead1.yaml:
          network_name: net0
          vendor: Apmec
 
-VNF2 sample template for nsd named mead2.yaml:
+MEA2 sample template for nsd named mead2.yaml:
 
 ::
 
@@ -195,13 +195,13 @@ VNF2 sample template for nsd named mead2.yaml:
   description: Demo example
 
   node_types:
-    tosca.nodes.nfv.VNF2:
+    tosca.nodes.nfv.MEA2:
       capabilities:
         forwarder1:
           type: tosca.capabilities.nfv.Forwarder
   topology_template:
     substitution_mappings:
-      node_type: tosca.nodes.nfv.VNF2
+      node_type: tosca.nodes.nfv.MEA2
       capabilities:
         forwarder1: [CP21, forwarder]
     node_templates:

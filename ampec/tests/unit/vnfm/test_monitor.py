@@ -23,7 +23,7 @@ from apmec.plugins.common import constants
 from apmec.mem import monitor
 
 MOCK_DEVICE_ID = 'a737497c-761c-11e5-89c3-9cb6541d805d'
-MOCK_VNF_DEVICE = {
+MOCK_MEA_DEVICE = {
     'id': MOCK_DEVICE_ID,
     'management_ip_addresses': {
         'vdu1': 'a.b.c.d'
@@ -50,10 +50,10 @@ MOCK_VNF_DEVICE = {
 }
 
 
-class TestVNFMonitor(testtools.TestCase):
+class TestMEMonitor(testtools.TestCase):
 
     def setUp(self):
-        super(TestVNFMonitor, self).setUp()
+        super(TestMEMonitor, self).setUp()
         p = mock.patch('apmec.common.driver_manager.DriverManager')
         self.mock_monitor_manager = p.start()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
@@ -69,7 +69,7 @@ class TestVNFMonitor(testtools.TestCase):
             'mgmt_url': '{"vdu1": "a.b.c.d"}',
             'attributes': {
                 'monitoring_policy': json.dumps(
-                        MOCK_VNF_DEVICE['monitoring_policy'])
+                        MOCK_MEA_DEVICE['monitoring_policy'])
             }
         }
         action_cb = mock.MagicMock()
@@ -80,38 +80,38 @@ class TestVNFMonitor(testtools.TestCase):
                 'vdu1': 'a.b.c.d'
             },
             'mea': test_device_dict,
-            'monitoring_policy': MOCK_VNF_DEVICE['monitoring_policy']
+            'monitoring_policy': MOCK_MEA_DEVICE['monitoring_policy']
         }
-        output_dict = monitor.VNFMonitor.to_hosting_mea(test_device_dict,
+        output_dict = monitor.MEMonitor.to_hosting_mea(test_device_dict,
                                                 action_cb)
         self.assertEqual(expected_output, output_dict)
 
-    @mock.patch('apmec.mem.monitor.VNFMonitor.__run__')
+    @mock.patch('apmec.mem.monitor.MEMonitor.__run__')
     def test_add_hosting_mea(self, mock_monitor_run):
         test_device_dict = {
             'id': MOCK_DEVICE_ID,
             'mgmt_url': '{"vdu1": "a.b.c.d"}',
             'attributes': {
                 'monitoring_policy': json.dumps(
-                        MOCK_VNF_DEVICE['monitoring_policy'])
+                        MOCK_MEA_DEVICE['monitoring_policy'])
             },
             'status': 'ACTIVE'
         }
         action_cb = mock.MagicMock()
         test_boot_wait = 30
-        test_memonitor = monitor.VNFMonitor(test_boot_wait)
+        test_memonitor = monitor.MEMonitor(test_boot_wait)
         new_dict = test_memonitor.to_hosting_mea(test_device_dict, action_cb)
         test_memonitor.add_hosting_mea(new_dict)
         test_device_id = list(test_memonitor._hosting_meas.keys())[0]
         self.assertEqual(MOCK_DEVICE_ID, test_device_id)
         self._cos_db_plugin.create_event.assert_called_with(
-            mock.ANY, res_id=mock.ANY, res_type=constants.RES_TYPE_VNF,
+            mock.ANY, res_id=mock.ANY, res_type=constants.RES_TYPE_MEA,
             res_state=mock.ANY, evt_type=constants.RES_EVT_MONITOR,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('apmec.mem.monitor.VNFMonitor.__run__')
+    @mock.patch('apmec.mem.monitor.MEMonitor.__run__')
     def test_run_monitor(self, mock_monitor_run):
-        test_hosting_mea = MOCK_VNF_DEVICE
+        test_hosting_mea = MOCK_MEA_DEVICE
         test_hosting_mea['mea'] = {}
         test_boot_wait = 30
         mock_kwargs = {
@@ -121,7 +121,7 @@ class TestVNFMonitor(testtools.TestCase):
             'mgmt_ip': 'a.b.c.d',
             'timeout': 2
         }
-        test_memonitor = monitor.VNFMonitor(test_boot_wait)
+        test_memonitor = monitor.MEMonitor(test_boot_wait)
         self.mock_monitor_manager.invoke = mock.MagicMock()
         test_memonitor._monitor_manager = self.mock_monitor_manager
         test_memonitor.run_monitor(test_hosting_mea)

@@ -9,7 +9,7 @@ Lists and shows captured events.
 Apmec currently supports events for following resource types:
 
 - MEAD
-- VNF
+- MEA
 - VIM
 
 List events
