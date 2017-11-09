@@ -17,7 +17,7 @@ import os
 import testtools
 import yaml
 
-from apmec.tosca import utils as toscautils
+from apmec.catalogs.tosca import utils as toscautils
 from toscaparser import tosca_template
 from translator.hot import tosca_translator
 

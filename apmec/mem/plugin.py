@@ -36,7 +36,7 @@ from apmec.mem.mgmt_drivers import constants as mgmt_constants
 from apmec.mem import monitor
 from apmec.mem import vim_client
 
-from apmec.tosca import utils as toscautils
+from apmec.catalogs.tosca import utils as toscautils
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF

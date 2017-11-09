@@ -19,7 +19,7 @@ from toscaparser import tosca_template
 from toscaparser.utils import yamlparser
 from translator.hot import tosca_translator
 
-from apmec.tosca import utils
+from apmec.catalogs.tosca import utils
 
 
 class TestSamples(testtools.TestCase):

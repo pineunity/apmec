@@ -21,7 +21,7 @@ import yaml
 from apmec.common import log
 from apmec.extensions import common_services as cs
 from apmec.extensions import mem
-from apmec.tosca import utils as toscautils
+from apmec.catalogs.tosca import utils as toscautils
 
 
 LOG = logging.getLogger(__name__)

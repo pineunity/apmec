@@ -20,7 +20,7 @@ from apmec.plugins.common import constants as evt_constants
 from apmec.tests import constants
 from apmec.tests.functional import base
 from apmec.tests.utils import read_file
-from apmec.tosca import utils as toscautils
+from apmec.catalogs.tosca import utils as toscautils
 
 CONF = cfg.CONF
 
