@@ -1,6 +1,6 @@
 auth_url: 'http://10.18.112.10:5000'
-username: 'nfv_user'
+username: 'mec_user'
 password: 'mySecretPW'
-project_name: 'nfv'
+project_name: 'mec'
 project_domain_name: 'Default'
 user_domain_name: 'Default'

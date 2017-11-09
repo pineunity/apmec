@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 
 description: Generic VDU with parameterized image and flavor
 
@@ -23,7 +23,7 @@ topology_template:
   node_templates:
 
     VDU1:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       properties:
         image: { get_input: image }
         flavor: { get_input: flavor }
@@ -36,7 +36,7 @@ topology_template:
             interval: 10
 
     CP1:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -47,7 +47,7 @@ topology_template:
             node: VDU1
 
     CP2:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       properties:
         anti_spoofing_protection: false
       requirements:
@@ -57,7 +57,7 @@ topology_template:
             node: VDU1
 
     CP3:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       properties:
         anti_spoofing_protection: false
       requirements:
@@ -67,19 +67,19 @@ topology_template:
             node: VDU1
 
     VL1:
-      type: tosca.nodes.nfv.VL
+      type: tosca.nodes.mec.VL
       properties:
         network_name: net_mgmt
         vendor: Apmec
 
     VL2:
-      type: tosca.nodes.nfv.VL
+      type: tosca.nodes.mec.VL
       properties:
         network_name: pkt_in
         vendor: Apmec
 
     VL3:
-      type: tosca.nodes.nfv.VL
+      type: tosca.nodes.mec.VL
       properties:
         network_name: pkt_out
         vendor: Apmec

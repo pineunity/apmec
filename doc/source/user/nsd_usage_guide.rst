@@ -45,26 +45,26 @@ The following code represents sample NSD which instantiates the above MEAs
 
 ::
 
-    tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+    tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
     imports:
       - MEAD1
       - MEAD2
     topology_template:
       node_templates:
         MEA1:
-          type: tosca.nodes.nfv.MEA1
+          type: tosca.nodes.mec.MEA1
           requirements:
             - virtualLink1: VL1
             - virtualLink2: VL2
         MEA2:
-          type: tosca.nodes.nfv.MEA2
+          type: tosca.nodes.mec.MEA2
         VL1:
-          type: tosca.nodes.nfv.VL
+          type: tosca.nodes.mec.VL
           properties:
           network_name: net0
           vendor: apmec
         VL2:
-          type: tosca.nodes.nfv.VL
+          type: tosca.nodes.mec.VL
           properties:
               network_name: net_mgmt
               vendor: apmec
@@ -102,26 +102,26 @@ MEA1 sample template for nsd named mead1.yaml:
 
 ::
 
- tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+ tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
  description: Demo example
  node_types:
-   tosca.nodes.nfv.MEA1:
+   tosca.nodes.mec.MEA1:
      requirements:
        - virtualLink1:
-           type: tosca.nodes.nfv.VL
+           type: tosca.nodes.mec.VL
            required: true
        - virtualLink2:
-           type: tosca.nodes.nfv.VL
+           type: tosca.nodes.mec.VL
            required: true
      capabilities:
        forwarder1:
-         type: tosca.capabilities.nfv.Forwarder
+         type: tosca.capabilities.mec.Forwarder
        forwarder2:
-         type: tosca.capabilities.nfv.Forwarder
+         type: tosca.capabilities.mec.Forwarder
 
  topology_template:
    substitution_mappings:
-     node_type: tosca.nodes.nfv.MEA1
+     node_type: tosca.nodes.mec.MEA1
      requirements:
        virtualLink1: [CP11, virtualLink]
        virtualLink2: [CP14, virtualLink]
@@ -130,7 +130,7 @@ MEA1 sample template for nsd named mead1.yaml:
        forwarder2: [CP14, forwarder]
    node_templates:
      VDU1:
-       type: tosca.nodes.nfv.VDU.Apmec
+       type: tosca.nodes.mec.VDU.Apmec
        properties:
          image: cirros-0.3.5-x86_64-disk
          flavor: m1.tiny
@@ -140,7 +140,7 @@ MEA1 sample template for nsd named mead1.yaml:
            param0: key1
            param1: key2
      CP11:
-       type: tosca.nodes.nfv.CP.Apmec
+       type: tosca.nodes.mec.CP.Apmec
        properties:
          management: true
          anti_spoofing_protection: false
@@ -149,7 +149,7 @@ MEA1 sample template for nsd named mead1.yaml:
              node: VDU1
 
      VDU2:
-       type: tosca.nodes.nfv.VDU.Apmec
+       type: tosca.nodes.mec.VDU.Apmec
        properties:
          image: cirros-0.3.5-x86_64-disk
          flavor: m1.medium
@@ -159,7 +159,7 @@ MEA1 sample template for nsd named mead1.yaml:
            param0: key1
            param1: key2
      CP13:
-       type: tosca.nodes.nfv.CP.Apmec
+       type: tosca.nodes.mec.CP.Apmec
        properties:
          management: true
          anti_spoofing_protection: false
@@ -169,7 +169,7 @@ MEA1 sample template for nsd named mead1.yaml:
          - virtualBinding:
              node: VDU2
      CP14:
-       type: tosca.nodes.nfv.CP.Apmec
+       type: tosca.nodes.mec.CP.Apmec
        properties:
          management: true
          anti_spoofing_protection: false
@@ -177,12 +177,12 @@ MEA1 sample template for nsd named mead1.yaml:
          - virtualBinding:
              node: VDU2
      VL1:
-       type: tosca.nodes.nfv.VL
+       type: tosca.nodes.mec.VL
        properties:
          network_name: net_mgmt
          vendor: Apmec
      VL2:
-       type: tosca.nodes.nfv.VL
+       type: tosca.nodes.mec.VL
        properties:
          network_name: net0
          vendor: Apmec
@@ -191,22 +191,22 @@ MEA2 sample template for nsd named mead2.yaml:
 
 ::
 
-  tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+  tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
   description: Demo example
 
   node_types:
-    tosca.nodes.nfv.MEA2:
+    tosca.nodes.mec.MEA2:
       capabilities:
         forwarder1:
-          type: tosca.capabilities.nfv.Forwarder
+          type: tosca.capabilities.mec.Forwarder
   topology_template:
     substitution_mappings:
-      node_type: tosca.nodes.nfv.MEA2
+      node_type: tosca.nodes.mec.MEA2
       capabilities:
         forwarder1: [CP21, forwarder]
     node_templates:
       VDU1:
-        type: tosca.nodes.nfv.VDU.Apmec
+        type: tosca.nodes.mec.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           flavor: m1.tiny
@@ -216,7 +216,7 @@ MEA2 sample template for nsd named mead2.yaml:
             param0: key1
             param1: key2
       CP21:
-        type: tosca.nodes.nfv.CP.Apmec
+        type: tosca.nodes.mec.CP.Apmec
         properties:
           management: true
           anti_spoofing_protection: false
@@ -226,14 +226,14 @@ MEA2 sample template for nsd named mead2.yaml:
           - virtualBinding:
               node: VDU1
       VDU2:
-        type: tosca.nodes.nfv.VDU.Apmec
+        type: tosca.nodes.mec.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           flavor: m1.medium
           availability_zone: nova
           mgmt_driver: noop
       CP22:
-        type: tosca.nodes.nfv.CP.Apmec
+        type: tosca.nodes.mec.CP.Apmec
         properties:
           management: true
           anti_spoofing_protection: false
@@ -243,12 +243,12 @@ MEA2 sample template for nsd named mead2.yaml:
           - virtualBinding:
               node: VDU2
       VL1:
-        type: tosca.nodes.nfv.VL
+        type: tosca.nodes.mec.VL
         properties:
           network_name: net_mgmt
           vendor: Apmec
       VL2:
-        type: tosca.nodes.nfv.VL
+        type: tosca.nodes.mec.VL
         properties:
           network_name: net0
           vendor: Apmec

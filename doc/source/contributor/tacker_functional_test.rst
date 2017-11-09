@@ -89,7 +89,7 @@ Execution of testcase:
 ======================
 
 * Install apmec server via devstack installation, which registers
-  apmec service and endpoint, creates "nfv_user" and "nfv" project,
+  apmec service and endpoint, creates "mec_user" and "mec" project,
   and registers default VIM with the created user and project.
 
 * Under apmec project dir, to prepare function test env via:

@@ -43,7 +43,7 @@ OpenWRT. All contents of the template file shows below:
 
 .. code-block:: ini
 
-   tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+   tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 
    description: OpenWRT with services
 
@@ -53,9 +53,9 @@ OpenWRT. All contents of the template file shows below:
    topology_template:
      node_templates:
        VDU1:
-         type: tosca.nodes.nfv.VDU.Apmec
+         type: tosca.nodes.mec.VDU.Apmec
          capabilities:
-           nfv_compute:
+           mec_compute:
              properties:
                num_cpus: 1
                mem_size: 512 MB
@@ -118,7 +118,7 @@ OpenWRT. All contents of the template file shows below:
                failure: respawn
 
        CP1:
-         type: tosca.nodes.nfv.CP.Apmec
+         type: tosca.nodes.mec.CP.Apmec
          properties:
            management: true
            anti_spoofing_protection: false
@@ -129,7 +129,7 @@ OpenWRT. All contents of the template file shows below:
                node: VDU1
 
        VL1:
-         type: tosca.nodes.nfv.VL
+         type: tosca.nodes.mec.VL
          properties:
            network_name: net_mgmt
            vendor: Apmec

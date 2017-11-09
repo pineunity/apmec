@@ -56,7 +56,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
 
 .. code-block:: yaml
 
-    tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+    tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
     description: Demo example
 
     metadata:
@@ -65,9 +65,9 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
     topology_template:
       node_templates:
         VDU1:
-          type: tosca.nodes.nfv.VDU.Apmec
+          type: tosca.nodes.mec.VDU.Apmec
           capabilities:
-            nfv_compute:
+            mec_compute:
               properties:
                 disk_size: 1 GB
                 mem_size: 512 MB
@@ -79,7 +79,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
             metadata: {metering.mea: SG1}
 
         CP1:
-          type: tosca.nodes.nfv.CP.Apmec
+          type: tosca.nodes.mec.CP.Apmec
           properties:
             management: true
             anti_spoofing_protection: false
@@ -89,9 +89,9 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
             - virtualBinding:
                 node: VDU1
         VDU2:
-          type: tosca.nodes.nfv.VDU.Apmec
+          type: tosca.nodes.mec.VDU.Apmec
           capabilities:
-            nfv_compute:
+            mec_compute:
               properties:
                 disk_size: 1 GB
                 mem_size: 512 MB
@@ -103,7 +103,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
             metadata: {metering.mea: SG1}
 
         CP2:
-          type: tosca.nodes.nfv.CP.Apmec
+          type: tosca.nodes.mec.CP.Apmec
           properties:
             management: true
             anti_spoofing_protection: false
@@ -114,7 +114,7 @@ alarming monitoring and scaling was also supported by Alarm monitor in Apmec:
                 node: VDU2
 
         VL1:
-          type: tosca.nodes.nfv.VL
+          type: tosca.nodes.mec.VL
           properties:
             network_name: net_mgmt
             vendor: Apmec

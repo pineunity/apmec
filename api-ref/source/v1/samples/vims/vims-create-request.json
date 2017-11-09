@@ -4,12 +4,12 @@
         "type": "openstack",
         "auth_url": "http://192.168.1.2:5000/v3",
         "auth_cred": {
-            "username": "nfv_user",
+            "username": "mec_user",
             "user_domain_name": "Default",
             "password": "password"
         },
         "vim_project": {
-            "name": "nfv",
+            "name": "mec",
             "project_domain_name": "Default"
         },
         "name": "VIM1",

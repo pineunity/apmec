@@ -44,7 +44,7 @@ class TestToscaUtils(testtools.TestCase):
     def test_updateimport(self):
         importspath = os.path.abspath('./apmec/tosca/lib/')
         file1 = importspath + '/apmec_defs.yaml'
-        file2 = importspath + '/apmec_nfv_defs.yaml'
+        file2 = importspath + '/apmec_mec_defs.yaml'
         expected_imports = [file1, file2]
         self.assertEqual(expected_imports, self.mead_dict['imports'])
 
@@ -196,12 +196,12 @@ class TestToscaUtils(testtools.TestCase):
                     'hw:cpu_sockets': 2, 'hw:cpu_threads': 2,
                     'hw:numa_nodes': 2, 'hw:cpu_cores': 2,
                     'hw:cpu_threads_policy': 'avoid',
-                    'aggregate_instance_extra_specs:nfv': 'true'
+                    'aggregate_instance_extra_specs:mec': 'true'
                 }
             }
         }
         actual_flavor_dict = toscautils.get_flavor_dict(
-            tosca, {"aggregate_instance_extra_specs:nfv": "true"})
+            tosca, {"aggregate_instance_extra_specs:mec": "true"})
         self.assertEqual(expected_flavor_dict, actual_flavor_dict)
 
     def test_add_resources_tpl_for_image(self):
@@ -236,9 +236,9 @@ class TestToscaUtils(testtools.TestCase):
         tosca_sb_map = _get_template('../../../../../etc/samples/test-nsd-'
                                      'mead1.yaml')
         param = {'substitution_mappings': {
-                 'VL2': {'type': 'tosca.nodes.nfv.VL', 'properties': {
+                 'VL2': {'type': 'tosca.nodes.mec.VL', 'properties': {
                          'network_name': 'net0', 'vendor': 'apmec'}},
-                 'VL1': {'type': 'tosca.nodes.nfv.VL', 'properties': {
+                 'VL1': {'type': 'tosca.nodes.mec.VL', 'properties': {
                          'network_name': 'net_mgmt', 'vendor': 'apmec'}},
                  'requirements': {'virtualLink2': 'VL2',
                                   'virtualLink1': 'VL1'}}}

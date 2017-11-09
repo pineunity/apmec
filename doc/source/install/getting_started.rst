@@ -31,9 +31,9 @@ is also called VIM. Get one account on this OpenStack. For example, the below
 is the account information collected in file vim-config.yaml::
 
     auth_url: 'http://10.1.0.5:5000'
-    username: 'nfv_user'
+    username: 'mec_user'
     password: 'mySecretPW'
-    project_name: 'nfv'
+    project_name: 'mec'
     project_domain_name: 'Default'
     user_domain_name: 'Default'
 
@@ -57,7 +57,7 @@ Onboarding sample MEA
 
 .. code-block:: ini
 
-   tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+   tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 
    description: Demo example
 
@@ -67,9 +67,9 @@ Onboarding sample MEA
    topology_template:
      node_templates:
        VDU1:
-         type: tosca.nodes.nfv.VDU.Apmec
+         type: tosca.nodes.mec.VDU.Apmec
          capabilities:
-           nfv_compute:
+           mec_compute:
              properties:
                num_cpus: 1
                mem_size: 512 MB
@@ -83,7 +83,7 @@ Onboarding sample MEA
              param1: key2
 
        CP1:
-         type: tosca.nodes.nfv.CP.Apmec
+         type: tosca.nodes.mec.CP.Apmec
          properties:
            management: true
            order: 0
@@ -95,7 +95,7 @@ Onboarding sample MEA
                node: VDU1
 
        VL1:
-         type: tosca.nodes.nfv.VL
+         type: tosca.nodes.mec.VL
          properties:
            network_name: net_mgmt
            vendor: Apmec

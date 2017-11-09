@@ -82,7 +82,7 @@ def get_by_id():
 
 def dummy_get_vim_auth(*args, **kwargs):
     return {'vim_auth': {u'username': u'admin', 'password': 'devstack',
-                         u'project_name': u'nfv', u'user_id': u'',
+                         u'project_name': u'mec', u'user_id': u'',
                          u'user_domain_name': u'Default',
                          u'auth_url': u'http://10.0.4.207/identity/v3',
                          u'project_id': u'',
@@ -360,7 +360,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_NANY_template(self):
         session = self.context.session
-        NANY_template = NANY_db.VnffgTemplate(
+        NANY_template = NANY_db.NfyTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
@@ -373,7 +373,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_NANY_template_inline(self):
         session = self.context.session
-        NANY_template = NANY_db.VnffgTemplate(
+        NANY_template = NANY_db.NfyTemplate(
             id='11da9f20-9347-4283-bc68-eb98061ef8f7',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='dummy_NANYD_inline',
@@ -386,7 +386,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_NANY_param_template(self):
         session = self.context.session
-        NANY_template = NANY_db.VnffgTemplate(
+        NANY_template = NANY_db.NfyTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
@@ -398,7 +398,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_NANY_str_param_template(self):
         session = self.context.session
-        NANY_template = NANY_db.VnffgTemplate(
+        NANY_template = NANY_db.NfyTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
@@ -410,7 +410,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_NANY_multi_param_template(self):
         session = self.context.session
-        NANY_template = NANY_db.VnffgTemplate(
+        NANY_template = NANY_db.NfyTemplate(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
@@ -422,7 +422,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
 
     def _insert_dummy_NANY(self):
         session = self.context.session
-        NANY = NANY_db.Vnffg(
+        NANY = NANY_db.Nfy(
             id='ffc1a59b-65bb-4874-94d3-84f639e63c74',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='dummy_NANY',
@@ -432,7 +432,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
             mea_mapping={'MEA1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
                          'MEA3': '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'})
         session.add(NANY)
-        nfp = NANY_db.VnffgNfp(
+        nfp = NANY_db.NfyNfp(
             id='768f76a7-9025-4acd-b51c-0da609759983',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             status="ACTIVE",
@@ -441,7 +441,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
             path_id=51,
             symmetrical=False)
         session.add(nfp)
-        sfc = NANY_db.VnffgChain(
+        sfc = NANY_db.NfyChain(
             id='f28e33bc-1061-4762-b942-76060bbd59c4',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             symmetrical=False,
@@ -456,7 +456,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
             nfp_id='768f76a7-9025-4acd-b51c-0da609759983',
             instance_id='bcfb295e-578e-405b-a349-39f06b25598c')
         session.add(sfc)
-        fc = NANY_db.VnffgClassifier(
+        fc = NANY_db.NfyClassifier(
             id='a85f21b5-f446-43f0-86f4-d83bdc5590ab',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             status='ACTIVE',
@@ -504,7 +504,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
 
     def test_validate_NANY_properties_wrong_number(self):
         template = {'NANYD': utils.NANYD_wrong_cp_number_template}
-        self.assertRaises(meo.VnffgdWrongEndpointNumber,
+        self.assertRaises(meo.NfydWrongEndpointNumber,
                           self.meo_plugin.validate_NANY_properties,
                           template)
 
@@ -600,7 +600,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
             mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             mock_get_by_id.value = get_by_id()
             NANY_obj = utils.get_dummy_NANY_str_param_obj()
-            self.assertRaises(meo.VnffgParamValueFormatError,
+            self.assertRaises(meo.NfyParamValueFormatError,
                               self.meo_plugin.create_NANY,
                               self.context, NANY_obj)
 
@@ -610,7 +610,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
             mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             self._insert_dummy_NANY_multi_param_template()
             NANY_obj = utils.get_dummy_NANY_param_obj()
-            self.assertRaises(meo.VnffgTemplateParamParsingException,
+            self.assertRaises(meo.NfyTemplateParamParsingException,
                               self.meo_plugin.create_NANY,
                               self.context, NANY_obj)
 
@@ -620,7 +620,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
             mock_plugins.return_value = {'MEM': FakeMEMPlugin()}
             self._insert_dummy_NANY_param_template()
             NANY_obj = utils.get_dummy_NANY_multi_param_obj()
-            self.assertRaises(meo.VnffgParamValueNotUsed,
+            self.assertRaises(meo.NfyParamValueNotUsed,
                               self.meo_plugin.create_NANY,
                               self.context, NANY_obj)
 
@@ -659,7 +659,7 @@ class TestMeoPlugin(db_base.SqlTestCase):
                 {'MEA1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
                  'MEA3': '5c7f5631-9e74-46e8-b3d2-397c0eda9d0b'}
             updated_NANY['NANY']['mea_mapping'] = updated_mea_mapping
-            self.assertRaises(meo.VnffgInvalidMappingException,
+            self.assertRaises(meo.NfyInvalidMappingException,
                               self.meo_plugin.update_NANY,
                               self.context, NANY['id'], updated_NANY)
 
@@ -703,20 +703,20 @@ class TestMeoPlugin(db_base.SqlTestCase):
                     'net0, description: name of VL2 virtuallink, type: string'
                     '}\n  node_templates:\n    VL1:\n      properties:\n     '
                     '   network_name: {get_input: vl1_name}\n        vendor: '
-                    'apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
+                    'apmec\n      type: tosca.nodes.mec.VL\n    VL2:\n      '
                     'properties:\n        network_name: {get_input: vl2_name}'
-                    '\n        vendor: apmec\n      type: tosca.nodes.nfv.VL'
+                    '\n        vendor: apmec\n      type: tosca.nodes.mec.VL'
                     '\n    MEA1:\n      requirements:\n      - {virtualLink1: '
                     'VL1}\n      - {virtualLink2: VL2}\n      type: tosca.node'
-                    's.nfv.MEA1\n    MEA2: {type: tosca.nodes.nfv.MEA2}\ntosca'
-                    '_definitions_version: tosca_simple_profile_for_nfv_1_0_0'
+                    's.mec.MEA1\n    MEA2: {type: tosca.nodes.mec.MEA2}\ntosca'
+                    '_definitions_version: tosca_simple_profile_for_mec_1_0_0'
                     '\n'}
         nsd_template = ns_db.NSD(
             id='eb094833-995e-49f0-a047-dfb56aaf7c4e',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='fake_template',
-            meads={'tosca.nodes.nfv.MEA1': 'mea1',
-                   'tosca.nodes.nfv.MEA2': 'mea2'},
+            meads={'tosca.nodes.mec.MEA1': 'mea1',
+                   'tosca.nodes.mec.MEA2': 'mea2'},
             description='fake_nsd_template_description',
             deleted_at=datetime.min,
             template_source='onboarded')
@@ -740,20 +740,20 @@ class TestMeoPlugin(db_base.SqlTestCase):
                     'net0, description: name of VL2 virtuallink, type: string'
                     '}\n  node_templates:\n    VL1:\n      properties:\n     '
                     '   network_name: {get_input: vl1_name}\n        vendor: '
-                    'apmec\n      type: tosca.nodes.nfv.VL\n    VL2:\n      '
+                    'apmec\n      type: tosca.nodes.mec.VL\n    VL2:\n      '
                     'properties:\n        network_name: {get_input: vl2_name}'
-                    '\n        vendor: apmec\n      type: tosca.nodes.nfv.VL'
+                    '\n        vendor: apmec\n      type: tosca.nodes.mec.VL'
                     '\n    MEA1:\n      requirements:\n      - {virtualLink1: '
                     'VL1}\n      - {virtualLink2: VL2}\n      type: tosca.node'
-                    's.nfv.MEA1\n    MEA2: {type: tosca.nodes.nfv.MEA2}\ntosca'
-                    '_definitions_version: tosca_simple_profile_for_nfv_1_0_0'
+                    's.mec.MEA1\n    MEA2: {type: tosca.nodes.mec.MEA2}\ntosca'
+                    '_definitions_version: tosca_simple_profile_for_mec_1_0_0'
                     '\n'}
         nsd_template = ns_db.NSD(
             id='be18005d-5656-4d81-b499-6af4d4d8437f',
             tenant_id='ad7ebc56538745a08ef7c5e97f8bd437',
             name='dummy_NSD',
-            meads={'tosca.nodes.nfv.MEA1': 'mea1',
-                   'tosca.nodes.nfv.MEA2': 'mea2'},
+            meads={'tosca.nodes.mec.MEA1': 'mea1',
+                   'tosca.nodes.mec.MEA2': 'mea2'},
             description='dummy_nsd_description',
             deleted_at=datetime.min,
             template_source='inline')

@@ -1,5 +1,5 @@
   Forwarding_path1:
-    type: tosca.nodes.nfv.FP
+    type: tosca.nodes.mec.FP
     id: 51
     description: creates path (CP11->CP12->CP32)
     properties:
@@ -20,7 +20,7 @@
 
   groups:
     NFY1:
-      type: tosca.groups.nfv.NFY
+      type: tosca.groups.mec.NFY
       description: HTTP to Corporate Net
       properties:
         vendor: apmec

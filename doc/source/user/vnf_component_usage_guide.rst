@@ -18,14 +18,14 @@ described firstly like other TOSCA templates in Apmec.
      topology_template:
        node_templates:
          firewall_meac:
-           type: tosca.nodes.nfv.MEAC.Apmec
+           type: tosca.nodes.mec.MEAC.Apmec
            requirements:
              - host: VDU1
            interfaces:
              Standard:
                create: install_meac.sh
 
-Every meac node must be of type 'tosca.nodes.nfv.MEAC.Apmec'. It takes
+Every meac node must be of type 'tosca.nodes.mec.MEAC.Apmec'. It takes
 two parameters:
 
 1) requirements: This node will accept list of hosts on which MEAC has to be

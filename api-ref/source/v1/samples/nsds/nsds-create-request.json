@@ -9,7 +9,7 @@
           "mea1",
           "mea2"
         ],
-        "tosca_definitions_version": "tosca_simple_profile_for_nfv_1_0_0",
+        "tosca_definitions_version": "tosca_simple_profile_for_mec_1_0_0",
         "topology_template": {
           "inputs": {
             "vl2_name": {
@@ -24,7 +24,7 @@
           },
           "node_templates": {
             "VL1": {
-              "type": "tosca.nodes.nfv.VL",
+              "type": "tosca.nodes.mec.VL",
               "properties": {
                 "network_name": {
                   "get_input": "vl1_name"
@@ -33,7 +33,7 @@
               }
             },
             "MEA1": {
-              "type": "tosca.nodes.nfv.MEA1",
+              "type": "tosca.nodes.mec.MEA1",
               "requirements": [
                 {
                   "virtualLink1": "VL1"
@@ -44,7 +44,7 @@
               ]
             },
             "VL2": {
-              "type": "tosca.nodes.nfv.VL",
+              "type": "tosca.nodes.mec.VL",
               "properties": {
                 "network_name": {
                   "get_input": "vl2_name"

@@ -4,8 +4,8 @@ Overview
 --------
 
 This document explains NFYD template structure and its various fields based
-on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-nfv/
-v1.0/tosca-nfv-v1.0.html>`_.
+on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-mec/
+v1.0/tosca-mec-v1.0.html>`_.
 
 The behavioural and deployment information of a NFY in Apmec is defined in a
 template known as NFY Descriptor (NFYD). The template is based on TOSCA
@@ -17,7 +17,7 @@ Each NFYD template will have below fields:
 
     tosca_definitions_version:
        This defines the TOSCA definition version on which the template is based.
-       The current version being tosca_simple_profile_for_nfv_1_0_0.
+       The current version being tosca_simple_profile_for_mec_1_0_0.
 
     tosca_default_namespace:
        This is optional. It mentions default namespace which includes schema,
@@ -58,15 +58,15 @@ well as the classifier that will eventually be created to form a path
 through a set of MEAs.
 
 :type:
-    tosca.nodes.nfv.FP.Apmec
+    tosca.nodes.mec.FP.Apmec
 :properties:
     Describes the properties of a FP.  These include id (path ID), policy
     (traffic match policy to flow through the path), and path (chain of
     MEAs/Connection Points). A complete list of NFY properties currently
     supported by Apmec are listed `here <https://github
     .com/openstack/apmec/blob/master/apmec/
-    tosca/lib/apmec_nfv_defs.yaml>`_ under **properties** section of
-    **tosca.nodes.nfv.FP.Apmec** field.
+    tosca/lib/apmec_mec_defs.yaml>`_ under **properties** section of
+    **tosca.nodes.mec.FP.Apmec** field.
 
 Specifying FP properties
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -77,7 +77,7 @@ An example FP shown below:
   node_templates:
 
     Forwarding_path1:
-      type: tosca.nodes.nfv.FP.Apmec
+      type: tosca.nodes.mec.FP.Apmec
       description: creates path (CP11->CP12->CP32)
       properties:
         id: 51
@@ -105,9 +105,9 @@ policy
 Policy defines the type of match policy that will be used to distinguish
 which traffic should enter this Forwarding Path.  The only currently
 supported type is ACL (access-list).
-Please reference `tosca.nfv.datatypes.aclType
+Please reference `tosca.mec.datatypes.aclType
 <https://github.com/openstack/apmec/blob/master/apmec/tosca/lib/
-apmec_nfv_defs.yaml>`_ under **properties** section for more information on
+apmec_mec_defs.yaml>`_ under **properties** section for more information on
 supported match criteria.
 
 path
@@ -133,13 +133,13 @@ NFY maps the Forwarding Path to other node types defined in the properties
 section.
 
 :type:
-    tosca.groups.nfv.NFY
+    tosca.groups.mec.NFY
 :properties:
     Describes the properties of a NFY.  These include vendor, version,
     dependent_virtual_link, connection_points, constituent_meas.
     . A complete list of NFY properties currently
     supported by Apmec are listed in `TOSCA <http://docs.oasis-open
-    .org/tosca/tosca-nfv/v1.0/csd03/tosca-nfv-v1.0-csd03
+    .org/tosca/tosca-mec/v1.0/csd03/tosca-mec-v1.0-csd03
     .html#_Toc447714727>`_.
 :members:
     A list of Forwarding Paths which belong to this NFY.  At the moment
@@ -153,7 +153,7 @@ An example NFY shown below:
 
   groups:
     NFY1:
-      type: tosca.groups.nfv.NFY
+      type: tosca.groups.mec.NFY
       description: HTTP to Corporate Net
       properties:
         vendor: apmec
@@ -189,7 +189,7 @@ composed of a Forwarding Path and a NFY.  A full NFYD is shown below:
 
 ::
 
-  tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+  tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 
   description: Sample NFY template
 
@@ -199,7 +199,7 @@ composed of a Forwarding Path and a NFY.  A full NFYD is shown below:
     node_templates:
 
       Forwarding_path1:
-        type: tosca.nodes.nfv.FP.Apmec
+        type: tosca.nodes.mec.FP.Apmec
         description: creates path (CP12->CP22)
         properties:
           id: 51
@@ -218,7 +218,7 @@ composed of a Forwarding Path and a NFY.  A full NFYD is shown below:
 
     groups:
       NFY1:
-        type: tosca.groups.nfv.NFY
+        type: tosca.groups.mec.NFY
         description: HTTP to Corporate Net
         properties:
           vendor: apmec

@@ -86,96 +86,96 @@ class ToscaParserFailed(exceptions.InvalidInput):
     message = _("tosca-parser failed: - %(error_msg_details)s")
 
 
-class VnffgdInvalidTemplate(exceptions.InvalidInput):
+class NfydInvalidTemplate(exceptions.InvalidInput):
     message = _("Invalid NFY template input: %(template)s")
 
 
-class VnffgdDuplicateForwarderException(exceptions.InvalidInput):
+class NfydDuplicateForwarderException(exceptions.InvalidInput):
     message = _("Invalid Forwarding Path contains duplicate forwarder not in "
                 "order: %(forwarder)s")
 
 
-class VnffgdDuplicateCPException(exceptions.InvalidInput):
+class NfydDuplicateCPException(exceptions.InvalidInput):
     message = _("Invalid Forwarding Path contains duplicate connection point "
                 ": %(cp)s")
 
 
-class VnffgdVnfdNotFoundException(exceptions.NotFound):
+class NfydVnfdNotFoundException(exceptions.NotFound):
     message = _("Specified MEAD %(mead_name)s in NFYD does not exist. "
                 "Please create MEADs before creating NFY")
 
 
-class VnffgdCpNotFoundException(exceptions.NotFound):
+class NfydCpNotFoundException(exceptions.NotFound):
     message = _("Specified CP %(cp_id)s could not be found in MEAD "
                 "%(mead_name)s. Please check MEAD for correct Connection "
                 "Point.")
 
 
-class VnffgdCpNoForwardingException(exceptions.ApmecException):
+class NfydCpNoForwardingException(exceptions.ApmecException):
     message = _("Specified CP %(cp_id)s in MEAD %(mead_name)s "
                 "does not have forwarding capability, which is required to be "
                 "included in forwarding path")
 
 
-class VnffgdWrongEndpointNumber(exceptions.ApmecException):
+class NfydWrongEndpointNumber(exceptions.ApmecException):
     message = _("Specified number_of_endpoints %(number)s is not equal to "
                 "the number of connection_point %(cps)s")
 
 
-class VnffgdInUse(exceptions.InUse):
+class NfydInUse(exceptions.InUse):
     message = _('NFYD %(NANYD_id)s is still in use')
 
 
-class VnffgdNotFoundException(exceptions.NotFound):
+class NfydNotFoundException(exceptions.NotFound):
     message = _('NFY Template %(NANYD_id)s could not be found')
 
 
-class VnffgCreateFailed(exceptions.ApmecException):
+class NfyCreateFailed(exceptions.ApmecException):
     message = _('Creating NFY based on %(NANYD_id)s failed')
 
 
-class VnffgInvalidMappingException(exceptions.ApmecException):
+class NfyInvalidMappingException(exceptions.ApmecException):
     message = _("Matching MEA Instance for MEAD %(mead_name)s could not be "
                 "found. Please create an instance of this MEAD before "
                 "creating/updating NFY.")
 
 
-class VnffgParamValueFormatError(exceptions.ApmecException):
+class NfyParamValueFormatError(exceptions.ApmecException):
     message = _("Param values %(param_value)s is not in dict format.")
 
 
-class VnffgTemplateParamParsingException(exceptions.ApmecException):
+class NfyTemplateParamParsingException(exceptions.ApmecException):
     message = _("Failed to parse NFY Template due to "
                 "missing input param %(get_input)s.")
 
 
-class VnffgParamValueNotUsed(exceptions.ApmecException):
+class NfyParamValueNotUsed(exceptions.ApmecException):
     message = _("Param input %(param_key)s not used.")
 
 
-class VnffgPropertyNotFoundException(exceptions.NotFound):
+class NfyPropertyNotFoundException(exceptions.NotFound):
     message = _('NFY Property %(NANY_property)s could not be found')
 
 
-class VnffgCpNotFoundException(exceptions.NotFound):
+class NfyCpNotFoundException(exceptions.NotFound):
     message = _("Specified CP %(cp_id)s could not be found in MEA "
                 "%(mea_id)s.")
 
 
-class VnffgNotFoundException(exceptions.NotFound):
+class NfyNotFoundException(exceptions.NotFound):
     message = _('NFY %(NANY_id)s could not be found')
 
 
-class VnffgInUse(exceptions.InUse):
+class NfyInUse(exceptions.InUse):
     message = _('NFY %(NANY_id)s is still in use')
 
 
-class VnffgVnfNotFoundException(exceptions.NotFound):
+class NfyVnfNotFoundException(exceptions.NotFound):
     message = _("Specified MEA instance %(mea_name)s in MEA Mapping could not "
                 "be found")
 
 
-class VnffgDeleteFailed(exceptions.ApmecException):
+class NfyDeleteFailed(exceptions.ApmecException):
     message = _('Deleting NFY %(NANY_id)s failed')
 
 

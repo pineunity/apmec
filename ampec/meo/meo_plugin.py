@@ -57,7 +57,7 @@ def config_opts():
     return [('meo_vim', MeoPlugin.OPTS)]
 
 
-class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.VnffgPluginDbMixin,
+class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.NfyPluginDbMixin,
                  ns_db.NSPluginDb):
     """MEO reference plugin for MEO extension
 
@@ -236,12 +236,12 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.VnffgPluginDbMixin,
             if element.get('forwarder') in known_forwarders:
                 if prev_element is not None and element.get('forwarder')\
                         != prev_element['forwarder']:
-                    raise meo.VnffgdDuplicateForwarderException(
+                    raise meo.NfydDuplicateForwarderException(
                         forwarder=element.get('forwarder')
                     )
                 elif prev_element is not None and element.get(
                         'capability') == prev_element['capability']:
-                    raise meo.VnffgdDuplicateCPException(
+                    raise meo.NfydDuplicateCPException(
                         cp=element.get('capability')
                     )
             else:
@@ -258,7 +258,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.VnffgPluginDbMixin,
             template, 'number_of_endpoints')
 
         if len(connection_point) != number_endpoint:
-            raise meo.VnffgdWrongEndpointNumber(
+            raise meo.NfydWrongEndpointNumber(
                 number=number_endpoint,
                 cps=connection_point)
 
@@ -273,7 +273,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.VnffgPluginDbMixin,
         NANYD['NANYD']['template_source'] = template_source
 
         if 'NANYD' not in template.get('template'):
-            raise meo.VnffgdInvalidTemplate(template=template.get('template'))
+            raise meo.NfydInvalidTemplate(template=template.get('template'))
         else:
             self.validate_tosca(template['template']['NANYD'])
 
@@ -347,14 +347,14 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.VnffgPluginDbMixin,
 
         fc = super(MeoPlugin, self).get_classifier(context,
                                                     nfp['classifier_id'])
-        template_db = self._get_resource(context, NANY_db.VnffgTemplate,
+        template_db = self._get_resource(context, NANY_db.NfyTemplate,
                                          NANY_dict['NANYD_id'])
         mea_members = self._get_NANY_property(template_db.template,
                                                'constituent_meas')
         new_NANY['mea_mapping'] = super(MeoPlugin, self)._get_mea_mapping(
             context, new_NANY.get('mea_mapping'), mea_members)
         template_id = NANY_dict['NANYD_id']
-        template_db = self._get_resource(context, NANY_db.VnffgTemplate,
+        template_db = self._get_resource(context, NANY_db.NfyTemplate,
                                          template_id)
         # functional attributes that allow update are mea_mapping,
         # and symmetrical.  Therefore we need to figure out the new chain if

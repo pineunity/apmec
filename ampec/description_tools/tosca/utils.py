@@ -32,12 +32,12 @@ LOG = logging.getLogger(__name__)
 MONITORING = 'tosca.policies.Monitoring'
 SCALING = 'tosca.policies.Scaling'
 PLACEMENT = 'tosca.policies.apmec.Placement'
-APMECCP = 'tosca.nodes.nfv.CP.Apmec'
-APMECVDU = 'tosca.nodes.nfv.VDU.Apmec'
+APMECCP = 'tosca.nodes.mec.CP.Apmec'
+APMECVDU = 'tosca.nodes.mec.VDU.Apmec'
 BLOCKSTORAGE = 'tosca.nodes.BlockStorage.Apmec'
 BLOCKSTORAGE_ATTACHMENT = 'tosca.nodes.BlockStorageAttachment'
 TOSCA_BINDS_TO = 'tosca.relationships.network.BindsTo'
-VDU = 'tosca.nodes.nfv.VDU'
+VDU = 'tosca.nodes.mec.VDU'
 IMAGE = 'tosca.artifacts.Deployment.Image.VM'
 HEAT_SOFTWARE_CONFIG = 'OS::Heat::SoftwareConfig'
 OS_RESOURCES = {
@@ -99,10 +99,10 @@ def updateimports(template):
     else:
         template['imports'] = [defsfile]
 
-    if 'nfv' in template['tosca_definitions_version']:
-        nfvfile = path + 'apmec_nfv_defs.yaml'
+    if 'mec' in template['tosca_definitions_version']:
+        mecfile = path + 'apmec_mec_defs.yaml'
 
-        template['imports'].append(nfvfile)
+        template['imports'].append(mecfile)
 
     LOG.debug(path)
 
@@ -517,9 +517,9 @@ def get_flavor_dict(template, flavor_extra_input=None):
         flavor_tmp = nt.get_properties().get('flavor')
         if flavor_tmp:
             continue
-        if nt.get_capabilities().get("nfv_compute"):
+        if nt.get_capabilities().get("mec_compute"):
             flavor_dict[nt.name] = {}
-            properties = nt.get_capabilities()["nfv_compute"].get_properties()
+            properties = nt.get_capabilities()["mec_compute"].get_properties()
             for prop, (hot_prop, default, unit) in \
                     (FLAVOR_PROPS).items():
                 hot_prop_val = (properties[prop].value

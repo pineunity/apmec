@@ -4,8 +4,8 @@ Overview
 --------
 
 This document explains MEAD template structure and its various fields based
-on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-nfv/
-v1.0/tosca-nfv-v1.0.html>`_.
+on TOSCA standards `V1.0 CSD 03 <http://docs.oasis-open.org/tosca/tosca-mec/
+v1.0/tosca-mec-v1.0.html>`_.
 
 The behavioural and deployment information of a MEA in Apmec is defined in a
 template known as MEA Descriptor (MEAD). The template is based on TOSCA
@@ -17,7 +17,7 @@ Each MEAD template will have below fields:
 
     tosca_definitions_version:
        This defines the TOSCA definition version on which the template is based.
-       The current version being tosca_simple_profile_for_nfv_1_0_0.
+       The current version being tosca_simple_profile_for_mec_1_0_0.
 
     tosca_default_namespace:
        This is optional. It mentions default namespace which includes schema,
@@ -58,7 +58,7 @@ Virtual Deployment Unit is a basic part of MEA. It is the VM that hosts the
 network function.
 
 :type:
-    tosca.nodes.nfv.VDU.Apmec
+    tosca.nodes.mec.VDU.Apmec
 :properties:
     Describes the properties like image to be used in VDU, availability zone in
     which VDU is to be spawned, management driver to be used to manage the VDU,
@@ -66,8 +66,8 @@ network function.
     policies for the VDU, providing user data in form of custom commands to the
     VDU. A complete list of VDU properties currently supported by Apmec are
     listed `here <https://github.com/openstack/apmec/blob/master/apmec/tosca/
-    lib/apmec_nfv_defs.yaml>`_ under **properties** section of
-    **tosca.nodes.nfv.VDU.Apmec** field
+    lib/apmec_mec_defs.yaml>`_ under **properties** section of
+    **tosca.nodes.mec.VDU.Apmec** field
 
 Specifying VDU properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -79,12 +79,12 @@ availability zone can be described as:
   topology_template:
     node_templates:
       VDU1:
-        type: tosca.nodes.nfv.VDU.Apmec
+        type: tosca.nodes.mec.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           availability_zone: nova
         capabilities:
-          nfv_compute:
+          mec_compute:
             properties:
               disk_size: 10 GB
               mem_size: 2048 MB
@@ -99,13 +99,13 @@ OpenStack specific **flavors** can also be used to describe VDU configuration.
   topology_template:
     node_templates:
       VDU1:
-        type: tosca.nodes.nfv.VDU.Apmec
+        type: tosca.nodes.mec.VDU.Apmec
         properties:
           image: cirros-0.3.5-x86_64-disk
           flavor: m1.tiny
           availability_zone: nova
 
-However, when both **nfv_compute properties** and **flavor** are mentioned in
+However, when both **mec_compute properties** and **flavor** are mentioned in
 a MEAD, **flavor** setting will take precedence.
 
 Monitoring the VDU
@@ -119,7 +119,7 @@ It can be re-spawned in case ping fails. This is described under
 
     ..
       VDU1:
-        type: tosca.nodes.nfv.VDU.Apmec
+        type: tosca.nodes.mec.VDU.Apmec
         properties:
           monitoring_policy:
             name: ping
@@ -142,7 +142,7 @@ template as user data.
 
   ..
     VDU1:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       properties:
         user_data_format: RAW
         user_data: |
@@ -169,7 +169,7 @@ the VDU with that image.
 
   ..
     VDU1:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       artifacts:
         MEAImage:
           type: tosca.artifacts.Deployment.Image.VM
@@ -189,9 +189,9 @@ can be specified as below. Thread and core counts can be specified as shown.
 
   ..
     VDU1:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       capabilities:
-        nfv_compute:
+        mec_compute:
           properties:
             disk_size: 10 GB
             mem_size: 2048 MB
@@ -207,7 +207,7 @@ can be specified as below. Thread and core counts can be specified as shown.
 +---------------------+---------------+-----------+--------------------------+
 |Name                 |Type           |Constraints|Description               |
 +---------------------+---------------+-----------+--------------------------+
-|nfv_compute          |Compute.       |None       |Describes the configurat  |
+|mec_compute          |Compute.       |None       |Describes the configurat  |
 |                     |Container.     |           |ion of the VM on which    |
 |                     |Architecture   |           |the VDU resides           |
 +---------------------+---------------+-----------+--------------------------+
@@ -288,7 +288,7 @@ Following code snippet describes symmetric NUMA topology requirements for VDUs.
   ..
   VDU1:
     capabilities:
-      nfv_compute:
+      mec_compute:
         properties:
           numa_node_count: 2
           numa_nodes: 3
@@ -300,7 +300,7 @@ For asymmetric NUMA architecture:
   ..
   VDU1:
     capabilities:
-      nfv_compute:
+      mec_compute:
         properties:
           mem_size: 4096 MB
           num_cpus: 4
@@ -350,7 +350,7 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
       VDU1:
         ..
       CP1:
-        type: tosca.nodes.nfv.CP.Apmec
+        type: tosca.nodes.mec.CP.Apmec
         properties:
           mac_address: fa:40:08:a0:de:0a
           ip_address: 10.10.1.12
@@ -367,7 +367,7 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
           - virtualBinding:
               node: VDU1
       CP2:
-        type: tosca.nodes.nfv.CP.Apmec
+        type: tosca.nodes.mec.CP.Apmec
         properties:
           type: vnic
           anti_spoofing_protection: false
@@ -384,7 +384,7 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
         ..
 
 :type:
-    tosca.nodes.nfv.CP.Apmec
+    tosca.nodes.mec.CP.Apmec
 
 :properties:
 
@@ -431,10 +431,10 @@ VDU1 in this order. Also CP1/CP2 are connected to VL1/VL2 respectively.
 +---------------+--------------------+-------------------+-------------------+
 |Name           |Capability          |Relationship       |Description        |
 +---------------+--------------------+-------------------+-------------------+
-|virtualLink    |nfv.VirtualLinkable |nfv.VirtualLinksTo |States the VL node |
+|virtualLink    |mec.VirtualLinkable |mec.VirtualLinksTo |States the VL node |
 |               |                    |                   |to connect to      |
 +---------------+--------------------+-------------------+-------------------+
-|virtualbinding |nfv.VirtualBindable |nfv.VirtualBindsTo |States the VDU     |
+|virtualbinding |mec.VirtualBindable |mec.VirtualBindsTo |States the VDU     |
 |               |                    |                   |node to connect to |
 +---------------+--------------------+-------------------+-------------------+
 
@@ -456,13 +456,13 @@ net-01 is as shown below.
       CP1:
         ..
       VL1:
-        type: tosca.nodes.nfv.VL
+        type: tosca.nodes.mec.VL
         properties:
           vendor: Acme
           network_name: net-01
 
 :type:
-    tosca.nodes.nfv.VL
+    tosca.nodes.mec.VL
 
 :properties:
 
@@ -489,7 +489,7 @@ An example of assign floating ip to VDU
       VDU1:
         ..
       CP1:
-        type: tosca.nodes.nfv.CP.Apmec
+        type: tosca.nodes.mec.CP.Apmec
         properties:
           management: true
         requirements:
@@ -560,16 +560,16 @@ a template which mentions all node types with all available options.
 
 ::
 
-     tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+     tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
      description: Sample MEAD template mentioning possible values for each node.
      metadata:
       template_name: sample-tosca-mead-template-guide
      topology_template:
       node_templates:
         VDU:
-          type: tosca.nodes.nfv.VDU.Apmec
+          type: tosca.nodes.mec.VDU.Apmec
           capabilities:
-            nfv_compute:
+            mec_compute:
               properties:
                 mem_page_size: [small, large, any, custom]
                 cpu_allocation:
@@ -613,7 +613,7 @@ a template which mentions all node types with all available options.
               type: tosca.artifacts.Deployment.Image.VM
               file: file to be used for image
         CP:
-          type: tosca.nodes.nfv.CP.Apmec
+          type: tosca.nodes.mec.CP.Apmec
           properties:
             management: [true, false]
             anti_spoofing_protection: [true, false]
@@ -626,7 +626,7 @@ a template which mentions all node types with all available options.
             - virtualBinding:
                node: VDU to bind to
         VL:
-          type: tosca.nodes.nfv.VL
+          type: tosca.nodes.mec.VL
           properties:
             network_name: name of network to attach to
             vendor: Acme

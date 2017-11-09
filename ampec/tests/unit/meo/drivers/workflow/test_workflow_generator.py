@@ -33,12 +33,12 @@ def get_dummy_ns():
 
 def get_dummy_param():
     return {u'mea1': {'substitution_mappings': {u'VL1b8587afb-60': {
-            'type': 'tosca.nodes.nfv.VL', 'properties': {
+            'type': 'tosca.nodes.mec.VL', 'properties': {
                 'network_name': u'net_mgmt',
                 'vendor': 'apmec'}}, 'requirements': {
                     'virtualLink2': u'VL2b8587afb-60',
                     'virtualLink1': u'VL1b8587afb-60'}, u'VL2b8587afb-60': {
-                        'type': 'tosca.nodes.nfv.VL',
+                        'type': 'tosca.nodes.mec.VL',
                         'properties': {'network_name': u'net0',
                             'vendor': 'apmec'}}}},
             u'nsd': {u'vl2_name': u'net0', u'vl1_name': u'net_mgmt'}}

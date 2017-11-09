@@ -26,7 +26,7 @@ feature. OpenStack versions starting from Kilo are supported with this feature.
 Preparing the OpenStack site
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. Create a new 'nfv' project and admin privileged 'nfv' user on the remote
+1. Create a new 'mec' project and admin privileged 'mec' user on the remote
    OpenStack site.
 2. Create the required neutron networks for management, packet in and packet
    out networks that will be used by MEAs.
@@ -42,7 +42,7 @@ To register a new OpenStack VIM inside Apmec.
  +----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+
  | Field          | Value                                                                                                                                                    |
  +----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+
- | auth_cred      | {"username": "nfv_user", "password": "***", "project_name": "nfv", "user_id": "", "user_domain_name": "default", "auth_url":                               |
+ | auth_cred      | {"username": "mec_user", "password": "***", "project_name": "mec", "user_id": "", "user_domain_name": "default", "auth_url":                               |
  |                | "http://10.18.161.165:5000/v3", "project_id": "", "project_domain_name": "default"}                                                                        |
  | auth_url       | http://10.18.161.165:5000/v3                                                                                                                             |
  | description    | OpenStack Liberty                                                                                                                                        |
@@ -51,7 +51,7 @@ To register a new OpenStack VIM inside Apmec.
  | placement_attr | {"regions": ["RegionOne", "RegionTwo"]}                                                                                                                  |
  | tenant_id      | 8907bae480c0414d98c3519acbad1b06                                                                                                                         |
  | type           | openstack                                                                                                                                                |
- | vim_project    | {"id": "", "name": "nfv"}                                                                                                                                |
+ | vim_project    | {"id": "", "name": "mec"}                                                                                                                                |
  +----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 In the above command, config.yaml contains VIM specific parameters as below:
@@ -59,9 +59,9 @@ In the above command, config.yaml contains VIM specific parameters as below:
 ::
 
  auth_url: 'http://localhost:5000'
- username: 'nfv_user'
+ username: 'mec_user'
  password: 'devstack'
- project_name: 'nfv'
+ project_name: 'mec'
 
 The parameter auth_url points to the keystone service authorization URL of the
 remote OpenStack site.
@@ -147,7 +147,7 @@ Features
 
 Limitations
 ~~~~~~~~~~~
-* MEAs of all users currently land in the 'nfv' project that is specified
+* MEAs of all users currently land in the 'mec' project that is specified
   during VIM registration.
 * Fernet keys for password encryption and decryption is stored on file systems.
   This is a limitation when multiple servers are serving behind a load balancer

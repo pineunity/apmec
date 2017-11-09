@@ -17,8 +17,8 @@ PRIVATE_KEY_FILE=${PRIVATE_KEY_FILE:-"keypair.priv"}
 function fixup_quota {
     echo "Disable nova compute instance & core quota"
     openstack quota set --class --instances -1 --cores -1 --ram -1 default
-    projectId=$(openstack project list | awk '/\ nfv\ / {print $2}')
-    echo "Disable neutron port quota on project 'nfv' $projectId"
+    projectId=$(openstack project list | awk '/\ mec\ / {print $2}')
+    echo "Disable neutron port quota on project 'mec' $projectId"
     openstack quota set --ports -1 $projectId
 }
 
@@ -34,7 +34,7 @@ function add_key_if_not_exist {
 
 function add_key {
     echo "Adding nova key"
-    userId=$(openstack user list | awk '/\ nfv_user\ / {print $2}')
+    userId=$(openstack user list | awk '/\ mec_user\ / {print $2}')
     # TODO: openstack cli does not support to add key to a specific user
     nova keypair-add userKey --user $userId > ${PRIVATE_KEY_FILE}
     echo "Keypair userKey is added"
@@ -42,9 +42,9 @@ function add_key {
 
 # Adding nova security groups (#1591372).
 function _create_secgrps {
-    openstack security group create --project nfv --description "apmec functest security group" test_secgrp
-    openstack security group rule create --project nfv --ingress --protocol icmp test_secgrp
-    openstack security group rule create --project nfv --ingress --protocol tcp --dst-port 22 test_secgrp
+    openstack security group create --project mec --description "apmec functest security group" test_secgrp
+    openstack security group rule create --project mec --ingress --protocol icmp test_secgrp
+    openstack security group rule create --project mec --ingress --protocol tcp --dst-port 22 test_secgrp
 }
 
 function _check_secgrps {

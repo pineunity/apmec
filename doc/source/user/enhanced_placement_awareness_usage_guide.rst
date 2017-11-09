@@ -130,9 +130,9 @@ created as part of the VDU properties using **availability_zone** property.
 .. code-block:: yaml
 
   vdu1:
-    type: tosca.nodes.nfv.VDU.Apmec
+    type: tosca.nodes.mec.VDU.Apmec
     capabilities:
-      nfv_compute:
+      mec_compute:
         properties:
           disk_size: 10 GB
           mem_size: 2048 MB

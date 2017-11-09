@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 description: Demo example
 
 metadata:
@@ -7,9 +7,9 @@ metadata:
 topology_template:
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       capabilities:
-        nfv_compute:
+        mec_compute:
           properties:
             disk_size: 1 GB
             mem_size: 512 MB
@@ -22,7 +22,7 @@ topology_template:
 
 
     CP1:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -33,7 +33,7 @@ topology_template:
             node: VDU1
 
     VL1:
-      type: tosca.nodes.nfv.VL
+      type: tosca.nodes.mec.VL
       properties:
         network_name: net_mgmt
         vendor: Apmec

@@ -1,24 +1,24 @@
-tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 
 description: Demo example
 node_types:
-  tosca.nodes.nfv.MEA1:
+  tosca.nodes.mec.MEA1:
     requirements:
       - virtualLink1:
-          type: tosca.nodes.nfv.VL
+          type: tosca.nodes.mec.VL
           required: true
       - virtualLink2:
-          type: tosca.nodes.nfv.VL
+          type: tosca.nodes.mec.VL
           required: true
     capabilities:
       forwader1:
-          type: tosca.capabilities.nfv.Forwarder
+          type: tosca.capabilities.mec.Forwarder
       forwader2:
-          type: tosca.capabilities.nfv.Forwarder
+          type: tosca.capabilities.mec.Forwarder
 
 topology_template:
   substitution_mappings:
-    node_type: tosca.nodes.nfv.MEA1
+    node_type: tosca.nodes.mec.MEA1
     requirements:
       virtualLink1: [CP11, virtualLink]
       virtualLink2: [CP14, virtualLink]
@@ -28,7 +28,7 @@ topology_template:
 
   node_templates:
     VDU1:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.tiny
@@ -39,7 +39,7 @@ topology_template:
           param1: key2
 
     CP11:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       properties:
         management: true
         anti_spoofing_protection: false
@@ -48,7 +48,7 @@ topology_template:
             node: VDU1
 
     CP12:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       properties:
         anti_spoofing_protection: false
       requirements:
@@ -58,7 +58,7 @@ topology_template:
             node: VDU1
 
     VDU2:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       properties:
         image: cirros-0.3.5-x86_64-disk
         flavor: m1.medium
@@ -69,7 +69,7 @@ topology_template:
           param1: key2
 
     CP13:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       properties:
         management: true
       requirements:
@@ -79,19 +79,19 @@ topology_template:
             node: VDU2
 
     CP14:
-      type: tosca.nodes.nfv.CP.Apmec
+      type: tosca.nodes.mec.CP.Apmec
       requirements:
         - virtualBinding:
             node: VDU2
 
     VL1:
-      type: tosca.nodes.nfv.VL
+      type: tosca.nodes.mec.VL
       properties:
         network_name: net_mgmt
         vendor: Apmec
 
     VL2:
-      type: tosca.nodes.nfv.VL
+      type: tosca.nodes.mec.VL
       properties:
         network_name: net0
         vendor: Apmec

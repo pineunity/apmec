@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 
 description: OpenWRT with services
 
@@ -9,9 +9,9 @@ topology_template:
   node_templates:
 
     VDU1:
-      type: tosca.nodes.nfv.VDU.Apmec
+      type: tosca.nodes.mec.VDU.Apmec
       capabilities:
-        nfv_compute:
+        mec_compute:
           properties:
             num_cpus: 6
             disk_size: 40 GB

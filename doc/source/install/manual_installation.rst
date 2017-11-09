@@ -104,7 +104,7 @@ c). Create apmec service.
 .. code-block:: console
 
    openstack service create --name apmec \
-       --description "Apmec Project" nfv-orchestration
+       --description "Apmec Project" mec-orchestration
 ..
 
 d). Provide an endpoint to apmec service.
@@ -113,11 +113,11 @@ If you are using keystone v3 then,
 
 .. code-block:: console
 
-   openstack endpoint create --region RegionOne nfv-orchestration \
+   openstack endpoint create --region RegionOne mec-orchestration \
               public http://<APMEC_NODE_IP>:9890/
-   openstack endpoint create --region RegionOne nfv-orchestration \
+   openstack endpoint create --region RegionOne mec-orchestration \
               internal http://<APMEC_NODE_IP>:9890/
-   openstack endpoint create --region RegionOne nfv-orchestration \
+   openstack endpoint create --region RegionOne mec-orchestration \
               admin http://<APMEC_NODE_IP>:9890/
 ..
 
