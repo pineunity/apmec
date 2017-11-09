@@ -114,11 +114,11 @@ If you are using keystone v3 then,
 .. code-block:: console
 
    openstack endpoint create --region RegionOne mec-orchestration \
-              public http://<APMEC_NODE_IP>:9890/
+              public http://<APMEC_NODE_IP>:9990/
    openstack endpoint create --region RegionOne mec-orchestration \
-              internal http://<APMEC_NODE_IP>:9890/
+              internal http://<APMEC_NODE_IP>:9990/
    openstack endpoint create --region RegionOne mec-orchestration \
-              admin http://<APMEC_NODE_IP>:9890/
+              admin http://<APMEC_NODE_IP>:9990/
 ..
 
 If you are using keystone v2 then,
@@ -126,9 +126,9 @@ If you are using keystone v2 then,
 .. code-block:: console
 
    openstack endpoint create --region RegionOne \
-        --publicurl 'http://<APMEC_NODE_IP>:9890/' \
-        --adminurl 'http://<APMEC_NODE_IP>:9890/' \
-        --internalurl 'http://<APMEC_NODE_IP>:9890/' <SERVICE-ID>
+        --publicurl 'http://<APMEC_NODE_IP>:9990/' \
+        --adminurl 'http://<APMEC_NODE_IP>:9990/' \
+        --internalurl 'http://<APMEC_NODE_IP>:9990/' <SERVICE-ID>
 ..
 
 3). Clone apmec repository.
@@ -190,7 +190,7 @@ If you are using keystone v2 then,
    debug = True
    use_syslog = False
    bind_host = <APMEC_NODE_IP>
-   bind_port = 9890
+   bind_port = 9990
    service_plugins = meo,mem
 
    state_path = /var/lib/apmec

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# lib/tacker
-# functions - functions specific to tacker
+# lib/apmec
+# functions - functions specific to apmec
 
 # Dependencies:
 # ``functions`` file
@@ -10,22 +10,24 @@
 
 # ``stack.sh`` calls the entry points in this order:
 #
-# - install_tacker
-# - configure_tacker
-# - create_tacker_accounts
-# - init_tacker
-# - start_tacker
-# - tacker_horizon_install
-# - tacker_create_initial_network
+# - install_apmec
+# - configure_apmec
+# - create_apmec_accounts
+# - init_apmec
+# - start_apmec
+# - apmec_horizon_install
+# - apmec_create_initial_network
 
 #
 # ``unstack.sh`` calls the entry points in this order:
 #
-# - stop_tacker
-# - cleanup_tacker
+# - stop_apmec
+# - cleanup_apmec
 
-# Tacker
+# Apmec
 # ---------------
+CUSTOM_BASE="https://github.com/pineunity"
+
 
 # Save trace setting
 XTRACE=$(set +o | grep xtrace)
@@ -34,40 +36,40 @@ set +o xtrace
 # Defaults
 # --------
 
-if is_ssl_enabled_service "tacker" || is_service_enabled tls-proxy; then
+if is_ssl_enabled_service "apmec" || is_service_enabled tls-proxy; then
     APMEC_PROTOCOL="https"
 fi
 
 # Set up default directories
-GITREPO["tacker-horizon"]=${APMECHORIZON_REPO:-${GIT_BASE}/openstack/tacker-horizon.git}
-GITBRANCH["tacker-horizon"]=${APMECHORIZON_BRANCH:-master}
-GITDIR["tacker-horizon"]=$DEST/tacker-horizon
+GITREPO["apmec-horizon"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/apmec-horizon.git}
+GITBRANCH["apmec-horizon"]=${APMECHORIZON_BRANCH:-master}
+GITDIR["apmec-horizon"]=$DEST/apmec-horizon
 
-APMEC_DIR=$DEST/tacker
-APMEC_AUTH_CACHE_DIR=${APMEC_AUTH_CACHE_DIR:-/var/cache/tacker}
+APMEC_DIR=$DEST/apmec
+APMEC_AUTH_CACHE_DIR=${APMEC_AUTH_CACHE_DIR:-/var/cache/apmec}
 
 # Support entry points installation of console scripts
-if [[ -d $APMEC_DIR/bin/tacker-server ]]; then
+if [[ -d $APMEC_DIR/bin/apmec-server ]]; then
     APMEC_BIN_DIR=$APMEC_DIR/bin
 else
     APMEC_BIN_DIR=$(get_python_exec_prefix)
 fi
 
-APMEC_CONF_DIR=/etc/tacker
-APMEC_CONF=$APMEC_CONF_DIR/tacker.conf
+APMEC_CONF_DIR=/etc/apmec
+APMEC_CONF=$APMEC_CONF_DIR/apmec.conf
 
-# Default name for Tacker database
-APMEC_DB_NAME=${APMEC_DB_NAME:-tacker}
-# Default Tacker Port
-APMEC_PORT=${APMEC_PORT:-9890}
-# Default Tacker Internal Port when using TLS proxy
-APMEC_PORT_INT=${APMEC_PORT_INT:-19890}       # TODO(FIX)
-# Default Tacker Host
+# Default name for Apmec database
+APMEC_DB_NAME=${APMEC_DB_NAME:-apmec}
+# Default Apmec Port
+APMEC_PORT=${APMEC_PORT:-9990}
+# Default Apmec Internal Port when using TLS proxy
+APMEC_PORT_INT=${APMEC_PORT_INT:-19990}       # TODO(FIX)
+# Default Apmec Host
 APMEC_HOST=${APMEC_HOST:-$SERVICE_HOST}
 # Default protocol
 APMEC_PROTOCOL=${APMEC_PROTOCOL:-$SERVICE_PROTOCOL}
 # Default admin username
-APMEC_ADMIN_USERNAME=${APMEC_ADMIN_USERNAME:-tacker}
+APMEC_ADMIN_USERNAME=${APMEC_ADMIN_USERNAME:-apmec}
 # Default auth strategy
 APMEC_AUTH_STRATEGY=${APMEC_AUTH_STRATEGY:-keystone}
 APMEC_USE_ROOTWRAP=${APMEC_USE_ROOTWRAP:-True}
@@ -76,7 +78,7 @@ APMEC_RR_CONF_FILE=$APMEC_CONF_DIR/rootwrap.conf
 if [[ "$APMEC_USE_ROOTWRAP" == "False" ]]; then
     APMEC_RR_COMMAND="sudo"
 else
-    APMEC_ROOTWRAP=$(get_rootwrap_location tacker)
+    APMEC_ROOTWRAP=$(get_rootwrap_location apmec)
     APMEC_RR_COMMAND="sudo $APMEC_ROOTWRAP $APMEC_RR_CONF_FILE"
 fi
 
@@ -85,42 +87,42 @@ APMEC_NOVA_CA_CERTIFICATES_FILE=${APMEC_NOVA_CA_CERTIFICATES_FILE:-}
 APMEC_NOVA_API_INSECURE=${APMEC_NOVA_API_INSECURE:-False}
 
 # Tell Tempest this project is present
-# TEMPEST_SERVICES+=,tacker
+# TEMPEST_SERVICES+=,apmec
 
 HEAT_CONF_DIR=/etc/heat
 
 # Functions
 # ---------
-# Test if any Tacker services are enabled
-# is_tacker_enabled
-function is_tacker_enabled {
-    [[ ,${ENABLED_SERVICES} =~ ,"tacker" ]] && return 0
+# Test if any Apmec services are enabled
+# is_apmec_enabled
+function is_apmec_enabled {
+    [[ ,${ENABLED_SERVICES} =~ ,"apmec" ]] && return 0
     return 1
 }
 
-# create_tacker_cache_dir() - Part of the _tacker_setup_keystone() process
-function create_tacker_cache_dir {
+# create_apmec_cache_dir() - Part of the _apmec_setup_keystone() process
+function create_apmec_cache_dir {
     # Create cache dir
     sudo install -d -o $STACK_USER $APMEC_AUTH_CACHE_DIR
     rm -f $APMEC_AUTH_CACHE_DIR/*
 }
 
-# create_tacker_accounts() - Set up common required tacker accounts
+# create_apmec_accounts() - Set up common required apmec accounts
 
 # Tenant               User       Roles
 # ------------------------------------------------------------------
-# service              tacker    admin        # if enabled
+# service              apmec    admin        # if enabled
 
 # Migrated from keystone_data.sh
-function create_tacker_accounts {
-    if is_service_enabled tacker; then
-        create_service_user "tacker"
+function create_apmec_accounts {
+    if is_service_enabled apmec; then
+        create_service_user "apmec"
         get_or_create_role "advsvc"
-        create_service_user "tacker" "advsvc"
+        create_service_user "apmec" "advsvc"
 
-        local tacker_service=$(get_or_create_service "tacker" \
-            "nfv-orchestration" "Tacker NFV Orchestration Service")
-        get_or_create_endpoint $tacker_service \
+        local apmec_service=$(get_or_create_service "apmec" \
+            "nfv-orchestration" "Apmec NFV Orchestration Service")
+        get_or_create_endpoint $apmec_service \
             "$REGION_NAME" \
             "$APMEC_PROTOCOL://$SERVICE_HOST:$APMEC_PORT/" \
             "$APMEC_PROTOCOL://$SERVICE_HOST:$APMEC_PORT/" \
@@ -131,20 +133,20 @@ function create_tacker_accounts {
 # stack.sh entry points
 # ---------------------
 
-# init_tacker() - Initialize databases, etc.
-function init_tacker {
+# init_apmec() - Initialize databases, etc.
+function init_apmec {
     recreate_database $APMEC_DB_NAME
 
-    # Run Tacker db migrations
-    $APMEC_BIN_DIR/tacker-db-manage --config-file $APMEC_CONF upgrade head
+    # Run Apmec db migrations
+    $APMEC_BIN_DIR/apmec-db-manage --config-file $APMEC_CONF upgrade head
 }
 
-# install_tacker() - Collect source and prepare
-function install_tacker {
+# install_apmec() - Collect source and prepare
+function install_apmec {
     setup_develop $APMEC_DIR
 }
 
-function start_tacker {
+function start_apmec {
     local cfg_file_options="--config-file $APMEC_CONF"
     local service_port=$APMEC_PORT
     local service_protocol=$APMEC_PROTOCOL
@@ -152,16 +154,16 @@ function start_tacker {
         service_port=$APMEC_PORT_INT
         service_protocol="http"
     fi
-    # Start tacker conductor
-    run_process tacker-conductor "$APMEC_BIN_DIR/tacker-conductor $cfg_file_options"
-    # Start the Tacker service
-    run_process tacker "$APMEC_BIN_DIR/tacker-server $cfg_file_options"
-    echo "Waiting for Tacker to start..."
-    if is_ssl_enabled_service "tacker"; then
+    # Start apmec conductor
+    run_process apmec-conductor "$APMEC_BIN_DIR/apmec-conductor $cfg_file_options"
+    # Start the Apmec service
+    run_process apmec "$APMEC_BIN_DIR/apmec-server $cfg_file_options"
+    echo "Waiting for Apmec to start..."
+    if is_ssl_enabled_service "apmec"; then
         ssl_ca="--ca-certificate=${SSL_BUNDLE_FILE}"
     fi
     if ! timeout $SERVICE_TIMEOUT sh -c "while ! wget ${ssl_ca} --no-proxy -q -O- $service_protocol://$APMEC_HOST:$service_port; do sleep 1; done"; then
-        die $LINENO "Tacker did not start"
+        die $LINENO "Apmec did not start"
     fi
     # Start proxy if enabled
     if is_service_enabled tls-proxy; then
@@ -169,39 +171,39 @@ function start_tacker {
     fi
 }
 
-# stop_tacker() - Stop running processes (non-screen)
-function stop_tacker {
-    stop_process tacker
-    stop_process tacker-conductor
+# stop_apmec() - Stop running processes (non-screen)
+function stop_apmec {
+    stop_process apmec
+    stop_process apmec-conductor
 }
 
-# cleanup_tacker() - Remove residual data files, anything left over from previous
+# cleanup_apmec() - Remove residual data files, anything left over from previous
 # runs that a clean run would need to clean up
-function cleanup_tacker {
+function cleanup_apmec {
     sudo rm -rf $APMEC_AUTH_CACHE_DIR
 }
 
 
-function _create_tacker_conf_dir {
+function _create_apmec_conf_dir {
     # Put config files in ``APMEC_CONF_DIR`` for everyone to find
     sudo install -d -o $STACK_USER $APMEC_CONF_DIR
 }
 
-# configure_tacker()
-# Set common config for all tacker server and agents.
-function configure_tacker {
-    _create_tacker_conf_dir
+# configure_apmec()
+# Set common config for all apmec server and agents.
+function configure_apmec {
+    _create_apmec_conf_dir
 
     cd $APMEC_DIR
     ./tools/generate_config_file_sample.sh
     cd -
 
-    cp $APMEC_DIR/etc/tacker/tacker.conf.sample $APMEC_CONF
+    cp $APMEC_DIR/etc/apmec/apmec.conf.sample $APMEC_CONF
 
-    iniset_rpc_backend tacker $APMEC_CONF
+    iniset_rpc_backend apmec $APMEC_CONF
 
     iniset $APMEC_CONF database connection `database_connection_url $APMEC_DB_NAME`
-    iniset $APMEC_CONF DEFAULT state_path $DATA_DIR/tacker
+    iniset $APMEC_CONF DEFAULT state_path $DATA_DIR/apmec
     iniset $APMEC_CONF DEFAULT use_syslog $SYSLOG
 
     # Format logging
@@ -217,7 +219,7 @@ function configure_tacker {
         iniset $APMEC_CONF DEFAULT bind_port "$APMEC_PORT_INT"
     fi
 
-    if is_ssl_enabled_service "tacker"; then
+    if is_ssl_enabled_service "apmec"; then
         ensure_certificates APMEC
 
         iniset $APMEC_CONF DEFAULT use_ssl True
@@ -229,17 +231,17 @@ function configure_tacker {
     APMEC_API_PASTE_FILE=$APMEC_CONF_DIR/api-paste.ini
     APMEC_POLICY_FILE=$APMEC_CONF_DIR/policy.json
 
-    cp $APMEC_DIR/etc/tacker/api-paste.ini $APMEC_API_PASTE_FILE
-    cp $APMEC_DIR/etc/tacker/policy.json $APMEC_POLICY_FILE
+    cp $APMEC_DIR/etc/apmec/api-paste.ini $APMEC_API_PASTE_FILE
+    cp $APMEC_DIR/etc/apmec/policy.json $APMEC_POLICY_FILE
 
-    # allow tacker user to administer tacker to match tacker account
-    sed -i 's/"context_is_admin":  "role:admin"/"context_is_admin":  "role:admin or user_name:tacker"/g' $APMEC_POLICY_FILE
+    # allow apmec user to administer apmec to match apmec account
+    sed -i 's/"context_is_admin":  "role:admin"/"context_is_admin":  "role:admin or user_name:apmec"/g' $APMEC_POLICY_FILE
 
     iniset $APMEC_CONF DEFAULT debug $ENABLE_DEBUG_LOG_LEVEL
     iniset $APMEC_CONF DEFAULT policy_file $APMEC_POLICY_FILE
 
     iniset $APMEC_CONF DEFAULT auth_strategy $APMEC_AUTH_STRATEGY
-    _tacker_setup_keystone $APMEC_CONF keystone_authtoken
+    _apmec_setup_keystone $APMEC_CONF keystone_authtoken
 
     if [[ "${APMEC_MODE}" == "all" ]]; then
         iniset "/$Q_PLUGIN_CONF_FILE" ml2 extension_drivers port_security
@@ -259,21 +261,21 @@ function configure_tacker {
     if [[ "${USE_BARBICAN}" == "True" ]]; then
          iniset $APMEC_CONF vim_keys use_barbican True
     fi
-    _tacker_setup_rootwrap
+    _apmec_setup_rootwrap
 }
 
 # Utility Functions
 #------------------
 
-# _tacker_deploy_rootwrap_filters() - deploy rootwrap filters to $APMEC_CONF_ROOTWRAP_D (owned by root).
-function _tacker_deploy_rootwrap_filters {
+# _apmec_deploy_rootwrap_filters() - deploy rootwrap filters to $APMEC_CONF_ROOTWRAP_D (owned by root).
+function _apmec_deploy_rootwrap_filters {
     local srcdir=$1
     sudo install -d -o root -m 755 $APMEC_CONF_ROOTWRAP_D
-    sudo install -o root -m 644 $srcdir/etc/tacker/rootwrap.d/* $APMEC_CONF_ROOTWRAP_D/
+    sudo install -o root -m 644 $srcdir/etc/apmec/rootwrap.d/* $APMEC_CONF_ROOTWRAP_D/
 }
 
-# _tacker_setup_rootwrap() - configure Tacker's rootwrap
-function _tacker_setup_rootwrap {
+# _apmec_setup_rootwrap() - configure Apmec's rootwrap
+function _apmec_setup_rootwrap {
     if [[ "$APMEC_USE_ROOTWRAP" == "False" ]]; then
         return
     fi
@@ -283,26 +285,26 @@ function _tacker_setup_rootwrap {
         sudo rm -rf $APMEC_CONF_ROOTWRAP_D
     fi
 
-    _tacker_deploy_rootwrap_filters $APMEC_DIR
+    _apmec_deploy_rootwrap_filters $APMEC_DIR
 
-    sudo install -o root -g root -m 644 $APMEC_DIR/etc/tacker/rootwrap.conf $APMEC_RR_CONF_FILE
+    sudo install -o root -g root -m 644 $APMEC_DIR/etc/apmec/rootwrap.conf $APMEC_RR_CONF_FILE
     sudo sed -e "s:^filters_path=.*$:filters_path=$APMEC_CONF_ROOTWRAP_D:" -i $APMEC_RR_CONF_FILE
-    # Specify ``rootwrap.conf`` as first parameter to tacker-rootwrap
+    # Specify ``rootwrap.conf`` as first parameter to apmec-rootwrap
     ROOTWRAP_SUDOER_CMD="$APMEC_ROOTWRAP $APMEC_RR_CONF_FILE *"
 
-    # Set up the rootwrap sudoers for tacker
+    # Set up the rootwrap sudoers for apmec
     TEMPFILE=`mktemp`
     echo "$STACK_USER ALL=(root) NOPASSWD: $ROOTWRAP_SUDOER_CMD" >$TEMPFILE
     chmod 0440 $TEMPFILE
     sudo chown root:root $TEMPFILE
-    sudo mv $TEMPFILE /etc/sudoers.d/tacker-rootwrap
+    sudo mv $TEMPFILE /etc/sudoers.d/apmec-rootwrap
 
     # Update the root_helper
     iniset $APMEC_CONF agent root_helper "$APMEC_RR_COMMAND"
 }
 
-# Configures keystone integration for tacker service and agents
-function _tacker_setup_keystone {
+# Configures keystone integration for apmec service and agents
+function _apmec_setup_keystone {
     local conf_file=$1
     local section=$2
     local use_auth_url=$3
@@ -313,14 +315,14 @@ function _tacker_setup_keystone {
         iniset $conf_file $section auth_url $KEYSTONE_SERVICE_URI/v2.0
     fi
 
-    create_tacker_cache_dir
+    create_apmec_cache_dir
     configure_auth_token_middleware $conf_file $APMEC_ADMIN_USERNAME $APMEC_AUTH_CACHE_DIR $section
 }
 
-function tacker_horizon_install {
-    git_clone_by_name "tacker-horizon"
-    setup_dev_lib "tacker-horizon"
-    sudo cp $DEST/tacker-horizon/tacker_horizon/enabled/* $DEST/horizon/openstack_dashboard/enabled/
+function apmec_horizon_install {
+    git_clone_by_name "apmec-horizon"
+    setup_dev_lib "apmec-horizon"
+    sudo cp $DEST/apmec-horizon/apmec_horizon/enabled/* $DEST/horizon/openstack_dashboard/enabled/
     restart_apache_server
 }
 
@@ -333,7 +335,7 @@ function openstack_image_create {
     openstack image show $image_name -f value -c id
 }
 
-function tacker_check_and_download_images {
+function apmec_check_and_download_images {
     local image_url
     image_url[0]='http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img'
     image_url[1]='https://downloads.openwrt.org/chaos_calmer/15.05/x86/kvm_guest/openwrt-15.05-x86-kvm_guest-combined-ext4.img.gz'
@@ -361,7 +363,7 @@ function tacker_check_and_download_images {
                     fi
                     openstack_image_create $FILES/$image_fname $glance_name
                 }||{
-                    echo "ERROR: tacker image create for $image_fname failed"
+                    echo "ERROR: apmec image create for $image_fname failed"
                     image_fname=$image_fname"*"
                     sudo rm -rf $FILES/$image_fname
                     exit 1
@@ -372,7 +374,7 @@ function tacker_check_and_download_images {
     done
 }
 
-function tacker_create_initial_network {
+function apmec_create_initial_network {
     # create necessary networks
     # prepare network
     echo "Deleting networks"
@@ -398,9 +400,9 @@ function tacker_create_initial_network {
     sudo ip address add ${NETWORK_GATEWAY_MGMT_IP} dev ${BR_MGMT}
 }
 
-function tacker_register_default_vim {
-    # Note: These must be the same as in tacker/tests/etc/samples/local-vim.yaml
-    # and devstack/lib/tacker/vim_config.yaml
+function apmec_register_default_vim {
+    # Note: These must be the same as in apmec/tests/etc/samples/local-vim.yaml
+    # and devstack/lib/apmec/vim_config.yaml
     DEFAULT_VIM_PROJECT_NAME="nfv"
     DEFAULT_VIM_USER="nfv_user"
     DEFAULT_VIM_PASSWORD="devstack"
@@ -413,9 +415,9 @@ function tacker_register_default_vim {
     get_or_add_user_project_role "advsvc" $DEFAULT_VIM_USER $DEFAULT_VIM_PROJECT_NAME
 
     echo "Register default VIM ..."
-    mkdir -p $DATA_DIR/tacker
-    cp $APMEC_DIR/devstack/vim_config.yaml $DATA_DIR/tacker
-    VIM_CONFIG_FILE="$DATA_DIR/tacker/vim_config.yaml"
+    mkdir -p $DATA_DIR/apmec
+    cp $APMEC_DIR/devstack/vim_config.yaml $DATA_DIR/apmec
+    VIM_CONFIG_FILE="$DATA_DIR/apmec/vim_config.yaml"
     sed -e "s|^auth_url:.*$|auth_url: \'${KEYSTONE_SERVICE_URI}\'|" -i $VIM_CONFIG_FILE
     echo "The content of VIM config file $VIM_CONFIG_FILE :"
     cat $VIM_CONFIG_FILE
@@ -429,14 +431,14 @@ function tacker_register_default_vim {
     echo $(cat $TOP_DIR/accrc/$DEFAULT_VIM_PROJECT_NAME/$DEFAULT_VIM_USER)
     . $TOP_DIR/accrc/$DEFAULT_VIM_PROJECT_NAME/$DEFAULT_VIM_USER
 
-    default_vim_id=$(tacker vim-register --is-default --description "Default VIM" --config-file $VIM_CONFIG_FILE $DEFAULT_VIM_NAME -c id | grep id | awk '{print $4}')
+    default_vim_id=$(apmec vim-register --is-default --description "Default VIM" --config-file $VIM_CONFIG_FILE $DEFAULT_VIM_NAME -c id | grep id | awk '{print $4}')
     echo "Default VIM registration done as $default_vim_id at $KEYSTONE_SERVICE_URI."
     echo "Switch back to old environment openrc:"
     echo $(cat $TOP_DIR/accrc/$old_project/$old_user)
     . $TOP_DIR/accrc/$old_project/$old_user
 
-    echo "Update tacker/tests/etc/samples/local-vim.yaml for functional testing"
-    functional_vim_file="$APMEC_DIR/tacker/tests/etc/samples/local-vim.yaml"
+    echo "Update apmec/tests/etc/samples/local-vim.yaml for functional testing"
+    functional_vim_file="$APMEC_DIR/apmec/tests/etc/samples/local-vim.yaml"
     sed -e "s|^auth_url:.*$|auth_url: \'${KEYSTONE_SERVICE_URI}\'|" -i $functional_vim_file
 }
 

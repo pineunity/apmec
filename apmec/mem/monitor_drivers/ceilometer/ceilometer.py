@@ -25,7 +25,7 @@ LOG = logging.getLogger(__name__)
 OPTS = [
     cfg.HostAddressOpt('host', default=utils.get_hostname(),
                        help=_('Address which drivers use to trigger')),
-    cfg.PortOpt('port', default=9890,
+    cfg.PortOpt('port', default=9990,
                help=_('port number which drivers use to trigger'))
 ]
 cfg.CONF.register_opts(OPTS, group='ceilometer')

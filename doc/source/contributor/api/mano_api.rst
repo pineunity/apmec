@@ -28,7 +28,7 @@ List API versions - Lists information about Apmec API version.
                 "id": "v1.0",
                 "links": [
                     {
-                        "href": "http://10.18.160.13:9890/v1.0",
+                        "href": "http://10.18.160.13:9990/v1.0",
                         "rel": "self"
                     }
                 ]
