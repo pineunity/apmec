@@ -442,7 +442,7 @@ SUB_RESOURCE_ATTRIBUTE_MAP = {
 }
 
 
-class Vnfm(extensions.ExtensionDescriptor):
+class Mem(extensions.ExtensionDescriptor):
     @classmethod
     def get_name(cls):
         return 'VNF Manager'
@@ -501,7 +501,7 @@ class Vnfm(extensions.ExtensionDescriptor):
         return VNFMPluginBase
 
     def update_attributes_map(self, attributes):
-        super(Vnfm, self).update_attributes_map(
+        super(Mem, self).update_attributes_map(
             attributes, extension_attrs_map=RESOURCE_ATTRIBUTE_MAP)
 
     def get_extended_resources(self, version):
