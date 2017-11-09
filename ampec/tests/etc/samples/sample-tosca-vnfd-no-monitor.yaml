@@ -32,4 +32,4 @@ topology_template:
       type: tosca.nodes.nfv.VL
       properties:
         network_name: net_mgmt
-        vendor: TACKER
+        vendor: APMEC

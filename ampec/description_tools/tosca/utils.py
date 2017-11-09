@@ -32,8 +32,8 @@ LOG = logging.getLogger(__name__)
 MONITORING = 'tosca.policies.Monitoring'
 SCALING = 'tosca.policies.Scaling'
 PLACEMENT = 'tosca.policies.apmec.Placement'
-TACKERCP = 'tosca.nodes.nfv.CP.Apmec'
-TACKERVDU = 'tosca.nodes.nfv.VDU.Apmec'
+APMECCP = 'tosca.nodes.nfv.CP.Apmec'
+APMECVDU = 'tosca.nodes.nfv.VDU.Apmec'
 BLOCKSTORAGE = 'tosca.nodes.BlockStorage.Apmec'
 BLOCKSTORAGE_ATTACHMENT = 'tosca.nodes.BlockStorageAttachment'
 TOSCA_BINDS_TO = 'tosca.relationships.network.BindsTo'
@@ -65,17 +65,17 @@ FLAVOR_EXTRA_SPECS_LIST = ('cpu_allocation',
                            'numa_node_count',
                            'numa_nodes')
 
-delpropmap = {TACKERVDU: ('mgmt_driver', 'config', 'service_type',
+delpropmap = {APMECVDU: ('mgmt_driver', 'config', 'service_type',
                           'placement_policy', 'monitoring_policy',
                           'metadata', 'failure_policy'),
-              TACKERCP: ('management',)}
+              APMECCP: ('management',)}
 
-convert_prop = {TACKERCP: {'anti_spoofing_protection':
+convert_prop = {APMECCP: {'anti_spoofing_protection':
                            'port_security_enabled',
                            'type':
                            'binding:vnic_type'}}
 
-convert_prop_values = {TACKERCP: {'type': {'sriov': 'direct',
+convert_prop_values = {APMECCP: {'type': {'sriov': 'direct',
                                            'vnic': 'normal'}}}
 
 deletenodes = (MONITORING, FAILURE, PLACEMENT)
@@ -148,7 +148,7 @@ def get_vdu_monitoring(template):
     policy_dict = dict()
     policy_dict['vdus'] = collections.OrderedDict()
     for nt in template.nodetemplates:
-        if nt.type_definition.is_derived_from(TACKERVDU):
+        if nt.type_definition.is_derived_from(APMECVDU):
             mon_policy = nt.get_property_value('monitoring_policy') or 'noop'
             if mon_policy != 'noop':
                 if 'parameters' in mon_policy:
@@ -165,7 +165,7 @@ def get_vdu_metadata(template):
     metadata = dict()
     metadata.setdefault('vdus', {})
     for nt in template.nodetemplates:
-        if nt.type_definition.is_derived_from(TACKERVDU):
+        if nt.type_definition.is_derived_from(APMECVDU):
             metadata_dict = nt.get_property_value('metadata') or None
             if metadata_dict:
                 metadata['vdus'][nt.name] = {}
@@ -281,7 +281,7 @@ def get_block_storage_details(template):
 def get_mgmt_ports(tosca):
     mgmt_ports = {}
     for nt in tosca.nodetemplates:
-        if nt.type_definition.is_derived_from(TACKERCP):
+        if nt.type_definition.is_derived_from(APMECCP):
             mgmt = nt.get_property_value('management') or None
             if mgmt:
                 vdu = None
@@ -492,7 +492,7 @@ def post_process_template(template):
 def get_mgmt_driver(template):
     mgmt_driver = None
     for nt in template.nodetemplates:
-        if nt.type_definition.is_derived_from(TACKERVDU):
+        if nt.type_definition.is_derived_from(APMECVDU):
             if (mgmt_driver and nt.get_property_value('mgmt_driver') !=
                     mgmt_driver):
                 raise mem.MultipleMGMTDriversSpecified()
@@ -505,7 +505,7 @@ def get_mgmt_driver(template):
 def findvdus(template):
     vdus = []
     for nt in template.nodetemplates:
-        if nt.type_definition.is_derived_from(TACKERVDU):
+        if nt.type_definition.is_derived_from(APMECVDU):
             vdus.append(nt)
     return vdus
 

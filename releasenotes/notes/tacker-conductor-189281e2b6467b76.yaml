@@ -3,5 +3,5 @@ features:
   - |
     The component apmec-conductor is introduced for apmec mistral actions
     to execute policy actions on apmec side. The conductor is listening on
-    TACKER_CONDUCTOR queue ( in the rabbitmq terms). Mistral actions RPC
+    APMEC_CONDUCTOR queue ( in the rabbitmq terms). Mistral actions RPC
     calls the conductor.

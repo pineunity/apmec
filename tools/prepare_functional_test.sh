@@ -2,7 +2,7 @@
 # installation of apmec
 
 DEVSTACK_DIR=${DEVSTACK_DIR:-~/devstack}
-TACKER_DIR=$(dirname "$0")/..
+APMEC_DIR=$(dirname "$0")/..
 PRIVATE_KEY_FILE=${PRIVATE_KEY_FILE:-/dev/null}
 NFV_USER=${NFV_USER:-"nfv_user"}
 
@@ -13,7 +13,7 @@ if [ ! -f ${DEVSTACK_DIR}/openrc ]; then
 fi
 
 . $DEVSTACK_DIR/openrc admin admin
-. ${TACKER_DIR}/apmec/tests/contrib/post_test_hook_lib.sh
+. ${APMEC_DIR}/apmec/tests/contrib/post_test_hook_lib.sh
 
 fixup_quota
 add_key_if_not_exist

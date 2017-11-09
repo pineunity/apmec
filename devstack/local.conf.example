@@ -58,5 +58,5 @@ enable_service n-cauth
 
 disable_service tempest
 
-#TACKER CONFIGURATION
+#APMEC CONFIGURATION
 USE_BARBICAN=True

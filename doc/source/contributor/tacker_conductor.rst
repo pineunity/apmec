@@ -61,10 +61,10 @@ Apmec conductor is listening on three queues:
 .. code-block:: console
 
     test@ubuntu64:~/apmec$ sudo rabbitmqctl list_queues | grep CONDUCTOR
-    TACKER_CONDUCTOR	0
-    TACKER_CONDUCTOR.ubuntu64	0
-    TACKER_CONDUCTOR_fanout_0ea005c0b666488485a7b3689eb70168	0
+    APMEC_CONDUCTOR	0
+    APMEC_CONDUCTOR.ubuntu64	0
+    APMEC_CONDUCTOR_fanout_0ea005c0b666488485a7b3689eb70168	0
 
 ..
 
-But only TACKER_CONDUCTOR queue without host suffix is used.
+But only APMEC_CONDUCTOR queue without host suffix is used.

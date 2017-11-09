@@ -16,7 +16,7 @@
 
 set -xe
 
-TACKER_DIR="$BASE/new/apmec"
+APMEC_DIR="$BASE/new/apmec"
 DEVSTACK_DIR="$BASE/new/devstack"
 SCRIPTS_DIR="/usr/os-testr-env/bin/"
 
@@ -53,7 +53,7 @@ function generate_testr_results {
     fi
 }
 
-. ${TACKER_DIR}/apmec/tests/contrib/post_test_hook_lib.sh
+. ${APMEC_DIR}/apmec/tests/contrib/post_test_hook_lib.sh
 
 if [[ "$venv" == dsvm-functional* ]]
 then
@@ -67,8 +67,8 @@ then
 fi
 
 # Set owner permissions according to job's requirements.
-cd $TACKER_DIR
-sudo chown -R $owner:stack $TACKER_DIR
+cd $APMEC_DIR
+sudo chown -R $owner:stack $APMEC_DIR
 
 # Run tests
 echo "Running apmec $venv test suite"

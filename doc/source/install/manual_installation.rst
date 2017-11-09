@@ -66,15 +66,15 @@ Installing Apmec server
    mysql -uroot -p
    CREATE DATABASE apmec;
    GRANT ALL PRIVILEGES ON apmec.* TO 'apmec'@'localhost' \
-       IDENTIFIED BY '<TACKERDB_PASSWORD>';
+       IDENTIFIED BY '<APMECDB_PASSWORD>';
    GRANT ALL PRIVILEGES ON apmec.* TO 'apmec'@'%' \
-       IDENTIFIED BY '<TACKERDB_PASSWORD>';
+       IDENTIFIED BY '<APMECDB_PASSWORD>';
    exit;
 ..
 
 .. note::
 
-   Replace ``TACKERDB_PASSWORD`` with your password.
+   Replace ``APMECDB_PASSWORD`` with your password.
 
 2). Create users, roles and endpoints:
 
@@ -114,11 +114,11 @@ If you are using keystone v3 then,
 .. code-block:: console
 
    openstack endpoint create --region RegionOne nfv-orchestration \
-              public http://<TACKER_NODE_IP>:9890/
+              public http://<APMEC_NODE_IP>:9890/
    openstack endpoint create --region RegionOne nfv-orchestration \
-              internal http://<TACKER_NODE_IP>:9890/
+              internal http://<APMEC_NODE_IP>:9890/
    openstack endpoint create --region RegionOne nfv-orchestration \
-              admin http://<TACKER_NODE_IP>:9890/
+              admin http://<APMEC_NODE_IP>:9890/
 ..
 
 If you are using keystone v2 then,
@@ -126,9 +126,9 @@ If you are using keystone v2 then,
 .. code-block:: console
 
    openstack endpoint create --region RegionOne \
-        --publicurl 'http://<TACKER_NODE_IP>:9890/' \
-        --adminurl 'http://<TACKER_NODE_IP>:9890/' \
-        --internalurl 'http://<TACKER_NODE_IP>:9890/' <SERVICE-ID>
+        --publicurl 'http://<APMEC_NODE_IP>:9890/' \
+        --adminurl 'http://<APMEC_NODE_IP>:9890/' \
+        --internalurl 'http://<APMEC_NODE_IP>:9890/' <SERVICE-ID>
 ..
 
 3). Clone apmec repository.
@@ -189,7 +189,7 @@ If you are using keystone v2 then,
    policy_file = /usr/local/etc/apmec/policy.json
    debug = True
    use_syslog = False
-   bind_host = <TACKER_NODE_IP>
+   bind_host = <APMEC_NODE_IP>
    bind_port = 9890
    service_plugins = meo,mem
 
@@ -205,9 +205,9 @@ If you are using keystone v2 then,
    auth_type = password
    project_domain_name = <DOMAIN_NAME>
    user_domain_name = <DOMAIN_NAME>
-   username = <TACKER_USER_NAME>
+   username = <APMEC_USER_NAME>
    project_name = service
-   password = <TACKER_SERVICE_USER_PASSWORD>
+   password = <APMEC_SERVICE_USER_PASSWORD>
    auth_url = http://<KEYSTONE_IP>:35357
    auth_uri = http://<KEYSTONE_IP>:5000
    ...
@@ -217,7 +217,7 @@ If you are using keystone v2 then,
    ...
 
    [database]
-   connection = mysql://apmec:<TACKERDB_PASSWORD>@<MYSQL_IP>:3306/apmec?charset=utf8
+   connection = mysql://apmec:<APMECDB_PASSWORD>@<MYSQL_IP>:3306/apmec?charset=utf8
    ...
 
    [apmec]

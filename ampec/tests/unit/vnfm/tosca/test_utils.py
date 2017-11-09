@@ -123,7 +123,7 @@ class TestToscaUtils(testtools.TestCase):
 
         for vdu in vdus:
             self.assertEqual(True, vdu.type_definition.is_derived_from(
-                toscautils.TACKERVDU))
+                toscautils.APMECVDU))
 
     def test_get_flavor_dict(self):
         mead_dict = yaml.safe_load(self.tosca_flavor)

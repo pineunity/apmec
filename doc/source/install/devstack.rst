@@ -52,13 +52,13 @@ is the target branch, the <branch-name> is stable/pike.
     ENABLE_VERBOSE_LOG_LEVEL=True
     GIT_BASE=${GIT_BASE:-git://git.openstack.org}
 
-    TACKER_MODE=standalone
+    APMEC_MODE=standalone
     USE_BARBICAN=True
-    TACKER_BRANCH=<branch-name>
-    enable_plugin networking-sfc ${GIT_BASE}/openstack/networking-sfc $TACKER_BRANCH
-    enable_plugin barbican ${GIT_BASE}/openstack/barbican $TACKER_BRANCH
-    enable_plugin mistral ${GIT_BASE}/openstack/mistral $TACKER_BRANCH
-    enable_plugin apmec ${GIT_BASE}/openstack/apmec $TACKER_BRANCH
+    APMEC_BRANCH=<branch-name>
+    enable_plugin networking-sfc ${GIT_BASE}/openstack/networking-sfc $APMEC_BRANCH
+    enable_plugin barbican ${GIT_BASE}/openstack/barbican $APMEC_BRANCH
+    enable_plugin mistral ${GIT_BASE}/openstack/mistral $APMEC_BRANCH
+    enable_plugin apmec ${GIT_BASE}/openstack/apmec $APMEC_BRANCH
 
 3. Run ``stack.sh``::
 

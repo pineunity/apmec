@@ -29,7 +29,7 @@ if is_service_enabled apmec; then
         start_apmec
         echo_summary "Installing apmec horizon"
         apmec_horizon_install
-        if [[ "${TACKER_MODE}" == "all" ]]; then
+        if [[ "${APMEC_MODE}" == "all" ]]; then
             echo_summary "Modifying Heat policy.json file"
             modify_heat_flavor_policy_rule
             echo_summary "Setup initial apmec network"
