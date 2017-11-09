@@ -209,7 +209,7 @@ Apmec users could use CLI:
     +---------------------------+-------------------------------------------------------------------------------------------------------------------------------+
     | Field                     | Value                                                                                                                         |
     +---------------------------+-------------------------------------------------------------------------------------------------------------------------------+
-    | alarm_actions             | [u'http://pinedcn:9990/v1.0/meas/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd']                   |
+    | alarm_actions             | [u'http://pinedcn:9896/v1.0/meas/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd']                   |
     | alarm_id                  | 6f2336b9-e0a2-4e33-88be-bc036192b42b                                                                                          |
     | comparison_operator       | lt                                                                                                                            |
     | description               | utilization less_than 10%                                                                                                     |
@@ -252,7 +252,7 @@ Another way could be used to check if backend action is handled well in Apmec:
 
 .. code-block::ini
 
-curl -H "Content-Type: application/json" -X POST -d '{"alarm_id": "35a80852-e24f-46ed-bd34-e2f831d00172", "current": "alarm"}' http://pinedcn:9990/v1.0/meas/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd
+curl -H "Content-Type: application/json" -X POST -d '{"alarm_id": "35a80852-e24f-46ed-bd34-e2f831d00172", "current": "alarm"}' http://pinedcn:9896/v1.0/meas/a0f60b00-ad3d-4769-92ef-e8d9518da2c8/vdu_lcpu_scaling_in/SP1-in/yl7kh5qd
 
 Then, users can check Horizon to know if mea is respawned. Please note that
 the url used in the above command could be captured from "**ceilometer alarm-show** command as shown before.

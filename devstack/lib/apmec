@@ -61,9 +61,9 @@ APMEC_CONF=$APMEC_CONF_DIR/apmec.conf
 # Default name for Apmec database
 APMEC_DB_NAME=${APMEC_DB_NAME:-apmec}
 # Default Apmec Port
-APMEC_PORT=${APMEC_PORT:-9990}
+APMEC_PORT=${APMEC_PORT:-9896}
 # Default Apmec Internal Port when using TLS proxy
-APMEC_PORT_INT=${APMEC_PORT_INT:-19990}       # TODO(FIX)
+APMEC_PORT_INT=${APMEC_PORT_INT:-19896}       # TODO(FIX)
 # Default Apmec Host
 APMEC_HOST=${APMEC_HOST:-$SERVICE_HOST}
 # Default protocol

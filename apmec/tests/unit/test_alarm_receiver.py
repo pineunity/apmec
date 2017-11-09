@@ -24,13 +24,13 @@ class TestAlarmReceiver(base.TestCase):
     def setUp(self):
         '''url:
 
-        http://apmec:9990/v1.0/meas/mea-uuid/mon-policy-name/
+        http://apmec:9896/v1.0/meas/mea-uuid/mon-policy-name/
         action-name/8ef785
         '''
         super(TestAlarmReceiver, self).setUp()
         self.alarmrc = AlarmReceiver(None)
         self.alarm_url = {
-            '00_base': 'http://apmec:9990/v1.0',
+            '00_base': 'http://apmec:9896/v1.0',
             '01_url_base': '/meas/mea-uuid/',
             '02_mea_id': 'mea-uuid',
             '03_monitoring_policy_name': 'mon-policy-name',
@@ -41,7 +41,7 @@ class TestAlarmReceiver(base.TestCase):
         self.ordered_url = self._generate_alarm_url()
 
     def _generate_alarm_url(self):
-        return 'http://apmec:9990/v1.0/meas/mea-uuid/mon-policy-name/'\
+        return 'http://apmec:9896/v1.0/meas/mea-uuid/mon-policy-name/'\
                'action-name/8ef785'
 
     def test_handle_url(self):
