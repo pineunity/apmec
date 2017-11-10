@@ -304,9 +304,6 @@ msgstr ""
 "No ha sido posible conseguir IDs y tipos del recurso MEA. Por favor "
 "comprueba el estado del servicio %(service)s."
 
-#, python-format
-msgid "Creating NFY based on %(NANYD_id)s failed"
-msgstr "Creación de NFY basado en %(NANYD_id)s falló"
 
 #, python-format
 msgid "Creation failed. %(dev_name)s already exists."
@@ -329,10 +326,6 @@ msgstr "VIM por defecto ya existe %(vim_id)s."
 
 msgid "Default VIM is not defined."
 msgstr "VIM por defecto no definido."
-
-#, python-format
-msgid "Deleting NFY %(NANY_id)s failed"
-msgstr "Borrado de NFY %(NANY_id)s falló"
 
 #, python-format
 msgid "Duplicate IP address '%s'"
@@ -1134,25 +1127,6 @@ msgstr "MEAD %(mead_id)s sigue en uso"
 msgid "MEAD Forwarder %(mead)s not found in MEA Mapping %(mapping)s"
 msgstr "MEAD Forwarder %(mead)s no encontrado en MEA Mapping %(mapping)s"
 
-#, python-format
-msgid "NFY %(NANY_id)s could not be found"
-msgstr "NFY %(NANY_id)s no ha sido encontrado"
-
-#, python-format
-msgid "NFY %(NANY_id)s is still in use"
-msgstr "NFY %(NANY_id)s sigue en uso"
-
-#, python-format
-msgid "NFY Property %(NANY_property)s could not be found"
-msgstr "Propiedad %(NANY_property)s de NFY no ha sido encontrada"
-
-#, python-format
-msgid "NFY Template %(NANYD_id)s could not be found"
-msgstr "Plantilla NFY %(NANYD_id)s no ha sido encontrada"
-
-#, python-format
-msgid "NFYD %(NANYD_id)s is still in use"
-msgstr "NFYD %(NANYD_id)s sigue en uso"
 
 msgid "VXLAN Network unsupported."
 msgstr "Red VXLAN no soportada."

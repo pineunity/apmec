@@ -568,10 +568,6 @@ class Controller(object):
                 if (resource == 'mea') and ('mead_template' in body['mea'])\
                         and (attr == "mead_id") and is_create:
                     continue
-                # skip validating NANYD_id when NANYD_template is provided
-                if (resource == 'NANY') and ('NANYD_template' in body['NANY'])\
-                        and (attr == 'NANYD_id') and is_create:
-                    continue
                 # skip validating nsd_id when nsd_template is provided
                 if (resource == 'ns') and ('nsd_template' in body['ns'])\
                         and (attr == 'nsd_id') and is_create:
