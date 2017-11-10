@@ -16,14 +16,14 @@
 # service type constants:
 CORE = "CORE"
 DUMMY = "DUMMY"
-MEM = "MEM"
+MEC = "MEC"
 MEO = "MEO"
 COMMONSERVICES = "COMMONSERVICES"
 
 COMMON_PREFIXES = {
     CORE: "",
     DUMMY: "/dummy_svc",
-    MEM: "",
+    MEC: "",
     MEO: "",
     COMMONSERVICES: ""
 }

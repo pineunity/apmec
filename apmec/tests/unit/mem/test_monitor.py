@@ -50,10 +50,10 @@ MOCK_MEA_DEVICE = {
 }
 
 
-class TestMEMonitor(testtools.TestCase):
+class TestMEAMonitor(testtools.TestCase):
 
     def setUp(self):
-        super(TestMEMonitor, self).setUp()
+        super(TestMEAMonitor, self).setUp()
         p = mock.patch('apmec.common.driver_manager.DriverManager')
         self.mock_monitor_manager = p.start()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
@@ -82,11 +82,11 @@ class TestMEMonitor(testtools.TestCase):
             'mea': test_device_dict,
             'monitoring_policy': MOCK_MEA_DEVICE['monitoring_policy']
         }
-        output_dict = monitor.MEMonitor.to_hosting_mea(test_device_dict,
+        output_dict = monitor.MEAMonitor.to_hosting_mea(test_device_dict,
                                                 action_cb)
         self.assertEqual(expected_output, output_dict)
 
-    @mock.patch('apmec.mem.monitor.MEMonitor.__run__')
+    @mock.patch('apmec.mem.monitor.MEAMonitor.__run__')
     def test_add_hosting_mea(self, mock_monitor_run):
         test_device_dict = {
             'id': MOCK_DEVICE_ID,
@@ -99,7 +99,7 @@ class TestMEMonitor(testtools.TestCase):
         }
         action_cb = mock.MagicMock()
         test_boot_wait = 30
-        test_memonitor = monitor.MEMonitor(test_boot_wait)
+        test_memonitor = monitor.MEAMonitor(test_boot_wait)
         new_dict = test_memonitor.to_hosting_mea(test_device_dict, action_cb)
         test_memonitor.add_hosting_mea(new_dict)
         test_device_id = list(test_memonitor._hosting_meas.keys())[0]
@@ -109,7 +109,7 @@ class TestMEMonitor(testtools.TestCase):
             res_state=mock.ANY, evt_type=constants.RES_EVT_MONITOR,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('apmec.mem.monitor.MEMonitor.__run__')
+    @mock.patch('apmec.mem.monitor.MEAMonitor.__run__')
     def test_run_monitor(self, mock_monitor_run):
         test_hosting_mea = MOCK_MEA_DEVICE
         test_hosting_mea['mea'] = {}
@@ -121,7 +121,7 @@ class TestMEMonitor(testtools.TestCase):
             'mgmt_ip': 'a.b.c.d',
             'timeout': 2
         }
-        test_memonitor = monitor.MEMonitor(test_boot_wait)
+        test_memonitor = monitor.MEAMonitor(test_boot_wait)
         self.mock_monitor_manager.invoke = mock.MagicMock()
         test_memonitor._monitor_manager = self.mock_monitor_manager
         test_memonitor.run_monitor(test_hosting_mea)

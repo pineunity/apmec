@@ -22,7 +22,7 @@ How to write a new monitor driver
 
 A monitor driver for apmec is a python module which contains a class that
 inherits from
-"apmec.mem.monitor_drivers.abstract_driver.MEMonitorAbstractDriver". If the
+"apmec.mem.monitor_drivers.abstract_driver.MEAMonitorAbstractDriver". If the
 driver depends/imports more than one module, then create a new python package
 under apmec/mem/monitor_drivers folder. After this we have to mention our
 driver path in setup.cfg file in root directory.
@@ -31,7 +31,7 @@ For example:
 ::
 
   apmec.apmec.monitor_drivers =
-      ping = apmec.mem.monitor_drivers.ping.ping:MEMonitorPing
+      ping = apmec.mem.monitor_drivers.ping.ping:MEAMonitorPing
 
 Following methods need to be overridden in the new driver:
 

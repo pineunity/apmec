@@ -19,11 +19,11 @@ import testtools
 from apmec.mem.monitor_drivers.http_ping import http_ping
 
 
-class TestMEMonitorHTTPPing(testtools.TestCase):
+class TestMEAMonitorHTTPPing(testtools.TestCase):
 
     def setUp(self):
-        super(TestMEMonitorHTTPPing, self).setUp()
-        self.monitor_http_ping = http_ping.MEMonitorHTTPPing()
+        super(TestMEAMonitorHTTPPing, self).setUp()
+        self.monitor_http_ping = http_ping.MEAMonitorHTTPPing()
 
     @mock.patch('six.moves.urllib.request.urlopen')
     def test_monitor_call_for_success(self, mock_urlopen):

@@ -46,7 +46,7 @@ class DeviceMgmtOpenWRT(abstract_driver.DeviceMGMTAbstractDriver):
         return 'openwrt'
 
     def get_description(self):
-        return 'Apmec MEMgmt OpenWRT Driver'
+        return 'Apmec MEAMgmt OpenWRT Driver'
 
     def mgmt_url(self, plugin, context, mea):
         LOG.debug('mgmt_url %s', mea)

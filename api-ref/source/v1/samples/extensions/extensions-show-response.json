@@ -4,7 +4,7 @@
         "name": "MEA Manager",
         "links": [],
         "namespace": "http://wiki.openstack.org/Apmec",
-        "alias": "MEM",
+        "alias": "MEC",
         "description": "Extension for MEA Manager"
     }
 }

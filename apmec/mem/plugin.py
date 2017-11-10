@@ -43,12 +43,12 @@ CONF = cfg.CONF
 
 
 def config_opts():
-    return [('apmec', MEMMgmtMixin.OPTS),
-            ('apmec', MEMPlugin.OPTS_INFRA_DRIVER),
-            ('apmec', MEMPlugin.OPTS_POLICY_ACTION)]
+    return [('apmec', MECMgmtMixin.OPTS),
+            ('apmec', MECPlugin.OPTS_INFRA_DRIVER),
+            ('apmec', MECPlugin.OPTS_POLICY_ACTION)]
 
 
-class MEMMgmtMixin(object):
+class MECMgmtMixin(object):
     OPTS = [
         cfg.ListOpt(
             'mgmt_driver', default=['noop', 'openwrt'],
@@ -61,7 +61,7 @@ class MEMMgmtMixin(object):
     cfg.CONF.register_opts(OPTS, 'apmec')
 
     def __init__(self):
-        super(MEMMgmtMixin, self).__init__()
+        super(MECMgmtMixin, self).__init__()
         self._mgmt_manager = driver_manager.DriverManager(
             'apmec.apmec.mgmt.drivers', cfg.CONF.apmec.mgmt_driver)
 
@@ -108,8 +108,8 @@ class MEMMgmtMixin(object):
             kwargs=kwargs)
 
 
-class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
-    """MEMPlugin which supports MEM framework.
+class MECPlugin(mem_db.MECPluginDb, MECMgmtMixin):
+    """MECPlugin which supports MEC framework.
 
     Plugin which supports Apmec framework
     """
@@ -131,7 +131,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
     supported_extension_aliases = ['mem']
 
     def __init__(self):
-        super(MEMPlugin, self).__init__()
+        super(MECPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self.boot_wait = cfg.CONF.apmec.boot_wait
         self.vim_client = vim_client.VimClient()
@@ -141,7 +141,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         self._mea_action = driver_manager.DriverManager(
             'apmec.apmec.policy.actions',
             cfg.CONF.apmec.policy_action)
-        self._mea_monitor = monitor.MEMonitor(self.boot_wait)
+        self._mea_monitor = monitor.MEAMonitor(self.boot_wait)
         self._mea_alarm_monitor = monitor.MEAAlarmMonitor()
 
     def spawn_n(self, function, *args, **kwargs):
@@ -180,7 +180,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         mead['mead']['template_source'] = template_source
 
         self._parse_template_input(mead)
-        return super(MEMPlugin, self).create_mead(
+        return super(MECPlugin, self).create_mead(
             context, mead)
 
     def _parse_template_input(self, mead):

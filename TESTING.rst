@@ -98,10 +98,10 @@ the dot-separated path to the module you want as an argument to it.
 For executing a specific test case, specify the name of the test case
 class separating it from the module path with a colon.
 
-For example, the following would run only the TestMEMPlugin tests from
+For example, the following would run only the TestMECPlugin tests from
 apmec/tests/unit/vm/test_plugin.py::
 
-      $ ./tox apmec.tests.unit.vm.test_plugin:TestMEMPlugin
+      $ ./tox apmec.tests.unit.vm.test_plugin:TestMECPlugin
 
 Debugging
 ---------

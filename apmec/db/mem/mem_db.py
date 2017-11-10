@@ -163,7 +163,7 @@ class MEAAttribute(model_base.BASE, models_v1.HasId):
     value = sa.Column(sa.TEXT(65535), nullable=True)
 
 
-class MEMPluginDb(mem.MEMPluginBase, db_base.CommonDbMixin):
+class MECPluginDb(mem.MECPluginBase, db_base.CommonDbMixin):
 
     @property
     def _core_plugin(self):
@@ -174,7 +174,7 @@ class MEMPluginDb(mem.MEMPluginBase, db_base.CommonDbMixin):
         return subnet['network_id']
 
     def __init__(self):
-        super(MEMPluginDb, self).__init__()
+        super(MECPluginDb, self).__init__()
         self._cos_db_plg = common_services_db_plugin.CommonServicesPluginDb()
 
     def _get_resource(self, context, model, id):

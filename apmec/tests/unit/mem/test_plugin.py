@@ -42,7 +42,7 @@ class FakeDriverManager(mock.Mock):
                                   'id': uuidutils.generate_uuid()}}
 
 
-class FakeMEMonitor(mock.Mock):
+class FakeMEAMonitor(mock.Mock):
     pass
 
 
@@ -54,9 +54,9 @@ class FakeVimClient(mock.Mock):
     pass
 
 
-class TestMEMPlugin(db_base.SqlTestCase):
+class TestMECPlugin(db_base.SqlTestCase):
     def setUp(self):
-        super(TestMEMPlugin, self).setUp()
+        super(TestMECPlugin, self).setUp()
         self.addCleanup(mock.patch.stopall)
         self.context = context.get_admin_context()
         self._mock_vim_client()
@@ -66,7 +66,7 @@ class TestMEMPlugin(db_base.SqlTestCase):
         self._mock_mea_alarm_monitor()
         self._mock_green_pool()
         self._insert_dummy_vim()
-        self.mem_plugin = plugin.MEMPlugin()
+        self.mem_plugin = plugin.MECPlugin()
         mock.patch('apmec.db.common_services.common_services_db_plugin.'
                    'CommonServicesPluginDb.create_event'
                    ).start()
@@ -105,14 +105,14 @@ class TestMEMPlugin(db_base.SqlTestCase):
             'eventlet.GreenPool', fake_green_pool)
 
     def _mock_mea_monitor(self):
-        self._mea_monitor = mock.Mock(wraps=FakeMEMonitor())
+        self._mea_monitor = mock.Mock(wraps=FakeMEAMonitor())
         fake_mea_monitor = mock.Mock()
         fake_mea_monitor.return_value = self._mea_monitor
         self._mock(
-            'apmec.mem.monitor.MEMonitor', fake_mea_monitor)
+            'apmec.mem.monitor.MEAMonitor', fake_mea_monitor)
 
     def _mock_mea_alarm_monitor(self):
-        self._mea_alarm_monitor = mock.Mock(wraps=FakeMEMonitor())
+        self._mea_alarm_monitor = mock.Mock(wraps=FakeMEAMonitor())
         fake_mea_alarm_monitor = mock.Mock()
         fake_mea_alarm_monitor.return_value = self._mea_alarm_monitor
         self._mock(
@@ -279,7 +279,7 @@ class TestMEMPlugin(db_base.SqlTestCase):
             res_state=mock.ANY, res_type=constants.RES_TYPE_MEA,
             tstamp=mock.ANY, details=mock.ANY)
 
-    @mock.patch('apmec.mem.plugin.MEMPlugin.create_mead')
+    @mock.patch('apmec.mem.plugin.MECPlugin.create_mead')
     def test_create_mea_from_template(self, mock_create_mead):
         self._insert_dummy_device_template_inline()
         mock_create_mead.return_value = {'id':
@@ -439,7 +439,7 @@ class TestMEMPlugin(db_base.SqlTestCase):
             self.context, mea_id, trigger_request)
         self.assertEqual(expected_result, trigger_result)
 
-    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MECPluginDb.get_mea')
     def test_create_mea_trigger_respawn(self, mock_get_mea):
         dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_respawn_tosca_template)
@@ -447,7 +447,7 @@ class TestMEMPlugin(db_base.SqlTestCase):
         self._test_create_mea_trigger(policy_name="vdu_hcpu_usage_respawning",
                                       action_value="respawn")
 
-    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MECPluginDb.get_mea')
     def test_create_mea_trigger_scale(self, mock_get_mea):
         dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_scale_tosca_template)
@@ -455,7 +455,7 @@ class TestMEMPlugin(db_base.SqlTestCase):
         self._test_create_mea_trigger(policy_name="vdu_hcpu_usage_scaling_out",
                                       action_value="SP1-out")
 
-    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MECPluginDb.get_mea')
     def test_create_mea_trigger_multi_actions(self, mock_get_mea):
         dummy_mea = self._get_dummy_active_mea(
             utils.mead_alarm_multi_actions_tosca_template)
@@ -463,7 +463,7 @@ class TestMEMPlugin(db_base.SqlTestCase):
         self._test_create_mea_trigger(policy_name="mon_policy_multi_actions",
                                       action_value="respawn&log")
 
-    @patch('apmec.db.mem.mem_db.MEMPluginDb.get_mea')
+    @patch('apmec.db.mem.mem_db.MECPluginDb.get_mea')
     def test_get_mea_policies(self, mock_get_mea):
         mea_id = "6261579e-d6f3-49ad-8bc3-a9cb974778fe"
         dummy_mea = self._get_dummy_active_mea(

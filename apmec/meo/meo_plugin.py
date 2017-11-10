@@ -60,7 +60,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
 
     Implements the MEO extension and defines public facing APIs for VIM
     operations. MEO internally invokes the appropriate VIM driver in
-    backend based on configured VIM types. Plugin also interacts with MEM
+    backend based on configured VIM types. Plugin also interacts with MEC
     extension for providing the specified VIM information
     """
     supported_extension_aliases = ['meo']
@@ -226,7 +226,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
         :param mea_id: MEA ID
         :return: VIM or VIM properties if fields are provided
         """
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
         vim_id = mem_plugin.get_mea(context, mea_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
@@ -324,7 +324,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
         nsd['meads'] = dict()
         LOG.debug('nsd_dict: %s', inner_nsd_dict)
 
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
         mead_imports = inner_nsd_dict['imports']
         inner_nsd_dict['imports'] = []
         new_files = []
@@ -402,7 +402,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
 
         nsd = self.get_nsd(context, ns['ns']['nsd_id'])
         nsd_dict = yaml.safe_load(nsd['attributes']['nsd'])
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
         onboarded_meads = mem_plugin.get_meads(context, [])
         region_name = ns.setdefault('placement_attr', {}).get(
             'region_name', None)

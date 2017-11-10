@@ -42,7 +42,7 @@ from apmec.common import constants as q_const
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 LOG = logging.getLogger(__name__)
 SYNCHRONIZED_PREFIX = 'apmec-'
-MEM_UNITS = {
+MEC_UNITS = {
     "MB": {
         "MB": {
             "op": "*",
@@ -162,13 +162,13 @@ def change_memory_unit(mem, to):
     """
 
     mem = str(mem) + " MB" if str(mem).isdigit() else mem.upper()
-    for unit, value in (MEM_UNITS).items():
+    for unit, value in (MEC_UNITS).items():
         mem_arr = mem.split(unit)
         if len(mem_arr) < 2:
             continue
         return eval(mem_arr[0] +
-                    MEM_UNITS[unit][to]["op"] +
-                    MEM_UNITS[unit][to]["val"])
+                    MEC_UNITS[unit][to]["op"] +
+                    MEC_UNITS[unit][to]["val"])
 
 
 def load_class_by_alias_or_classname(namespace, name):

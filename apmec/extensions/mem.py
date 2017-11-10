@@ -449,7 +449,7 @@ class Mem(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_alias(cls):
-        return 'MEM'
+        return 'MEC'
 
     @classmethod
     def get_description(cls):
@@ -471,10 +471,10 @@ class Mem(extensions.ExtensionDescriptor):
         plural_mappings['service_types'] = 'service_type'
         attr.PLURALS.update(plural_mappings)
         resources = resource_helper.build_resource_info(
-            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.MEM,
+            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.MEC,
             translate_name=True)
         plugin = manager.ApmecManager.get_service_plugins()[
-            constants.MEM]
+            constants.MEC]
         for collection_name in SUB_RESOURCE_ATTRIBUTE_MAP:
             parent = SUB_RESOURCE_ATTRIBUTE_MAP[collection_name]['parent']
 
@@ -498,7 +498,7 @@ class Mem(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_plugin_interface(cls):
-        return MEMPluginBase
+        return MECPluginBase
 
     def update_attributes_map(self, attributes):
         super(Mem, self).update_attributes_map(
@@ -510,12 +510,12 @@ class Mem(extensions.ExtensionDescriptor):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class MEMPluginBase(service_base.MECPluginBase):
+class MECPluginBase(service_base.MECPluginBase):
     def get_plugin_name(self):
-        return constants.MEM
+        return constants.MEC
 
     def get_plugin_type(self):
-        return constants.MEM
+        return constants.MEC
 
     def get_plugin_description(self):
         return 'Apmec MEA Manager plugin'

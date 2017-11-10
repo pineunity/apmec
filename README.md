@@ -24,7 +24,7 @@ The development of this project is still under implementation, therefore folks s
 
 MEP: Mobile Edge Platform
 
-MEM: Mobile Edge manager
+MEC: Mobile Edge manager
 
 MEO: Mobile Edge Orchestrator
 

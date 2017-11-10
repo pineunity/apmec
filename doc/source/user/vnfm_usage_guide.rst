@@ -18,8 +18,8 @@
 MEA Manager User Guide
 ======================
 
-Apmec MEA Manager (MEM) component manages the life-cycle of a Virtual Network
-Function (MEA). MEM takes care of deployment, monitoring, scaling and removal
+Apmec MEA Manager (MEC) component manages the life-cycle of a Virtual Network
+Function (MEA). MEC takes care of deployment, monitoring, scaling and removal
 of MEAs on a Virtual Infrastructure Manager (VIM).
 
 
@@ -107,10 +107,10 @@ Example
       apmec mead-list --template-source inline
       apmec mead-list --template-source all
 
-Finding MEM Status
+Finding MEC Status
 ===================
 
-Status of various MEM resources can be checked by following commands.
+Status of various MEC resources can be checked by following commands.
 
 .. code-block:: console
 
