@@ -13,7 +13,7 @@ various actions that a user can take when a specific event occurs.
 Introduction
 -------------
 
-Apmec monitoring framework provides the NFV operators and MEA vendors to
+Apmec monitoring framework provides the MEC operators and MEA vendors to
 write a pluggable driver that monitors the various status conditions of the
 MEA entities it deploys and manages.
 

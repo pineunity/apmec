@@ -1,7 +1,7 @@
 ---
 features:
   - MEA Forwarding Graph support is available as an EXPERIMENTAL feature.
-    TOSCA NFV Profile based Forwarding Graph Descriptor can be uploaded
+    TOSCA MEC Profile based Forwarding Graph Descriptor can be uploaded
     to MEA-FGD Catalog. MEA-FFGD template describes both Classifier and
     Forwarding Path across a collection of Connection Points described in
     MEADs. Using the template MEA FFG can be instantiated using the default

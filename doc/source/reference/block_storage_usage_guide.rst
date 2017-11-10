@@ -17,7 +17,7 @@
 Orchestrating MEAs with attached Volumes
 =========================================
 
-To support persistent volumes to MEA, TOSCA NFV profile supports new type
+To support persistent volumes to MEA, TOSCA MEC profile supports new type
 of nodes. Apmec has now feature of parsing of those new nodes and creation
 of cinder volumes  which are attached to the VDUs.
 

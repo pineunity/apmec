@@ -18,7 +18,7 @@ from apmec.services import service_base
 
 
 @six.add_metaclass(abc.ABCMeta)
-class NSPluginBase(service_base.NFVPluginBase):
+class NSPluginBase(service_base.MECPluginBase):
 
     @abc.abstractmethod
     def create_nsd(self, context, nsd):

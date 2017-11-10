@@ -133,7 +133,7 @@ class Common_services(extensions.ExtensionDescriptor):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class CommonServicesPluginBase(service_base.NFVPluginBase):
+class CommonServicesPluginBase(service_base.MECPluginBase):
     def get_plugin_name(self):
         return constants.COMMONSERVICES
 

@@ -4,7 +4,7 @@
 DEVSTACK_DIR=${DEVSTACK_DIR:-~/devstack}
 APMEC_DIR=$(dirname "$0")/..
 PRIVATE_KEY_FILE=${PRIVATE_KEY_FILE:-/dev/null}
-NFV_USER=${NFV_USER:-"mec_user"}
+MEC_USER=${MEC_USER:-"mec_user"}
 
 # Test devstack dir setting
 if [ ! -f ${DEVSTACK_DIR}/openrc ]; then

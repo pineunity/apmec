@@ -84,8 +84,8 @@ onboarding the template into Apmec MEAD Catalog.
 
    apmec mea-create --mead-template <MEAD-FILE-NAME> <MEA-NAME>
 
-This method is recommended when NFV Catalog is maintained outside Apmec and
-Apmec is primarily used as a NFV workflow engine.
+This method is recommended when MEC Catalog is maintained outside Apmec and
+Apmec is primarily used as a MEC workflow engine.
 
 Example
 ~~~~~~~

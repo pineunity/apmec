@@ -17,7 +17,7 @@
 Orchestrating MEAs using Network Services Descriptor (NSD)
 ==========================================================
 
-To enable dynamic composition of network services, NFV introduces Network
+To enable dynamic composition of network services, MEC introduces Network
 Service Descriptors (NSDs) that specify the network service to be created.
 This usage guide describes lifecycle of Network service descriptors and
 services.

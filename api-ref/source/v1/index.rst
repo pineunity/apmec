@@ -1,7 +1,7 @@
 :tocdepth: 2
 
 ##########################
-NFV Orchestration API v1.0
+MEC Orchestration API v1.0
 ##########################
 
 .. rest_expand_all::

@@ -4,14 +4,14 @@
 API versions
 ============
 
-Lists information of NFV Orchestration API versions.
+Lists information of MEC Orchestration API versions.
 
 List versions
 =============
 
 .. rest_method::  GET /
 
-Lists NFV Orchestration API versions.
+Lists MEC Orchestration API versions.
 
 Response Codes
 --------------

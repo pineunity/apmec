@@ -7,7 +7,7 @@ Virtualized Infrastructure Managers (VIMs)
 Manages Virtualized Infrastructure Managers (VIMs).
 
 The VIM is responsible for controlling and managing Network Function
-Virtualization Infrastructure (NFVI) which provides MEAs with the
+Virtualization Infrastructure (MECI) which provides MEAs with the
 resources they need.
 
 Register VIM

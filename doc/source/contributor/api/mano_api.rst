@@ -2,12 +2,12 @@
 Apmec API Overview
 *******************
 
-Apmec API provides REST API end-points based on `ETSI NFV MANO standards`_.
+Apmec API provides REST API end-points based on `ETSI MEC MANO standards`_.
 The two new resources introduced are 'mead' and 'mea' for
 describing the 'mem' extension. The resources request and response formats are
 described in below sections.
 
-.. _ETSI NFV MANO standards: http://www.etsi.org/deliver/etsi_gs/NFV-MAN/001_099/001/01.01.01_60/gs_mec-man001v010101p.pdf
+.. _ETSI MEC MANO standards: http://www.etsi.org/deliver/etsi_gs/MEC-MAN/001_099/001/01.01.01_60/gs_mec-man001v010101p.pdf
 
 API versions
 ============

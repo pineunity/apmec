@@ -1,5 +1,5 @@
 ==============================
-NFV Orchestration Service APIs
+MEC Orchestration Service APIs
 ==============================
 
 .. toctree::

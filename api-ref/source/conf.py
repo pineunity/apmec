@@ -63,7 +63,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'NFV Orchestration API Reference'
+project = u'MEC Orchestration API Reference'
 copyright = u'2016-present, OpenStack Foundation'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -205,7 +205,7 @@ htmlhelp_basename = 'apmecdoc'
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'Apmec.tex', u'OpenStack NFV Orchestration API Documentation',
+    ('index', 'Apmec.tex', u'OpenStack MEC Orchestration API Documentation',
      u'OpenStack Foundation', 'manual'),
 ]
 

@@ -12,7 +12,7 @@ The objective of APMEC is to:
 
 - provide advanced features like live migration, state management, and fast data processing
 
-- tightly integrate with OpenStack projects like Apmec (NFV Orchestrator)
+- tightly integrate with OpenStack projects like Apmec (MEC Orchestrator)
 
 
 The development of this project is still under implementation, therefore folks should consider the copyright

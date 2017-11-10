@@ -112,11 +112,11 @@ availability zone and adding compute nodes.
 
 .. code-block:: console
 
-   openstack aggregate create --zone NFV-AZ NFV-AGG
+   openstack aggregate create --zone MEC-AZ MEC-AGG
 
-   openstack aggregate add host NFV-AGG <NFV_HOST1>
+   openstack aggregate add host MEC-AGG <MEC_HOST1>
 
-   openstack aggregate add host NFV-AGG <NFV_HOST2>
+   openstack aggregate add host MEC-AGG <MEC_HOST2>
 
 **NOTE**: Consult http://docs.openstack.org/cli-reference/nova.html for
 latest supported commands.
@@ -139,7 +139,7 @@ created as part of the VDU properties using **availability_zone** property.
           num_cpus: 2
           mem_page_size: large
     properties:
-      availability_zone: NFV-AZ
+      availability_zone: MEC-AZ
       image: cirros
 
 Deploying EPA TOSCA templates using Apmec

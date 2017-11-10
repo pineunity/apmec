@@ -11,7 +11,7 @@ This section will introduce framework for apmec policy actions.
 Introduction
 ------------
 
-Apmec policy actions framework provides the NFV operators and MEA vendors to
+Apmec policy actions framework provides the MEC operators and MEA vendors to
 write a pluggable action that manages their own MEAs. Currently Apmec
 already provided some common actions like autoscaling, respawning, and
 logging. With this framework the custom actions can be easily

@@ -446,7 +446,7 @@ RESOURCE_ATTRIBUTE_MAP = {
 class Meo(extensions.ExtensionDescriptor):
     @classmethod
     def get_name(cls):
-        return 'NFV Orchestrator'
+        return 'MEC Orchestrator'
 
     @classmethod
     def get_alias(cls):
@@ -454,7 +454,7 @@ class Meo(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_description(cls):
-        return "Extension for NFV Orchestrator"
+        return "Extension for MEC Orchestrator"
 
     @classmethod
     def get_namespace(cls):
@@ -488,7 +488,7 @@ class Meo(extensions.ExtensionDescriptor):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class MEOPluginBase(service_base.NFVPluginBase):
+class MEOPluginBase(service_base.MECPluginBase):
     def get_plugin_name(self):
         return constants.MEO
 
@@ -496,7 +496,7 @@ class MEOPluginBase(service_base.NFVPluginBase):
         return constants.MEO
 
     def get_plugin_description(self):
-        return 'Apmec NFV Orchestrator plugin'
+        return 'Apmec MEC Orchestrator plugin'
 
     @abc.abstractmethod
     def create_vim(self, context, vim):

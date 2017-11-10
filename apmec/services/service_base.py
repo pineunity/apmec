@@ -21,7 +21,7 @@ from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)
-class NFVPluginBase(extensions.PluginInterface):
+class MECPluginBase(extensions.PluginInterface):
     """Define base interface for any Advanced Service plugin."""
     supported_extension_aliases = []
 

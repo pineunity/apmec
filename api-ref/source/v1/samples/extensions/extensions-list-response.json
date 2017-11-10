@@ -18,11 +18,11 @@
         },
         {
             "updated": "2015-12-21T10:00:00-00:00",
-            "name": "NFV Orchestrator",
+            "name": "MEC Orchestrator",
             "links": [],
             "namespace": "http://wiki.openstack.org/Apmec",
             "alias": "MEO",
-            "description": "Extension for NFV Orchestrator"
+            "description": "Extension for MEC Orchestrator"
         }
     ]
 }
