@@ -22,10 +22,6 @@ Based on this comparison database can be healed with healing migration.
 """
 
 from apmec.db import model_base
-from apmec.db.meo import meo_db  # noqa
-from apmec.db.meo import ns_db  # noqa
-from apmec.db.meo import NANY_db  # noqa
-from apmec.db.mem import mem_db  # noqa
 
 
 def get_metadata():
