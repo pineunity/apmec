@@ -12,7 +12,6 @@ NFV Orchestration API v1.0
 .. include:: meas.inc
 .. include:: vims.inc
 .. include:: events.inc
-.. include:: NANYDs.inc
 .. include:: NANYs.inc
 .. include:: nfps.inc
 .. include:: sfcs.inc

@@ -390,8 +390,6 @@ msgid "Failed to init policy %(policy)s because %(reason)s"
 msgstr "No se ha podido iniciar la política %(policy)s debido a %(reason)s"
 
 #, python-format
-msgid ""
-"Failed to parse NFY Template due to missing input param %(get_input)s."
 msgstr ""
 "Falló al analizar plantilla NFY debido a falta de parámetros de entrada "
 "%(get_input)s."
@@ -501,7 +499,6 @@ msgstr ""
 "%(forwarder)s"
 
 #, python-format
-msgid "Invalid NFY template input: %(template)s"
 msgstr "Plantilla NFY insertada no valida: %(template)s"
 
 #, python-format

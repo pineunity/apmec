@@ -32,19 +32,6 @@ def _get_template(name):
 tosca_mead_openwrt = _get_template('test_tosca_openwrt.yaml')
 config_data = _get_template('config_data.yaml')
 update_config_data = _get_template('update_config_data.yaml')
-NANY_params = _get_template('NANY_params.yaml')
-NANY_multi_params = _get_template('NANY_multi_params.yaml')
-NANYD_template = yaml.safe_load(_get_template('NANYD_template.yaml'))
-NANYD_tosca_template = yaml.safe_load(_get_template(
-    'tosca_NANYD_template.yaml'))
-NANYD_tosca_param_template = yaml.safe_load(_get_template(
-    'tosca_NANYD_param_template.yaml'))
-NANYD_tosca_str_param_template = yaml.safe_load(_get_template(
-    'tosca_NANYD_str_param_template.yaml'))
-NANYD_tosca_multi_param_template = yaml.safe_load(_get_template(
-    'tosca_NANYD_multi_param_template.yaml'))
-NANYD_invalid_tosca_template = yaml.safe_load(_get_template(
-    'tosca_invalid_NANYD_template.yaml'))
 mead_scale_tosca_template = _get_template('tosca_scale.yaml')
 mead_alarm_respawn_tosca_template = _get_template(
     'test_tosca_mead_alarm_respawn.yaml')
@@ -53,8 +40,6 @@ mead_alarm_scale_tosca_template = _get_template(
 mead_alarm_multi_actions_tosca_template = _get_template(
     'test_tosca_mead_alarm_multi_actions.yaml')
 nsd_tosca_template = yaml.safe_load(_get_template('tosca_nsd_template.yaml'))
-NANYD_wrong_cp_number_template = yaml.safe_load(_get_template(
-    'tosca_NANYD_wrong_cp_number_template.yaml'))
 
 
 def get_dummy_mead_obj():
@@ -164,95 +149,6 @@ def get_vim_auth_obj():
             'auth_url': 'http://localhost:5000/v3',
             'user_domain_name': 'default',
             'project_domain_name': 'default'}
-
-
-def get_dummy_NANYD_obj():
-    return {u'NANYD': {'name': 'dummy_NANYD',
-                        'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                        u'template': {u'NANYD': NANYD_tosca_template},
-                        'description': 'dummy_NANYD_description',
-                        'template_source': 'onboarded'}}
-
-
-def get_dummy_NANYD_obj_inline():
-    return {u'NANYD': {'name': 'dummy_NANYD_inline',
-                        'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                        u'template': {u'NANYD': NANYD_tosca_template},
-                        'description': 'dummy_NANYD_description_inline',
-                        'template_source': 'inline'}}
-
-
-def get_dummy_NANY_obj():
-    return {'NANY': {'description': 'dummy_NANY_description',
-                      'NANYD_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-                      'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      'name': 'dummy_NANY',
-                      u'attributes': {u'template': NANYD_tosca_template},
-                      'mea_mapping': {},
-                      'symmetrical': False}}
-
-
-def get_dummy_NANY_obj_inline():
-    return {'NANY': {'description': 'dummy_NANY_description_inline',
-                      'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      'name': 'dummy_NANY_inline',
-                      u'attributes': {u'template': NANYD_tosca_template},
-                      'mea_mapping': {},
-                      'symmetrical': False,
-                      'NANYD_template': NANYD_tosca_template}}
-
-
-def get_dummy_NANY_param_obj():
-    return {'NANY': {'description': 'dummy_mea_description',
-                      'NANYD_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-                      'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      'name': 'dummy_NANY',
-                      u'attributes': {
-                          u'template': NANYD_tosca_param_template},
-                      'mea_mapping': {},
-                      u'attributes': {u'param_values':
-                          yaml.safe_load(NANY_params)},
-                      'symmetrical': False}}
-
-
-def get_dummy_NANY_str_param_obj():
-    return {'NANY': {'description': 'dummy_mea_description',
-                      'NANYD_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-                      'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      'name': 'dummy_NANY',
-                      u'attributes': {
-                          u'template': NANYD_tosca_param_template},
-                      'mea_mapping': {},
-                      u'attributes': {
-                          u'param_values': 'value not dict format'},
-                      'symmetrical': False}}
-
-
-def get_dummy_NANY_multi_param_obj():
-    return {'NANY': {'description': 'dummy_mea_description',
-                      'NANYD_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-                      'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      'name': 'dummy_NANY',
-                      u'attributes': {
-                          u'template': NANYD_tosca_multi_param_template},
-                      'mea_mapping': {},
-                      u'attributes': {u'param_values':
-                          yaml.safe_load(NANY_multi_params)},
-                      'symmetrical': False}}
-
-
-def get_dummy_NANY_obj_mea_mapping():
-    return {'NANY': {'description': 'dummy_mea_description',
-                      'NANYD_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
-                      'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                      'name': 'dummy_NANY',
-                      u'attributes': {u'template': NANYD_tosca_template},
-                      'mea_mapping': {
-                          'MEA1': '91e32c20-6d1f-47a4-9ba7-08f5e5effe07',
-                          'MEA3': '7168062e-9fa1-4203-8cb7-f5c99ff3ee1b'
-                      },
-                      'symmetrical': False}}
-
 
 def get_dummy_nsd_obj():
     return {'nsd': {'description': 'dummy_nsd_description',

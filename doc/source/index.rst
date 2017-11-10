@@ -73,7 +73,6 @@ Feature Documentation
    contributor/monitor-api.rst
    contributor/mead_template_parameterization.rst
    contributor/event_logging.rst
-   contributor/NANYD_template_description.rst
    contributor/apmec_conductor.rst
    contributor/apmec_vim_monitoring.rst
    contributor/policy_actions_framework.rst
@@ -89,7 +88,6 @@ User Guide
    user/multisite_vim_usage_guide.rst
    user/scale_usage_guide.rst
    user/alarm_monitoring_usage_guide.rst
-   user/NANY_usage_guide.rst
    user/nsd_usage_guide.rst
    user/mea_component_usage_guide.rst
    user/enhanced_placement_awareness_usage_guide.rst

@@ -100,11 +100,6 @@ class NfydDuplicateCPException(exceptions.InvalidInput):
                 ": %(cp)s")
 
 
-class NfydMeadNotFoundException(exceptions.NotFound):
-    message = _("Specified MEAD %(mead_name)s in NFYD does not exist. "
-                "Please create MEADs before creating NFY")
-
-
 class NfydCpNotFoundException(exceptions.NotFound):
     message = _("Specified CP %(cp_id)s could not be found in MEAD "
                 "%(mead_name)s. Please check MEAD for correct Connection "
@@ -122,18 +117,6 @@ class NfydWrongEndpointNumber(exceptions.ApmecException):
                 "the number of connection_point %(cps)s")
 
 
-class NfydInUse(exceptions.InUse):
-    message = _('NFYD %(NANYD_id)s is still in use')
-
-
-class NfydNotFoundException(exceptions.NotFound):
-    message = _('NFY Template %(NANYD_id)s could not be found')
-
-
-class NfyCreateFailed(exceptions.ApmecException):
-    message = _('Creating NFY based on %(NANYD_id)s failed')
-
-
 class NfyInvalidMappingException(exceptions.ApmecException):
     message = _("Matching MEA Instance for MEAD %(mead_name)s could not be "
                 "found. Please create an instance of this MEAD before "
@@ -144,17 +127,8 @@ class NfyParamValueFormatError(exceptions.ApmecException):
     message = _("Param values %(param_value)s is not in dict format.")
 
 
-class NfyTemplateParamParsingException(exceptions.ApmecException):
-    message = _("Failed to parse NFY Template due to "
-                "missing input param %(get_input)s.")
-
-
 class NfyParamValueNotUsed(exceptions.ApmecException):
     message = _("Param input %(param_key)s not used.")
-
-
-class NfyPropertyNotFoundException(exceptions.NotFound):
-    message = _('NFY Property %(NANY_property)s could not be found')
 
 
 class NfyCpNotFoundException(exceptions.NotFound):
@@ -162,21 +136,9 @@ class NfyCpNotFoundException(exceptions.NotFound):
                 "%(mea_id)s.")
 
 
-class NfyNotFoundException(exceptions.NotFound):
-    message = _('NFY %(NANY_id)s could not be found')
-
-
-class NfyInUse(exceptions.InUse):
-    message = _('NFY %(NANY_id)s is still in use')
-
-
 class NfyMeaNotFoundException(exceptions.NotFound):
     message = _("Specified MEA instance %(mea_name)s in MEA Mapping could not "
                 "be found")
-
-
-class NfyDeleteFailed(exceptions.ApmecException):
-    message = _('Deleting NFY %(NANY_id)s failed')
 
 
 class NfpAttributeNotFoundException(exceptions.NotFound):
@@ -330,280 +292,6 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
         },
     },
-
-    'NANYDs': {
-        'id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-            'primary_key': True,
-        },
-        'tenant_id': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'required_by_policy': True,
-            'is_visible': True,
-        },
-        'name': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:string': None},
-            'is_visible': True,
-        },
-        'description': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:string': None},
-            'is_visible': True,
-            'default': '',
-        },
-        'template': {
-            'allow_post': True,
-            'allow_put': False,
-            'convert_to': attr.convert_none_to_empty_dict,
-            'validate': {'type:dict_or_nodata': None},
-            'is_visible': True,
-            'default': None,
-        },
-        'template_source': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-            'default': 'onboarded'
-        }
-    },
-
-    'NANYs': {
-        'id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-            'primary_key': True
-        },
-        'tenant_id': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'required_by_policy': True,
-            'is_visible': True
-        },
-        'NANYD_id': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-            'default': None
-        },
-        'name': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:string': None},
-            'is_visible': True,
-        },
-        'description': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:string': None},
-            'is_visible': True,
-            'default': '',
-        },
-        'mea_mapping': {
-            'allow_post': True,
-            'allow_put': True,
-            'convert_to': attr.convert_none_to_empty_dict,
-            'validate': {'type:dict_or_nodata': None},
-            'is_visible': True,
-            'default': None,
-        },
-        'attributes': {
-            'allow_post': True,
-            'allow_put': True,
-            'convert_to': attr.convert_none_to_empty_dict,
-            'validate': {'type:dict_or_nodata': None},
-            'is_visible': True,
-            'default': None,
-        },
-        'symmetrical': {
-            'allow_post': True,
-            'allow_put': True,
-            'is_visible': True,
-            'validate': {'type:boolean': None},
-            'default': False,
-        },
-        'forwarding_paths': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-        'status': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-        'NANYD_template': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:dict_or_nodata': None},
-            'is_visible': True,
-            'default': None,
-        },
-    },
-
-    'nfps': {
-        'id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-            'primary_key': True
-        },
-        'tenant_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'required_by_policy': True,
-            'is_visible': True
-        },
-        'NANY_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-        },
-        'name': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'is_visible': True,
-        },
-        'classifier_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-        },
-        'chain_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-        },
-        'path_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'is_visible': True,
-        },
-        'symmetrical': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-            'validate': {'type:boolean': None},
-            'default': False,
-        },
-        'status': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-    },
-    'sfcs': {
-        'id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-            'primary_key': True
-        },
-        'tenant_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'required_by_policy': True,
-            'is_visible': True
-        },
-        'nfp_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-        },
-        'instance_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-        },
-        'chain': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-        'path_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-        'symmetrical': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-            'validate': {'type:boolean': None},
-            'default': False,
-        },
-        'status': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-    },
-    'classifiers': {
-        'id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-            'primary_key': True
-        },
-        'tenant_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'required_by_policy': True,
-            'is_visible': True
-        },
-        'nfp_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-        },
-        'instance_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-        },
-        'match': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-        'chain_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-        'status': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-    },
-
     'nsds': {
         'id': {
             'allow_post': False,
