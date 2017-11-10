@@ -390,11 +390,6 @@ msgid "Failed to init policy %(policy)s because %(reason)s"
 msgstr "No se ha podido iniciar la política %(policy)s debido a %(reason)s"
 
 #, python-format
-msgstr ""
-"Falló al analizar plantilla NFY debido a falta de parámetros de entrada "
-"%(get_input)s."
-
-#, python-format
 msgid "Failed to parse request. Parameter '%s' not specified"
 msgstr ""
 "No se ha podido analizar la solicitud. No se ha especificado el parámetro "
@@ -497,9 +492,6 @@ msgid ""
 msgstr ""
 "Forwarding Path no válido, contiene el  forwarder duplicado sin orden: "
 "%(forwarder)s"
-
-#, python-format
-msgstr "Plantilla NFY insertada no valida: %(template)s"
 
 #, python-format
 msgid "Invalid alarm url for MEA %(mea_id)s"
