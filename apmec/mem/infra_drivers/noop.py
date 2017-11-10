@@ -19,7 +19,7 @@ from oslo_log import log as logging
 from oslo_utils import uuidutils
 
 from apmec.common import log
-from apmec.meam.infra_drivers import abstract_driver
+from apmec.mem.infra_drivers import abstract_driver
 
 
 LOG = logging.getLogger(__name__)

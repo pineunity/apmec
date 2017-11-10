@@ -16,7 +16,7 @@
 
 from oslo_log import log as logging
 
-from apmec.meam.mgmt_drivers import abstract_driver
+from apmec.mem.mgmt_drivers import abstract_driver
 
 
 LOG = logging.getLogger(__name__)

@@ -17,7 +17,7 @@ from oslo_log import log as logging
 import random
 import string
 from apmec.common import utils
-from apmec.meam.monitor_drivers import abstract_driver
+from apmec.mem.monitor_drivers import abstract_driver
 
 
 LOG = logging.getLogger(__name__)
