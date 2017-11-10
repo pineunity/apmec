@@ -27,6 +27,8 @@ if is_service_enabled apmec; then
         init_apmec
         echo_summary "Starting Apmec API and conductor"
         start_apmec
+        echo_summary "Installing apmec client"
+        apmec_client_install
         echo_summary "Installing apmec horizon"
         apmec_horizon_install
         if [[ "${APMEC_MODE}" == "all" ]]; then
