@@ -76,7 +76,7 @@ def get_scaling_policy_name(action, policy_name):
 
 
 class OpenStack(abstract_driver.DeviceAbstractDriver,
-                scale_driver.VnfScaleAbstractDriver):
+                scale_driver.MeaScaleAbstractDriver):
     """Openstack infra driver for hosting meas"""
 
     def __init__(self):

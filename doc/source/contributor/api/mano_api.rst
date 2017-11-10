@@ -36,7 +36,7 @@ List API versions - Lists information about Apmec API version.
         ]
     }
 
-Vnfds
+Meads
 =====
 
 **GET /v1.0/meads**
@@ -154,7 +154,7 @@ Delete mead - Deletes a specified mead_id from the MEA catalog.
 This operation does not accept a request body and does not return a response
 body.
 
-Vnfs
+Meas
 ====
 
 **GET /v1.0/meas**

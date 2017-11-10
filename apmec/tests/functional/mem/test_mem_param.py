@@ -49,7 +49,7 @@ class MemTestParam(base.BaseApmecTest):
         try:
             mead_d = self.client.show_mead(mead_id)
         except Exception:
-            assert True, "Vnfd Delete success" + str(mead_d) + str(Exception)
+            assert True, "Mead Delete success" + str(mead_d) + str(Exception)
 
     def _test_mea_create(self, mead_instance, mea_name, param_values):
         # Create the mea with values
@@ -83,7 +83,7 @@ class MemTestParam(base.BaseApmecTest):
         return mea_instance, param_values_dict
 
     def _test_mea_delete(self, mea_instance):
-        # Delete Vnf
+        # Delete Mea
         mea_id = mea_instance['mea']['id']
         try:
             self.client.delete_mea(mea_id)
@@ -97,7 +97,7 @@ class MemTestParam(base.BaseApmecTest):
         try:
             mea_d = self.client.show_mea(mea_id)
         except Exception:
-            assert True, "Vnf Delete success" + str(mea_d) + str(Exception)
+            assert True, "Mea Delete success" + str(mea_d) + str(Exception)
 
     def test_mead_param_tosca_template(self):
         mead_name = 'sample_cirros_mead_tosca'

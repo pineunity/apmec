@@ -23,7 +23,7 @@ from apmec.tests.utils import read_file
 import yaml
 
 
-class VnfTestAlarmMonitor(base.BaseApmecTest):
+class MeaTestAlarmMonitor(base.BaseApmecTest):
 
     def _test_mea_tosca_alarm(self, mead_file, mea_name):
         mea_trigger_path = '/meas/%s/triggers'

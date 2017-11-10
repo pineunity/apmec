@@ -18,7 +18,7 @@ from apmec.tests.functional import base
 from apmec.tests.utils import read_file
 
 
-class VnfTestPingMonitor(base.BaseApmecTest):
+class MeaTestPingMonitor(base.BaseApmecTest):
 
     def _test_mea_with_monitoring(self, mead_file, mea_name):
         data = dict()

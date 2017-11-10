@@ -20,7 +20,7 @@ from apmec.tests.functional import base
 from apmec.tests.utils import read_file
 
 
-class VnfTestToscaFloatingIp(base.BaseApmecTest):
+class MeaTestToscaFloatingIp(base.BaseApmecTest):
 
     def get_heat_stack_resource(self, stack_id, resource_name):
         resource_types = self.h_client.resources

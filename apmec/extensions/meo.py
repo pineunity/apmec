@@ -78,7 +78,7 @@ class VimGetResourceNotFoundException(exceptions.ApmecException):
                 "by %(cmd)s returns nothing")
 
 
-class VimFromVnfNotFoundException(exceptions.NotFound):
+class VimFromMeaNotFoundException(exceptions.NotFound):
     message = _('VIM from MEA %(mea_id)s could not be found')
 
 
@@ -100,7 +100,7 @@ class NfydDuplicateCPException(exceptions.InvalidInput):
                 ": %(cp)s")
 
 
-class NfydVnfdNotFoundException(exceptions.NotFound):
+class NfydMeadNotFoundException(exceptions.NotFound):
     message = _("Specified MEAD %(mead_name)s in NFYD does not exist. "
                 "Please create MEADs before creating NFY")
 
@@ -170,7 +170,7 @@ class NfyInUse(exceptions.InUse):
     message = _('NFY %(NANY_id)s is still in use')
 
 
-class NfyVnfNotFoundException(exceptions.NotFound):
+class NfyMeaNotFoundException(exceptions.NotFound):
     message = _("Specified MEA instance %(mea_name)s in MEA Mapping could not "
                 "be found")
 

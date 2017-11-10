@@ -445,7 +445,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, NANY_db.NfyPluginDbMixin,
         vim_id = mem_plugin.get_mea(context, mea_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
-            raise meo.VimFromVnfNotFoundException(mea_id=mea_id)
+            raise meo.VimFromMeaNotFoundException(mea_id=mea_id)
         self._build_vim_auth(context, vim_obj)
         return vim_obj
 

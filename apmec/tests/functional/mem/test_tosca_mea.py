@@ -29,7 +29,7 @@ CONF = cfg.CONF
 MEA_CIRROS_CREATE_TIMEOUT = 120
 
 
-class VnfTestToscaCreate(base.BaseApmecTest):
+class MeaTestToscaCreate(base.BaseApmecTest):
     def _test_create_mea(self, mead_file, mea_name,
                          template_source="onboarded"):
         data = dict()
@@ -156,7 +156,7 @@ class VnfTestToscaCreate(base.BaseApmecTest):
         self._test_cleanup_mead(mead_id, mea_id)
 
 
-class VnfTestToscaCreateFlavorCreation(base.BaseApmecTest):
+class MeaTestToscaCreateFlavorCreation(base.BaseApmecTest):
     def test_create_delete_mea_tosca_no_monitoring(self):
         mead_name = 'tosca_mead_with_auto_flavor'
         input_yaml = read_file('sample-tosca-mead-flavor.yaml')
@@ -218,7 +218,7 @@ class VnfTestToscaCreateFlavorCreation(base.BaseApmecTest):
                           [flavor_id])
 
 
-class VnfTestToscaCreateImageCreation(base.BaseApmecTest):
+class MeaTestToscaCreateImageCreation(base.BaseApmecTest):
 
     @unittest.skip("Until BUG 1673099")
     def test_create_delete_mea_tosca_no_monitoring(self):

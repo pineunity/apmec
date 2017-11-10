@@ -263,16 +263,16 @@ class TriggerNotFound(NotFound):
     message = _("Trigger %(trigger_name)s does not exist for MEA %(mea_id)s")
 
 
-class VnfPolicyNotFound(NotFound):
+class MeaPolicyNotFound(NotFound):
     message = _("Policy %(policy)s does not exist for MEA %(mea_id)s")
 
 
-class VnfPolicyActionInvalid(BadRequest):
+class MeaPolicyActionInvalid(BadRequest):
     message = _("Invalid action %(action)s for policy %(policy)s, "
                 "should be one of %(valid_actions)s")
 
 
-class VnfPolicyTypeInvalid(BadRequest):
+class MeaPolicyTypeInvalid(BadRequest):
     message = _("Invalid type %(type)s for policy %(policy)s, "
                 "should be one of %(valid_types)s")
 

@@ -540,7 +540,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             type = policy['type']
 
             if type not in constants.POLICY_ACTIONS.keys():
-                raise exceptions.VnfPolicyTypeInvalid(
+                raise exceptions.MeaPolicyTypeInvalid(
                     type=type,
                     valid_types=constants.POLICY_ACTIONS.keys(),
                     policy=policy['name']
@@ -548,7 +548,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
             action = policy['action']
 
             if action not in constants.POLICY_ACTIONS[type]:
-                raise exceptions.VnfPolicyActionInvalid(
+                raise exceptions.MeaPolicyActionInvalid(
                     action=action,
                     valid_actions=constants.POLICY_ACTIONS[type],
                     policy=policy['name']
@@ -713,7 +713,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
                                       scale['scale']['policy'],
                                       mea_id)
         if not policy_:
-            raise exceptions.VnfPolicyNotFound(policy=scale['scale']['policy'],
+            raise exceptions.MeaPolicyNotFound(policy=scale['scale']['policy'],
                                                mea_id=mea_id)
         policy_.update({'action': scale['scale']['type']})
         self._handle_mea_scaling(context, policy_)
@@ -727,7 +727,7 @@ class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
         if policies:
             return policies[0]
 
-        raise exceptions.VnfPolicyTypeInvalid(type=constants.POLICY_ALARMING,
+        raise exceptions.MeaPolicyTypeInvalid(type=constants.POLICY_ALARMING,
                                               mea_id=mea_id)
 
     def _validate_alarming_policy(self, context, mea_id, trigger):

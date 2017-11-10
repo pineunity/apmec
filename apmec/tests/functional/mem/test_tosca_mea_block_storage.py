@@ -26,7 +26,7 @@ CONF = cfg.CONF
 MEA_CIRROS_CREATE_TIMEOUT = 120
 
 
-class VnfBlockStorageTestToscaCreate(base.BaseApmecTest):
+class MeaBlockStorageTestToscaCreate(base.BaseApmecTest):
     def _test_create_mea(self, mead_file, mea_name,
                          template_source="onboarded"):
         data = dict()
