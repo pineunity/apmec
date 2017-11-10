@@ -21,7 +21,7 @@ from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)
-class MEAScaleAbstractDriver(extensions.PluginInterface):
+class MeaScaleAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def scale(self,
