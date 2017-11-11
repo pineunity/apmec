@@ -12,12 +12,6 @@ echo_summary "apmec's plugin.sh was called..."
 if is_service_enabled apmec; then
     if [[ "$1" == "stack" && "$2" == "install" ]]; then
         # Perform installation of service source
-        echo_summary "Installing tosca parser"
-        mec_tosca_parser_install
-        echo_summary "Installing heat translator"
-        mec_heat_translator_install
-
-
         echo_summary "Installing Apmec"
         install_apmec
 
@@ -37,6 +31,10 @@ if is_service_enabled apmec; then
         apmec_client_install
         echo_summary "Installing apmec horizon"
         apmec_horizon_install
+        echo_summary "Installing tosca parser"
+        mec_tosca_parser_install
+        echo_summary "Installing heat translator"
+        mec_heat_translator_install
         if [[ "${APMEC_MODE}" == "all" ]]; then
             echo_summary "Modifying Heat policy.json file"
             modify_heat_flavor_policy_rule
