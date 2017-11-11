@@ -334,18 +334,22 @@ function _apmec_setup_keystone {
 }
 
 function mec_tosca_parser_install {
+    sudo su
     git_clone_by_name "mec-tosca-parser"
     setup_dev_lib "toscaparser"
     cd $LIB_DEST/toscaparser
     sudo python setup.py install
+    exit
     cd $DEST
 }
 
 function mec_heat_translator_install {
+    sudo su
     git_clone_by_name "mec-heat-translator"
     setup_dev_lib "heat_translator"
     cd $LIB_DEST/heat_translator
     sudo python setup.py install
+    exit
     cd $DEST
 }
 
