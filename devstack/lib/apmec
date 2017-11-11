@@ -50,6 +50,14 @@ GITREPO["python-apmecclient"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/python-apmeccl
 GITBRANCH["python-apmecclient"]=${APMECHORIZON_BRANCH:-master}
 GITDIR["python-apmecclient"]=$DEST/python-apmecclient
 
+GITREPO["mec-tosca-parser"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-tosca-parser.git}
+GITBRANCH["mec-tosca-parser"]=${APMECHORIZON_BRANCH:-master}
+GITDIR["mec-tosca-parser"]=$DEST/mec-tosca-parser.git
+
+GITREPO["mec-heat-translator"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-heat-translator.git}
+GITBRANCH["mec-heat-translator"]=${APMECHORIZON_BRANCH:-master}
+GITDIR["mec-heat-translator"]=$DEST/mec-heat-translator.git
+
 
 APMEC_DIR=$DEST/apmec
 APMEC_AUTH_CACHE_DIR=${APMEC_AUTH_CACHE_DIR:-/var/cache/apmec}
@@ -323,6 +331,22 @@ function _apmec_setup_keystone {
 
     create_apmec_cache_dir
     configure_auth_token_middleware $conf_file $APMEC_ADMIN_USERNAME $APMEC_AUTH_CACHE_DIR $section
+}
+
+function mec_tosca_parser_install {
+    git_clone_by_name "mec-tosca-parser"
+    setup_dev_lib "mec-tosca-parser"
+    cd $DEST/mec-tosca-parser
+    sudo python setup.py install
+    cd $DEST
+}
+
+function mec_heat_translator_install {
+    git_clone_by_name "mec-heat-translator"
+    setup_dev_lib "mec-heat-translator"
+    cd $DEST/mec-heat-translator
+    sudo python setup.py install
+    cd $DEST
 }
 
 function apmec_horizon_install {
