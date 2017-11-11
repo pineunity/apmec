@@ -28,7 +28,7 @@
 # Apmec
 # ---------------
 CUSTOM_BASE="https://pineunity:Doantung92*@github.com/pineunity"
-
+LIB_DEST=/usr/local/lib/python2.7/dist-packages
 
 # Save trace setting
 XTRACE=$(set +o | grep xtrace)
@@ -52,11 +52,11 @@ GITDIR["python-apmecclient"]=$DEST/python-apmecclient
 
 GITREPO["mec-tosca-parser"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-tosca-parser.git}
 GITBRANCH["mec-tosca-parser"]=${APMECHORIZON_BRANCH:-master}
-GITDIR["mec-tosca-parser"]=$DEST/toscaparser
+GITDIR["mec-tosca-parser"]=/$LIB_DEST/toscaparser
 
 GITREPO["mec-heat-translator"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-heat-translator.git}
 GITBRANCH["mec-heat-translator"]=${APMECHORIZON_BRANCH:-master}
-GITDIR["mec-heat-translator"]=$DEST/heat_translator
+GITDIR["mec-heat-translator"]=$LIB_DEST/heat_translator
 
 
 APMEC_DIR=$DEST/apmec
@@ -336,7 +336,7 @@ function _apmec_setup_keystone {
 function mec_tosca_parser_install {
     git_clone_by_name "mec-tosca-parser"
     setup_dev_lib "toscaparser"
-    cd $DEST/toscaparser
+    cd $LIB_DEST/toscaparser
     sudo python setup.py install
     cd $DEST
 }
@@ -344,7 +344,7 @@ function mec_tosca_parser_install {
 function mec_heat_translator_install {
     git_clone_by_name "mec-heat-translator"
     setup_dev_lib "heat_translator"
-    cd $DEST/heat_translator
+    cd $LIB_DEST/heat_translator
     sudo python setup.py install
     cd $DEST
 }
