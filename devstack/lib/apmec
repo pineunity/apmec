@@ -28,7 +28,8 @@
 # Apmec
 # ---------------
 CUSTOM_BASE="https://pineunity:Doantung92*@github.com/pineunity"
-LIB_DEST=/usr/local/lib/python2.7/dist-packages
+EXTRA_CUSTOM_BASE="git+https://pineunity:Doantung92*@github.com/pineunity"
+#LIB_DEST=/usr/local/lib/python2.7/dist-packages
 
 # Save trace setting
 XTRACE=$(set +o | grep xtrace)
@@ -334,23 +335,12 @@ function _apmec_setup_keystone {
 }
 
 function mec_tosca_parser_install {
-    sudo su
-    git_clone_by_name "mec-tosca-parser"
-    setup_dev_lib "toscaparser"
-    cd $LIB_DEST/toscaparser
-    sudo python setup.py install
-    exit
-    cd $DEST
+   sudo pip install ${EXTRA_CUSTOM_BASE}/mec-tosca-parser.git
 }
 
 function mec_heat_translator_install {
-    sudo su
-    git_clone_by_name "mec-heat-translator"
-    setup_dev_lib "heat_translator"
-    cd $LIB_DEST/heat_translator
-    sudo python setup.py install
-    exit
-    cd $DEST
+   sudo pip install ${EXTRA_CUSTOM_BASE}/mec-heat-translator.git
+
 }
 
 function apmec_horizon_install {
