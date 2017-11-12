@@ -22,10 +22,11 @@ if is_service_enabled apmec; then
         create_apmec_accounts
 
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
-        echo_summary "Installing tosca parser"
-        mec_tosca_parser_install
-        echo_summary "Installing heat translator"
-        mec_heat_translator_install
+        #echo_summary "Installing tosca parser"
+        #mec_tosca_parser_install
+        #echo_summary "Installing heat translator"
+        #mec_heat_translator_install
+
         echo_summary "Installing apmec horizon"
         apmec_horizon_install
         # Initialize and start the apmec service

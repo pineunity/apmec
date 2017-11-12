@@ -50,13 +50,13 @@ GITREPO["python-apmecclient"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/python-apmeccl
 GITBRANCH["python-apmecclient"]=${APMECHORIZON_BRANCH:-master}
 GITDIR["python-apmecclient"]=$DEST/python-apmecclient
 
-GITREPO["mec-tosca-parser"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-tosca-parser.git}
-GITBRANCH["mec-tosca-parser"]=${APMECHORIZON_BRANCH:-master}
-GITDIR["mec-tosca-parser"]=/$LIB_DEST/toscaparser
+#GITREPO["mec-tosca-parser"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-tosca-parser.git}
+#GITBRANCH["mec-tosca-parser"]=${APMECHORIZON_BRANCH:-master}
+#GITDIR["mec-tosca-parser"]=/$LIB_DEST/toscaparser
 
-GITREPO["mec-heat-translator"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-heat-translator.git}
-GITBRANCH["mec-heat-translator"]=${APMECHORIZON_BRANCH:-master}
-GITDIR["mec-heat-translator"]=$LIB_DEST/heat_translator
+#GITREPO["mec-heat-translator"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-heat-translator.git}
+#GITBRANCH["mec-heat-translator"]=${APMECHORIZON_BRANCH:-master}
+#GITDIR["mec-heat-translator"]=$LIB_DEST/heat_translator
 
 
 APMEC_DIR=$DEST/apmec
