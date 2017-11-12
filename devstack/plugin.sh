@@ -11,10 +11,6 @@ echo_summary "apmec's plugin.sh was called..."
 # check for service enabled
 if is_service_enabled apmec; then
     if [[ "$1" == "stack" && "$2" == "install" ]]; then
-        echo_summary "Installing tosca parser"
-        mec_tosca_parser_install
-        echo_summary "Installing heat translator"
-        mec_heat_translator_install
         # Perform installation of service source
         echo_summary "Installing Apmec"
         install_apmec
@@ -26,6 +22,10 @@ if is_service_enabled apmec; then
         create_apmec_accounts
 
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
+        echo_summary "Installing tosca parser"
+        mec_tosca_parser_install
+        echo_summary "Installing heat translator"
+        mec_heat_translator_install
         echo_summary "Installing apmec horizon"
         apmec_horizon_install
         # Initialize and start the apmec service
