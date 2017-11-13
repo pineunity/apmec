@@ -443,8 +443,8 @@ function apmec_register_default_vim {
     get_or_create_project $DEFAULT_VIM_PROJECT_NAME
     echo "Create MEC VIM user $DEFAULT_VIM_USER ..."
     get_or_create_user $DEFAULT_VIM_USER $DEFAULT_VIM_PASSWORD
-    get_or_add_user_project_role admin $DEFAULT_VIM_USER $DEFAULT_VIM_PROJECT_NAME
-    #get_or_add_user_project_role "advsvc" $DEFAULT_VIM_USER $DEFAULT_VIM_PROJECT_NAME
+    get_or_add_user_project_role "admin" $DEFAULT_VIM_USER $DEFAULT_VIM_PROJECT_NAME
+    get_or_add_user_project_role "advsvc" $DEFAULT_VIM_USER $DEFAULT_VIM_PROJECT_NAME
 
     echo "Register default VIM ..."
     mkdir -p $DATA_DIR/apmec
