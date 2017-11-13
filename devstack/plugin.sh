@@ -26,15 +26,6 @@ if is_service_enabled apmec; then
         create_apmec_accounts
 
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
-        #echo_summary "Installing tosca parser"
-        #mec_tosca_parser_install
-        #echo_summary "Installing heat translator"
-        #mec_heat_translator_install
-
-        echo_summary "Installing apmec horizon"
-        apmec_horizon_install
-        # Initialize and start the apmec service
-        echo_summary "Initializing Apmec"
         init_apmec
         echo_summary "Starting Apmec API and conductor"
         start_apmec
@@ -49,6 +40,10 @@ if is_service_enabled apmec; then
             apmec_check_and_download_images
             echo_summary "Registering default VIM"
             apmec_register_default_vim
+            echo_summary "Installing apmec horizon"
+            apmec_horizon_install
+            # Initialize and start the apmec service
+            echo_summary "Initializing Apmec"
         fi
     fi
 
