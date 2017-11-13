@@ -355,7 +355,7 @@ function apmec_client_install {
     setup_dev_lib "python-apmecclient"
     cd $DEST/python-apmecclient
     sudo python setup.py install
-    cd $DEST
+    cd $TOP_DIR
 }
 
 function openstack_image_create {
