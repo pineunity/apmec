@@ -14,7 +14,7 @@ from mistralclient.api import client as mistral_client
 
 
 class MistralClient(object):
-    """Mistral Client class for NSD"""
+    """Mistral Client class for MESD"""
 
     def __init__(self, keystone, auth_token):
         endpoint = keystone.session.get_endpoint(

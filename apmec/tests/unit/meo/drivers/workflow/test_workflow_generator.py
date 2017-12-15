@@ -17,13 +17,13 @@ from apmec.meo.drivers.workflow import workflow_generator
 from apmec.tests.unit import base
 
 
-def get_dummy_ns():
-    return {u'ns': {'description': '',
+def get_dummy_mes():
+    return {u'mes': {'description': '',
                     'tenant_id': u'a81900a92bda40588c52699e1873a92f',
                     'vim_id': u'96025dd5-ca16-49f3-9823-958eb04260c4',
                     'mea_ids': '', u'attributes': {},
-                    u'nsd_id': u'b8587afb-6099-4f56-abce-572c62e3d61d',
-                    u'name': u'test_create_ns'},
+                    u'mesd_id': u'b8587afb-6099-4f56-abce-572c62e3d61d',
+                    u'name': u'test_create_mes'},
             'mead_details': {u'mea1': {'instances': ['MEA1'],
                              'id': u'dec09ed4-f355-4ec8-a00b-8548f6575a80'},
             u'mea2': {'instances': ['MEA2'],
@@ -41,7 +41,7 @@ def get_dummy_param():
                         'type': 'tosca.nodes.mec.VL',
                         'properties': {'network_name': u'net0',
                             'vendor': 'apmec'}}}},
-            u'nsd': {u'vl2_name': u'net0', u'vl1_name': u'net_mgmt'}}
+            u'mesd': {u'vl2_name': u'net0', u'vl1_name': u'net_mgmt'}}
 
 
 def get_dummy_create_workflow():
@@ -116,7 +116,7 @@ def get_dummy_create_workflow():
             'version': '2.0'}
 
 
-def dummy_delete_ns_obj():
+def dummy_delete_mes_obj():
     return {'mea_ids': u"{'MEA1': '5de5eca6-3e21-4bbd-a9d7-86458de75f0c'}"}
 
 
@@ -152,7 +152,7 @@ class TestWorkflowGenerator(base.TestCase):
     def test_prepare_workflow_create(self):
         fPlugin = FakeMEOPlugin(context, self.mistral_client,
                                  resource='mea', action='create')
-        fPlugin.prepare_workflow(ns=get_dummy_ns(), params=get_dummy_param())
+        fPlugin.prepare_workflow(mes=get_dummy_mes(), params=get_dummy_param())
         wf_def_values = [fPlugin.wg.definition[k] for
             k in fPlugin.wg.definition]
         self.assertIn(get_dummy_create_workflow()['std.create_mea_dummy'],
@@ -163,7 +163,7 @@ class TestWorkflowGenerator(base.TestCase):
     def test_prepare_workflow_delete(self):
         fPlugin = FakeMEOPlugin(context, self.mistral_client,
                                  resource='mea', action='delete')
-        fPlugin.prepare_workflow(ns=dummy_delete_ns_obj())
+        fPlugin.prepare_workflow(mes=dummy_delete_mes_obj())
         wf_def_values = [fPlugin.wg.definition[k] for
             k in fPlugin.wg.definition]
         self.assertIn(get_dummy_delete_workflow()['std.delete_mea_dummy'],

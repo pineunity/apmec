@@ -1,6 +1,0 @@
----
-features:
-  - |
-    Add Guru Meditation support.
-    Command "kill -s SIGUSR2 <apmec-server-pid>"
-    will make apmec server emit running configuration.

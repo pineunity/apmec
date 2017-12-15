@@ -1,8 +1,0 @@
----
-features:
-  - |
-    Add support to attach cinder volumes to the MEA. We can create cinder volumes
-    through new syntax in TOSCA MEAD template and we can attach it to MEAs.
-other:
-  - |
-    Only attaching volumes to the MEAs is supported. Boot from volume is not supported

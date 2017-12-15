@@ -19,7 +19,7 @@ import os
 import yaml
 
 
-DUMMY_NS_2_NAME = 'dummy_ns_2'
+DUMMY_mes_2_NAME = 'dummy_mes_2'
 
 
 def _get_template(name):
@@ -39,7 +39,7 @@ mead_alarm_scale_tosca_template = _get_template(
     'test_tosca_mead_alarm_scale.yaml')
 mead_alarm_multi_actions_tosca_template = _get_template(
     'test_tosca_mead_alarm_multi_actions.yaml')
-nsd_tosca_template = yaml.safe_load(_get_template('tosca_nsd_template.yaml'))
+mesd_tosca_template = yaml.safe_load(_get_template('tosca_mesd_template.yaml'))
 
 
 def get_dummy_mead_obj():
@@ -150,53 +150,53 @@ def get_vim_auth_obj():
             'user_domain_name': 'default',
             'project_domain_name': 'default'}
 
-def get_dummy_nsd_obj():
-    return {'nsd': {'description': 'dummy_nsd_description',
-                    'name': 'dummy_NSD',
+def get_dummy_mesd_obj():
+    return {'mesd': {'description': 'dummy_mesd_description',
+                    'name': 'dummy_MESD',
                     'tenant_id': u'8819a1542a5948b68f94d4be0fd50496',
-                    'attributes': {u'nsd': nsd_tosca_template},
+                    'attributes': {u'mesd': mesd_tosca_template},
                     'template_source': 'onboarded'}}
 
 
-def get_dummy_nsd_obj_inline():
-    return {'nsd': {'description': 'dummy_nsd_description_inline',
-                    'name': 'dummy_NSD_inline',
+def get_dummy_mesd_obj_inline():
+    return {'mesd': {'description': 'dummy_mesd_description_inline',
+                    'name': 'dummy_MESD_inline',
                     'tenant_id': u'8819a1542a5948b68f94d4be0fd50496',
-                    'attributes': {u'nsd': nsd_tosca_template},
+                    'attributes': {u'mesd': mesd_tosca_template},
                     'template_source': 'inline'}}
 
 
-def get_dummy_ns_obj():
-    return {'ns': {'description': 'dummy_ns_description',
+def get_dummy_mes_obj():
+    return {'mes': {'description': 'dummy_mes_description',
                    'id': u'ba6bf017-f6f7-45f1-a280-57b073bf78ea',
-                   'nsd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+                   'mesd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
                    'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                    'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                   'name': 'dummy_ns',
+                   'name': 'dummy_mes',
                    'attributes': {
-                       'param_values': {'nsd': {'vl1_name': 'net_mgmt',
+                       'param_values': {'mesd': {'vl1_name': 'net_mgmt',
                                                 'vl2_name': 'net0'}}}}}
 
 
-def get_dummy_ns_obj_inline():
-    return {'ns': {'description': 'dummy_ns_description_inline',
+def get_dummy_mes_obj_inline():
+    return {'mes': {'description': 'dummy_mes_description_inline',
                    'id': u'ff35e3f0-0a11-4071-bce6-279fdf1c8bf9',
                    'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                    'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                   'name': 'dummy_ns_inline',
+                   'name': 'dummy_mes_inline',
                    'attributes': {
-                       'param_values': {'nsd': {'vl1_name': 'net_mgmt',
+                       'param_values': {'mesd': {'vl1_name': 'net_mgmt',
                                                 'vl2_name': 'net0'}}},
-                   'nsd_template': nsd_tosca_template}}
+                   'mesd_template': mesd_tosca_template}}
 
 
-def get_dummy_ns_obj_2():
-    return {'ns': {'description': 'dummy_ns_description',
+def get_dummy_mes_obj_2():
+    return {'mes': {'description': 'dummy_mes_description',
                    'id': u'ba6bf017-f6f7-45f1-a280-57b073bf78ea',
-                   'nsd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
+                   'mesd_id': u'eb094833-995e-49f0-a047-dfb56aaf7c4e',
                    'vim_id': u'6261579e-d6f3-49ad-8bc3-a9cb974778ff',
                    'tenant_id': u'ad7ebc56538745a08ef7c5e97f8bd437',
-                   'name': DUMMY_NS_2_NAME,
+                   'name': DUMMY_mes_2_NAME,
                    'attributes': {
-                       'param_values': {'nsd': {'vl1_name': 'net_mgmt',
+                       'param_values': {'mesd': {'vl1_name': 'net_mgmt',
                                                 'vl2_name': 'net0'}}}}}

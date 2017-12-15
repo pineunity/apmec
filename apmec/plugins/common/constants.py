@@ -56,8 +56,8 @@ POLICY_ALARMING = 'tosca.policies.apmec.Alarming'
 DEFAULT_ALARM_ACTIONS = ['respawn', 'log', 'log_and_kill', 'notify']
 
 RES_TYPE_MEAD = "mead"
-RES_TYPE_NSD = "nsd"
-RES_TYPE_NS = "ns"
+RES_TYPE_MESD = "mesd"
+RES_TYPE_mes = "mes"
 RES_TYPE_MEA = "mea"
 RES_TYPE_VIM = "vim"
 

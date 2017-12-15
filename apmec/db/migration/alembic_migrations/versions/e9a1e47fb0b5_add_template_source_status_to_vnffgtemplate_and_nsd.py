@@ -13,7 +13,7 @@
 #    under the License.
 #
 
-"""add onboarded status for NANYD and nsd
+"""add onboarded status for NANYD and mesd
 
 Revision ID: e9a1e47fb0b5
 Revises: f5c1c3b0f6b4
@@ -37,9 +37,9 @@ def upgrade(active_plugins=None, options=None):
     op.execute("UPDATE NANYtemplates set template_source='onboarded'"
         " WHERE template_source is NULL")
 
-    op.add_column('nsd',
+    op.add_column('mesd',
                   sa.Column('template_source',
                             sa.String(length=255),
                             server_default='onboarded'))
-    op.execute("UPDATE nsd set template_source='onboarded'"
+    op.execute("UPDATE mesd set template_source='onboarded'"
         " WHERE template_source is NULL")

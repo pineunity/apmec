@@ -640,20 +640,20 @@ msgid "NFP attribute %(attribute)s could not be found"
 msgstr "Atributo NFP %(attribute)s no ha sido encontrado"
 
 #, python-format
-msgid "NS %(ns_id)s could not be found"
-msgstr "NS %(ns_id)s no ha sido encontrado"
+msgid "MES %(ns_id)s could not be found"
+msgstr "MES %(ns_id)s no ha sido encontrado"
 
 #, python-format
-msgid "NS %(ns_id)s is still in use"
-msgstr "NS %(ns_id)s sigue en uso"
+msgid "MES %(ns_id)s is still in use"
+msgstr "MES %(ns_id)s sigue en uso"
 
 #, python-format
-msgid "NSD %(nsd_id)s could not be found"
-msgstr "NSD %(nsd_id)s no ha sido encontrado"
+msgid "MESD %(mesd_id)s could not be found"
+msgstr "MESD %(mesd_id)s no ha sido encontrado"
 
 #, python-format
-msgid "NSD %(nsd_id)s is still in use"
-msgstr "NSD %(nsd_id)s sigue en uso"
+msgid "MESD %(mesd_id)s is still in use"
+msgstr "MESD %(mesd_id)s sigue en uso"
 
 msgid "Native pagination depend on native sorting"
 msgstr "La paginación nativa depende de la ordenación nativa"

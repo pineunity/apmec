@@ -299,34 +299,34 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                                         resource_name=name)
 
     @log.log
-    def create_nsd(self, context, nsd):
-        nsd_data = nsd['nsd']
-        template = nsd_data['attributes'].get('nsd')
+    def create_mesd(self, context, mesd):
+        mesd_data = mesd['mesd']
+        template = mesd_data['attributes'].get('mesd')
         if isinstance(template, dict):
-            nsd_data['attributes']['nsd'] = yaml.safe_dump(
+            mesd_data['attributes']['mesd'] = yaml.safe_dump(
                 template)
-        LOG.debug('nsd %s', nsd_data)
+        LOG.debug('mesd %s', mesd_data)
 
-        if 'template_source' in nsd_data:
-            template_source = nsd_data.get('template_source')
+        if 'template_source' in mesd_data:
+            template_source = mesd_data.get('template_source')
         else:
             template_source = "onboarded"
-        nsd['nsd']['template_source'] = template_source
+        mesd['mesd']['template_source'] = template_source
 
-        self._parse_template_input(context, nsd)
-        return super(MeoPlugin, self).create_nsd(
-            context, nsd)
+        self._parse_template_input(context, mesd)
+        return super(MeoPlugin, self).create_mesd(
+            context, mesd)
 
-    def _parse_template_input(self, context, nsd):
-        nsd_dict = nsd['nsd']
-        nsd_yaml = nsd_dict['attributes'].get('nsd')
-        inner_nsd_dict = yaml.safe_load(nsd_yaml)
-        nsd['meads'] = dict()
-        LOG.debug('nsd_dict: %s', inner_nsd_dict)
+    def _parse_template_input(self, context, mesd):
+        mesd_dict = mesd['mesd']
+        mesd_yaml = mesd_dict['attributes'].get('mesd')
+        inner_mesd_dict = yaml.safe_load(mesd_yaml)
+        mesd['meads'] = dict()
+        LOG.debug('mesd_dict: %s', inner_mesd_dict)
 
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
-        mead_imports = inner_nsd_dict['imports']
-        inner_nsd_dict['imports'] = []
+        mead_imports = inner_mesd_dict['imports']
+        inner_mesd_dict['imports'] = []
         new_files = []
         for mead_name in mead_imports:
             mead = mem_plugin.get_mead(context, mead_name)
@@ -334,7 +334,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
             sm_dict = yaml.safe_load(mead['attributes']['mead'])[
                 'topology_template'][
                 'substitution_mappings']
-            nsd['meads'][sm_dict['node_type']] = mead['name']
+            mesd['meads'][sm_dict['node_type']] = mead['name']
             # Ugly Hack to validate the child templates
             # TODO(tbh): add support in tosca-parser to pass child
             # templates as dict
@@ -343,33 +343,33 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                 fp.write(mead['attributes']['mead'])
             os.close(fd)
             new_files.append(temp_path)
-            inner_nsd_dict['imports'].append(temp_path)
+            inner_mesd_dict['imports'].append(temp_path)
         # Prepend the apmec_defs.yaml import file with the full
         # path to the file
-        toscautils.updateimports(inner_nsd_dict)
+        toscautils.updateimports(inner_mesd_dict)
 
         try:
             ToscaTemplate(a_file=False,
-                          yaml_dict_tpl=inner_nsd_dict)
+                          yaml_dict_tpl=inner_mesd_dict)
         except Exception as e:
             LOG.exception("tosca-parser error: %s", str(e))
             raise meo.ToscaParserFailed(error_msg_details=str(e))
         finally:
             for file_path in new_files:
                 os.remove(file_path)
-            inner_nsd_dict['imports'] = mead_imports
+            inner_mesd_dict['imports'] = mead_imports
 
-        if ('description' not in nsd_dict or
-                nsd_dict['description'] == ''):
-            nsd_dict['description'] = inner_nsd_dict.get(
+        if ('description' not in mesd_dict or
+                mesd_dict['description'] == ''):
+            mesd_dict['description'] = inner_mesd_dict.get(
                 'description', '')
-        if (('name' not in nsd_dict or
-                not len(nsd_dict['name'])) and
-                'metadata' in inner_nsd_dict):
-            nsd_dict['name'] = inner_nsd_dict['metadata'].get(
+        if (('name' not in mesd_dict or
+                not len(mesd_dict['name'])) and
+                'metadata' in inner_mesd_dict):
+            mesd_dict['name'] = inner_mesd_dict['metadata'].get(
                 'template_name', '')
 
-        LOG.debug('nsd %s', nsd)
+        LOG.debug('mesd %s', mesd)
 
     def _get_mead_id(self, mead_name, onboarded_meads):
         for mead in onboarded_meads:
@@ -377,52 +377,52 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                 return mead['id']
 
     @log.log
-    def create_ns(self, context, ns):
-        """Create NS and corresponding MEAs.
+    def create_mes(self, context, mes):
+        """Create MES and corresponding MEAs.
 
-        :param ns: ns dict which contains nsd_id and attributes
+        :param mes: mes dict which contains mesd_id and attributes
         This method has 3 steps:
         step-1: substitute all get_input params to its corresponding values
         step-2: Build params dict for substitution mappings case through which
         MEAs will actually substitute their requirements.
         step-3: Create mistral workflow and execute the workflow
         """
-        ns_info = ns['ns']
-        name = ns_info['name']
+        mes_info = mes['mes']
+        name = mes_info['name']
 
-        if ns_info.get('nsd_template'):
-            nsd_name = utils.generate_resource_name(name, 'inline')
-            nsd = {'nsd': {
-                'attributes': {'nsd': ns_info['nsd_template']},
-                'description': ns_info['description'],
-                'name': nsd_name,
+        if mes_info.get('mesd_template'):
+            mesd_name = utils.generate_resource_name(name, 'inline')
+            mesd = {'mesd': {
+                'attributes': {'mesd': mes_info['mesd_template']},
+                'description': mes_info['description'],
+                'name': mesd_name,
                 'template_source': 'inline',
-                'tenant_id': ns_info['tenant_id']}}
-            ns_info['nsd_id'] = self.create_nsd(context, nsd).get('id')
+                'tenant_id': mes_info['tenant_id']}}
+            mes_info['mesd_id'] = self.create_mesd(context, mesd).get('id')
 
-        nsd = self.get_nsd(context, ns['ns']['nsd_id'])
-        nsd_dict = yaml.safe_load(nsd['attributes']['nsd'])
+        mesd = self.get_mesd(context, mes['mes']['mesd_id'])
+        mesd_dict = yaml.safe_load(mesd['attributes']['mesd'])
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
         onboarded_meads = mem_plugin.get_meads(context, [])
-        region_name = ns.setdefault('placement_attr', {}).get(
+        region_name = mes.setdefault('placement_attr', {}).get(
             'region_name', None)
-        vim_res = self.vim_client.get_vim(context, ns['ns']['vim_id'],
+        vim_res = self.vim_client.get_vim(context, mes['mes']['vim_id'],
                                           region_name)
         driver_type = vim_res['vim_type']
-        if not ns['ns']['vim_id']:
-            ns['ns']['vim_id'] = vim_res['vim_id']
+        if not mes['mes']['vim_id']:
+            mes['mes']['vim_id'] = vim_res['vim_id']
 
         # Step-1
-        param_values = ns['ns']['attributes'].get('param_values', {})
-        if 'get_input' in str(nsd_dict):
-            self._process_parameterized_input(ns['ns']['attributes'],
-                                              nsd_dict)
+        param_values = mes['mes']['attributes'].get('param_values', {})
+        if 'get_input' in str(mesd_dict):
+            self._process_parameterized_input(mes['mes']['attributes'],
+                                              mesd_dict)
         # Step-2
-        meads = nsd['meads']
+        meads = mesd['meads']
         # mead_dict is used while generating workflow
         mead_dict = dict()
         for node_name, node_val in \
-                (nsd_dict['topology_template']['node_templates']).items():
+                (mesd_dict['topology_template']['node_templates']).items():
             if node_val.get('type') not in meads.keys():
                 continue
             mead_name = meads[node_val.get('type')]
@@ -443,18 +443,18 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
             for requirement in requirements:
                 req_name = list(requirement.keys())[0]
                 req_val = list(requirement.values())[0]
-                res_name = req_val + ns['ns']['nsd_id'][:11]
+                res_name = req_val + mes['mes']['mesd_id'][:11]
                 req_dict[req_name] = res_name
-                if req_val in nsd_dict['topology_template']['node_templates']:
+                if req_val in mesd_dict['topology_template']['node_templates']:
                     param_values[mead_name]['substitution_mappings'][
-                        res_name] = nsd_dict['topology_template'][
+                        res_name] = mesd_dict['topology_template'][
                             'node_templates'][req_val]
 
             param_values[mead_name]['substitution_mappings'][
                 'requirements'] = req_dict
-        ns['mead_details'] = mead_dict
+        mes['mead_details'] = mead_dict
         # Step-3
-        kwargs = {'ns': ns, 'params': param_values}
+        kwargs = {'mes': mes, 'params': param_values}
 
         # NOTE NoTasksException is raised if no tasks.
         workflow = self._vim_drivers.invoke(
@@ -477,9 +477,9 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
             raise ex
-        ns_dict = super(MeoPlugin, self).create_ns(context, ns)
+        mes_dict = super(MeoPlugin, self).create_mes(context, mes)
 
-        def _create_ns_wait(self_obj, ns_id, execution_id):
+        def _create_mes_wait(self_obj, mes_id, execution_id):
             exec_state = "RUNNING"
             mistral_retries = MISTRAL_RETRIES
             while exec_state == "RUNNING" and mistral_retries > 0:
@@ -496,7 +496,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
             error_reason = None
             if mistral_retries == 0 and exec_state == 'RUNNING':
                 error_reason = _(
-                    "NS creation is not completed within"
+                    "MES creation is not completed within"
                     " {wait} seconds as creation of mistral"
                     " execution {mistral} is not completed").format(
                     wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
@@ -514,12 +514,12 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                                      'delete_workflow',
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
-            super(MeoPlugin, self).create_ns_post(context, ns_id, exec_obj,
+            super(MeoPlugin, self).create_mes_post(context, mes_id, exec_obj,
                                                    mead_dict, error_reason)
 
-        self.spawn_n(_create_ns_wait, self, ns_dict['id'],
+        self.spawn_n(_create_mes_wait, self, mes_dict['id'],
                      mistral_execution.id)
-        return ns_dict
+        return mes_dict
 
     @log.log
     def _update_params(self, original, paramvalues):
@@ -537,20 +537,20 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                     self._update_params(value, paramvalues)
 
     @log.log
-    def _process_parameterized_input(self, attrs, nsd_dict):
+    def _process_parameterized_input(self, attrs, mesd_dict):
         param_vattrs_dict = attrs.pop('param_values', None)
         if param_vattrs_dict:
             for node in \
-                    nsd_dict['topology_template']['node_templates'].values():
+                    mesd_dict['topology_template']['node_templates'].values():
                 if 'get_input' in str(node):
-                    self._update_params(node, param_vattrs_dict['nsd'])
+                    self._update_params(node, param_vattrs_dict['mesd'])
         else:
             raise cs.ParamYAMLInputMissing()
 
     @log.log
-    def delete_ns(self, context, ns_id):
-        ns = super(MeoPlugin, self).get_ns(context, ns_id)
-        vim_res = self.vim_client.get_vim(context, ns['vim_id'])
+    def delete_mes(self, context, mes_id):
+        mes = super(MeoPlugin, self).get_mes(context, mes_id)
+        vim_res = self.vim_client.get_vim(context, mes['vim_id'])
         driver_type = vim_res['vim_type']
         workflow = None
         try:
@@ -561,7 +561,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                 action='delete',
                 auth_dict=self.get_auth_dict(context),
                 kwargs={
-                    'ns': ns})
+                    'mes': mes})
         except meo.NoTasksException:
             LOG.warning("No MEA deletion task(s).")
         if workflow:
@@ -580,9 +580,9 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                                          auth_dict=self.get_auth_dict(context))
 
                 raise ex
-        super(MeoPlugin, self).delete_ns(context, ns_id)
+        super(MeoPlugin, self).delete_mes(context, mes_id)
 
-        def _delete_ns_wait(ns_id, execution_id):
+        def _delete_mes_wait(mes_id, execution_id):
             exec_state = "RUNNING"
             mistral_retries = MISTRAL_RETRIES
             while exec_state == "RUNNING" and mistral_retries > 0:
@@ -599,7 +599,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
             error_reason = None
             if mistral_retries == 0 and exec_state == 'RUNNING':
                 error_reason = _(
-                    "NS deletion is not completed within"
+                    "MES deletion is not completed within"
                     " {wait} seconds as deletion of mistral"
                     " execution {mistral} is not completed").format(
                     wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
@@ -617,11 +617,11 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                                      'delete_workflow',
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
-            super(MeoPlugin, self).delete_ns_post(context, ns_id, exec_obj,
+            super(MeoPlugin, self).delete_mes_post(context, mes_id, exec_obj,
                                                    error_reason)
         if workflow:
-            self.spawn_n(_delete_ns_wait, ns['id'], mistral_execution.id)
+            self.spawn_n(_delete_mes_wait, mes['id'], mistral_execution.id)
         else:
-            super(MeoPlugin, self).delete_ns_post(
-                context, ns_id, None, None)
-        return ns['id']
+            super(MeoPlugin, self).delete_mes_post(
+                context, mes_id, None, None)
+        return mes['id']

@@ -88,7 +88,7 @@ User Guide
    user/multisite_vim_usage_guide.rst
    user/scale_usage_guide.rst
    user/alarm_monitoring_usage_guide.rst
-   user/nsd_usage_guide.rst
+   user/mesd_usage_guide.rst
    user/mea_component_usage_guide.rst
    user/enhanced_placement_awareness_usage_guide.rst
    reference/mistral_workflows_usage_guide.rst

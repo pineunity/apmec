@@ -23,8 +23,8 @@ OUTPUT = {
 
 class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
 
-    def _add_create_mea_tasks(self, ns):
-        meads = ns['mead_details']
+    def _add_create_mea_tasks(self, mes):
+        meads = mes['mead_details']
         task_dict = dict()
         for mead_name, mead_info in (meads).items():
             nodes = mead_info['instances']
@@ -48,8 +48,8 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
                 }
         return task_dict
 
-    def _add_wait_mea_tasks(self, ns):
-        meads = ns['mead_details']
+    def _add_wait_mea_tasks(self, mes):
+        meads = mes['mead_details']
         task_dict = dict()
         for mead_name, mead_info in (meads).items():
             nodes = mead_info['instances']
@@ -81,8 +81,8 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
                 }
         return task_dict
 
-    def _add_delete_mea_tasks(self, ns):
-        meads = ns['mead_details']
+    def _add_delete_mea_tasks(self, mes):
+        meads = mes['mead_details']
         task_dict = dict()
         for mead_name, mead_info in (meads).items():
             nodes = mead_info['instances']
@@ -94,8 +94,8 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
                 }
         return task_dict
 
-    def _build_output_dict(self, ns):
-        meads = ns['mead_details']
+    def _build_output_dict(self, mes):
+        meads = mes['mead_details']
         task_dict = dict()
         for mead_name, mead_info in (meads).items():
             nodes = mead_info['instances']
@@ -108,8 +108,8 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
     def get_input_dict(self):
         return self.input_dict
 
-    def build_input(self, ns, params):
-        meads = ns['mead_details']
+    def build_input(self, mes, params):
+        meads = mes['mead_details']
         id = uuidutils.generate_uuid()
         self.input_dict = {'mea': {}}
         for mead_name, mead_info in (meads).items():
@@ -118,7 +118,7 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
                 self.input_dict['mea'][node] = dict()
                 self.input_dict['mea'][node]['mea'] = {
                     'attributes': {},
-                    'vim_id': ns['ns'].get('vim_id', ''),
+                    'vim_id': mes['mes'].get('vim_id', ''),
                     'mead_id': mead_info['id'],
                     'name': 'create_mea_%s_%s' % (mead_info['id'], id)
                 }
@@ -128,30 +128,30 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
                     }
 
     def create_mea(self, **kwargs):
-        ns = kwargs.get('ns')
+        mes = kwargs.get('mes')
         params = kwargs.get('params')
         # TODO(anyone): Keep this statements in a loop and
         # remove in all the methods.
         self.definition[self.wf_identifier]['tasks'] = dict()
         self.definition[self.wf_identifier]['tasks'].update(
-            self._add_create_mea_tasks(ns))
+            self._add_create_mea_tasks(mes))
         self.definition[self.wf_identifier]['tasks'].update(
-            self._add_wait_mea_tasks(ns))
+            self._add_wait_mea_tasks(mes))
         self.definition[self.wf_identifier]['tasks'].update(
-            self._add_delete_mea_tasks(ns))
+            self._add_delete_mea_tasks(mes))
         self.definition[self.wf_identifier]['output'] = \
-            self._build_output_dict(ns)
-        self.build_input(ns, params)
+            self._build_output_dict(mes)
+        self.build_input(mes, params)
 
-    def delete_mea(self, ns):
-        ns_dict = {'mead_details': {}}
-        mea_ids = ast.literal_eval(ns['mea_ids'])
+    def delete_mea(self, mes):
+        mes_dict = {'mead_details': {}}
+        mea_ids = ast.literal_eval(mes['mea_ids'])
         self.definition[self.wf_identifier]['input'] = []
         for mea in mea_ids.keys():
             mea_key = 'mea_id_' + mea
             self.definition[self.wf_identifier]['input'].append(mea_key)
             self.input_dict[mea_key] = mea_ids[mea]
-            ns_dict['mead_details'][mea] = {'instances': [mea]}
+            mes_dict['mead_details'][mea] = {'instances': [mea]}
         self.definition[self.wf_identifier]['tasks'] = dict()
         self.definition[self.wf_identifier]['tasks'].update(
-            self._add_delete_mea_tasks(ns_dict))
+            self._add_delete_mea_tasks(mes_dict))

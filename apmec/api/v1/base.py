@@ -568,9 +568,9 @@ class Controller(object):
                 if (resource == 'mea') and ('mead_template' in body['mea'])\
                         and (attr == "mead_id") and is_create:
                     continue
-                # skip validating nsd_id when nsd_template is provided
-                if (resource == 'ns') and ('nsd_template' in body['ns'])\
-                        and (attr == 'nsd_id') and is_create:
+                # skip validating mesd_id when mesd_template is provided
+                if (resource == 'mes') and ('mesd_template' in body['mes'])\
+                        and (attr == 'mesd_id') and is_create:
                     continue
                 res = attributes.validators[rule](res_dict[attr],
                                                   attr_vals['validate'][rule])

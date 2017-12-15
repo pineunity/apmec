@@ -233,7 +233,7 @@ class TestToscaUtils(testtools.TestCase):
         self.assertEqual(expected_heat_dict, dummy_heat_dict)
 
     def test_check_for_substitution_mappings(self):
-        tosca_sb_map = _get_template('../../../../../etc/samples/test-nsd-'
+        tosca_sb_map = _get_template('../../../../../etc/samples/test-mesd-'
                                      'mead1.yaml')
         param = {'substitution_mappings': {
                  'VL2': {'type': 'tosca.nodes.mec.VL', 'properties': {

@@ -26,7 +26,7 @@ import time
 CONF = cfg.CONF
 
 
-class NsdTestCreate(base.BaseApmecTest):
+class MesdTestCreate(base.BaseApmecTest):
     def _test_create_tosca_mead(self, tosca_mead_file, mead_name):
         input_yaml = read_file(tosca_mead_file)
         tosca_dict = yaml.safe_load(input_yaml)
@@ -40,22 +40,22 @@ class NsdTestCreate(base.BaseApmecTest):
         self.assertIsNotNone(meads, "List of meads are Empty after Creation")
         return mead_instance['mead']['id']
 
-    def _test_create_nsd(self, tosca_nsd_file, nsd_name):
-        input_yaml = read_file(tosca_nsd_file)
+    def _test_create_mesd(self, tosca_mesd_file, mesd_name):
+        input_yaml = read_file(tosca_mesd_file)
         tosca_dict = yaml.safe_load(input_yaml)
-        tosca_arg = {'nsd': {'name': nsd_name,
-                             'attributes': {'nsd': tosca_dict}}}
-        nsd_instance = self.client.create_nsd(body=tosca_arg)
-        self.assertIsNotNone(nsd_instance)
-        return nsd_instance['nsd']['id']
+        tosca_arg = {'mesd': {'name': mesd_name,
+                             'attributes': {'mesd': tosca_dict}}}
+        mesd_instance = self.client.create_mesd(body=tosca_arg)
+        self.assertIsNotNone(mesd_instance)
+        return mesd_instance['mesd']['id']
 
-    def _test_delete_nsd(self, nsd_id):
+    def _test_delete_mesd(self, mesd_id):
         try:
-            self.client.delete_nsd(nsd_id)
+            self.client.delete_mesd(mesd_id)
         except Exception:
-                assert False, "nsd Delete failed"
+                assert False, "mesd Delete failed"
 
-    def _test_delete_mead(self, mead_id, timeout=constants.NS_DELETE_TIMEOUT):
+    def _test_delete_mead(self, mead_id, timeout=constants.MES_DELETE_TIMEOUT):
         start_time = int(time.time())
         while True:
             try:
@@ -71,108 +71,108 @@ class NsdTestCreate(base.BaseApmecTest):
         self.verify_mead_events(mead_id, evt_constants.RES_EVT_DELETE,
                                 evt_constants.RES_EVT_NA_STATE)
 
-    def _wait_until_ns_status(self, ns_id, target_status, timeout,
+    def _wait_until_mes_status(self, mes_id, target_status, timeout,
                               sleep_interval):
         start_time = int(time.time())
         while True:
-                ns_result = self.client.show_ns(ns_id)
-                status = ns_result['ns']['status']
+                mes_result = self.client.show_mes(mes_id)
+                status = mes_result['mes']['status']
                 if (status == target_status) or (
                         (int(time.time()) - start_time) > timeout):
                     break
                 time.sleep(sleep_interval)
 
         self.assertEqual(status, target_status,
-                         "ns %(ns_id)s with status %(status)s is"
+                         "mes %(mes_id)s with status %(status)s is"
                          " expected to be %(target)s" %
-                         {"ns_id": ns_id, "status": status,
+                         {"mes_id": mes_id, "status": status,
                           "target": target_status})
 
-    def _wait_until_ns_delete(self, ns_id, timeout):
+    def _wait_until_mes_delete(self, mes_id, timeout):
         start_time = int(time.time())
         while True:
             try:
-                ns_result = self.client.show_ns(ns_id)
+                mes_result = self.client.show_mes(mes_id)
                 time.sleep(2)
             except Exception:
                 return
-            status = ns_result['ns']['status']
+            status = mes_result['mes']['status']
             if (status != 'PENDING_DELETE') or ((
                     int(time.time()) - start_time) > timeout):
                 raise Exception("Failed with status: %s" % status)
 
-    def _test_create_delete_ns(self, nsd_file, ns_name,
+    def _test_create_delete_mes(self, mesd_file, mes_name,
                                template_source='onboarded'):
         mead1_id = self._test_create_tosca_mead(
-            'test-ns-mead1.yaml',
-            'test-ns-mead1')
+            'test-mes-mead1.yaml',
+            'test-mes-mead1')
         mead2_id = self._test_create_tosca_mead(
-            'test-ns-mead2.yaml',
-            'test-ns-mead2')
+            'test-mes-mead2.yaml',
+            'test-mes-mead2')
 
         if template_source == 'onboarded':
-            nsd_id = self._test_create_nsd(
-                nsd_file,
-                'test-ns-nsd')
-            ns_arg = {'ns': {
-                'nsd_id': nsd_id,
-                'name': ns_name,
+            mesd_id = self._test_create_mesd(
+                mesd_file,
+                'test-mes-mesd')
+            mes_arg = {'mes': {
+                'mesd_id': mesd_id,
+                'name': mes_name,
                 'attributes': {"param_values": {
-                    "nsd": {
+                    "mesd": {
                         "vl2_name": "net0",
                         "vl1_name": "net_mgmt"}}}}}
-            ns_instance = self.client.create_ns(body=ns_arg)
-            ns_id = ns_instance['ns']['id']
+            mes_instance = self.client.create_mes(body=mes_arg)
+            mes_id = mes_instance['mes']['id']
 
         if template_source == 'inline':
-            input_yaml = read_file(nsd_file)
+            input_yaml = read_file(mesd_file)
             template = yaml.safe_load(input_yaml)
-            ns_arg = {'ns': {
-                'name': ns_name,
+            mes_arg = {'mes': {
+                'name': mes_name,
                 'attributes': {"param_values": {
-                    "nsd": {
+                    "mesd": {
                         "vl2_name": "net0",
                         "vl1_name": "net_mgmt"}}},
-                'nsd_template': template}}
-            ns_instance = self.client.create_ns(body=ns_arg)
-            ns_id = ns_instance['ns']['id']
+                'mesd_template': template}}
+            mes_instance = self.client.create_mes(body=mes_arg)
+            mes_id = mes_instance['mes']['id']
 
-        self._wait_until_ns_status(ns_id, 'ACTIVE',
-                                   constants.NS_CREATE_TIMEOUT,
+        self._wait_until_mes_status(mes_id, 'ACTIVE',
+                                   constants.MES_CREATE_TIMEOUT,
                                    constants.ACTIVE_SLEEP_TIME)
-        ns_show_out = self.client.show_ns(ns_id)['ns']
-        self.assertIsNotNone(ns_show_out['mgmt_urls'])
+        mes_show_out = self.client.show_mes(mes_id)['mes']
+        self.assertIsNotNone(mes_show_out['mgmt_urls'])
 
         try:
-            self.client.delete_ns(ns_id)
+            self.client.delete_mes(mes_id)
         except Exception as e:
             print("Exception:", e)
-            assert False, "ns Delete failed"
+            assert False, "mes Delete failed"
         if template_source == 'onboarded':
-            self._wait_until_ns_delete(ns_id, constants.NS_DELETE_TIMEOUT)
-            self._test_delete_nsd(nsd_id)
+            self._wait_until_mes_delete(mes_id, constants.NS_DELETE_TIMEOUT)
+            self._test_delete_mesd(mesd_id)
         self._test_delete_mead(mead1_id)
         self._test_delete_mead(mead2_id)
 
-    def test_create_delete_nsd(self):
+    def test_create_delete_mesd(self):
         mead1_id = self._test_create_tosca_mead(
-            'test-nsd-mead1.yaml',
-            'test-nsd-mead1')
+            'test-mesd-mead1.yaml',
+            'test-mesd-mead1')
         mead2_id = self._test_create_tosca_mead(
-            'test-nsd-mead2.yaml',
-            'test-nsd-mead2')
-        nsd_id = self._test_create_nsd(
-            'test-nsd.yaml',
-            'test-nsd')
-        self._test_delete_nsd(nsd_id)
+            'test-mesd-mead2.yaml',
+            'test-mesd-mead2')
+        mesd_id = self._test_create_mesd(
+            'test-mesd.yaml',
+            'test-mesd')
+        self._test_delete_mesd(mesd_id)
         self._test_delete_mead(mead1_id)
         self._test_delete_mead(mead2_id)
 
     def test_create_delete_network_service(self):
-        self._test_create_delete_ns('test-ns-nsd.yaml',
-                                    'test-ns-onboarded',
+        self._test_create_delete_mes('test-mes-mesd.yaml',
+                                    'test-mes-onboarded',
                                     template_source='onboarded')
         time.sleep(1)
-        self._test_create_delete_ns('test-ns-nsd.yaml',
-                                    'test-ns-inline',
+        self._test_create_delete_mes('test-mes-mesd.yaml',
+                                    'test-mes-inline',
                                     template_source='inline')

@@ -1,5 +1,0 @@
----
-fixes:
-  - Fixes bug 1603851, VIM registry should not use keystone
-    information from apmec.conf. This fixed the VIM keystone
-    v3 support.

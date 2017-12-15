@@ -1,5 +1,0 @@
----
-upgrade:
-  - From Mitaka version, Apmec supports TOSCA based MEAD templates.
-    Legacy templates described under apmec/samples/legacy-templates
-    are deprecated in newton and removed in Ocata.

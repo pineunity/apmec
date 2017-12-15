@@ -31,7 +31,7 @@ from apmec.tests.unit.db import base as db_base
 from apmec.tests.unit.db import utils
 
 SECRET_PASSWORD = '***'
-DUMMY_NS_2 = 'ba6bf017-f6f7-45f1-a280-57b073bf78ef'
+DUMMY_mes_2 = 'ba6bf017-f6f7-45f1-a280-57b073bf78ef'
 
 
 def dummy_get_vim(*args, **kwargs):
@@ -60,11 +60,11 @@ class FakeDriverManager(mock.Mock):
             return mock_execution
         elif ('prepare_and_create_workflow' in args and
               'delete' == kwargs['action'] and
-              DUMMY_NS_2 == kwargs['kwargs']['ns']['id']):
+              DUMMY_mes_2 == kwargs['kwargs']['mes']['id']):
             raise meo.NoTasksException()
         elif ('prepare_and_create_workflow' in args and
               'create' == kwargs['action'] and
-              utils.DUMMY_NS_2_NAME == kwargs['kwargs']['ns']['ns']['name']):
+              utils.DUMMY_mes_2_NAME == kwargs['kwargs']['mes']['mes']['name']):
             raise meo.NoTasksException()
 
 
@@ -113,12 +113,12 @@ class FakeMECPlugin(mock.Mock):
             return {'id': self.mea1_mead_id,
                     'name': 'MEA1',
                     'attributes': {'mead': _get_template(
-                                   'test-nsd-mead1.yaml')}}
+                                   'test-mesd-mead1.yaml')}}
         elif 'MEA2' in args:
             return {'id': self.mea3_mead_id,
                     'name': 'MEA2',
                     'attributes': {'mead': _get_template(
-                                   'test-nsd-mead2.yaml')}}
+                                   'test-mesd-mead2.yaml')}}
 
     def get_meads(self, *args, **kwargs):
         if {'name': ['MEA1']} in args:

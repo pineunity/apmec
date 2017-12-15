@@ -190,12 +190,12 @@ class ClassifierNotFoundException(exceptions.NotFound):
     message = _('Classifier %(classifier_id)s could not be found')
 
 
-class NSDInUse(exceptions.InUse):
-    message = _('NSD %(nsd_id)s is still in use')
+class MESDInUse(exceptions.InUse):
+    message = _('MESD %(mesd_id)s is still in use')
 
 
-class NSInUse(exceptions.InUse):
-    message = _('NS %(ns_id)s is still in use')
+class MESInUse(exceptions.InUse):
+    message = _('MES %(mes_id)s is still in use')
 
 
 class NoTasksException(exceptions.ApmecException):
@@ -292,7 +292,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
         },
     },
-    'nsds': {
+    'mesds': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -347,7 +347,7 @@ RESOURCE_ATTRIBUTE_MAP = {
 
     },
 
-    'nss': {
+    'mess': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -392,7 +392,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
             'default': '',
         },
-        'nsd_id': {
+        'mesd_id': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:uuid': None},
@@ -431,7 +431,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'validate': {'type:dict_or_nodata': None},
             'is_visible': True,
         },
-        'nsd_template': {
+        'mesd_template': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:dict_or_nodata': None},

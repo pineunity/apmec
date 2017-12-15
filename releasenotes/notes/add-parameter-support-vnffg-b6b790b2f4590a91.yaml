@@ -1,8 +1,0 @@
----
-features:
-  - Added parameter support for deploying MEA Forwarding Graph
-    Descriptor templates. With this addition the user can deploy
-    a NFY using an Onboarded parameterized template with
-    different parameter values using parameter yaml
-    file at each time without onboarding new template.
-

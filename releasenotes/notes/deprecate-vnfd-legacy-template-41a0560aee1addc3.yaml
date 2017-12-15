@@ -1,4 +1,0 @@
----
-deprecations:
-  - Support for legacy templates for creating a MEAD is deprecated and will be
-    removed in 'Newton' cycle. Please use TOSCA based templates.

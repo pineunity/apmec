@@ -1,4 +1,0 @@
----
-features:
-  - Added support for key_name in TOSCA template for type
-    tosca.nodes.mec.VDU.Apmec.

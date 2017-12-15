@@ -1,7 +1,0 @@
----
-features:
-  - An alarm-based monitoring driver using Ceilometer is added.
-    Alarm-based monitoring driver in Apmec is designed to
-    collect alarms/events triggered by the Ceilometer.
-    For details please refer
-    https://docs.openstack.org/apmec/latest/user/alarm_monitoring_usage_guide.html

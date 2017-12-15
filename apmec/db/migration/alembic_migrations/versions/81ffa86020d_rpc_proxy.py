@@ -38,17 +38,17 @@ def upgrade(active_plugins=None, options=None):
         sa.Column('port_id', sa.String(36), nullable=False),
         sa.Column('dst_transport_url', sa.String(255)),
         sa.Column('svr_proxy_id', sa.String(36)),
-        sa.Column('svr_ns_proxy_id', sa.String(36)),
+        sa.Column('svr_mes_proxy_id', sa.String(36)),
         sa.Column('clt_proxy_id', sa.String(36)),
-        sa.Column('clt_ns_proxy_id', sa.String(36)),
+        sa.Column('clt_mes_proxy_id', sa.String(36)),
         sa.PrimaryKeyConstraint('device_id'),
     )
     op.create_table(
         'proxyserviceports',
         sa.Column('service_instance_id', sa.String(255)),
         sa.Column('svr_proxy_id', sa.String(36)),
-        sa.Column('svr_ns_proxy_id', sa.String(36)),
+        sa.Column('svr_mes_proxy_id', sa.String(36)),
         sa.Column('clt_proxy_id', sa.String(36)),
-        sa.Column('clt_ns_proxy_id', sa.String(36)),
+        sa.Column('clt_mes_proxy_id', sa.String(36)),
         sa.PrimaryKeyConstraint('service_instance_id'),
     )

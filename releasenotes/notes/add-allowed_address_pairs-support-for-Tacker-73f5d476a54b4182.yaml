@@ -1,4 +1,0 @@
----
-features:
-  - Add allowed_address_pairs support in CP's properties,
-    so Virtual IP is enabled via Apmec.

@@ -18,6 +18,6 @@ redirectmatch 301 ^/apmec/([^/]+)/devref/mistral_workflows_usage_guide.html$ ^/a
 redirectmatch 301 ^/apmec/([^/]+)/devref/alarm_monitoring_usage_guide.html$ ^/apmec/$1/user/alarm_monitoring_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/enhanced_placement_awareness_usage_guide.html$ ^/apmec/$1/user/enhanced_placement_awareness_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/multisite_vim_usage_guide.html$ ^/apmec/$1/user/multisite_vim_usage_guide.html
-redirectmatch 301 ^/apmec/([^/]+)/devref/nsd_usage_guide.html$ ^/apmec/$1/user/nsd_usage_guide.html
+redirectmatch 301 ^/apmec/([^/]+)/devref/mesd_usage_guide.html$ ^/apmec/$1/user/mesd_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/scale_usage_guide.html$ ^/apmec/$1/user/scale_usage_guide.html
 redirectmatch 301 ^/apmec/([^/]+)/devref/mea_component_usage_guide.html$ ^/apmec/$1/user/mea_component_usage_guide.html

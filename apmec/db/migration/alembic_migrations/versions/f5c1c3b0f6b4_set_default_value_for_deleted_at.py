@@ -39,8 +39,8 @@ def upgrade(active_plugins=None, options=None):
     op.execute(("UPDATE vims set deleted_at='%s'"
        " WHERE deleted_at is NULL") % datetime.min)
 
-    op.execute(("UPDATE ns set deleted_at='%s'"
+    op.execute(("UPDATE mes set deleted_at='%s'"
        " WHERE deleted_at is NULL") % datetime.min)
 
-    op.execute(("UPDATE nsd set deleted_at='%s'"
+    op.execute(("UPDATE mesd set deleted_at='%s'"
        " WHERE deleted_at is NULL") % datetime.min)

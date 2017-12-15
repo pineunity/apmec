@@ -277,24 +277,24 @@ class TestAttributes(base.BaseTestCase):
             self.assertIsNone(msg)
 
     def test_validate_nameservers(self):
-        ns_pools = [['1.1.1.2', '1.1.1.2'],
+        mes_pools = [['1.1.1.2', '1.1.1.2'],
                     ['www.hostname.com', 'www.hostname.com'],
                     ['77.hostname.com'],
                     ['1000.0.0.1'],
                     None]
 
-        for ns in ns_pools:
-            msg = attributes._validate_nameservers(ns, None)
+        for mes in mes_pools:
+            msg = attributes._validate_nameservers(mes, None)
             self.assertIsNotNone(msg)
 
-        ns_pools = [['100.0.0.2'],
+        mes_pools = [['100.0.0.2'],
                     ['www.hostname.com'],
                     ['www.great.marathons.to.travel'],
                     ['valid'],
                     ['www.internal.hostname.com']]
 
-        for ns in ns_pools:
-            msg = attributes._validate_nameservers(ns, None)
+        for mes in mes_pools:
+            msg = attributes._validate_nameservers(mes, None)
             self.assertIsNone(msg)
 
     def test_validate_hostroutes(self):

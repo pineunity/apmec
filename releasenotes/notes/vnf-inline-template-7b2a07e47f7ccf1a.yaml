@@ -1,4 +1,0 @@
----
-features:
-  - Support MEA create with direct MEAD template input via CLI/API without
-    onboarding MEAD.
