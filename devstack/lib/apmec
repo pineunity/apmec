@@ -48,7 +48,7 @@ GITBRANCH["apmec-horizon"]=${APMECHORIZON_BRANCH:-master}
 GITDIR["apmec-horizon"]=$DEST/apmec-horizon
 
 GITREPO["python-apmecclient"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/python-apmecclient.git}
-GITBRANCH["python-apmecclient"]=${APMECHORIZON_BRANCH:-master}
+GITBRANCH["python-apmecclient"]=${APMECHORIZON_BRANCH:-apmec-nfv}
 GITDIR["python-apmecclient"]=$DEST/python-apmecclient
 
 #GITREPO["mec-tosca-parser"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-tosca-parser.git}
