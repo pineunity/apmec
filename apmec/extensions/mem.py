@@ -510,7 +510,7 @@ class Mem(extensions.ExtensionDescriptor):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class MEMPluginBase(service_base.MEMPluginBase):
+class MEMPluginBase(service_base.MECPluginBase):
     def get_plugin_name(self):
         return constants.MEM
 
