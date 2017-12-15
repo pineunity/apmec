@@ -34,6 +34,7 @@ from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
 from apmec.db.meo import meo_db_plugin
+from apmec.db.meo import mes_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
@@ -55,12 +56,12 @@ def config_opts():
     return [('meo_vim', MeoPlugin.OPTS)]
 
 
-class MeoPlugin(meo_db_plugin.MeoPluginDb):
+class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
     """MEO reference plugin for MEO extension
 
     Implements the MEO extension and defines public facing APIs for VIM
     operations. MEO internally invokes the appropriate VIM driver in
-    backend based on configured VIM types. Plugin also interacts with MEC
+    backend based on configured VIM types. Plugin also interacts with MEM
     extension for providing the specified VIM information
     """
     supported_extension_aliases = ['meo']
@@ -226,7 +227,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
         :param mea_id: MEA ID
         :return: VIM or VIM properties if fields are provided
         """
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         vim_id = mem_plugin.get_mea(context, mea_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
@@ -324,7 +325,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
         mesd['meads'] = dict()
         LOG.debug('mesd_dict: %s', inner_mesd_dict)
 
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         mead_imports = inner_mesd_dict['imports']
         inner_mesd_dict['imports'] = []
         new_files = []
@@ -402,7 +403,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
 
         mesd = self.get_mesd(context, mes['mes']['mesd_id'])
         mesd_dict = yaml.safe_load(mesd['attributes']['mesd'])
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEC']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         onboarded_meads = mem_plugin.get_meads(context, [])
         region_name = mes.setdefault('placement_attr', {}).get(
             'region_name', None)

@@ -92,10 +92,10 @@ class FakeClient(mock.Mock):
         pass
 
 
-class FakeMECPlugin(mock.Mock):
+class FakeMEMPlugin(mock.Mock):
 
     def __init__(self):
-        super(FakeMECPlugin, self).__init__()
+        super(FakeMEMPlugin, self).__init__()
         self.mea1_mead_id = 'eb094833-995e-49f0-a047-dfb56aaf7c4e'
         self.mea1_mea_id = '91e32c20-6d1f-47a4-9ba7-08f5e5effe07'
         self.mea3_mead_id = 'e4015e9f-1ef2-49fb-adb6-070791ad3c45'

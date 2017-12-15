@@ -43,12 +43,12 @@ CONF = cfg.CONF
 
 
 def config_opts():
-    return [('apmec', MECMgmtMixin.OPTS),
-            ('apmec', MECPlugin.OPTS_INFRA_DRIVER),
-            ('apmec', MECPlugin.OPTS_POLICY_ACTION)]
+    return [('apmec', MEMMgmtMixin.OPTS),
+            ('apmec', MEMPlugin.OPTS_INFRA_DRIVER),
+            ('apmec', MEMPlugin.OPTS_POLICY_ACTION)]
 
 
-class MECMgmtMixin(object):
+class MEMMgmtMixin(object):
     OPTS = [
         cfg.ListOpt(
             'mgmt_driver', default=['noop', 'openwrt'],
@@ -61,7 +61,7 @@ class MECMgmtMixin(object):
     cfg.CONF.register_opts(OPTS, 'apmec')
 
     def __init__(self):
-        super(MECMgmtMixin, self).__init__()
+        super(MEMMgmtMixin, self).__init__()
         self._mgmt_manager = driver_manager.DriverManager(
             'apmec.apmec.mgmt.drivers', cfg.CONF.apmec.mgmt_driver)
 
@@ -108,8 +108,8 @@ class MECMgmtMixin(object):
             kwargs=kwargs)
 
 
-class MECPlugin(mem_db.MECPluginDb, MECMgmtMixin):
-    """MECPlugin which supports MEC framework.
+class MEMPlugin(mem_db.MEMPluginDb, MEMMgmtMixin):
+    """MEMPlugin which supports MEM framework.
 
     Plugin which supports Apmec framework
     """
@@ -131,7 +131,7 @@ class MECPlugin(mem_db.MECPluginDb, MECMgmtMixin):
     supported_extension_aliases = ['mem']
 
     def __init__(self):
-        super(MECPlugin, self).__init__()
+        super(MEMPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self.boot_wait = cfg.CONF.apmec.boot_wait
         self.vim_client = vim_client.VimClient()
@@ -180,7 +180,7 @@ class MECPlugin(mem_db.MECPluginDb, MECMgmtMixin):
         mead['mead']['template_source'] = template_source
 
         self._parse_template_input(mead)
-        return super(MECPlugin, self).create_mead(
+        return super(MEMPlugin, self).create_mead(
             context, mead)
 
     def _parse_template_input(self, mead):
