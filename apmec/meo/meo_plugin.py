@@ -325,6 +325,12 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         mesd['meads'] = dict()
         LOG.debug('mesd_dict: %s', inner_mesd_dict)
 
+        # From import we can deploy both NS and MEC Application
+        # Step 1: Call Tacker API
+
+
+
+        # Step 2: Call MEM API
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         mead_imports = inner_mesd_dict['imports']
         inner_mesd_dict['imports'] = []
