@@ -13,6 +13,7 @@ from keystoneauth1 import identity
 from keystoneauth1 import session
 from tackerclient.v1_0 import client as tacker_client
 
+
 class TackerClient(object):
     """Tacker Client class for VNFM and NFVO negotiation"""
 
@@ -20,3 +21,31 @@ class TackerClient(object):
         auth = identity.Password(**auth_attr)
         sess = session.Session(auth=auth)
         self.client = tacker_client.Client(session=sess)
+
+    def nsd_create(self, nsd_dict):
+        nsd_instance = self.client.create_nsd(body=nsd_dict)
+        if nsd_instance:
+            return nsd_instance['nsd']['id']
+        else:
+            return None
+
+    def ns_create(self, ns_dict):
+        ns_instance = self.client.create_ns(body=ns_dict)
+        if ns_instance:
+            return ns_instance['ns']['id']
+        else:
+            return None
+
+    def vnfd_create(self, vnfd_dict):
+        vnfd_instance = self.client.create_vnfd(body=vnfd_dict)
+        if vnfd_instance:
+            return vnfd_instance['vnf']['id']
+        else:
+            return None
+
+    def vnf_create(self, vnf_dict):
+        vnf_instance = self.client.create_vnf(body=vnf_dict)
+        if vnf_instance:
+            return vnf_instance['vnf']['id']
+        else:
+            return None

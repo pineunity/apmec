@@ -42,6 +42,7 @@ from apmec import manager
 from apmec.meo.workflows.vim_monitor import vim_monitor_utils
 from apmec.plugins.common import constants
 from apmec.mem import vim_client
+from apmec.nfv.tacker_client import TackerClient as tackerclient
 
 from apmec.catalogs.tosca import utils as toscautils
 from toscaparser import tosca_template
@@ -324,15 +325,11 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         inner_mesd_dict = yaml.safe_load(mesd_yaml)
         mesd['meads'] = dict()
         LOG.debug('mesd_dict: %s', inner_mesd_dict)
-
         # From import we can deploy both NS and MEC Application
-        # Step 1: Call Tacker API
-
-
-
-        # Step 2: Call MEM API
+        nsd_imports = inner_mesd_dict['imports']['nsds']
+        mesd_dict['attributes']['nsds'] = nsd_imports
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
-        mead_imports = inner_mesd_dict['imports']
+        mead_imports = inner_mesd_dict['imports']['meads']
         inner_mesd_dict['imports'] = []
         new_files = []
         for mead_name in mead_imports:
@@ -418,6 +415,13 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         driver_type = vim_res['vim_type']
         if not mes['mes']['vim_id']:
             mes['mes']['vim_id'] = vim_res['vim_id']
+
+        # get auth
+        vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
+        self._build_vim_auth(context, vim_obj)
+        vnf_arg = {'vnf': {'vnfd_id': '925de00f-f8e2-4a35-b37e-656a530104f4', 'name': 'tung'}}
+        client = tackerclient(vim_obj['auth_cred'])
+        vnf_instance = client.vnf_create(vnf_arg)
 
         # Step-1
         param_values = mes['mes']['attributes'].get('param_values', {})
