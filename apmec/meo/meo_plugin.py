@@ -416,12 +416,14 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         if not mes['mes']['vim_id']:
             mes['mes']['vim_id'] = vim_res['vim_id']
 
+        nsds = mesd['attributes']['nsds']
         # get auth
         vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
         self._build_vim_auth(context, vim_obj)
-        vnf_arg = {'vnf': {'vnfd_id': '925de00f-f8e2-4a35-b37e-656a530104f4', 'name': 'tung'}}
         client = tackerclient(vim_obj['auth_cred'])
-        vnf_instance = client.vnf_create(vnf_arg)
+        nsd_instance = client.nsd_get(nsds)
+        ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': 'ns-mes'}}
+        ns_instance = client.ns_create(ns_arg)
 
         # Step-1
         param_values = mes['mes']['attributes'].get('param_values', {})

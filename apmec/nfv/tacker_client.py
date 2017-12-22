@@ -29,6 +29,15 @@ class TackerClient(object):
         else:
             return None
 
+    def nsd_get(self, nsd_name):
+        nsd_dict = self.client.list_nsds()
+        nsd_list = nsd_dict['nsds']
+        nsd_id = None
+        for nsd in nsd_list:
+            if nsd['name'] == nsd_name:
+                nsd_id = nsd['id']
+        return nsd_id
+
     def ns_create(self, ns_dict):
         ns_instance = self.client.create_ns(body=ns_dict)
         if ns_instance:
