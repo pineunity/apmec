@@ -326,8 +326,9 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         mesd['meads'] = dict()
         LOG.debug('mesd_dict: %s', inner_mesd_dict)
         # From import we can deploy both NS and MEC Application
-        nsd_imports = inner_mesd_dict['imports']['nsds']
-        mesd_dict['attributes']['nsds'] = nsd_imports
+        nsd_imports = inner_mesd_dict['imports'].get('nsds')
+        if nsd_imports:
+            mesd_dict['attributes']['nsds'] = nsd_imports
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         mead_imports = inner_mesd_dict['imports']['meads']
         inner_mesd_dict['imports'] = []
@@ -416,14 +417,16 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         if not mes['mes']['vim_id']:
             mes['mes']['vim_id'] = vim_res['vim_id']
 
-        nsds = mesd['attributes']['nsds']
-        # get auth
-        vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
-        self._build_vim_auth(context, vim_obj)
-        client = tackerclient(vim_obj['auth_cred'])
-        nsd_instance = client.nsd_get(nsds)
-        ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': 'ns-mes'}}
-        ns_instance = client.ns_create(ns_arg)
+        nsds = mesd['attributes'].get('nsds')
+        if nsds:
+            # get auth
+            vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
+            self._build_vim_auth(context, vim_obj)
+            client = tackerclient(vim_obj['auth_cred'])
+            ns_name = 'ns-' + name
+            nsd_instance = client.nsd_get(nsds)
+            ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
+            ns_instance = client.ns_create(ns_arg)
 
         # Step-1
         param_values = mes['mes']['attributes'].get('param_values', {})
