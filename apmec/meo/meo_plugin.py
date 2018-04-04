@@ -327,11 +327,11 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         LOG.debug('mesd_dict: %s', inner_mesd_dict)
         # From import we can deploy both NS and MEC Application
         nsd_imports = inner_mesd_dict['imports'].get('nsds')
-        vnffg_imports = inner_mesd_dict['imports'].get('nsds')
+        vnffg_imports = inner_mesd_dict['imports'].get('vnffgds')
         if nsd_imports:
             mesd_dict['attributes']['nsds'] = nsd_imports
         if vnffg_imports:
-            mesd_dict['attributes']['nsds'] = vnffg_imports
+            mesd_dict['attributes']['vnffgds'] = vnffg_imports
 
         # Deploy MEC applications
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
@@ -442,6 +442,8 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
                 vnffgd_name = vnffgd + name
                 vnffgd_instance = client.vnffgd_get(vnffgd_name)
                 vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffgd_name}}
+                time.sleep(300)
+                vnffg_instance = client.vnffg_create(vnffg_arg)
 
         # Step-1
         param_values = mes['mes']['attributes'].get('param_values', {})
