@@ -327,8 +327,13 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         LOG.debug('mesd_dict: %s', inner_mesd_dict)
         # From import we can deploy both NS and MEC Application
         nsd_imports = inner_mesd_dict['imports'].get('nsds')
+        vnffg_imports = inner_mesd_dict['imports'].get('nsds')
         if nsd_imports:
             mesd_dict['attributes']['nsds'] = nsd_imports
+        if vnffg_imports:
+            mesd_dict['attributes']['nsds'] = vnffg_imports
+
+        # Deploy MEC applications
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         mead_imports = inner_mesd_dict['imports']['meads']
         inner_mesd_dict['imports'] = []
@@ -419,14 +424,24 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
 
         nsds = mesd['attributes'].get('nsds')
         if nsds:
-            # get auth
-            vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
-            self._build_vim_auth(context, vim_obj)
-            client = tackerclient(vim_obj['auth_cred'])
-            ns_name = 'ns-' + name
-            nsd_instance = client.nsd_get(nsds)
-            ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
-            ns_instance = client.ns_create(ns_arg)
+            for nsd in nsds:
+                vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
+                self._build_vim_auth(context, vim_obj)
+                client = tackerclient(vim_obj['auth_cred'])
+                ns_name = nsd + name
+                nsd_instance = client.nsd_get(nsds)
+                ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
+                ns_instance = client.ns_create(ns_arg)
+
+        vnffgds = mesd['attributes'].get('vnffgs')
+        if vnffgds:
+            for vnffgd in vnffgds:
+                vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
+                self._build_vim_auth(context, vim_obj)
+                client = tackerclient(vim_obj['auth_cred'])
+                vnffgd_name = vnffgd + name
+                vnffgd_instance = client.vnffgd_get(vnffgd_name)
+                vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffgd_name}}
 
         # Step-1
         param_values = mes['mes']['attributes'].get('param_values', {})

@@ -45,6 +45,20 @@ class TackerClient(object):
         else:
             return None
 
+    def ns_get(self, ns_name):
+        ns_dict = self.client.list_nsds()
+        ns_list = ns_dict['nss']
+        ns_id = None
+        for ns in ns_list:
+            if ns['name'] == ns_name:
+                ns_id = ns['id']
+        return ns_id
+
+    def ns_delete(self, ns_name):
+        nsd_id = self.ns_get(ns_name)
+        if nsd_id:
+            self.client.delete_ns(nsd_id)
+
     def vnfd_create(self, vnfd_dict):
         vnfd_instance = self.client.create_vnfd(body=vnfd_dict)
         if vnfd_instance:
@@ -58,3 +72,33 @@ class TackerClient(object):
             return vnf_instance['vnf']['id']
         else:
             return None
+
+    def vnffgd_get(self, vnffgd_name):
+        vnffgd_dict = self.client.list_vnffgds()
+        vnffgd_list = vnffgd_dict['vnffgds']
+        vnffgd_id = None
+        for vnffgd in vnffgd_list:
+            if vnffgd['name'] == vnffgd_name:
+                vnffgd_id = vnffgd['id']
+        return vnffgd_id
+
+    def vnffg_create(self, vnffg_dict):
+        vnffg_instance = self.client.create_vnffgd(body=vnffg_dict)
+        if vnffg_instance:
+            return vnffg_instance['vnffg']['id']
+        else:
+            return None
+
+    def vnffg_get(self, vnffg_name):
+        vnffg_dict = self.client.list_vnffgs()
+        vnffg_list = vnffg_dict['vnffgs']
+        vnffg_id = None
+        for vnffg in vnffg_list:
+            if vnffg['name'] == vnffg_name:
+                vnffg_id = vnffg['id']
+        return vnffg_id
+
+    def vnffg_delete(self, vnffg_name):
+        vnffg_id = self.vnffg_get(vnffg_name)
+        if vnffg_id:
+            self.client.delete_vnffg(vnffg_id)
