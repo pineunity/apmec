@@ -429,7 +429,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
                 self._build_vim_auth(context, vim_obj)
                 client = tackerclient(vim_obj['auth_cred'])
                 ns_name = nsd + name
-                nsd_instance = client.nsd_get(nsds)
+                nsd_instance = client.nsd_get(nsd)
                 ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
                 ns_instance = client.ns_create(ns_arg)
 
@@ -440,7 +440,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
                 self._build_vim_auth(context, vim_obj)
                 client = tackerclient(vim_obj['auth_cred'])
                 vnffgd_name = vnffgd + name
-                vnffgd_instance = client.vnffgd_get(vnffgd_name)
+                vnffgd_instance = client.vnffgd_get(vnffgd)
                 vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffgd_name}}
                 time.sleep(300)
                 vnffg_instance = client.vnffg_create(vnffg_arg)

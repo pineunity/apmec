@@ -11,12 +11,10 @@ imports:
     - vnffgd1
 
 topology_template:
-#Define mec app here.
-#filter import to move sample-tosca-nsd1
   node_templates:
-      VNF1:
-        type: tosca.nodes.nfv.VNF1
-      VNF2:
-        type: tosca.nodes.nfv.VNF2
+      MEA1:
+        type: tosca.nodes.mec.MEA1
+      MEA2:
+        type: tosca.nodes.mec.MEA2
 
 
