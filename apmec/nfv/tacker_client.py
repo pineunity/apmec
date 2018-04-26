@@ -83,7 +83,7 @@ class TackerClient(object):
         return vnffgd_id
 
     def vnffg_create(self, vnffgd_dict):
-        vnffg_instance = self.client.create_vnffgd(body=vnffgd_dict)
+        vnffg_instance = self.client.create_vnffg(body=vnffgd_dict)
         if vnffg_instance:
             return vnffg_instance['vnffg']['id']
         else:

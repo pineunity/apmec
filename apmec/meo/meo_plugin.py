@@ -433,7 +433,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
                 ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
                 ns_instance = client.ns_create(ns_arg)
 
-        vnffgds = mesd['attributes'].get('vnffgs')
+        vnffgds = mesd['attributes'].get('vnffgds')
         if vnffgds:
             for vnffgd in vnffgds:
                 vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
