@@ -21,7 +21,7 @@ topology_template:
       capabilities:
         mec_compute:
           properties:
-            disk_size: 1 GB
+            disk_size: 10 GB
             mem_size: 512 MB
             num_cpus: 2
       properties:
@@ -57,7 +57,7 @@ topology_template:
       capabilities:
         mec_compute:
           properties:
-            disk_size: 1 GB
+            disk_size: 10 GB
             mem_size: 512 MB
             num_cpus: 2
       properties:

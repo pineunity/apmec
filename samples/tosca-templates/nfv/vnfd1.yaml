@@ -15,8 +15,15 @@ topology_template:
       properties:
         image: ubuntu-xenial
         mgmt_driver: noop
+        config_drive: true
         availability_zone: nova
         key_name: mykey
+        mgmt_driver: noop
+        user_data_format: RAW
+        user_data: |
+          #!/bin/sh
+          echo 1 > /proc/sys/net/ipv4/ip_forward
+
     CP1:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
