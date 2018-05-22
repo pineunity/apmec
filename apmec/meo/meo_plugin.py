@@ -331,7 +331,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
         if nsd_imports:
             mesd_dict['attributes']['nsds'] = nsd_imports
         if vnffg_imports:
-            mesd_dict['attributes']['vnffgds'] = vnffg_imports
+            mesd_dict['attributes']['vnffgds'] = '-'.join(vnffg_imports)
 
         # Deploy MEC applications
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
@@ -434,16 +434,16 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
                 ns_instance = client.ns_create(ns_arg)
 
         vnffgds = mesd['attributes'].get('vnffgds')
-        if vnffgds:
-            for vnffgd in vnffgds:
-                vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
-                self._build_vim_auth(context, vim_obj)
-                client = tackerclient(vim_obj['auth_cred'])
-                vnffgd_name = vnffgd + name
-                vnffgd_instance = client.vnffgd_get(vnffgd)
-                vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffgd_name}}
-                time.sleep(300)
-                vnffg_instance = client.vnffg_create(vnffg_arg)
+        vnffgds_list = vnffgds.split('-')
+        for vnffgd in vnffgds_list:
+            vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
+            self._build_vim_auth(context, vim_obj)
+            client = tackerclient(vim_obj['auth_cred'])
+            vnffg_name = vnffgd + name
+            vnffgd_instance = client.vnffgd_get(vnffgds)
+            vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
+            #time.sleep(300)
+            vnffg_instance = client.vnffg_create(vnffg_arg)
 
         # Step-1
         param_values = mes['mes']['attributes'].get('param_values', {})
