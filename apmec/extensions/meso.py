@@ -43,95 +43,6 @@ class NoTasksException(exceptions.ApmecException):
 
 
 RESOURCE_ATTRIBUTE_MAP = {
-
-    'vims': {
-        'id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:uuid': None},
-            'is_visible': True,
-            'primary_key': True,
-        },
-        'tenant_id': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'required_by_policy': True,
-            'is_visible': True
-        },
-        'type': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'is_visible': True
-        },
-        'auth_url': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'is_visible': True
-        },
-        'auth_cred': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:dict_or_nodata': None},
-            'is_visible': True,
-        },
-        'vim_project': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:dict_or_nodata': None},
-            'is_visible': True,
-        },
-        'name': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:string': None},
-            'is_visible': True,
-        },
-        'description': {
-            'allow_post': True,
-            'allow_put': True,
-            'validate': {'type:string': None},
-            'is_visible': True,
-            'default': '',
-        },
-        'status': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:string': None},
-            'is_visible': True,
-        },
-        'placement_attr': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-            'default': None,
-        },
-        'shared': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': False,
-            'convert_to': attr.convert_to_boolean,
-            'required_by_policy': True
-        },
-        'is_default': {
-            'allow_post': True,
-            'allow_put': True,
-            'is_visible': True,
-            'default': False
-        },
-        'created_at': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-        'updated_at': {
-            'allow_post': False,
-            'allow_put': False,
-            'is_visible': True,
-        },
-    },
     'mesds': {
         'id': {
             'allow_post': False,
@@ -283,18 +194,18 @@ RESOURCE_ATTRIBUTE_MAP = {
 }
 
 
-class Meo(extensions.ExtensionDescriptor):
+class Meso(extensions.ExtensionDescriptor):
     @classmethod
     def get_name(cls):
-        return 'MEC Orchestrator'
+        return 'MEC Service Orchestrator'
 
     @classmethod
     def get_alias(cls):
-        return 'MEO'
+        return 'MESO'
 
     @classmethod
     def get_description(cls):
-        return "Extension for MEC Orchestrator"
+        return "Extension for MEC Service Orchestrator"
 
     @classmethod
     def get_namespace(cls):
