@@ -31,7 +31,6 @@ from apmec.db import model_base
 from apmec.db import models_v1
 from apmec.db import types
 from apmec.extensions import meso
-from apmec.extensions.meo_plugins import edge_service
 from apmec.plugins.common import constants
 
 LOG = logging.getLogger(__name__)
@@ -113,10 +112,10 @@ class MES(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     )
 
 
-class MESPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
+class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
-        super(MESPluginDb, self).__init__()
+        super(MESOPluginDb, self).__init__()
         self._cos_db_plg = common_services_db_plugin.CommonServicesPluginDb()
 
     def _get_resource(self, context, model, id):
@@ -217,7 +216,7 @@ class MESPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             mess_db = context.session.query(MES).filter_by(
                 mesd_id=mesd_id).first()
             if mess_db is not None and mess_db.deleted_at is None:
-                raise meo.MESDInUse(mesd_id=mesd_id)
+                raise meso.MESDInUse(mesd_id=mesd_id)
 
             mesd_db = self._get_resource(context, MESD,
                                         mesd_id)

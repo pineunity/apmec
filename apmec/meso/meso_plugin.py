@@ -37,7 +37,7 @@ from apmec.catalogs.tosca import utils as toscautils
 from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
-from apmec.db.meo import meo_db_plugin
+from apmec.db.meso import meso_db
 from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meo
@@ -52,10 +52,10 @@ MISTRAL_RETRY_WAIT = 6
 
 
 def config_opts():
-    return [('meo_vim', MeoPlugin.OPTS)]
+    return [('meo_vim', MesoPlugin.OPTS)]
 
 
-class MeoPlugin(meo_db_plugin.MeoPluginDb, meso_db.MESPluginDb):
+class MesoPlugin(meso_db.MESOPluginDb):
     """MEO reference plugin for MEO extension
 
     Implements the MEO extension and defines public facing APIs for VIM
@@ -94,111 +94,6 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meso_db.MESPluginDb):
 
     def spawn_n(self, function, *args, **kwargs):
         self._pool.spawn_n(function, *args, **kwargs)
-
-    @log.log
-    def create_vim(self, context, vim):
-        LOG.debug('Create vim called with parameters %s',
-                  strutils.mask_password(vim))
-        vim_obj = vim['vim']
-        vim_type = vim_obj['type']
-        vim_obj['id'] = uuidutils.generate_uuid()
-        vim_obj['status'] = 'PENDING'
-        try:
-            self._vim_drivers.invoke(vim_type,
-                                     'register_vim',
-                                     context=context,
-                                     vim_obj=vim_obj)
-            res = super(MeoPlugin, self).create_vim(context, vim_obj)
-        except Exception:
-            with excutils.save_and_reraise_exception():
-                self._vim_drivers.invoke(vim_type,
-                                         'delete_vim_auth',
-                                         context=context,
-                                         vim_id=vim_obj['id'],
-                                         auth=vim_obj['auth_cred'])
-
-        try:
-            self.monitor_vim(context, vim_obj)
-        except Exception:
-            LOG.warning("Failed to set up vim monitoring")
-        return res
-
-    def _get_vim(self, context, vim_id):
-        if not self.is_vim_still_in_use(context, vim_id):
-            return self.get_vim(context, vim_id, mask_password=False)
-
-    @log.log
-    def update_vim(self, context, vim_id, vim):
-        vim_obj = self._get_vim(context, vim_id)
-        old_vim_obj = copy.deepcopy(vim_obj)
-        utils.deep_update(vim_obj, vim['vim'])
-        vim_type = vim_obj['type']
-        update_args = vim['vim']
-        old_auth_need_delete = False
-        new_auth_created = False
-        try:
-            # re-register the VIM only if there is a change in password.
-            # auth_url of auth_cred is from vim object which
-            # is not updatable. so no need to consider it
-            if 'auth_cred' in update_args:
-                auth_cred = update_args['auth_cred']
-                if 'password' in auth_cred:
-                    vim_obj['auth_cred']['password'] = auth_cred['password']
-                    # Notice: vim_obj may be updated in vim driver's
-                    self._vim_drivers.invoke(vim_type,
-                                             'register_vim',
-                                             context=context,
-                                             vim_obj=vim_obj)
-                    new_auth_created = True
-
-                    # Check whether old vim's auth need to be deleted
-                    old_key_type = old_vim_obj['auth_cred'].get('key_type')
-                    if old_key_type == 'barbican_key':
-                        old_auth_need_delete = True
-
-            vim_obj = super(MeoPlugin, self).update_vim(
-                context, vim_id, vim_obj)
-            if old_auth_need_delete:
-                try:
-                    self._vim_drivers.invoke(vim_type,
-                                             'delete_vim_auth',
-                                             context=context,
-                                             vim_id=old_vim_obj['id'],
-                                             auth=old_vim_obj['auth_cred'])
-                except Exception as ex:
-                    LOG.warning("Fail to delete old auth for vim %s due to %s",
-                                vim_id, ex)
-            return vim_obj
-        except Exception as ex:
-            LOG.debug("Got exception when update_vim %s due to %s",
-                      vim_id, ex)
-            with excutils.save_and_reraise_exception():
-                if new_auth_created:
-                    # delete new-created vim auth, old auth is still used.
-                    self._vim_drivers.invoke(vim_type,
-                                             'delete_vim_auth',
-                                             context=context,
-                                             vim_id=vim_obj['id'],
-                                             auth=vim_obj['auth_cred'])
-
-    @log.log
-    def delete_vim(self, context, vim_id):
-        vim_obj = self._get_vim(context, vim_id)
-        self._vim_drivers.invoke(vim_obj['type'],
-                                 'deregister_vim',
-                                 context=context,
-                                 vim_obj=vim_obj)
-        try:
-            auth_dict = self.get_auth_dict(context)
-            vim_monitor_utils.delete_vim_monitor(context, auth_dict, vim_obj)
-        except Exception:
-            LOG.exception("Failed to remove vim monitor")
-        super(MeoPlugin, self).delete_vim(context, vim_id)
-
-    @log.log
-    def monitor_vim(self, context, vim_obj):
-        auth_dict = self.get_auth_dict(context)
-        vim_monitor_utils.monitor_vim(auth_dict, vim_obj)
 
     @log.log
     def validate_tosca(self, template):
@@ -249,54 +144,6 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meso_db.MESPluginDb):
             if attr in vim_auth:
                 vim_auth.pop(attr, None)
         return vim_auth
-
-    def _decode_vim_auth(self, context, vim_id, auth):
-        """Decode Vim credentials
-
-        Decrypt VIM cred, get fernet Key from local_file_system or
-        barbican.
-        """
-        cred = auth['password'].encode('utf-8')
-        if auth.get('key_type') == 'barbican_key':
-            keystone_conf = CONF.keystone_authtoken
-            secret_uuid = auth['secret_uuid']
-            keymgr_api = KEYMGR_API(keystone_conf.auth_url)
-            secret_obj = keymgr_api.get(context, secret_uuid)
-            vim_key = secret_obj.payload
-        else:
-            vim_key = self._find_vim_key(vim_id)
-
-        f = fernet.Fernet(vim_key)
-        if not f:
-            LOG.warning('Unable to decode VIM auth')
-            raise meo.VimNotFoundException(
-                'Unable to decode VIM auth key')
-        return f.decrypt(cred)
-
-    @staticmethod
-    def _find_vim_key(vim_id):
-        key_file = os.path.join(CONF.vim_keys.openstack, vim_id)
-        LOG.debug('Attempting to open key file for vim id %s', vim_id)
-        with open(key_file, 'r') as f:
-            return f.read()
-        LOG.warning('VIM id invalid or key not found for  %s', vim_id)
-
-    def _vim_resource_name_to_id(self, context, resource, name, mea_id):
-        """Converts a VIM resource name to its ID
-
-        :param resource: resource type to find (network, subnet, etc)
-        :param name: name of the resource to find its ID
-        :param mea_id: A MEA instance ID that is part of the chain to which
-               the classifier will apply to
-        :return: ID of the resource name
-        """
-        vim_obj = self._get_vim_from_mea(context, mea_id)
-        driver_type = vim_obj['type']
-        return self._vim_drivers.invoke(driver_type,
-                                        'get_vim_resource_id',
-                                        vim_obj=vim_obj,
-                                        resource_type=resource,
-                                        resource_name=name)
 
     @log.log
     def create_mesd(self, context, mesd):
