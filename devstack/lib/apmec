@@ -27,8 +27,8 @@
 
 # Apmec
 # ---------------
-CUSTOM_BASE="https://pineunity:Doantung92*@github.com/pineunity"
-EXTRA_CUSTOM_BASE="git+https://pineunity:Doantung92*@github.com/pineunity"
+CUSTOM_BASE="https://github.com/pineunity"
+EXTRA_CUSTOM_BASE="git+https://github.com/pineunity"
 #LIB_DEST=/usr/local/lib/python2.7/dist-packages
 
 # Save trace setting
