@@ -17,35 +17,33 @@
 import copy
 import os
 import time
-import yaml
-
 from cryptography import fernet
+from tempfile import mkstemp
+
 import eventlet
+import yaml
+from apmec.nfv.tacker_client import TackerClient as tackerclient
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import excutils
 from oslo_utils import strutils
 from oslo_utils import uuidutils
-from tempfile import mkstemp
+from toscaparser import tosca_template
 from toscaparser.tosca_template import ToscaTemplate
 
+from apmec import manager
 from apmec._i18n import _
+from apmec.catalogs.tosca import utils as toscautils
 from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
 from apmec.db.meo import meo_db_plugin
-from apmec.db.meo import mes_db
+from apmec.db.meso import mes_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
-from apmec import manager
-from apmec.meo.workflows.vim_monitor import vim_monitor_utils
-from apmec.plugins.common import constants
 from apmec.mem import vim_client
-from apmec.nfv.tacker_client import TackerClient as tackerclient
-
-from apmec.catalogs.tosca import utils as toscautils
-from toscaparser import tosca_template
+from apmec.meo.workflows.vim_monitor import vim_monitor_utils
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
