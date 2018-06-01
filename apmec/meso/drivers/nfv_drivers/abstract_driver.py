@@ -21,66 +21,26 @@ from apmec.api import extensions
 
 
 @six.add_metaclass(abc.ABCMeta)
-class VimAbstractDriver(extensions.PluginInterface):
+class NfvAbstractDriver(extensions.PluginInterface):
 
     @abc.abstractmethod
     def get_type(self):
-        """Get VIM Driver type
+        """Get NFV Driver type
 
-        Return one of predefined types of VIMs.
+        Return one of predefined types of NFV drivers.
         """
         pass
 
     @abc.abstractmethod
     def get_name(self):
-        """Get VIM name
+        """Get NFV driver name
 
-        Return a symbolic name for the VIM driver.
+        Return a symbolic name for the NFV driver.
         """
         pass
 
     @abc.abstractmethod
     def get_description(self):
-        pass
-
-    @abc.abstractmethod
-    def register_vim(self, context, vim_obj):
-        """Register VIM object in to MEO plugin
-
-        Validate, encode and store VIM information for deploying MEAs.
-        """
-        pass
-
-    @abc.abstractmethod
-    def deregister_vim(self, context, vim_obj):
-        """Deregister VIM object from MEO plugin
-
-        Cleanup VIM data and delete VIM information
-        """
-        pass
-
-    @abc.abstractmethod
-    def authenticate_vim(self, context, vim_obj):
-        """Authenticate VIM connection parameters
-
-        Validate authentication credentials and connectivity of VIM
-        """
-        pass
-
-    @abc.abstractmethod
-    def encode_vim_auth(self, context, vim_id, auth):
-        """Encrypt VIM credentials
-
-        Encrypt and store VIM sensitive information such as password
-        """
-        pass
-
-    @abc.abstractmethod
-    def delete_vim_auth(self, context, vim_id, auth):
-        """Delete VIM auth keys
-
-        Delete VIM sensitive information such as keys from file system or DB
-        """
         pass
 
     @abc.abstractmethod
