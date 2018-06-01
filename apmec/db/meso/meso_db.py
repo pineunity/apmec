@@ -30,7 +30,7 @@ from apmec.db import db_base
 from apmec.db import model_base
 from apmec.db import models_v1
 from apmec.db import types
-from apmec.extensions import meo
+from apmec.extensions import meso
 from apmec.extensions.meo_plugins import edge_service
 from apmec.plugins.common import constants
 
@@ -113,7 +113,7 @@ class MES(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     )
 
 
-class MESPluginDb(edge_service.MESPluginBase, db_base.CommonDbMixin):
+class MESPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
         super(MESPluginDb, self).__init__()
@@ -124,9 +124,9 @@ class MESPluginDb(edge_service.MESPluginBase, db_base.CommonDbMixin):
             return self._get_by_id(context, model, id)
         except orm_exc.NoResultFound:
             if issubclass(model, MESD):
-                raise edge_service.MESDNotFound(mesd_id=id)
+                raise meso.MESDNotFound(mesd_id=id)
             if issubclass(model, MES):
-                raise edge_service.MESNotFound(mes_id=id)
+                raise meso.MESNotFound(mes_id=id)
             else:
                 raise
 
@@ -138,7 +138,7 @@ class MESPluginDb(edge_service.MESPluginBase, db_base.CommonDbMixin):
                 filter(MES.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise edge_service.MESNotFound(mes_id=mes_id)
+            raise meso.MESNotFound(mes_id=mes_id)
         mes_db.update({'status': new_status})
         return mes_db
 

@@ -38,7 +38,7 @@ from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
 from apmec.db.meo import meo_db_plugin
-from apmec.db.meso import mes_db
+from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
@@ -55,7 +55,7 @@ def config_opts():
     return [('meo_vim', MeoPlugin.OPTS)]
 
 
-class MeoPlugin(meo_db_plugin.MeoPluginDb, mes_db.MESPluginDb):
+class MeoPlugin(meo_db_plugin.MeoPluginDb, meso_db.MESPluginDb):
     """MEO reference plugin for MEO extension
 
     Implements the MEO extension and defines public facing APIs for VIM
