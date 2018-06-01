@@ -26,10 +26,6 @@ from apmec.plugins.common import constants
 from apmec.services import service_base
 
 
-class ClassifierNotFoundException(exceptions.NotFound):
-    message = _('Classifier %(classifier_id)s could not be found')
-
-
 class MESDInUse(exceptions.InUse):
     message = _('MESD %(mesd_id)s is still in use')
 
@@ -40,6 +36,14 @@ class MESInUse(exceptions.InUse):
 
 class NoTasksException(exceptions.ApmecException):
     message = _('No tasks to run for %(action)s on %(resource)s')
+
+
+class MESDNotFound(exceptions.NotFound):
+    message = _('MESD %(mesd_id)s could not be found')
+
+
+class MESNotFound(exceptions.NotFound):
+    message = _('MES %(mes_id)s could not be found')
 
 
 RESOURCE_ATTRIBUTE_MAP = {
@@ -227,10 +231,10 @@ class Meso(extensions.ExtensionDescriptor):
 
     @classmethod
     def get_plugin_interface(cls):
-        return MEOPluginBase
+        return MESOPluginBase
 
     def update_attributes_map(self, attributes):
-        super(Meo, self).update_attributes_map(
+        super(Meso, self).update_attributes_map(
             attributes, extension_attrs_map=RESOURCE_ATTRIBUTE_MAP)
 
     def get_extended_resources(self, version):
@@ -239,39 +243,37 @@ class Meso(extensions.ExtensionDescriptor):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class MEOPluginBase(service_base.MECPluginBase):
-    def get_plugin_name(self):
-        return constants.MEO
-
-    def get_plugin_type(self):
-        return constants.MEO
-
-    def get_plugin_description(self):
-        return 'Apmec MEC Orchestrator plugin'
+class MESOPluginBase(service_base.MECPluginBase):
 
     @abc.abstractmethod
-    def create_vim(self, context, vim):
+    def create_mesd(self, context, mesd):
         pass
 
     @abc.abstractmethod
-    def update_vim(self, context, vim_id, vim):
+    def delete_mesd(self, context, mesd_id):
         pass
 
     @abc.abstractmethod
-    def delete_vim(self, context, vim_id):
+    def get_mesd(self, context, mesd_id, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vim(self, context, vim_id, fields=None, mask_password=True):
+    def get_mesds(self, context, filters=None, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_vims(self, context, filters=None, fields=None):
+    def create_mes(self, context, mes):
         pass
 
-    def get_vim_by_name(self, context, vim_name, fields=None,
-                        mask_password=True):
-        raise NotImplementedError()
+    @abc.abstractmethod
+    def get_mess(self, context, filters=None, fields=None):
+        pass
 
-    def get_default_vim(self, context):
-        raise NotImplementedError()
+    @abc.abstractmethod
+    def get_mes(self, context, mes_id, fields=None):
+        pass
+
+    @abc.abstractmethod
+    def delete_mes(self, context, mes_id):
+        pass
+
