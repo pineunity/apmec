@@ -14,15 +14,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import copy
 import os
 import time
-from cryptography import fernet
 from tempfile import mkstemp
 
 import eventlet
 import yaml
-from apmec.nfv.tacker_client import TackerClient as tackerclient
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import excutils
@@ -38,12 +35,9 @@ from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
 from apmec.db.meso import meso_db
-from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
-from apmec.extensions import meo
-from apmec.keymgr import API as KEYMGR_API
+from apmec.extensions import meso
 from apmec.mem import vim_client
-from apmec.meo.workflows.vim_monitor import vim_monitor_utils
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
@@ -52,7 +46,7 @@ MISTRAL_RETRY_WAIT = 6
 
 
 def config_opts():
-    return [('meo_vim', MesoPlugin.OPTS)]
+    return [('meso_vim', MesoPlugin.OPTS)]
 
 
 class MesoPlugin(meso_db.MESOPluginDb):
@@ -63,7 +57,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
     backend based on configured VIM types. Plugin also interacts with MEM
     extension for providing the specified VIM information
     """
-    supported_extension_aliases = ['meo']
+    supported_extension_aliases = ['meso']
 
     OPTS = [
         cfg.ListOpt(
@@ -73,14 +67,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
             'monitor_interval', default=30,
             help=_('Interval to check for VIM health')),
     ]
-    cfg.CONF.register_opts(OPTS, 'meo_vim')
+    cfg.CONF.register_opts(OPTS, 'meso_vim')
 
     def __init__(self):
-        super(MeoPlugin, self).__init__()
+        super(MesoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self._vim_drivers = driver_manager.DriverManager(
-            'apmec.meo.vim.drivers',
-            cfg.CONF.meo_vim.vim_drivers)
+            'apmec.meso.vim.drivers',
+            cfg.CONF.meso_vim.vim_drivers)
         self.vim_client = vim_client.VimClient()
 
     def get_auth_dict(self, context):
@@ -98,7 +92,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
     @log.log
     def validate_tosca(self, template):
         if "tosca_definitions_version" not in template:
-            raise meo.ToscaParserFailed(
+            raise meso.ToscaParserFailed(
                 error_msg_details='tosca_definitions_version missing in '
                                   'template'
             )
@@ -112,7 +106,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 a_file=False, yaml_dict_tpl=template)
         except Exception as e:
             LOG.exception("tosca-parser error: %s", str(e))
-            raise meo.ToscaParserFailed(error_msg_details=str(e))
+            raise meso.ToscaParserFailed(error_msg_details=str(e))
 
     def _get_vim_from_mea(self, context, mea_id):
         """Figures out VIM based on a MEA
@@ -125,7 +119,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         vim_id = mem_plugin.get_mea(context, mea_id, fields=['vim_id'])
         vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
         if vim_obj is None:
-            raise meo.VimFromMeaNotFoundException(mea_id=mea_id)
+            raise meso.VimFromMeaNotFoundException(mea_id=mea_id)
         self._build_vim_auth(context, vim_obj)
         return vim_obj
 
@@ -161,7 +155,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         mesd['mesd']['template_source'] = template_source
 
         self._parse_template_input(context, mesd)
-        return super(MeoPlugin, self).create_mesd(
+        return super(MesoPlugin, self).create_mesd(
             context, mesd)
 
     def _parse_template_input(self, context, mesd):
@@ -208,7 +202,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                           yaml_dict_tpl=inner_mesd_dict)
         except Exception as e:
             LOG.exception("tosca-parser error: %s", str(e))
-            raise meo.ToscaParserFailed(error_msg_details=str(e))
+            raise meso.ToscaParserFailed(error_msg_details=str(e))
         finally:
             for file_path in new_files:
                 os.remove(file_path)
@@ -273,7 +267,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
           for nsd in nsds_list:
             vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
             self._build_vim_auth(context, vim_obj)
-            client = tackerclient(vim_obj['auth_cred'])
+            client = self.tackerclient(vim_obj['auth_cred'])
             ns_name = nsd + name
             nsd_instance = client.nsd_get(nsd)
             ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
@@ -285,11 +279,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
           for vnffgd in vnffgds_list:
             vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
             self._build_vim_auth(context, vim_obj)
-            client = tackerclient(vim_obj['auth_cred'])
+            client = self.tackerclient(vim_obj['auth_cred'])
             vnffg_name = vnffgds + name
             vnffgd_instance = client.vnffgd_get(vnffgd)
             vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
-            #time.sleep(300)
             vnffg_instance = client.vnffg_create(vnffg_arg)
 
         # Step-1
@@ -357,7 +350,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
             raise ex
-        mes_dict = super(MeoPlugin, self).create_mes(context, mes)
+        mes_dict = super(MesoPlugin, self).create_mes(context, mes)
 
         def _create_mes_wait(self_obj, mes_id, execution_id):
             exec_state = "RUNNING"
@@ -394,7 +387,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                      'delete_workflow',
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
-            super(MeoPlugin, self).create_mes_post(context, mes_id, exec_obj,
+            super(MesoPlugin, self).create_mes_post(context, mes_id, exec_obj,
                                                    mead_dict, error_reason)
 
         self.spawn_n(_create_mes_wait, self, mes_dict['id'],
@@ -429,7 +422,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
     @log.log
     def delete_mes(self, context, mes_id):
-        mes = super(MeoPlugin, self).get_mes(context, mes_id)
+        mes = super(MesoPlugin, self).get_mes(context, mes_id)
         vim_res = self.vim_client.get_vim(context, mes['vim_id'])
         driver_type = vim_res['vim_type']
         workflow = None
@@ -442,7 +435,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 auth_dict=self.get_auth_dict(context),
                 kwargs={
                     'mes': mes})
-        except meo.NoTasksException:
+        except meso.NoTasksException:
             LOG.warning("No MEA deletion task(s).")
         if workflow:
             try:
@@ -460,7 +453,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                          auth_dict=self.get_auth_dict(context))
 
                 raise ex
-        super(MeoPlugin, self).delete_mes(context, mes_id)
+        super(MesoPlugin, self).delete_mes(context, mes_id)
 
         def _delete_mes_wait(mes_id, execution_id):
             exec_state = "RUNNING"
@@ -497,11 +490,11 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                      'delete_workflow',
                                      workflow_id=workflow['id'],
                                      auth_dict=self.get_auth_dict(context))
-            super(MeoPlugin, self).delete_mes_post(context, mes_id, exec_obj,
+            super(MesoPlugin, self).delete_mes_post(context, mes_id, exec_obj,
                                                    error_reason)
         if workflow:
             self.spawn_n(_delete_mes_wait, mes['id'], mistral_execution.id)
         else:
-            super(MeoPlugin, self).delete_mes_post(
+            super(MesoPlugin, self).delete_mes_post(
                 context, mes_id, None, None)
         return mes['id']
