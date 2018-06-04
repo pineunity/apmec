@@ -50,10 +50,10 @@ def config_opts():
 
 
 class MesoPlugin(meso_db.MESOPluginDb):
-    """MEO reference plugin for MEO extension
+    """MESO reference plugin for MESO extension
 
-    Implements the MEO extension and defines public facing APIs for VIM
-    operations. MEO internally invokes the appropriate VIM driver in
+    Implements the MESO extension and defines public facing APIs for VIM
+    operations. MESO internally invokes the appropriate VIM driver in
     backend based on configured VIM types. Plugin also interacts with MEM
     extension for providing the specified VIM information
     """
