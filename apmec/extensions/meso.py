@@ -226,7 +226,7 @@ class Meso(extensions.ExtensionDescriptor):
             special_mappings, RESOURCE_ATTRIBUTE_MAP)
         attr.PLURALS.update(plural_mappings)
         return resource_helper.build_resource_info(
-            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.MEO,
+            plural_mappings, RESOURCE_ATTRIBUTE_MAP, constants.MESO,
             translate_name=True)
 
     @classmethod

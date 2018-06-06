@@ -26,6 +26,7 @@ COMMON_PREFIXES = {
     DUMMY: "/dummy_svc",
     MEM: "",
     MEO: "",
+    MESO: "",
     COMMONSERVICES: ""
 }
 
