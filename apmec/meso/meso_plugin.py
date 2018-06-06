@@ -22,9 +22,6 @@ import eventlet
 import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
-from oslo_utils import excutils
-from oslo_utils import strutils
-from oslo_utils import uuidutils
 from toscaparser import tosca_template
 from toscaparser.tosca_template import ToscaTemplate
 

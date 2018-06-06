@@ -16,19 +16,15 @@
 
 import copy
 import os
-import time
 from cryptography import fernet
-from tempfile import mkstemp
 
 import eventlet
-import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import excutils
 from oslo_utils import strutils
 from oslo_utils import uuidutils
 from toscaparser import tosca_template
-from toscaparser.tosca_template import ToscaTemplate
 
 from apmec import manager
 from apmec._i18n import _
@@ -37,7 +33,6 @@ from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
 from apmec.db.meo import meo_db_plugin
-from apmec.extensions import common_services as cs
 from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
 from apmec.mem import vim_client
