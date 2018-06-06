@@ -244,6 +244,14 @@ class Meso(extensions.ExtensionDescriptor):
 
 @six.add_metaclass(abc.ABCMeta)
 class MESOPluginBase(service_base.MECPluginBase):
+    def get_plugin_name(self):
+        return constants.MESO
+
+    def get_plugin_type(self):
+        return constants.MESO
+
+    def get_plugin_description(self):
+        return 'Apmec MEC service Orchestrator plugin'
 
     @abc.abstractmethod
     def create_mesd(self, context, mesd):
