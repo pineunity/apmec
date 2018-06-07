@@ -43,7 +43,7 @@ MISTRAL_RETRY_WAIT = 6
 
 
 def config_opts():
-    return [('meso_vim', MesoPlugin.OPTS)]
+    return [('meso', MesoPlugin.OPTS)]
 
 
 class MesoPlugin(meso_db.MESOPluginDb):
@@ -58,21 +58,17 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
     OPTS = [
         cfg.ListOpt(
-            'vim_drivers', default=['openstack'],
-            help=_('VIM driver for launching MEAs')),
-        cfg.IntOpt(
-            'monitor_interval', default=30,
-            help=_('Interval to check for VIM health')),
+            'nfv_drivers', default=['tacker'],
+            help=_('NFV drivers for launching NSs')),
     ]
-    cfg.CONF.register_opts(OPTS, 'meso_vim')
+    cfg.CONF.register_opts(OPTS, 'meso')
 
     def __init__(self):
         super(MesoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
-        self._vim_drivers = driver_manager.DriverManager(
-            'apmec.meso.vim.drivers',
-            cfg.CONF.meso_vim.vim_drivers)
-        self.vim_client = vim_client.VimClient()
+        self._mano_drivers = driver_manager.DriverManager(
+            'apmec.meso.drivers.nfv_drivers',
+            cfg.CONF.meso.nfv_drivers)
 
     def get_auth_dict(self, context):
         auth = CONF.keystone_authtoken
