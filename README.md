@@ -30,6 +30,8 @@ MEO: Mobile Edge Orchestrator
 
 MEA: Mobile Edge Application
 
+MCA: Multi-component Application
+
 MEAD: MEA Descriptor
 
 Author: Tung Doan
