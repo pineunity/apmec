@@ -86,12 +86,12 @@ class ToscaParserFailed(exceptions.InvalidInput):
     message = _("tosca-parser failed: - %(error_msg_details)s")
 
 
-class MESDInUse(exceptions.InUse):
-    message = _('MESD %(mesd_id)s is still in use')
+class MCADInUse(exceptions.InUse):
+    message = _('MCAD %(mcad_id)s is still in use')
 
 
-class MESInUse(exceptions.InUse):
-    message = _('MES %(mes_id)s is still in use')
+class MCAInUse(exceptions.InUse):
+    message = _('MCA %(mca_id)s is still in use')
 
 
 class NoTasksException(exceptions.ApmecException):
@@ -272,3 +272,47 @@ class MEOPluginBase(service_base.MECPluginBase):
 
     def get_default_vim(self, context):
         raise NotImplementedError()
+
+
+@six.add_metaclass(abc.ABCMeta)
+class MCAPluginBase(service_base.MECPluginBase):
+
+    @abc.abstractmethod
+    def create_mcad(self, context, mcad):
+        pass
+
+    @abc.abstractmethod
+    def delete_mcad(self, context, mcad_id):
+        pass
+
+    @abc.abstractmethod
+    def get_mcad(self, context, mcad_id, fields=None):
+        pass
+
+    @abc.abstractmethod
+    def get_mcads(self, context, filters=None, fields=None):
+        pass
+
+    @abc.abstractmethod
+    def create_mca(self, context, mca):
+        pass
+
+    @abc.abstractmethod
+    def get_mcas(self, context, filters=None, fields=None):
+        pass
+
+    @abc.abstractmethod
+    def get_mca(self, context, mca_id, fields=None):
+        pass
+
+    @abc.abstractmethod
+    def delete_mca(self, context, mca_id):
+        pass
+
+
+class MCADNotFound(exceptions.NotFound):
+    message = _('MCAD %(mcad_id)s could not be found')
+
+
+class MCANotFound(exceptions.NotFound):
+    message = _('MCA %(mca_id)s could not be found')
