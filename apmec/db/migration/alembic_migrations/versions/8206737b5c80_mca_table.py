@@ -31,6 +31,7 @@ import sqlalchemy as sa
 
 from apmec.db import types
 
+
 def upgrade(active_plugins=None, options=None):
     op.create_table('mcad',
                     sa.Column('tenant_id', sa.String(length=64), nullable=False),
@@ -50,7 +51,7 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('created_at', sa.DateTime(), nullable=True),
                     sa.Column('updated_at', sa.DateTime(), nullable=True),
                     sa.Column('deleted_at', sa.DateTime(), nullable=True),
-                    sa.Column('mesd_id', types.Uuid(length=36), nullable=True),
+                    sa.Column('mcad_id', types.Uuid(length=36), nullable=True),
                     sa.Column('vim_id', sa.String(length=64), nullable=False),
                     sa.Column('name', sa.String(length=255), nullable=False),
                     sa.Column('description', sa.Text(), nullable=True),
@@ -58,16 +59,16 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('mgmt_urls', sa.TEXT(length=65535), nullable=True),
                     sa.Column('status', sa.String(length=64), nullable=False),
                     sa.Column('error_reason', sa.Text(), nullable=True),
-                    sa.ForeignKeyConstraint(['mesd_id'], ['mesd.id'], ),
+                    sa.ForeignKeyConstraint(['mcad_id'], ['mcad.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
     op.create_table('mcad_attribute',
                     sa.Column('id', types.Uuid(length=36), nullable=False),
-                    sa.Column('mesd_id', types.Uuid(length=36), nullable=False),
+                    sa.Column('mcad_id', types.Uuid(length=36), nullable=False),
                     sa.Column('key', sa.String(length=255), nullable=False),
                     sa.Column('value', sa.TEXT(length=65535), nullable=True),
-                    sa.ForeignKeyConstraint(['mesd_id'], ['mesd.id'], ),
+                    sa.ForeignKeyConstraint(['mcad_id'], ['mcad.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
