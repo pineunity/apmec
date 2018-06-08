@@ -40,9 +40,7 @@ from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
 from apmec import manager
 from apmec.meo.workflows.vim_monitor import vim_monitor_utils
-from apmec.plugins.common import constants
 from apmec.mem import vim_client
-from apmec.nfv.tacker_client import TackerClient as tackerclient
 
 from apmec.catalogs.tosca import utils as toscautils
 from toscaparser import tosca_template
