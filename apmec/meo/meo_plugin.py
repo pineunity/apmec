@@ -16,27 +16,36 @@
 
 import copy
 import os
-from cryptography import fernet
+import time
+import yaml
 
+from cryptography import fernet
 import eventlet
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import excutils
 from oslo_utils import strutils
 from oslo_utils import uuidutils
-from toscaparser import tosca_template
+from tempfile import mkstemp
+from toscaparser.tosca_template import ToscaTemplate
 
-from apmec import manager
 from apmec._i18n import _
-from apmec.catalogs.tosca import utils as toscautils
 from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
 from apmec.db.meo import meo_db_plugin
+from apmec.db.meo import mca_db
+from apmec.extensions import common_services as cs
 from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
-from apmec.mem import vim_client
+from apmec import manager
 from apmec.meo.workflows.vim_monitor import vim_monitor_utils
+from apmec.plugins.common import constants
+from apmec.mem import vim_client
+from apmec.nfv.tacker_client import TackerClient as tackerclient
+
+from apmec.catalogs.tosca import utils as toscautils
+from toscaparser import tosca_template
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
@@ -48,7 +57,7 @@ def config_opts():
     return [('meo_vim', MeoPlugin.OPTS)]
 
 
-class MeoPlugin(meo_db_plugin.MeoPluginDb):
+class MeoPlugin(meo_db_plugin.MeoPluginDb, mca_db.MCAPluginDb):
     """MEO reference plugin for MEO extension
 
     Implements the MEO extension and defines public facing APIs for VIM
@@ -290,3 +299,333 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb):
                                         vim_obj=vim_obj,
                                         resource_type=resource,
                                         resource_name=name)
+
+    @log.log
+    def create_mcad(self, context, mcad):
+        mcad_data = mcad['mcad']
+        template = mcad_data['attributes'].get('mcad')
+        if isinstance(template, dict):
+            mcad_data['attributes']['mcad'] = yaml.safe_dump(
+                template)
+        LOG.debug('mcad %s', mcad_data)
+
+        if 'template_source' in mcad_data:
+            template_source = mcad_data.get('template_source')
+        else:
+            template_source = "onboarded"
+        mcad['mcad']['template_source'] = template_source
+
+        self._parse_template_input(context, mcad)
+        return super(MeoPlugin, self).create_mcad(
+            context, mcad)
+
+    def _parse_template_input(self, context, mcad):
+        mcad_dict = mcad['mcad']
+        mcad_yaml = mcad_dict['attributes'].get('mcad')
+        inner_mcad_dict = yaml.safe_load(mcad_yaml)
+        mcad['meads'] = dict()
+        LOG.debug('mcad_dict: %s', inner_mcad_dict)
+        # From import we can deploy both NS and MEC Application
+
+        # Deploy MEC applications
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
+        mead_imports = inner_mcad_dict['imports']['meads']
+        inner_mcad_dict['imports'] = []
+        new_files = []
+        for mead_name in mead_imports:
+            mead = mem_plugin.get_mead(context, mead_name)
+            # Copy MEA types and MEA names
+            sm_dict = yaml.safe_load(mead['attributes']['mead'])[
+                'topology_template'][
+                'substitution_mappings']
+            mcad['meads'][sm_dict['node_type']] = mead['name']
+            # Ugly Hack to validate the child templates
+            # TODO(tbh): add support in tosca-parser to pass child
+            # templates as dict
+            fd, temp_path = mkstemp()
+            with open(temp_path, 'w') as fp:
+                fp.write(mead['attributes']['mead'])
+            os.close(fd)
+            new_files.append(temp_path)
+            inner_mcad_dict['imports'].append(temp_path)
+        # Prepend the apmec_defs.yaml import file with the full
+        # path to the file
+        toscautils.updateimports(inner_mcad_dict)
+
+        try:
+            ToscaTemplate(a_file=False,
+                          yaml_dict_tpl=inner_mcad_dict)
+        except Exception as e:
+            LOG.exception("tosca-parser error: %s", str(e))
+            raise meo.ToscaParserFailed(error_msg_details=str(e))
+        finally:
+            for file_path in new_files:
+                os.remove(file_path)
+            inner_mcad_dict['imports'] = mead_imports
+
+        if ('description' not in mcad_dict or
+                mcad_dict['description'] == ''):
+            mcad_dict['description'] = inner_mcad_dict.get(
+                'description', '')
+        if (('name' not in mcad_dict or
+                not len(mcad_dict['name'])) and
+                'metadata' in inner_mcad_dict):
+            mcad_dict['name'] = inner_mcad_dict['metadata'].get(
+                'template_name', '')
+
+        LOG.debug('mcad %s', mcad)
+
+    def _get_mead_id(self, mead_name, onboarded_meads):
+        for mead in onboarded_meads:
+            if mead_name == mead['name']:
+                return mead['id']
+
+    @log.log
+    def create_mca(self, context, mca):
+        """Create MCA and corresponding MEAs.
+
+        :param mca: mca dict which contains mcad_id and attributes
+        This method has 3 steps:
+        step-1: substitute all get_input params to its corresponding values
+        step-2: Build params dict for substitution mappings case through which
+        MEAs will actually substitute their requirements.
+        step-3: Create mistral workflow and execute the workflow
+        """
+        mca_info = mca['mca']
+        name = mca_info['name']
+
+        if mca_info.get('mcad_template'):
+            mcad_name = utils.generate_resource_name(name, 'inline')
+            mcad = {'mcad': {
+                'attributes': {'mcad': mca_info['mcad_template']},
+                'description': mca_info['description'],
+                'name': mcad_name,
+                'template_source': 'inline',
+                'tenant_id': mca_info['tenant_id']}}
+            mca_info['mcad_id'] = self.create_mcad(context, mcad).get('id')
+
+        mcad = self.get_mcad(context, mca['mca']['mcad_id'])
+        mcad_dict = yaml.safe_load(mcad['attributes']['mcad'])
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
+        onboarded_meads = mem_plugin.get_meads(context, [])
+        region_name = mca.setdefault('placement_attr', {}).get(
+            'region_name', None)
+        vim_res = self.vim_client.get_vim(context, mca['mca']['vim_id'],
+                                          region_name)
+        driver_type = vim_res['vim_type']
+        if not mca['mca']['vim_id']:
+            mca['mca']['vim_id'] = vim_res['vim_id']
+
+        # Step-1
+        param_values = mca['mca']['attributes'].get('param_values', {})
+        if 'get_input' in str(mcad_dict):
+            self._process_parameterized_input(mca['mca']['attributes'],
+                                              mcad_dict)
+        # Step-2
+        meads = mcad['meads']
+        # mead_dict is used while generating workflow
+        mead_dict = dict()
+        for node_name, node_val in \
+                (mcad_dict['topology_template']['node_templates']).items():
+            if node_val.get('type') not in meads.keys():
+                continue
+            mead_name = meads[node_val.get('type')]
+            if not mead_dict.get(mead_name):
+                mead_dict[mead_name] = {
+                    'id': self._get_mead_id(mead_name, onboarded_meads),
+                    'instances': [node_name]
+                }
+            else:
+                mead_dict[mead_name]['instances'].append(node_name)
+            if not node_val.get('requirements'):
+                continue
+            if not param_values.get(mead_name):
+                param_values[mead_name] = {}
+            param_values[mead_name]['substitution_mappings'] = dict()
+            req_dict = dict()
+            requirements = node_val.get('requirements')
+            for requirement in requirements:
+                req_name = list(requirement.keys())[0]
+                req_val = list(requirement.values())[0]
+                res_name = req_val + mca['mca']['mcad_id'][:11]
+                req_dict[req_name] = res_name
+                if req_val in mcad_dict['topology_template']['node_templates']:
+                    param_values[mead_name]['substitution_mappings'][
+                        res_name] = mcad_dict['topology_template'][
+                            'node_templates'][req_val]
+
+            param_values[mead_name]['substitution_mappings'][
+                'requirements'] = req_dict
+        mca['mead_details'] = mead_dict
+        # Step-3
+        kwargs = {'mca': mca, 'params': param_values}
+
+        # NOTE NoTasksException is raised if no tasks.
+        workflow = self._vim_drivers.invoke(
+            driver_type,
+            'prepare_and_create_workflow',
+            resource='mea',
+            action='create',
+            auth_dict=self.get_auth_dict(context),
+            kwargs=kwargs)
+        try:
+            mistral_execution = self._vim_drivers.invoke(
+                driver_type,
+                'execute_workflow',
+                workflow=workflow,
+                auth_dict=self.get_auth_dict(context))
+        except Exception as ex:
+            LOG.error('Error while executing workflow: %s', ex)
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_workflow',
+                                     workflow_id=workflow['id'],
+                                     auth_dict=self.get_auth_dict(context))
+            raise ex
+        mca_dict = super(MeoPlugin, self).create_mca(context, mca)
+
+        def _create_mca_wait(self_obj, mca_id, execution_id):
+            exec_state = "RUNNING"
+            mistral_retries = MISTRAL_RETRIES
+            while exec_state == "RUNNING" and mistral_retries > 0:
+                time.sleep(MISTRAL_RETRY_WAIT)
+                exec_state = self._vim_drivers.invoke(
+                    driver_type,
+                    'get_execution',
+                    execution_id=execution_id,
+                    auth_dict=self.get_auth_dict(context)).state
+                LOG.debug('status: %s', exec_state)
+                if exec_state == 'SUCCESS' or exec_state == 'ERROR':
+                    break
+                mistral_retries = mistral_retries - 1
+            error_reason = None
+            if mistral_retries == 0 and exec_state == 'RUNNING':
+                error_reason = _(
+                    "MCA creation is not completed within"
+                    " {wait} seconds as creation of mistral"
+                    " execution {mistral} is not completed").format(
+                    wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
+                    mistral=execution_id)
+            exec_obj = self._vim_drivers.invoke(
+                driver_type,
+                'get_execution',
+                execution_id=execution_id,
+                auth_dict=self.get_auth_dict(context))
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_execution',
+                                     execution_id=execution_id,
+                                     auth_dict=self.get_auth_dict(context))
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_workflow',
+                                     workflow_id=workflow['id'],
+                                     auth_dict=self.get_auth_dict(context))
+            super(MeoPlugin, self).create_mca_post(context, mca_id, exec_obj,
+                                                   mead_dict, error_reason)
+
+        self.spawn_n(_create_mca_wait, self, mca_dict['id'],
+                     mistral_execution.id)
+        return mca_dict
+
+    @log.log
+    def _update_params(self, original, paramvalues):
+        for key, value in (original).items():
+            if not isinstance(value, dict) or 'get_input' not in str(value):
+                pass
+            elif isinstance(value, dict):
+                if 'get_input' in value:
+                    if value['get_input'] in paramvalues:
+                        original[key] = paramvalues[value['get_input']]
+                    else:
+                        LOG.debug('Key missing Value: %s', key)
+                        raise cs.InputValuesMissing(key=key)
+                else:
+                    self._update_params(value, paramvalues)
+
+    @log.log
+    def _process_parameterized_input(self, attrs, mcad_dict):
+        param_vattrs_dict = attrs.pop('param_values', None)
+        if param_vattrs_dict:
+            for node in \
+                    mcad_dict['topology_template']['node_templates'].values():
+                if 'get_input' in str(node):
+                    self._update_params(node, param_vattrs_dict['mcad'])
+        else:
+            raise cs.ParamYAMLInputMissing()
+
+    @log.log
+    def delete_mca(self, context, mca_id):
+        mca = super(MeoPlugin, self).get_mca(context, mca_id)
+        vim_res = self.vim_client.get_vim(context, mca['vim_id'])
+        driver_type = vim_res['vim_type']
+        workflow = None
+        try:
+            workflow = self._vim_drivers.invoke(
+                driver_type,
+                'prepare_and_create_workflow',
+                resource='mea',
+                action='delete',
+                auth_dict=self.get_auth_dict(context),
+                kwargs={
+                    'mca': mca})
+        except meo.NoTasksException:
+            LOG.warning("No MEA deletion task(s).")
+        if workflow:
+            try:
+                mistral_execution = self._vim_drivers.invoke(
+                    driver_type,
+                    'execute_workflow',
+                    workflow=workflow,
+                    auth_dict=self.get_auth_dict(context))
+
+            except Exception as ex:
+                LOG.error('Error while executing workflow: %s', ex)
+                self._vim_drivers.invoke(driver_type,
+                                         'delete_workflow',
+                                         workflow_id=workflow['id'],
+                                         auth_dict=self.get_auth_dict(context))
+
+                raise ex
+        super(MeoPlugin, self).delete_mca(context, mca_id)
+
+        def _delete_mca_wait(mca_id, execution_id):
+            exec_state = "RUNNING"
+            mistral_retries = MISTRAL_RETRIES
+            while exec_state == "RUNNING" and mistral_retries > 0:
+                time.sleep(MISTRAL_RETRY_WAIT)
+                exec_state = self._vim_drivers.invoke(
+                    driver_type,
+                    'get_execution',
+                    execution_id=execution_id,
+                    auth_dict=self.get_auth_dict(context)).state
+                LOG.debug('status: %s', exec_state)
+                if exec_state == 'SUCCESS' or exec_state == 'ERROR':
+                    break
+                mistral_retries -= 1
+            error_reason = None
+            if mistral_retries == 0 and exec_state == 'RUNNING':
+                error_reason = _(
+                    "MCA deletion is not completed within"
+                    " {wait} seconds as deletion of mistral"
+                    " execution {mistral} is not completed").format(
+                    wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
+                    mistral=execution_id)
+            exec_obj = self._vim_drivers.invoke(
+                driver_type,
+                'get_execution',
+                execution_id=execution_id,
+                auth_dict=self.get_auth_dict(context))
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_execution',
+                                     execution_id=execution_id,
+                                     auth_dict=self.get_auth_dict(context))
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_workflow',
+                                     workflow_id=workflow['id'],
+                                     auth_dict=self.get_auth_dict(context))
+            super(MeoPlugin, self).delete_mca_post(context, mca_id, exec_obj,
+                                                   error_reason)
+        if workflow:
+            self.spawn_n(_delete_mca_wait, mca['id'], mistral_execution.id)
+        else:
+            super(MeoPlugin, self).delete_mca_post(
+                context, mca_id, None, None)
+        return mca['id']
