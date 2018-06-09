@@ -44,11 +44,11 @@ fi
 
 # Set up default directories
 GITREPO["apmec-horizon"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/apmec-horizon.git}
-GITBRANCH["apmec-horizon"]=${APMECHORIZON_BRANCH:-master}
+GITBRANCH["apmec-horizon"]=${APMECHORIZON_BRANCH:-apmec-refactor}
 GITDIR["apmec-horizon"]=$DEST/apmec-horizon
 
 GITREPO["python-apmecclient"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/python-apmecclient.git}
-GITBRANCH["python-apmecclient"]=${APMECHORIZON_BRANCH:-apmec-nfv}
+GITBRANCH["python-apmecclient"]=${APMECHORIZON_BRANCH:-apmec-refactor}
 GITDIR["python-apmecclient"]=$DEST/python-apmecclient
 
 #GITREPO["mec-tosca-parser"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/mec-tosca-parser.git}
