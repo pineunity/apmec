@@ -42,6 +42,7 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('name', sa.String(length=255), nullable=False),
                     sa.Column('description', sa.Text(), nullable=True),
                     sa.Column('meads', types.Json, nullable=True),
+                    sa.Column('template_source', sa.String(length=255), server_default='onboarded'),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
