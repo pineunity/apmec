@@ -44,52 +44,52 @@ CREATE_STATES = (constants.PENDING_CREATE, constants.DEAD)
 ###########################################################################
 # db tables
 
-class MCAD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
+class MECAD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
         models_v1.Audit):
-    """Represents MCAD to create MCA."""
+    """Represents MECAD to create MECA."""
 
-    __tablename__ = 'mcad'
+    __tablename__ = 'mecad'
     # Descriptive name
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text)
     meads = sa.Column(types.Json, nullable=True)
 
-    # Mcad template source - onboarded
+    # Mecad template source - onboarded
     template_source = sa.Column(sa.String(255), server_default='onboarded')
 
     # (key, value) pair to spin up
-    attributes = orm.relationship('MCADAttribute',
-                                  backref='mcad')
+    attributes = orm.relationship('MECADAttribute',
+                                  backref='mecad')
 
     __table_args__ = (
         schema.UniqueConstraint(
             "tenant_id",
             "name",
-            name="uniq_mcad0tenant_id0name"),
+            name="uniq_mecad0tenant_id0name"),
     )
 
 
-class MCADAttribute(model_base.BASE, models_v1.HasId):
-    """Represents attributes necessary for creation of mca in (key, value) pair
+class MECADAttribute(model_base.BASE, models_v1.HasId):
+    """Represents attributes necessary for creation of meca in (key, value) pair
 
     """
 
-    __tablename__ = 'mcad_attribute'
-    mcad_id = sa.Column(types.Uuid, sa.ForeignKey('mcad.id'),
+    __tablename__ = 'mecad_attribute'
+    mecad_id = sa.Column(types.Uuid, sa.ForeignKey('mecad.id'),
             nullable=False)
     key = sa.Column(sa.String(255), nullable=False)
     value = sa.Column(sa.TEXT(65535), nullable=True)
 
 
-class MCA(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
+class MECA(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
         models_v1.Audit):
     """Represents network services that deploys services.
 
     """
 
-    __tablename__ = 'mca'
-    mcad_id = sa.Column(types.Uuid, sa.ForeignKey('mcad.id'))
-    mcad = orm.relationship('MCAD')
+    __tablename__ = 'meca'
+    mecad_id = sa.Column(types.Uuid, sa.ForeignKey('mecad.id'))
+    mecad = orm.relationship('MECAD')
 
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text, nullable=True)
@@ -108,185 +108,185 @@ class MCA(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
         schema.UniqueConstraint(
             "tenant_id",
             "name",
-            name="uniq_mca0tenant_id0name"),
+            name="uniq_meca0tenant_id0name"),
     )
 
 
-class MCAPluginDb(meo.MCAPluginBase, db_base.CommonDbMixin):
+class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
 
     def __init__(self):
-        super(MCAPluginDb, self).__init__()
+        super(MECAPluginDb, self).__init__()
         self._cos_db_plg = common_services_db_plugin.CommonServicesPluginDb()
 
     def _get_resource(self, context, model, id):
         try:
             return self._get_by_id(context, model, id)
         except orm_exc.NoResultFound:
-            if issubclass(model, MCAD):
-                raise meo.MCADNotFound(mcad_id=id)
-            if issubclass(model, MCA):
-                raise meo.MCANotFound(mca_id=id)
+            if issubclass(model, MECAD):
+                raise meo.MECADNotFound(mecad_id=id)
+            if issubclass(model, MECA):
+                raise meo.MECANotFound(meca_id=id)
             else:
                 raise
 
-    def _get_mca_db(self, context, mca_id, current_statuses, new_status):
+    def _get_meca_db(self, context, meca_id, current_statuses, new_status):
         try:
-            mca_db = (
-                self._model_query(context, MCA).
-                filter(MCA.id == mca_id).
-                filter(MCA.status.in_(current_statuses)).
+            meca_db = (
+                self._model_query(context, MECA).
+                filter(MECA.id == meca_id).
+                filter(MECA.status.in_(current_statuses)).
                 with_lockmode('update').one())
         except orm_exc.NoResultFound:
-            raise meo.MCANotFound(mca_id=mca_id)
-        mca_db.update({'status': new_status})
-        return mca_db
+            raise meo.MECANotFound(meca_id=meca_id)
+        meca_db.update({'status': new_status})
+        return meca_db
 
     def _make_attributes_dict(self, attributes_db):
         return dict((attr.key, attr.value) for attr in attributes_db)
 
-    def _make_mcad_dict(self, mcad, fields=None):
+    def _make_mecad_dict(self, mecad, fields=None):
         res = {
-            'attributes': self._make_attributes_dict(mcad['attributes']),
+            'attributes': self._make_attributes_dict(mecad['attributes']),
         }
         key_list = ('id', 'tenant_id', 'name', 'description',
                     'created_at', 'updated_at', 'meads', 'template_source')
-        res.update((key, mcad[key]) for key in key_list)
+        res.update((key, mecad[key]) for key in key_list)
         return self._fields(res, fields)
 
     def _make_dev_attrs_dict(self, dev_attrs_db):
         return dict((arg.key, arg.value) for arg in dev_attrs_db)
 
-    def _make_mca_dict(self, mca_db, fields=None):
-        LOG.debug('mca_db %s', mca_db)
+    def _make_meca_dict(self, meca_db, fields=None):
+        LOG.debug('meca_db %s', meca_db)
         res = {}
-        key_list = ('id', 'tenant_id', 'mcad_id', 'name', 'description',
+        key_list = ('id', 'tenant_id', 'mecad_id', 'name', 'description',
                     'mea_ids', 'status', 'mgmt_urls', 'error_reason',
                     'vim_id', 'created_at', 'updated_at')
-        res.update((key, mca_db[key]) for key in key_list)
+        res.update((key, meca_db[key]) for key in key_list)
         return self._fields(res, fields)
 
-    def create_mcad(self, context, mcad):
-        meads = mcad['meads']
-        mcad = mcad['mcad']
-        LOG.debug('mcad %s', mcad)
-        tenant_id = self._get_tenant_id_for_create(context, mcad)
-        template_source = mcad.get('template_source')
+    def create_mecad(self, context, mecad):
+        meads = mecad['meads']
+        mecad = mecad['mecad']
+        LOG.debug('mecad %s', mecad)
+        tenant_id = self._get_tenant_id_for_create(context, mecad)
+        template_source = mecad.get('template_source')
 
         try:
             with context.session.begin(subtransactions=True):
-                mcad_id = uuidutils.generate_uuid()
-                mcad_db = MCAD(
-                    id=mcad_id,
+                mecad_id = uuidutils.generate_uuid()
+                mecad_db = MECAD(
+                    id=mecad_id,
                     tenant_id=tenant_id,
-                    name=mcad.get('name'),
+                    name=mecad.get('name'),
                     meads=meads,
-                    description=mcad.get('description'),
+                    description=mecad.get('description'),
                     deleted_at=datetime.min,
                     template_source=template_source)
-                context.session.add(mcad_db)
-                for (key, value) in mcad.get('attributes', {}).items():
-                    attribute_db = MCADAttribute(
+                context.session.add(mecad_db)
+                for (key, value) in mecad.get('attributes', {}).items():
+                    attribute_db = MECADAttribute(
                         id=uuidutils.generate_uuid(),
-                        mcad_id=mcad_id,
+                        mecad_id=mecad_id,
                         key=key,
                         value=value)
                     context.session.add(attribute_db)
         except DBDuplicateEntry as e:
             raise exceptions.DuplicateEntity(
-                _type="mcad",
+                _type="mecad",
                 entry=e.columns)
-        LOG.debug('mcad_db %(mcad_db)s %(attributes)s ',
-                  {'mcad_db': mcad_db,
-                   'attributes': mcad_db.attributes})
-        mcad_dict = self._make_mcad_dict(mcad_db)
-        LOG.debug('mcad_dict %s', mcad_dict)
+        LOG.debug('mecad_db %(mecad_db)s %(attributes)s ',
+                  {'mecad_db': mecad_db,
+                   'attributes': mecad_db.attributes})
+        mecad_dict = self._make_mecad_dict(mecad_db)
+        LOG.debug('mecad_dict %s', mecad_dict)
         self._cos_db_plg.create_event(
-            context, res_id=mcad_dict['id'],
-            res_type=constants.RES_TYPE_MCAD,
+            context, res_id=mecad_dict['id'],
+            res_type=constants.RES_TYPE_MECAD,
             res_state=constants.RES_EVT_ONBOARDED,
             evt_type=constants.RES_EVT_CREATE,
-            tstamp=mcad_dict[constants.RES_EVT_CREATED_FLD])
-        return mcad_dict
+            tstamp=mecad_dict[constants.RES_EVT_CREATED_FLD])
+        return mecad_dict
 
-    def delete_mcad(self,
+    def delete_mecad(self,
             context,
-            mcad_id,
+            mecad_id,
             soft_delete=True):
         with context.session.begin(subtransactions=True):
-            mcas_db = context.session.query(MCA).filter_by(
-                mcad_id=mcad_id).first()
-            if mcas_db is not None and mcas_db.deleted_at is None:
-                raise meo.MCADInUse(mcad_id=mcad_id)
+            mecas_db = context.session.query(MECA).filter_by(
+                mecad_id=mecad_id).first()
+            if mecas_db is not None and mecas_db.deleted_at is None:
+                raise meo.MECADInUse(mecad_id=mecad_id)
 
-            mcad_db = self._get_resource(context, MCAD,
-                                        mcad_id)
+            mecad_db = self._get_resource(context, MECAD,
+                                        mecad_id)
             if soft_delete:
-                mcad_db.update({'deleted_at': timeutils.utcnow()})
+                mecad_db.update({'deleted_at': timeutils.utcnow()})
                 self._cos_db_plg.create_event(
-                    context, res_id=mcad_db['id'],
-                    res_type=constants.RES_TYPE_MCAD,
+                    context, res_id=mecad_db['id'],
+                    res_type=constants.RES_TYPE_MECAD,
                     res_state=constants.RES_EVT_NA_STATE,
                     evt_type=constants.RES_EVT_DELETE,
-                    tstamp=mcad_db[constants.RES_EVT_DELETED_FLD])
+                    tstamp=mecad_db[constants.RES_EVT_DELETED_FLD])
             else:
-                context.session.query(MCADAttribute).filter_by(
-                    mcad_id=mcad_id).delete()
-                context.session.delete(mcad_db)
+                context.session.query(MECADAttribute).filter_by(
+                    mecad_id=mecad_id).delete()
+                context.session.delete(mecad_db)
 
-    def get_mcad(self, context, mcad_id, fields=None):
-        mcad_db = self._get_resource(context, MCAD, mcad_id)
-        return self._make_mcad_dict(mcad_db)
+    def get_mecad(self, context, mecad_id, fields=None):
+        mecad_db = self._get_resource(context, MECAD, mecad_id)
+        return self._make_mecad_dict(mecad_db)
 
-    def get_mcads(self, context, filters, fields=None):
+    def get_mecads(self, context, filters, fields=None):
         if ('template_source' in filters) and \
                 (filters['template_source'][0] == 'all'):
             filters.pop('template_source')
-        return self._get_collection(context, MCAD,
-                                    self._make_mcad_dict,
+        return self._get_collection(context, MECAD,
+                                    self._make_mecad_dict,
                                     filters=filters, fields=fields)
 
     # reference implementation. needs to be overrided by subclass
-    def create_mca(self, context, mca):
-        LOG.debug('mca %s', mca)
-        mca = mca['mca']
-        tenant_id = self._get_tenant_id_for_create(context, mca)
-        mcad_id = mca['mcad_id']
-        vim_id = mca['vim_id']
-        name = mca.get('name')
-        mca_id = uuidutils.generate_uuid()
+    def create_meca(self, context, meca):
+        LOG.debug('meca %s', meca)
+        meca = meca['meca']
+        tenant_id = self._get_tenant_id_for_create(context, meca)
+        mecad_id = meca['mecad_id']
+        vim_id = meca['vim_id']
+        name = meca.get('name')
+        meca_id = uuidutils.generate_uuid()
         try:
             with context.session.begin(subtransactions=True):
-                mcad_db = self._get_resource(context, MCAD,
-                                            mcad_id)
-                mca_db = MCA(id=mca_id,
+                mecad_db = self._get_resource(context, MECAD,
+                                            mecad_id)
+                meca_db = MECA(id=meca_id,
                            tenant_id=tenant_id,
                            name=name,
-                           description=mcad_db.description,
+                           description=mecad_db.description,
                            mea_ids=None,
                            status=constants.PENDING_CREATE,
                            mgmt_urls=None,
-                           mcad_id=mcad_id,
+                           mecad_id=mecad_id,
                            vim_id=vim_id,
                            error_reason=None,
                            deleted_at=datetime.min)
-                context.session.add(mca_db)
+                context.session.add(meca_db)
         except DBDuplicateEntry as e:
             raise exceptions.DuplicateEntity(
-                _type="mca",
+                _type="meca",
                 entry=e.columns)
-        evt_details = "MCA UUID assigned."
+        evt_details = "MECA UUID assigned."
         self._cos_db_plg.create_event(
-            context, res_id=mca_id,
-            res_type=constants.RES_TYPE_mca,
+            context, res_id=meca_id,
+            res_type=constants.RES_TYPE_meca,
             res_state=constants.PENDING_CREATE,
             evt_type=constants.RES_EVT_CREATE,
-            tstamp=mca_db[constants.RES_EVT_CREATED_FLD],
+            tstamp=meca_db[constants.RES_EVT_CREATED_FLD],
             details=evt_details)
-        return self._make_mca_dict(mca_db)
+        return self._make_meca_dict(meca_db)
 
-    def create_mca_post(self, context, mca_id, mistral_obj,
+    def create_meca_post(self, context, meca_id, mistral_obj,
             mead_dict, error_reason):
-        LOG.debug('mca ID %s', mca_id)
+        LOG.debug('meca ID %s', meca_id)
         output = ast.literal_eval(mistral_obj.output)
         mgmt_urls = dict()
         mea_ids = dict()
@@ -307,77 +307,77 @@ class MCAPluginDb(meo.MCAPluginBase, db_base.CommonDbMixin):
         status = constants.ACTIVE if mistral_obj.state == 'SUCCESS' \
             else constants.ERROR
         with context.session.begin(subtransactions=True):
-            mca_db = self._get_resource(context, MCA,
-                                       mca_id)
-            mca_db.update({'mea_ids': mea_ids})
-            mca_db.update({'mgmt_urls': mgmt_urls})
-            mca_db.update({'status': status})
-            mca_db.update({'error_reason': error_reason})
-            mca_db.update({'updated_at': timeutils.utcnow()})
-            mca_dict = self._make_mca_dict(mca_db)
+            meca_db = self._get_resource(context, MECA,
+                                       meca_id)
+            meca_db.update({'mea_ids': mea_ids})
+            meca_db.update({'mgmt_urls': mgmt_urls})
+            meca_db.update({'status': status})
+            meca_db.update({'error_reason': error_reason})
+            meca_db.update({'updated_at': timeutils.utcnow()})
+            meca_dict = self._make_meca_dict(meca_db)
             self._cos_db_plg.create_event(
-                context, res_id=mca_dict['id'],
-                res_type=constants.RES_TYPE_mca,
+                context, res_id=meca_dict['id'],
+                res_type=constants.RES_TYPE_meca,
                 res_state=constants.RES_EVT_NA_STATE,
                 evt_type=constants.RES_EVT_UPDATE,
-                tstamp=mca_dict[constants.RES_EVT_UPDATED_FLD])
-        return mca_dict
+                tstamp=meca_dict[constants.RES_EVT_UPDATED_FLD])
+        return meca_dict
 
     # reference implementation. needs to be overrided by subclass
-    def delete_mca(self, context, mca_id):
+    def delete_meca(self, context, meca_id):
         with context.session.begin(subtransactions=True):
-            mca_db = self._get_mca_db(
-                context, mca_id, _ACTIVE_UPDATE_ERROR_DEAD,
+            meca_db = self._get_meca_db(
+                context, meca_id, _ACTIVE_UPDATE_ERROR_DEAD,
                 constants.PENDING_DELETE)
-        deleted_mca_db = self._make_mca_dict(mca_db)
+        deleted_meca_db = self._make_meca_dict(meca_db)
         self._cos_db_plg.create_event(
-            context, res_id=mca_id,
-            res_type=constants.RES_TYPE_mca,
-            res_state=deleted_mca_db['status'],
+            context, res_id=meca_id,
+            res_type=constants.RES_TYPE_meca,
+            res_state=deleted_meca_db['status'],
             evt_type=constants.RES_EVT_DELETE,
-            tstamp=timeutils.utcnow(), details="MCA delete initiated")
-        return deleted_mca_db
+            tstamp=timeutils.utcnow(), details="MECA delete initiated")
+        return deleted_meca_db
 
-    def delete_mca_post(self, context, mca_id, mistral_obj,
+    def delete_meca_post(self, context, meca_id, mistral_obj,
                        error_reason, soft_delete=True):
-        mca = self.get_mca(context, mca_id)
-        mcad_id = mca.get('mcad_id')
+        meca = self.get_meca(context, meca_id)
+        mecad_id = meca.get('mecad_id')
         with context.session.begin(subtransactions=True):
             query = (
-                self._model_query(context, MCA).
-                filter(MCA.id == mca_id).
-                filter(MCA.status == constants.PENDING_DELETE))
+                self._model_query(context, MECA).
+                filter(MECA.id == meca_id).
+                filter(MECA.status == constants.PENDING_DELETE))
             if mistral_obj and mistral_obj.state == 'ERROR':
                 query.update({'status': constants.ERROR})
                 self._cos_db_plg.create_event(
-                    context, res_id=mca_id,
-                    res_type=constants.RES_TYPE_mca,
+                    context, res_id=meca_id,
+                    res_type=constants.RES_TYPE_meca,
                     res_state=constants.ERROR,
                     evt_type=constants.RES_EVT_DELETE,
                     tstamp=timeutils.utcnow(),
-                    details="MCA Delete ERROR")
+                    details="MECA Delete ERROR")
             else:
                 if soft_delete:
                     deleted_time_stamp = timeutils.utcnow()
                     query.update({'deleted_at': deleted_time_stamp})
                     self._cos_db_plg.create_event(
-                        context, res_id=mca_id,
-                        res_type=constants.RES_TYPE_mca,
+                        context, res_id=meca_id,
+                        res_type=constants.RES_TYPE_meca,
                         res_state=constants.PENDING_DELETE,
                         evt_type=constants.RES_EVT_DELETE,
                         tstamp=deleted_time_stamp,
-                        details="mca Delete Complete")
+                        details="meca Delete Complete")
                 else:
                     query.delete()
-            template_db = self._get_resource(context, MCAD, mcad_id)
+            template_db = self._get_resource(context, MECAD, mecad_id)
             if template_db.get('template_source') == 'inline':
-                self.delete_mcad(context, mcad_id)
+                self.delete_mecad(context, mecad_id)
 
-    def get_mca(self, context, mca_id, fields=None):
-        mca_db = self._get_resource(context, MCA, mca_id)
-        return self._make_mca_dict(mca_db)
+    def get_meca(self, context, meca_id, fields=None):
+        meca_db = self._get_resource(context, MECA, meca_id)
+        return self._make_meca_dict(meca_db)
 
-    def get_mcas(self, context, filters=None, fields=None):
-        return self._get_collection(context, MCA,
-                                    self._make_mca_dict,
+    def get_mecas(self, context, filters=None, fields=None):
+        return self._get_collection(context, MECA,
+                                    self._make_meca_dict,
                                     filters=filters, fields=fields)

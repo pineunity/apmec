@@ -30,7 +30,7 @@ MEO: Mobile Edge Orchestrator
 
 MEA: Mobile Edge Application
 
-MCA: Multi-component Application
+MECA: MEC Multi-component Application
 
 MEAD: MEA Descriptor
 

@@ -120,7 +120,7 @@ Install OpenStack
     enable_haproxy: "yes"
     enable_keystone: "yes"
     enable_mariadb: "yes"
-    enable_memcached: "yes"
+    enable_memecached: "yes"
     enable_neutron: "yes"
     enable_nova: "yes"
     enable_rabbitmq: "yes"

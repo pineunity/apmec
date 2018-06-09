@@ -86,12 +86,12 @@ class ToscaParserFailed(exceptions.InvalidInput):
     message = _("tosca-parser failed: - %(error_msg_details)s")
 
 
-class MCADInUse(exceptions.InUse):
-    message = _('MCAD %(mcad_id)s is still in use')
+class MECADInUse(exceptions.InUse):
+    message = _('MECAD %(mecad_id)s is still in use')
 
 
-class MCAInUse(exceptions.InUse):
-    message = _('MCA %(mca_id)s is still in use')
+class MECAInUse(exceptions.InUse):
+    message = _('MECA %(meca_id)s is still in use')
 
 
 class NoTasksException(exceptions.ApmecException):
@@ -189,7 +189,7 @@ RESOURCE_ATTRIBUTE_MAP = {
         },
     },
 
-    'mcads': {
+    'mecads': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -244,7 +244,7 @@ RESOURCE_ATTRIBUTE_MAP = {
 
     },
 
-    'mcas': {
+    'mecas': {
         'id': {
             'allow_post': False,
             'allow_put': False,
@@ -289,7 +289,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
             'default': '',
         },
-        'mcad_id': {
+        'mecad_id': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:uuid': None},
@@ -328,7 +328,7 @@ RESOURCE_ATTRIBUTE_MAP = {
             'validate': {'type:dict_or_nodata': None},
             'is_visible': True,
         },
-        'mcad_template': {
+        'mecad_template': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:dict_or_nodata': None},
@@ -423,44 +423,44 @@ class MEOPluginBase(service_base.MECPluginBase):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class MCAPluginBase(service_base.MECPluginBase):
+class MECAPluginBase(service_base.MECPluginBase):
 
     @abc.abstractmethod
-    def create_mcad(self, context, mcad):
+    def create_mecad(self, context, mecad):
         pass
 
     @abc.abstractmethod
-    def delete_mcad(self, context, mcad_id):
+    def delete_mecad(self, context, mecad_id):
         pass
 
     @abc.abstractmethod
-    def get_mcad(self, context, mcad_id, fields=None):
+    def get_mecad(self, context, mecad_id, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_mcads(self, context, filters=None, fields=None):
+    def get_mecads(self, context, filters=None, fields=None):
         pass
 
     @abc.abstractmethod
-    def create_mca(self, context, mca):
+    def create_meca(self, context, meca):
         pass
 
     @abc.abstractmethod
-    def get_mcas(self, context, filters=None, fields=None):
+    def get_mecas(self, context, filters=None, fields=None):
         pass
 
     @abc.abstractmethod
-    def get_mca(self, context, mca_id, fields=None):
+    def get_meca(self, context, meca_id, fields=None):
         pass
 
     @abc.abstractmethod
-    def delete_mca(self, context, mca_id):
+    def delete_meca(self, context, meca_id):
         pass
 
 
-class MCADNotFound(exceptions.NotFound):
-    message = _('MCAD %(mcad_id)s could not be found')
+class MECADNotFound(exceptions.NotFound):
+    message = _('MECAD %(mecad_id)s could not be found')
 
 
-class MCANotFound(exceptions.NotFound):
-    message = _('MCA %(mca_id)s could not be found')
+class MECANotFound(exceptions.NotFound):
+    message = _('MECA %(meca_id)s could not be found')

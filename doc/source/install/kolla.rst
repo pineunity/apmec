@@ -86,7 +86,7 @@ Install Apmec
     enable_haproxy: "no"
     enable_keystone: "yes"
     enable_mariadb: "yes"
-    enable_memcached: "yes"
+    enable_memecached: "yes"
     enable_neutron: "no"
     enable_nova: "no"
     enable_barbican: "yes"
@@ -173,7 +173,7 @@ components.
     4e1142ff158d        gongysh/centos-source-cron:5.0.0                         cron
     000ba4ca1974        gongysh/centos-source-kolla-toolbox:5.0.0                kolla_toolbox
     0fe21b1ad18c        gongysh/centos-source-fluentd:5.0.0                      fluentd
-    a13e45fc034f        gongysh/centos-source-memcached:5.0.0                    memcached
+    a13e45fc034f        gongysh/centos-source-memecached:5.0.0                    memecached
 
 ..
 

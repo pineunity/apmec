@@ -200,7 +200,7 @@ If you are using keystone v2 then,
    vim_drivers = openstack
 
    [keystone_authtoken]
-   memcached_servers = 11211
+   memecached_servers = 11211
    region_name = RegionOne
    auth_type = password
    project_domain_name = <DOMAIN_NAME>

@@ -13,7 +13,7 @@
 #    under the License.
 #
 
-"""mca-table
+"""meca-table
 
 Revision ID: 8206737b5c80
 Revises: e9a1e47fb0b5
@@ -33,7 +33,7 @@ from apmec.db import types
 
 
 def upgrade(active_plugins=None, options=None):
-    op.create_table('mcad',
+    op.create_table('mecad',
                     sa.Column('tenant_id', sa.String(length=64), nullable=False),
                     sa.Column('id', types.Uuid(length=36), nullable=False),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -45,13 +45,13 @@ def upgrade(active_plugins=None, options=None):
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
-    op.create_table('mca',
+    op.create_table('meca',
                     sa.Column('tenant_id', sa.String(length=64), nullable=False),
                     sa.Column('id', types.Uuid(length=36), nullable=False),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
                     sa.Column('updated_at', sa.DateTime(), nullable=True),
                     sa.Column('deleted_at', sa.DateTime(), nullable=True),
-                    sa.Column('mcad_id', types.Uuid(length=36), nullable=True),
+                    sa.Column('mecad_id', types.Uuid(length=36), nullable=True),
                     sa.Column('vim_id', sa.String(length=64), nullable=False),
                     sa.Column('name', sa.String(length=255), nullable=False),
                     sa.Column('description', sa.Text(), nullable=True),
@@ -59,16 +59,16 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('mgmt_urls', sa.TEXT(length=65535), nullable=True),
                     sa.Column('status', sa.String(length=64), nullable=False),
                     sa.Column('error_reason', sa.Text(), nullable=True),
-                    sa.ForeignKeyConstraint(['mcad_id'], ['mcad.id'], ),
+                    sa.ForeignKeyConstraint(['mecad_id'], ['mecad.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
-    op.create_table('mcad_attribute',
+    op.create_table('mecad_attribute',
                     sa.Column('id', types.Uuid(length=36), nullable=False),
-                    sa.Column('mcad_id', types.Uuid(length=36), nullable=False),
+                    sa.Column('mecad_id', types.Uuid(length=36), nullable=False),
                     sa.Column('key', sa.String(length=255), nullable=False),
                     sa.Column('value', sa.TEXT(length=65535), nullable=True),
-                    sa.ForeignKeyConstraint(['mcad_id'], ['mcad.id'], ),
+                    sa.ForeignKeyConstraint(['mecad_id'], ['mecad.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
