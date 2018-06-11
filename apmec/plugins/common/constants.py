@@ -62,6 +62,8 @@ RES_TYPE_MESD = "mesd"
 RES_TYPE_meca = "mes"
 RES_TYPE_MEA = "mea"
 RES_TYPE_VIM = "vim"
+RES_TYPE_MECAD = "mecad"
+
 
 RES_EVT_CREATE = "CREATE"
 RES_EVT_DELETE = "DELETE"
