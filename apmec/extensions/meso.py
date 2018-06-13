@@ -75,6 +75,20 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
             'default': '',
         },
+        'mecad_id': {
+            'allow_post': False,
+            'allow_put': False,
+            'validate': {'type:string': None},
+            'is_visible': True,
+            'default': '',
+        },
+        'nsd_id': {
+            'allow_post': False,
+            'allow_put': False,
+            'validate': {'type:string': None},
+            'is_visible': True,
+            'default': '',
+        },
         'created_at': {
             'allow_post': False,
             'allow_put': False,
@@ -140,7 +154,14 @@ RESOURCE_ATTRIBUTE_MAP = {
             'allow_put': False,
             'is_visible': True,
         },
-        'mea_ids': {
+        'meca_id': {
+            'allow_post': True,
+            'allow_put': False,
+            'validate': {'type:string': None},
+            'is_visible': True,
+            'default': '',
+        },
+        'ns_id': {
             'allow_post': True,
             'allow_put': False,
             'validate': {'type:string': None},
@@ -178,13 +199,6 @@ RESOURCE_ATTRIBUTE_MAP = {
             'validate': {'type:dict_or_nodata': None},
             'is_visible': True,
             'default': None,
-        },
-        'mgmt_urls': {
-            'allow_post': False,
-            'allow_put': False,
-            'convert_to': attr.convert_none_to_empty_dict,
-            'validate': {'type:dict_or_nodata': None},
-            'is_visible': True,
         },
         'mesd_template': {
             'allow_post': True,

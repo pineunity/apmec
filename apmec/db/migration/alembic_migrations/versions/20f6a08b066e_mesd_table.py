@@ -13,17 +13,17 @@
 #    under the License.
 #
 
-"""meca-table
+"""mesd-table
 
-Revision ID: 8206737b5c80
-Revises: e9a1e47fb0b5
-Create Date: 2018-06-08 15:58:43.286238
+Revision ID: 20f6a08b066e
+Revises: 8206737b5c80
+Create Date: 2018-06-13 20:36:59.470322
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '8206737b5c80'
-down_revision = 'e9a1e47fb0b5'
+revision = '20f6a08b066e'
+down_revision = '8206737b5c80'
 
 from alembic import op
 import sqlalchemy as sa
@@ -33,7 +33,7 @@ from apmec.db import types
 
 
 def upgrade(active_plugins=None, options=None):
-    op.create_table('mecad',
+    op.create_table('mesd',
                     sa.Column('tenant_id', sa.String(length=64), nullable=False),
                     sa.Column('id', types.Uuid(length=36), nullable=False),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -41,12 +41,12 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('deleted_at', sa.DateTime(), nullable=True),
                     sa.Column('name', sa.String(length=255), nullable=False),
                     sa.Column('description', sa.Text(), nullable=True),
-                    sa.Column('mead', types.Json, nullable=True),
+                    sa.Column('meads', types.Json, nullable=True),
                     sa.Column('template_source', sa.String(length=255), server_default='onboarded'),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
-    op.create_table('meca',
+    op.create_table('mes',
                     sa.Column('tenant_id', sa.String(length=64), nullable=False),
                     sa.Column('id', types.Uuid(length=36), nullable=False),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -64,7 +64,7 @@ def upgrade(active_plugins=None, options=None):
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
-    op.create_table('mecad_attribute',
+    op.create_table('mesd_attribute',
                     sa.Column('id', types.Uuid(length=36), nullable=False),
                     sa.Column('mecad_id', types.Uuid(length=36), nullable=False),
                     sa.Column('key', sa.String(length=255), nullable=False),
