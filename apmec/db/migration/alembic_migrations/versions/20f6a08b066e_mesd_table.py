@@ -41,7 +41,7 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('deleted_at', sa.DateTime(), nullable=True),
                     sa.Column('name', sa.String(length=255), nullable=False),
                     sa.Column('description', sa.Text(), nullable=True),
-                    sa.Column('meads', types.Json, nullable=True),
+                    sa.Column('mesd_mapping', types.Json, nullable=True),
                     sa.Column('template_source', sa.String(length=255), server_default='onboarded'),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
@@ -52,7 +52,7 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('created_at', sa.DateTime(), nullable=True),
                     sa.Column('updated_at', sa.DateTime(), nullable=True),
                     sa.Column('deleted_at', sa.DateTime(), nullable=True),
-                    sa.Column('mecad_id', types.Uuid(length=36), nullable=True),
+                    sa.Column('mesd_id', types.Uuid(length=36), nullable=True),
                     sa.Column('vim_id', sa.String(length=64), nullable=False),
                     sa.Column('name', sa.String(length=255), nullable=False),
                     sa.Column('description', sa.Text(), nullable=True),
@@ -60,16 +60,16 @@ def upgrade(active_plugins=None, options=None):
                     sa.Column('mgmt_urls', sa.TEXT(length=65535), nullable=True),
                     sa.Column('status', sa.String(length=64), nullable=False),
                     sa.Column('error_reason', sa.Text(), nullable=True),
-                    sa.ForeignKeyConstraint(['mecad_id'], ['mecad.id'], ),
+                    sa.ForeignKeyConstraint(['mesd_id'], ['mesd.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )
     op.create_table('mesd_attribute',
                     sa.Column('id', types.Uuid(length=36), nullable=False),
-                    sa.Column('mecad_id', types.Uuid(length=36), nullable=False),
+                    sa.Column('mesd_id', types.Uuid(length=36), nullable=False),
                     sa.Column('key', sa.String(length=255), nullable=False),
                     sa.Column('value', sa.TEXT(length=65535), nullable=True),
-                    sa.ForeignKeyConstraint(['mecad_id'], ['mecad.id'], ),
+                    sa.ForeignKeyConstraint(['mesd_id'], ['mesd.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     mysql_engine='InnoDB'
                     )

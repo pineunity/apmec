@@ -75,17 +75,11 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
             'default': '',
         },
-        'mecad_id': {
+        'mesd_mapping': {
             'allow_post': False,
             'allow_put': False,
-            'validate': {'type:string': None},
-            'is_visible': True,
-            'default': '',
-        },
-        'nsd_id': {
-            'allow_post': False,
-            'allow_put': False,
-            'validate': {'type:string': None},
+            'convert_to': attr.convert_none_to_empty_dict,
+            'validate': {'type:dict_or_nodata': None},
             'is_visible': True,
             'default': '',
         },
@@ -154,17 +148,11 @@ RESOURCE_ATTRIBUTE_MAP = {
             'allow_put': False,
             'is_visible': True,
         },
-        'meca_id': {
-            'allow_post': True,
+        'mes_mapping': {
+            'allow_post': False,
             'allow_put': False,
-            'validate': {'type:string': None},
-            'is_visible': True,
-            'default': '',
-        },
-        'ns_id': {
-            'allow_post': True,
-            'allow_put': False,
-            'validate': {'type:string': None},
+            'convert_to': attr.convert_none_to_empty_dict,
+            'validate': {'type:dict_or_nodata': None},
             'is_visible': True,
             'default': '',
         },
