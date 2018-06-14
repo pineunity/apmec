@@ -101,21 +101,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
             LOG.exception("tosca-parser error: %s", str(e))
             raise meso.ToscaParserFailed(error_msg_details=str(e))
 
-    def _get_vim_from_mea(self, context, mea_id):
-        """Figures out VIM based on a MEA
-
-        :param context: SQL Session Context
-        :param mea_id: MEA ID
-        :return: VIM or VIM properties if fields are provided
-        """
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
-        vim_id = mem_plugin.get_mea(context, mea_id, fields=['vim_id'])
-        vim_obj = self.get_vim(context, vim_id['vim_id'], mask_password=False)
-        if vim_obj is None:
-            raise meso.VimFromMeaNotFoundException(mea_id=mea_id)
-        self._build_vim_auth(context, vim_obj)
-        return vim_obj
-
     def _build_vim_auth(self, context, vim_info):
         LOG.debug('VIM id is %s', vim_info['id'])
         vim_auth = vim_info['auth_cred']
@@ -266,6 +251,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
             ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
             ns_instance = client.ns_create(ns_arg)
 
+            # Call tacker client driver
+
         vnffgds = mesd['attributes'].get('vnffgds')
         if vnffgds:
           vnffgds_list = vnffgds.split('-')
@@ -277,6 +264,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             vnffgd_instance = client.vnffgd_get(vnffgd)
             vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
             vnffg_instance = client.vnffg_create(vnffg_arg)
+            # Call Tacker client driver
 
         # Step-1
         param_values = mes['mes']['attributes'].get('param_values', {})

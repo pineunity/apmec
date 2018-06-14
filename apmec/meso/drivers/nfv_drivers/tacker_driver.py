@@ -81,17 +81,6 @@ _VALID_RESOURCE_TYPES = {'network': {'client': neutron_client.Client,
                                      }
                          }
 
-FC_MAP = {'name': 'name',
-          'description': 'description',
-          'eth_type': 'ethertype',
-          'ip_src_prefix': 'source_ip_prefix',
-          'ip_dst_prefix': 'destination_ip_prefix',
-          'source_port_min': 'source_port_range_min',
-          'source_port_max': 'source_port_range_max',
-          'destination_port_min': 'destination_port_range_min',
-          'destination_port_max': 'destination_port_range_max',
-          'network_src_port_id': 'logical_source_port',
-          'network_dst_port_id': 'logical_destination_port'}
 
 CONNECTION_POINT = 'connection_points'
 
@@ -121,45 +110,6 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
 
     def get_description(self):
         return 'OpenStack Tacker Driver'
-
-    def get_mistral_client(self, auth_dict):
-        if not auth_dict:
-            LOG.warning("auth dict required to instantiate mistral client")
-            raise EnvironmentError('auth dict required for'
-                                   ' mistral workflow driver')
-        return mistral_client.MistralClient(
-            keystone.Keystone().initialize_client('2', **auth_dict),
-            auth_dict['token']).get_client()
-
-    def prepare_and_create_workflow(self, resource, action,
-                                    kwargs, auth_dict=None):
-        mistral_client = self.get_mistral_client(auth_dict)
-        wg = workflow_generator.WorkflowGenerator(resource, action)
-        wg.task(**kwargs)
-        if not wg.get_tasks():
-            raise meo.NoTasksException(resource=resource, action=action)
-        definition_yaml = yaml.safe_dump(wg.definition)
-        workflow = mistral_client.workflows.create(definition_yaml)
-        return {'id': workflow[0].id, 'input': wg.get_input_dict()}
-
-    def execute_workflow(self, workflow, auth_dict=None):
-        return self.get_mistral_client(auth_dict)\
-            .executions.create(
-                workflow_identifier=workflow['id'],
-                workflow_input=workflow['input'],
-                wf_params={})
-
-    def get_execution(self, execution_id, auth_dict=None):
-        return self.get_mistral_client(auth_dict)\
-            .executions.get(execution_id)
-
-    def delete_execution(self, execution_id, auth_dict=None):
-        return self.get_mistral_client(auth_dict).executions\
-            .delete(execution_id)
-
-    def delete_workflow(self, workflow_id, auth_dict=None):
-        return self.get_mistral_client(auth_dict)\
-            .workflows.delete(workflow_id)
 
 
 class TackerClient(object):
