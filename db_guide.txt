@@ -1,0 +1,5 @@
+cd /opt/stack/apmec/apmec/db/migration/alembic_migrations
+
+apmec-db-manage --config-file apmec.conf.sample revision -m "mca-table"
+
+
