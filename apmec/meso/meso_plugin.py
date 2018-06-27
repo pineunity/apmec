@@ -82,25 +82,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
     def spawn_n(self, function, *args, **kwargs):
         self._pool.spawn_n(function, *args, **kwargs)
 
-    @log.log
-    def validate_tosca(self, template):
-        if "tosca_definitions_version" not in template:
-            raise meso.ToscaParserFailed(
-                error_msg_details='tosca_definitions_version missing in '
-                                  'template'
-            )
-
-        LOG.debug('template yaml: %s', template)
-
-        toscautils.updateimports(template)
-
-        try:
-            tosca_template.ToscaTemplate(
-                a_file=False, yaml_dict_tpl=template)
-        except Exception as e:
-            LOG.exception("tosca-parser error: %s", str(e))
-            raise meso.ToscaParserFailed(error_msg_details=str(e))
-
     def _build_vim_auth(self, context, vim_info):
         LOG.debug('VIM id is %s', vim_info['id'])
         vim_auth = vim_info['auth_cred']

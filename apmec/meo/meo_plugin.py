@@ -200,25 +200,6 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meca_db.MECAPluginDb):
         auth_dict = self.get_auth_dict(context)
         vim_monitor_utils.monitor_vim(auth_dict, vim_obj)
 
-    @log.log
-    def validate_tosca(self, template):
-        if "tosca_definitions_version" not in template:
-            raise meo.ToscaParserFailed(
-                error_msg_details='tosca_definitions_version missing in '
-                                  'template'
-            )
-
-        LOG.debug('template yaml: %s', template)
-
-        toscautils.updateimports(template)
-
-        try:
-            tosca_template.ToscaTemplate(
-                a_file=False, yaml_dict_tpl=template)
-        except Exception as e:
-            LOG.exception("tosca-parser error: %s", str(e))
-            raise meo.ToscaParserFailed(error_msg_details=str(e))
-
     def _get_vim_from_mea(self, context, mea_id):
         """Figures out VIM based on a MEA
 
