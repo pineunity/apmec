@@ -111,48 +111,48 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
     def get_description(self):
         return 'OpenStack Tacker Driver'
 
-    def nsd_create(self, auth_id, nsd_dict):
-        tacker_client = TackerClient(auth_id)
+    def nsd_create(self, auth_attr, nsd_dict):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.nsd_create(nsd_dict)
 
-    def nsd_get(self, auth_id, nsd_name):
-        tacker_client = TackerClient(auth_id)
+    def nsd_get(self, auth_attr, nsd_name):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.nsd_get(nsd_name)
 
-    def ns_create(self, auth_id, ns_dict):
-        tacker_client = TackerClient(auth_id)
+    def ns_create(self, auth_attr, ns_dict):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_create(ns_dict)
 
-    def ns_get(self, auth_id, ns_name):
-        tacker_client = TackerClient(auth_id)
+    def ns_get(self, auth_attr, ns_name):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_get(ns_name)
 
-    def ns_delete(self, auth_id, ns_name):
-        tacker_client = TackerClient(auth_id)
+    def ns_delete(self, auth_attr, ns_name):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_delete(ns_name)
 
-    def vnfd_create(self, auth_id, vnfd_dict):
-        tacker_client = TackerClient(auth_id)
+    def vnfd_create(self, auth_attr, vnfd_dict):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.vnfd_create(vnfd_dict)
 
-    def vnf_create(self, auth_id, vnf_dict):
-        tacker_client = TackerClient(auth_id)
+    def vnf_create(self, auth_attr, vnf_dict):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.vnf_create(vnf_dict)
 
-    def vnffgd_get(self, auth_id, vnffgd_name):
-        tacker_client = TackerClient(auth_id)
+    def vnffgd_get(self, auth_attr, vnffgd_name):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffgd_get(vnffgd_name)
 
-    def vnffg_create(self, auth_id, vnffgd_dict):
-        tacker_client = TackerClient(auth_id)
+    def vnffg_create(self, auth_attr, vnffgd_dict):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_create(vnffgd_dict)
 
-    def vnffg_get(self, auth_id, vnffg_name):
-        tacker_client = TackerClient(auth_id)
+    def vnffg_get(self, auth_attr, vnffg_name):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_get(vnffg_name)
 
-    def vnffg_delete(self, auth_id, vnffg_name):
-        tacker_client = TackerClient(auth_id)
+    def vnffg_delete(self, auth_attr, vnffg_name):
+        tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_delete(vnffg_name)
 
 

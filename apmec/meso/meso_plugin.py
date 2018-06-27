@@ -155,11 +155,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
         """Create MES and corresponding MEAs.
 
         :param mes: mes dict which contains mesd_id and attributes
-        This method has 3 steps:
-        step-1: substitute all get_input params to its corresponding values
-        step-2: Build params dict for substitution mappings case through which
-        MEAs will actually substitute their requirements.
-        step-3: Create mistral workflow and execute the workflow
+        This method has 2 steps:
+        step-1: Call MEO API to create MEAs
+        step-2: Call Tacker drivers to create NSs
         """
         mes_info = mes['mes']
         name = mes_info['name']
@@ -176,8 +174,15 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         mesd = self.get_mesd(context, mes['mes']['mesd_id'])
         mesd_dict = yaml.safe_load(mesd['attributes']['mesd'])
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
-        onboarded_meads = mem_plugin.get_meads(context, [])
+        meo_plugin = manager.ApmecManager.get_service_plugins()['MEO']
+        meca_id = dict()
+        # Create MEAs using MEO APIs
+        try:
+            meca_name = 'meca' + name
+            meca_arg = {'meca': {'mecad_template': mes['mes']['mesd'], 'name': meca_name}}
+            meca_dict = meo_plugin.create_meca(context, meca_arg)
+        except Exception as e:
+            LOG.error('Error while creating the MEAs: %s', e)
         region_name = mes.setdefault('placement_attr', {}).get(
             'region_name', None)
         vim_res = self.vim_client.get_vim(context, mes['mes']['vim_id'],
@@ -186,17 +191,32 @@ class MesoPlugin(meso_db.MESOPluginDb):
         if not mes['mes']['vim_id']:
             mes['mes']['vim_id'] = vim_res['vim_id']
 
+        ##########################################
+        # Detect MANO driver here:
+        # Probably use the Tosca template
+
+        ##########################################
+
         nsds = mesd['attributes'].get('nsds')
         if nsds:
           nsds_list = nsds.split('-')
           for nsd in nsds_list:
             vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
             self._build_vim_auth(context, vim_obj)
-            client = self.tackerclient(vim_obj['auth_cred'])
             ns_name = nsd + name
-            nsd_instance = client.nsd_get(nsd)
-            ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
-            ns_instance = client.ns_create(ns_arg)
+            nsd_instance = self._mano_drivers.invoke(
+                mano_driver_type, # How to tell it is Tacker
+                'nsd_get',
+                nsd_name=nsd,
+                auth_attr=vim_obj['auth_cred'],)
+            if nsd_instance:
+                ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
+                ns_instance = self._mano_drivers.invoke(
+                    mano_driver_type,  # How to tell it is Tacker
+                    'ns_create',
+                    ns_dict=ns_arg,
+                    auth_attr=vim_obj['auth_cred'], )
+
 
             # Call tacker client driver
 
