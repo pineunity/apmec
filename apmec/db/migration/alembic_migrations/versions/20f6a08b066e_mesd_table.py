@@ -28,48 +28,10 @@ down_revision = '8206737b5c80'
 from alembic import op
 import sqlalchemy as sa
 
-
 from apmec.db import types
 
 
 def upgrade(active_plugins=None, options=None):
-    op.create_table('mesd',
-                    sa.Column('tenant_id', sa.String(length=64), nullable=False),
-                    sa.Column('id', types.Uuid(length=36), nullable=False),
-                    sa.Column('created_at', sa.DateTime(), nullable=True),
-                    sa.Column('updated_at', sa.DateTime(), nullable=True),
-                    sa.Column('deleted_at', sa.DateTime(), nullable=True),
-                    sa.Column('name', sa.String(length=255), nullable=False),
-                    sa.Column('description', sa.Text(), nullable=True),
-                    sa.Column('mesd_mapping', types.Json, nullable=True),
-                    sa.Column('template_source', sa.String(length=255), server_default='onboarded'),
-                    sa.PrimaryKeyConstraint('id'),
-                    mysql_engine='InnoDB'
-                    )
-    op.create_table('mes',
-                    sa.Column('tenant_id', sa.String(length=64), nullable=False),
-                    sa.Column('id', types.Uuid(length=36), nullable=False),
-                    sa.Column('created_at', sa.DateTime(), nullable=True),
-                    sa.Column('updated_at', sa.DateTime(), nullable=True),
-                    sa.Column('deleted_at', sa.DateTime(), nullable=True),
-                    sa.Column('mesd_id', types.Uuid(length=36), nullable=True),
-                    sa.Column('vim_id', sa.String(length=64), nullable=False),
-                    sa.Column('name', sa.String(length=255), nullable=False),
-                    sa.Column('description', sa.Text(), nullable=True),
-                    sa.Column('mea_ids', sa.TEXT(length=65535), nullable=True),
-                    sa.Column('mgmt_urls', sa.TEXT(length=65535), nullable=True),
-                    sa.Column('status', sa.String(length=64), nullable=False),
-                    sa.Column('error_reason', sa.Text(), nullable=True),
-                    sa.ForeignKeyConstraint(['mesd_id'], ['mesd.id'], ),
-                    sa.PrimaryKeyConstraint('id'),
-                    mysql_engine='InnoDB'
-                    )
-    op.create_table('mesd_attribute',
-                    sa.Column('id', types.Uuid(length=36), nullable=False),
-                    sa.Column('mesd_id', types.Uuid(length=36), nullable=False),
-                    sa.Column('key', sa.String(length=255), nullable=False),
-                    sa.Column('value', sa.TEXT(length=65535), nullable=True),
-                    sa.ForeignKeyConstraint(['mesd_id'], ['mesd.id'], ),
-                    sa.PrimaryKeyConstraint('id'),
-                    mysql_engine='InnoDB'
-                    )
+   op.add_column('mesd',
+                  sa.Column('mesd_mapping',
+                           types.Json, nullable=True))

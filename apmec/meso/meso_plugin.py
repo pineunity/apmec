@@ -38,8 +38,10 @@ from apmec.mem import vim_client
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
-MISTRAL_RETRIES = 30
-MISTRAL_RETRY_WAIT = 6
+MANO_RETRIES = 30
+MANO_RETRY_WAIT = 6
+MEC_RETRIES = 30
+MEC_RETRY_WAIT = 6
 
 
 def config_opts():
@@ -236,54 +238,15 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     auth_attr=vim_obj['auth_cred'], )
             # Call Tacker client driver
 
-        # Step-1
-        param_values = mes['mes']['attributes'].get('param_values', {})
-        if 'get_input' in str(mesd_dict):
-            self._process_parameterized_input(mes['mes']['attributes'],
-                                              mesd_dict)
-        # Step-2
-        meads = mesd['meads']
-        # mead_dict is used while generating workflow
-        mead_dict = dict()
-        for node_name, node_val in \
-                (mesd_dict['topology_template']['node_templates']).items():
-            if node_val.get('type') not in meads.keys():
-                continue
-            mead_name = meads[node_val.get('type')]
-            if not mead_dict.get(mead_name):
-                mead_dict[mead_name] = {
-                    'id': self._get_mead_id(mead_name, onboarded_meads),
-                    'instances': [node_name]
-                }
-            else:
-                mead_dict[mead_name]['instances'].append(node_name)
-            if not node_val.get('requirements'):
-                continue
-            if not param_values.get(mead_name):
-                param_values[mead_name] = {}
-            param_values[mead_name]['substitution_mappings'] = dict()
-            req_dict = dict()
-            requirements = node_val.get('requirements')
-            for requirement in requirements:
-                req_name = list(requirement.keys())[0]
-                req_val = list(requirement.values())[0]
-                res_name = req_val + mes['mes']['mesd_id'][:11]
-                req_dict[req_name] = res_name
-                if req_val in mesd_dict['topology_template']['node_templates']:
-                    param_values[mead_name]['substitution_mappings'][
-                        res_name] = mesd_dict['topology_template'][
-                            'node_templates'][req_val]
-
-            param_values[mead_name]['substitution_mappings'][
-                'requirements'] = req_dict
-
         mes_dict = super(MesoPlugin, self).create_mes(context, mes)
 
         def _create_mes_wait(self_obj, mes_id, execution_id):
-            exec_state = "RUNNING"
-            mistral_retries = MISTRAL_RETRIES
-            while exec_state == "RUNNING" and mistral_retries > 0:
-                time.sleep(MISTRAL_RETRY_WAIT)
+            mano_status = "RUNNING"
+            mec_status = "RUNNING"
+            mano_retries = MANO_RETRIES
+            mec_retries = MEC_RETRIES
+            while mec_status == "RUNNING" and mec_retries > 0:
+                time.sleep(MEC_RETRY_WAIT)
                 exec_state = self._vim_drivers.invoke(
                     driver_type,
                     'get_execution',
