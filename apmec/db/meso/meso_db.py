@@ -52,8 +52,6 @@ class MESD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     # Descriptive name
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text)
-    meads = sa.Column(types.Json, nullable=True)
-
     # Mesd template source - onboarded
     template_source = sa.Column(sa.String(255), server_default='onboarded')
 
@@ -149,7 +147,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             'attributes': self._make_attributes_dict(mesd['attributes']),
         }
         key_list = ('id', 'tenant_id', 'name', 'description',
-                    'created_at', 'updated_at', 'meads', 'template_source')
+                    'created_at', 'updated_at', 'template_source')
         res.update((key, mesd[key]) for key in key_list)
         return self._fields(res, fields)
 
@@ -166,7 +164,6 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         return self._fields(res, fields)
 
     def create_mesd(self, context, mesd):
-        meads = mesd['meads']
         mesd = mesd['mesd']
         LOG.debug('mesd %s', mesd)
         tenant_id = self._get_tenant_id_for_create(context, mesd)
@@ -179,7 +176,6 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                     id=mesd_id,
                     tenant_id=tenant_id,
                     name=mesd.get('name'),
-                    meads=meads,
                     description=mesd.get('description'),
                     deleted_at=datetime.min,
                     template_source=template_source)

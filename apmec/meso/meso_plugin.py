@@ -113,7 +113,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             template_source = "onboarded"
         mesd['mesd']['template_source'] = template_source
 
-        self._parse_template_input(context, mesd)
+        # self._parse_template_input(context, mesd)
         return super(MesoPlugin, self).create_mesd(
             context, mesd)
 

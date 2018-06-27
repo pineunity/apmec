@@ -46,6 +46,10 @@ class MESNotFound(exceptions.NotFound):
     message = _('MES %(mes_id)s could not be found')
 
 
+class ToscaParserFailed(exceptions.InvalidInput):
+    message = _("tosca-parser failed: - %(error_msg_details)s")
+
+
 RESOURCE_ATTRIBUTE_MAP = {
     'mesds': {
         'id': {
