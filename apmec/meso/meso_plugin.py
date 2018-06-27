@@ -121,7 +121,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         mesd_dict = mesd['mesd']
         mesd_yaml = mesd_dict['attributes'].get('mesd')
         inner_mesd_dict = yaml.safe_load(mesd_yaml)
-        mesd['meads'] = dict()
+        mesd['mesd_mapping'] = dict()
         LOG.debug('mesd_dict: %s', inner_mesd_dict)
         # From import we can deploy both NS and MEC Application
         nsd_imports = inner_mesd_dict['imports'].get('nsds')
@@ -132,7 +132,13 @@ class MesoPlugin(meso_db.MESOPluginDb):
             mesd_dict['attributes']['vnffgds'] = '-'.join(vnffg_imports)
 
         # Deploy MEC applications
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEO']
+        nsd_id = self._mano_drivers.invoke(vim_obj['type'],
+                                 'deregister_vim',
+                                 context=context,
+                                 vim_obj=vim_obj))
+
+
         mead_imports = inner_mesd_dict['imports']['meads']
         inner_mesd_dict['imports'] = []
         new_files = []
