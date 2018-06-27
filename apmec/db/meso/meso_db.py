@@ -146,7 +146,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         res = {
             'attributes': self._make_attributes_dict(mesd['attributes']),
         }
-        key_list = ('id', 'tenant_id', 'name', 'description',
+        key_list = ('id', 'tenant_id', 'name', 'description', 'mesd_mapping',
                     'created_at', 'updated_at', 'template_source')
         res.update((key, mesd[key]) for key in key_list)
         return self._fields(res, fields)
@@ -177,6 +177,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                     tenant_id=tenant_id,
                     name=mesd.get('name'),
                     description=mesd.get('description'),
+                    mesd_mapping=mesd.get('mesd_mapping'),
                     deleted_at=datetime.min,
                     template_source=template_source)
                 context.session.add(mesd_db)

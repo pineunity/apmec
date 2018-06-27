@@ -113,7 +113,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             template_source = "onboarded"
         mesd['mesd']['template_source'] = template_source
 
-        # self._parse_template_input(context, mesd)
+        self._parse_template_input(context, mesd)
         return super(MesoPlugin, self).create_mesd(
             context, mesd)
 
@@ -128,50 +128,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
         vnffg_imports = inner_mesd_dict['imports'].get('vnffgds')
         if nsd_imports:
             mesd_dict['attributes']['nsds'] = '-'.join(nsd_imports)
+            mesd['mesd_mapping']['NSD'] = nsd_imports
         if vnffg_imports:
+            mesd['mesd_mapping'] = vnffg_imports
             mesd_dict['attributes']['vnffgds'] = '-'.join(vnffg_imports)
-
-        # Deploy MEC applications
-        mem_plugin = manager.ApmecManager.get_service_plugins()['MEO']
-        nsd_id = self._mano_drivers.invoke(vim_obj['type'],
-                                 'deregister_vim',
-                                 context=context,
-                                 vim_obj=vim_obj))
-
-
-        mead_imports = inner_mesd_dict['imports']['meads']
-        inner_mesd_dict['imports'] = []
-        new_files = []
-        for mead_name in mead_imports:
-            mead = mem_plugin.get_mead(context, mead_name)
-            # Copy MEA types and MEA names
-            sm_dict = yaml.safe_load(mead['attributes']['mead'])[
-                'topology_template'][
-                'substitution_mappings']
-            mesd['meads'][sm_dict['node_type']] = mead['name']
-            # Ugly Hack to validate the child templates
-            # TODO(tbh): add support in tosca-parser to pass child
-            # templates as dict
-            fd, temp_path = mkstemp()
-            with open(temp_path, 'w') as fp:
-                fp.write(mead['attributes']['mead'])
-            os.close(fd)
-            new_files.append(temp_path)
-            inner_mesd_dict['imports'].append(temp_path)
-        # Prepend the apmec_defs.yaml import file with the full
-        # path to the file
-        toscautils.updateimports(inner_mesd_dict)
-
-        try:
-            ToscaTemplate(a_file=False,
-                          yaml_dict_tpl=inner_mesd_dict)
-        except Exception as e:
-            LOG.exception("tosca-parser error: %s", str(e))
-            raise meso.ToscaParserFailed(error_msg_details=str(e))
-        finally:
-            for file_path in new_files:
-                os.remove(file_path)
-            inner_mesd_dict['imports'] = mead_imports
 
         if ('description' not in mesd_dict or
                 mesd_dict['description'] == ''):
