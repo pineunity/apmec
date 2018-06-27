@@ -67,7 +67,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         super(MesoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
         self._mano_drivers = driver_manager.DriverManager(
-            'apmec.meso.drivers.nfv_drivers',
+            'apmec.meso.drivers',
             cfg.CONF.meso.nfv_drivers)
 
     def get_auth_dict(self, context):
