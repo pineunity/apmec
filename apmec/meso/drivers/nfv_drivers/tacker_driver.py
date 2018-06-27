@@ -143,9 +143,9 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffgd_get(vnffgd_name)
 
-    def vnffg_create(self, auth_attr, vnffgd_dict):
+    def vnffg_create(self, auth_attr, vnffg_dict):
         tacker_client = TackerClient(auth_attr)
-        return tacker_client.vnffg_create(vnffgd_dict)
+        return tacker_client.vnffg_create(vnffg_dict)
 
     def vnffg_get(self, auth_attr, vnffg_name):
         tacker_client = TackerClient(auth_attr)

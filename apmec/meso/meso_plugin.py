@@ -196,13 +196,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
         # Probably use the Tosca template
 
         ##########################################
-
+        vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
+        self._build_vim_auth(context, vim_obj)
         nsds = mesd['attributes'].get('nsds')
         if nsds:
           nsds_list = nsds.split('-')
           for nsd in nsds_list:
-            vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
-            self._build_vim_auth(context, vim_obj)
             ns_name = nsd + name
             nsd_instance = self._mano_drivers.invoke(
                 mano_driver_type, # How to tell it is Tacker
@@ -216,21 +215,25 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     'ns_create',
                     ns_dict=ns_arg,
                     auth_attr=vim_obj['auth_cred'], )
-
-
             # Call tacker client driver
 
         vnffgds = mesd['attributes'].get('vnffgds')
         if vnffgds:
           vnffgds_list = vnffgds.split('-')
           for vnffgd in vnffgds_list:
-            vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
-            self._build_vim_auth(context, vim_obj)
-            client = self.tackerclient(vim_obj['auth_cred'])
             vnffg_name = vnffgds + name
-            vnffgd_instance = client.vnffgd_get(vnffgd)
-            vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
-            vnffg_instance = client.vnffg_create(vnffg_arg)
+            vnffgd_instance = self._mano_drivers.invoke(
+                mano_driver_type,  # How to tell it is Tacker
+                'vnffgd_get',
+                nsd_name=vnffgd,
+                auth_attr=vim_obj['auth_cred'], )
+            if vnffgd_instance:
+                vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
+                vnffg_instance = self._mano_drivers.invoke(
+                    mano_driver_type,  # How to tell it is Tacker
+                    'vnffg_create',
+                    vnffg_dict=vnffg_arg,
+                    auth_attr=vim_obj['auth_cred'], )
             # Call Tacker client driver
 
         # Step-1
@@ -273,31 +276,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
             param_values[mead_name]['substitution_mappings'][
                 'requirements'] = req_dict
-        mes['mead_details'] = mead_dict
-        # Step-3
-        kwargs = {'mes': mes, 'params': param_values}
 
-        # NOTE NoTasksException is raised if no tasks.
-        workflow = self._vim_drivers.invoke(
-            driver_type,
-            'prepare_and_create_workflow',
-            resource='mea',
-            action='create',
-            auth_dict=self.get_auth_dict(context),
-            kwargs=kwargs)
-        try:
-            mistral_execution = self._vim_drivers.invoke(
-                driver_type,
-                'execute_workflow',
-                workflow=workflow,
-                auth_dict=self.get_auth_dict(context))
-        except Exception as ex:
-            LOG.error('Error while executing workflow: %s', ex)
-            self._vim_drivers.invoke(driver_type,
-                                     'delete_workflow',
-                                     workflow_id=workflow['id'],
-                                     auth_dict=self.get_auth_dict(context))
-            raise ex
         mes_dict = super(MesoPlugin, self).create_mes(context, mes)
 
         def _create_mes_wait(self_obj, mes_id, execution_id):
