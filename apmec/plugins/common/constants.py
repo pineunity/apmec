@@ -77,8 +77,6 @@ RES_EVT_CREATED_FLD = "created_at"
 RES_EVT_DELETED_FLD = "deleted_at"
 RES_EVT_UPDATED_FLD = "updated_at"
 
-EXCEC_STATUS = "RUNNING"
-
 
 MEC_DRIVER = "Apmec"
 NFV_DRIVER = ['Tacker', ]

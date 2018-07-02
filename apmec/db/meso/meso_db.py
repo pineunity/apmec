@@ -157,14 +157,14 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
     def _make_mes_dict(self, mes_db, fields=None):
         LOG.debug('mes_db %s', mes_db)
         res = {}
-        key_list = ('id', 'tenant_id', 'mesd_id', 'name', 'description',
+        key_list = ('id', 'tenant_id', 'mesd_id', 'name', 'description', 'mes_mapping',
                     'mea_ids', 'status', 'mgmt_urls', 'error_reason',
                     'vim_id', 'created_at', 'updated_at')
         res.update((key, mes_db[key]) for key in key_list)
         return self._fields(res, fields)
 
     def create_mesd(self, context, mesd):
-        mesd = mesd['mesd']
+        mesd = mesd['mesd']['imports']['']
         LOG.debug('mesd %s', mesd)
         tenant_id = self._get_tenant_id_for_create(context, mesd)
         template_source = mesd.get('template_source')
@@ -250,6 +250,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         mesd_id = mes['mesd_id']
         vim_id = mes['vim_id']
         name = mes.get('name')
+        mes_mapping = mes['mes_mapping']
         mes_id = uuidutils.generate_uuid()
         try:
             with context.session.begin(subtransactions=True):
@@ -261,6 +262,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                            description=mesd_db.description,
                            mea_ids=None,
                            status=constants.PENDING_CREATE,
+                           mes_mapping=mes_mapping,
                            mgmt_urls=None,
                            mesd_id=mesd_id,
                            vim_id=vim_id,

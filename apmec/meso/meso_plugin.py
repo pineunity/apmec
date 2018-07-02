@@ -71,7 +71,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
     def __init__(self):
         super(MesoPlugin, self).__init__()
         self._pool = eventlet.GreenPool()
-        self._mano_drivers = driver_manager.DriverManager(
+        self._nfv_drivers = driver_manager.DriverManager(
             'apmec.meso.drivers',
             cfg.CONF.meso.nfv_drivers)
 
@@ -178,6 +178,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         """
         mes_info = mes['mes']
         name = mes_info['name']
+        mes_info['mes_mapping'] = dict()
 
         if mes_info.get('mesd_template'):
             mesd_name = utils.generate_resource_name(name, 'inline')
@@ -198,6 +199,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             meca_name = 'meca' + name
             meca_arg = {'meca': {'mecad_template': mesd['attributes']['mesd'], 'name': meca_name}}
             meca_dict = meo_plugin.create_meca(context, meca_arg)
+            mes_info['mes_mapping']['MECA'] = meca_dict['id']
         except Exception as e:
             LOG.error('Error while creating the MEAs: %s', e)
         region_name = mes.setdefault('placement_attr', {}).get(
@@ -211,6 +213,13 @@ class MesoPlugin(meso_db.MESOPluginDb):
         ##########################################
         # Detect MANO driver here:
         # Probably use the Tosca template
+        nfv_dirver = None
+        if mesd_dict['import'].get('nsds'):
+            nfv_dirver = mesd_dict['import']['nsds']['nfv_driver']
+            nfv_dirver = nfv_dirver.lowers()
+        if mesd_dict['import'].get('nsds'):
+            nfv_dirver = mesd_dict['import']['vnffgds']['nfv_driver']
+            nfv_dirver = nfv_dirver.lower()
 
         ##########################################
         vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
@@ -218,66 +227,69 @@ class MesoPlugin(meso_db.MESOPluginDb):
         nsds = mesd['attributes'].get('nsds')
         if nsds:
           nsds_list = nsds.split('-')
+          mes_info['mes_mapping']['NS'] = list()
           for nsd in nsds_list:
             ns_name = nsd + name
-            nsd_instance = self._mano_drivers.invoke(
-                mano_driver_type, # How to tell it is Tacker
+            nsd_instance = self._nfv_drivers.invoke(
+                nfv_dirver, # How to tell it is Tacker
                 'nsd_get',
                 nsd_name=nsd,
                 auth_attr=vim_obj['auth_cred'],)
             if nsd_instance:
                 ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
-                ns_instance = self._mano_drivers.invoke(
-                    mano_driver_type,  # How to tell it is Tacker
+                ns_instance = self._nfv_drivers.invoke(
+                    nfv_dirver,  # How to tell it is Tacker
                     'ns_create',
                     ns_dict=ns_arg,
                     auth_attr=vim_obj['auth_cred'], )
+                mes_info['mes_mapping']['NS'].append(ns_instance['ns']['id'])
             # Call tacker client driver
 
         vnffgds = mesd['attributes'].get('vnffgds')
         if vnffgds:
           vnffgds_list = vnffgds.split('-')
+          mes_info['mes_mapping']['VNFFG'] = list()
           for vnffgd in vnffgds_list:
             vnffg_name = vnffgds + name
-            vnffgd_instance = self._mano_drivers.invoke(
-                mano_driver_type,  # How to tell it is Tacker
+            vnffgd_instance = self._nfv_drivers.invoke(
+                nfv_dirver,  # How to tell it is Tacker
                 'vnffgd_get',
                 nsd_name=vnffgd,
                 auth_attr=vim_obj['auth_cred'], )
             if vnffgd_instance:
                 vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
-                vnffg_instance = self._mano_drivers.invoke(
-                    mano_driver_type,  # How to tell it is Tacker
+                vnffg_instance = self._nfv_drivers.invoke(
+                    nfv_dirver,  # How to tell it is Tacker
                     'vnffg_create',
                     vnffg_dict=vnffg_arg,
                     auth_attr=vim_obj['auth_cred'], )
+                mes_info['mes_mapping']['VNFFG'].append(vnffg_instance['vnffg']['id'])
             # Call Tacker client driver
 
         mes_dict = super(MesoPlugin, self).create_mes(context, mes)
 
         def _create_mes_wait(self_obj, mes_id, execution_id):
-            mano_status = constants.EXCEC_STATUS
-            mec_status = constants.EXCEC_STATUS
-            mano_retries = NFV_RETRIES
+            nfv__status = "ACTIVE"
+            mec_status = "ACTIVE"
+            nfv_retries = NFV_RETRIES
             mec_retries = MEC_RETRIES
-            while mec_status == "RUNNING" and mec_retries > 0:
+
+            # Check MECA
+            meo_plugin = manager.ApmecManager.get_service_plugins()['MEO']
+            while mec_status == "ACTIVE" and mec_retries > 0:
                 time.sleep(MEC_RETRY_WAIT)
-                exec_state = self._vim_drivers.invoke(
-                    driver_type,
-                    'get_execution',
-                    execution_id=execution_id,
-                    auth_dict=self.get_auth_dict(context)).state
+                mec_status = meo_plugin.get_meca(context, )
                 LOG.debug('status: %s', exec_state)
                 if exec_state == 'SUCCESS' or exec_state == 'ERROR':
                     break
-                mistral_retries = mistral_retries - 1
+                mec_retries = mec_retries - 1
             error_reason = None
-            if mistral_retries == 0 and exec_state == 'RUNNING':
+            if mec_retries == 0 and mec_exec_status == 'RUNNING':
                 error_reason = _(
                     "MES creation is not completed within"
                     " {wait} seconds as creation of mistral"
                     " execution {mistral} is not completed").format(
-                    wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
+                    wait=MEC_RETRIES * MEC_RETRY_WAIT,
                     mistral=execution_id)
             exec_obj = self._vim_drivers.invoke(
                 driver_type,
@@ -294,6 +306,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                      auth_dict=self.get_auth_dict(context))
             super(MesoPlugin, self).create_mes_post(context, mes_id, exec_obj,
                                                    mead_dict, error_reason)
+
+            # Check NSD/VNFFGD status
+
 
         self.spawn_n(_create_mes_wait, self, mes_dict['id'],
                      mistral_execution.id)
