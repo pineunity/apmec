@@ -35,11 +35,14 @@ from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meso
 from apmec.mem import vim_client
+from apmec.plugins.common import constants
+
+
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
-MANO_RETRIES = 30
-MANO_RETRY_WAIT = 6
+NFV_RETRIES = 30
+NFV_RETRY_WAIT = 6
 MEC_RETRIES = 30
 MEC_RETRY_WAIT = 6
 
@@ -129,11 +132,23 @@ class MesoPlugin(meso_db.MESOPluginDb):
         nsd_imports = inner_mesd_dict['imports'].get('nsds')
         vnffg_imports = inner_mesd_dict['imports'].get('vnffgds')
         if nsd_imports:
-            mesd_dict['attributes']['nsds'] = '-'.join(nsd_imports)
-            mesd['mesd_mapping']['NSD'] = nsd_imports
+            nsd_tpls = nsd_imports.get('nsd_templates')
+            nfv_driver = nsd_imports.get('nfv_driver')
+            if not nsd_tpls:
+                raise meso.NSDNotFound(mesd_name=mesd_dict['name'])
+            if nfv_driver.lower() not in [driver.lower() for driver in constants.NFV_DRIVER]:
+                raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
+            mesd_dict['attributes']['nsds'] = '-'.join(nsd_tpls)
+            mesd['mesd_mapping']['NSD'] = nsd_tpls
         if vnffg_imports:
-            mesd['mesd_mapping'] = vnffg_imports
-            mesd_dict['attributes']['vnffgds'] = '-'.join(vnffg_imports)
+            vnffgd_tpls = vnffg_imports.get('vnffgd_templates')
+            nfv_driver = vnffg_imports.get('nfv_driver')
+            if not vnffgd_tpls:
+                raise meso.VNFFGDNotFound(mesd_name=mesd_dict['name'])
+            mesd['mesd_mapping'] = vnffgd_tpls
+            mesd_dict['attributes']['vnffgds'] = '-'.join(vnffgd_tpls)
+            if nfv_driver.lower() not in [driver.lower() for driver in constants.NFV_DRIVER]:
+                raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
 
         if ('description' not in mesd_dict or
                 mesd_dict['description'] == ''):
@@ -241,9 +256,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
         mes_dict = super(MesoPlugin, self).create_mes(context, mes)
 
         def _create_mes_wait(self_obj, mes_id, execution_id):
-            mano_status = "RUNNING"
-            mec_status = "RUNNING"
-            mano_retries = MANO_RETRIES
+            mano_status = constants.EXCEC_STATUS
+            mec_status = constants.EXCEC_STATUS
+            mano_retries = NFV_RETRIES
             mec_retries = MEC_RETRIES
             while mec_status == "RUNNING" and mec_retries > 0:
                 time.sleep(MEC_RETRY_WAIT)
@@ -346,9 +361,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
         super(MesoPlugin, self).delete_mes(context, mes_id)
 
         def _delete_mes_wait(mes_id, execution_id):
-            exec_state = "RUNNING"
+            exec_state = constants.EXCEC_STATUS
             mistral_retries = MISTRAL_RETRIES
-            while exec_state == "RUNNING" and mistral_retries > 0:
+            while exec_state == constants.EXCEC_STATUS and mistral_retries > 0:
                 time.sleep(MISTRAL_RETRY_WAIT)
                 exec_state = self._vim_drivers.invoke(
                     driver_type,

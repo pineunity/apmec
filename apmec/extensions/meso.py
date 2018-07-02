@@ -50,6 +50,21 @@ class ToscaParserFailed(exceptions.InvalidInput):
     message = _("tosca-parser failed: - %(error_msg_details)s")
 
 
+class NSDNotFound(exceptions.NotFound):
+    message = _('NSD template(s) not existed for MESD %(mesd_name)')
+
+
+class VNFFGDNotFound(exceptions.NotFound):
+    message = _('VNFFGD template(s) not existed for MESD %(mesd_name)')
+
+
+class MECDriverNotfound(exceptions.NotFound):
+    message = _('MEC driver not specified for the MESD %(mesd_name)')
+
+
+class NFVDriverNotFound(exceptions.NotFound):
+    message = _('NFV driver is not specified for the MESD %(mesd_name)')
+
 RESOURCE_ATTRIBUTE_MAP = {
     'mesds': {
         'id': {
