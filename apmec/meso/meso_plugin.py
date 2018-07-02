@@ -221,8 +221,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
             nfv_dirver = nfv_dirver.lower()
 
         ##########################################
-        vim_obj = self.get_vim(context, mes['mes']['vim_id'], mask_password=False)
-        self._build_vim_auth(context, vim_obj)
+
+        # vim_obj = meo_plugin.get_vim(context, mes['mes']['vim_id'], mask_password=False)
+        # self._build_vim_auth(context, vim_obj)
         nsds = mesd['attributes'].get('nsds')
         if nsds:
           nsds_list = nsds.split('-')
@@ -233,14 +234,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 nfv_dirver, # How to tell it is Tacker
                 'nsd_get',
                 nsd_name=nsd,
-                auth_attr=vim_obj['auth_cred'],)
+                auth_attr=vim_res['vim_auth'],)
             if nsd_instance:
                 ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
                 ns_instance = self._nfv_drivers.invoke(
                     nfv_dirver,  # How to tell it is Tacker
                     'ns_create',
                     ns_dict=ns_arg,
-                    auth_attr=vim_obj['auth_cred'], )
+                    auth_attr=vim_res['vim_auth'], )
                 mes_info['mes_mapping']['NS'].append(ns_instance['ns']['id'])
             # Call tacker client driver
 
@@ -254,14 +255,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 nfv_dirver,  # How to tell it is Tacker
                 'vnffgd_get',
                 nsd_name=vnffgd,
-                auth_attr=vim_obj['auth_cred'], )
+                auth_attr=vim_res['vim_auth'], )
             if vnffgd_instance:
                 vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
                 vnffg_instance = self._nfv_drivers.invoke(
                     nfv_dirver,  # How to tell it is Tacker
                     'vnffg_create',
                     vnffg_dict=vnffg_arg,
-                    auth_attr=vim_obj['auth_cred'], )
+                    auth_attr=vim_res['vim_auth'], )
                 mes_info['mes_mapping']['VNFFG'].append(vnffg_instance['vnffg']['id'])
             # Call Tacker client driver
 
@@ -301,7 +302,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         nfv_dirver,  # How to tell it is Tacker
                         'ns_get',
                         ns_id=ns_list[0],
-                        auth_attr=vim_obj['auth_cred'], )
+                        auth_attr=vim_res['vim_auth'], )
                     ns_status = ns_instance['status']
                     LOG.debug('status: %s', ns_status)
                     if ns_status == 'ACTIVE' or ns_status == 'ERROR':
@@ -322,7 +323,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         nfv_dirver,  # How to tell it is Tacker
                         'vnffg_get',
                         ns_id=vnffg_list[0],
-                        auth_attr=vim_obj['auth_cred'], )
+                        auth_attr=vim_res['vim_auth'], )
                     vnffg_status = vnffg_instance['status']
                     LOG.debug('status: %s', vnffg_status)
                     if vnffg_status == 'ACTIVE' or vnffg_status == 'ERROR':
