@@ -14,27 +14,22 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import os
 import time
-from tempfile import mkstemp
 
 import eventlet
 import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
-from toscaparser import tosca_template
-from toscaparser.tosca_template import ToscaTemplate
+
 
 from apmec import manager
 from apmec._i18n import _
-from apmec.catalogs.tosca import utils as toscautils
 from apmec.common import driver_manager
 from apmec.common import log
 from apmec.common import utils
 from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meso
-from apmec.mem import vim_client
 from apmec.plugins.common import constants
 
 
