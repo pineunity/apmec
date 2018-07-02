@@ -273,53 +273,18 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             raise exceptions.DuplicateEntity(
                 _type="mes",
                 entry=e.columns)
-        evt_details = "MES UUID assigned."
-        self._cos_db_plg.create_event(
-            context, res_id=mes_id,
-            res_type=constants.RES_TYPE_mes,
-            res_state=constants.PENDING_CREATE,
-            evt_type=constants.RES_EVT_CREATE,
-            tstamp=mes_db[constants.RES_EVT_CREATED_FLD],
-            details=evt_details)
         return self._make_mes_dict(mes_db)
 
-    def create_mes_post(self, context, mes_id, mistral_obj,
-            mead_dict, error_reason):
+    def create_mes_post(self, context, mes_id,
+                        mes_status, error_reason):
         LOG.debug('mes ID %s', mes_id)
-        output = ast.literal_eval(mistral_obj.output)
-        mgmt_urls = dict()
-        mea_ids = dict()
-        if len(output) > 0:
-            for mead_name, mead_val in iteritems(mead_dict):
-                for instance in mead_val['instances']:
-                    if 'mgmt_url_' + instance in output:
-                        mgmt_urls[instance] = ast.literal_eval(
-                            output['mgmt_url_' + instance].strip())
-                        mea_ids[instance] = output['mea_id_' + instance]
-            mea_ids = str(mea_ids)
-            mgmt_urls = str(mgmt_urls)
-
-        if not mea_ids:
-            mea_ids = None
-        if not mgmt_urls:
-            mgmt_urls = None
-        status = constants.ACTIVE if mistral_obj.state == 'SUCCESS' \
-            else constants.ERROR
         with context.session.begin(subtransactions=True):
             mes_db = self._get_resource(context, MES,
                                        mes_id)
-            mes_db.update({'mea_ids': mea_ids})
-            mes_db.update({'mgmt_urls': mgmt_urls})
-            mes_db.update({'status': status})
+            mes_db.update({'status': mes_status})
             mes_db.update({'error_reason': error_reason})
             mes_db.update({'updated_at': timeutils.utcnow()})
             mes_dict = self._make_mes_dict(mes_db)
-            self._cos_db_plg.create_event(
-                context, res_id=mes_dict['id'],
-                res_type=constants.RES_TYPE_mes,
-                res_state=constants.RES_EVT_NA_STATE,
-                evt_type=constants.RES_EVT_UPDATE,
-                tstamp=mes_dict[constants.RES_EVT_UPDATED_FLD])
         return mes_dict
 
     # reference implementation. needs to be overrided by subclass
@@ -329,12 +294,6 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                 context, mes_id, _ACTIVE_UPDATE_ERROR_DEAD,
                 constants.PENDING_DELETE)
         deleted_mes_db = self._make_mes_dict(mes_db)
-        self._cos_db_plg.create_event(
-            context, res_id=mes_id,
-            res_type=constants.RES_TYPE_mes,
-            res_state=deleted_mes_db['status'],
-            evt_type=constants.RES_EVT_DELETE,
-            tstamp=timeutils.utcnow(), details="MES delete initiated")
         return deleted_mes_db
 
     def delete_mes_post(self, context, mes_id, mistral_obj,
@@ -348,24 +307,12 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                 filter(MES.status == constants.PENDING_DELETE))
             if mistral_obj and mistral_obj.state == 'ERROR':
                 query.update({'status': constants.ERROR})
-                self._cos_db_plg.create_event(
-                    context, res_id=mes_id,
-                    res_type=constants.RES_TYPE_mes,
-                    res_state=constants.ERROR,
-                    evt_type=constants.RES_EVT_DELETE,
-                    tstamp=timeutils.utcnow(),
-                    details="MES Delete ERROR")
+
             else:
                 if soft_delete:
                     deleted_time_stamp = timeutils.utcnow()
                     query.update({'deleted_at': deleted_time_stamp})
-                    self._cos_db_plg.create_event(
-                        context, res_id=mes_id,
-                        res_type=constants.RES_TYPE_mes,
-                        res_state=constants.PENDING_DELETE,
-                        evt_type=constants.RES_EVT_DELETE,
-                        tstamp=deleted_time_stamp,
-                        details="mes Delete Complete")
+
                 else:
                     query.delete()
             template_db = self._get_resource(context, MESD, mesd_id)

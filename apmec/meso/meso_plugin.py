@@ -41,10 +41,12 @@ from apmec.plugins.common import constants
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
-NFV_RETRIES = 30
-NFV_RETRY_WAIT = 6
+NS_RETRIES = 30
+NS_RETRY_WAIT = 6
 MEC_RETRIES = 30
 MEC_RETRY_WAIT = 6
+VNFFG_RETRIES = 30
+VNFFG_RETRY_WAIT = 6
 
 
 def config_opts():
@@ -268,50 +270,81 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         mes_dict = super(MesoPlugin, self).create_mes(context, mes)
 
-        def _create_mes_wait(self_obj, mes_id, execution_id):
-            nfv__status = "ACTIVE"
+        def _create_mes_wait(self_obj, mes_id):
+            mes_status = "ACTIVE"
+            ns_status = "ACTIVE"
+            vnffg_status = "ACTIVE"
             mec_status = "ACTIVE"
-            nfv_retries = NFV_RETRIES
+            ns_retries = NS_RETRIES
+            vnffg_retries = NS_RETRIES
             mec_retries = MEC_RETRIES
-
+            vnffg_retries = VNFFG_RETRIES
+            mes_mapping = self.get_mes(context, mes_id)['mes_mapping']
             # Check MECA
-            meo_plugin = manager.ApmecManager.get_service_plugins()['MEO']
             while mec_status == "ACTIVE" and mec_retries > 0:
                 time.sleep(MEC_RETRY_WAIT)
-                mec_status = meo_plugin.get_meca(context, )
-                LOG.debug('status: %s', exec_state)
-                if exec_state == 'SUCCESS' or exec_state == 'ERROR':
+                meca_id = mes_mapping['MECA']
+                mec_status = meo_plugin.get_meca(context, meca_id)['status']
+                LOG.debug('status: %s', mec_status)
+                if mec_status == 'ACTIVE' or mec_status == 'ERROR':
                     break
                 mec_retries = mec_retries - 1
             error_reason = None
-            if mec_retries == 0 and mec_exec_status == 'RUNNING':
+            if mec_retries == 0 and mec_status == 'PENDING_CREATE':
                 error_reason = _(
                     "MES creation is not completed within"
-                    " {wait} seconds as creation of mistral"
-                    " execution {mistral} is not completed").format(
-                    wait=MEC_RETRIES * MEC_RETRY_WAIT,
-                    mistral=execution_id)
-            exec_obj = self._vim_drivers.invoke(
-                driver_type,
-                'get_execution',
-                execution_id=execution_id,
-                auth_dict=self.get_auth_dict(context))
-            self._vim_drivers.invoke(driver_type,
-                                     'delete_execution',
-                                     execution_id=execution_id,
-                                     auth_dict=self.get_auth_dict(context))
-            self._vim_drivers.invoke(driver_type,
-                                     'delete_workflow',
-                                     workflow_id=workflow['id'],
-                                     auth_dict=self.get_auth_dict(context))
-            super(MesoPlugin, self).create_mes_post(context, mes_id, exec_obj,
-                                                   mead_dict, error_reason)
+                    " {wait} seconds as creation of MECA").format(
+                    wait=MEC_RETRIES * MEC_RETRY_WAIT)
+            # Check NS/VNFFG status
+            if mes_mapping.get('NS'):
+                while ns_status == "ACTIVE" and ns_retries > 0:
+                    time.sleep(NS_RETRY_WAIT)
+                    ns_list = mes_mapping['NS']
+                    # Todo: support multiple NSs
+                    ns_instance = self._nfv_drivers.invoke(
+                        nfv_dirver,  # How to tell it is Tacker
+                        'ns_get',
+                        ns_id=ns_list[0],
+                        auth_attr=vim_obj['auth_cred'], )
+                    ns_status = ns_instance['status']
+                    LOG.debug('status: %s', ns_status)
+                    if ns_status == 'ACTIVE' or ns_status == 'ERROR':
+                        break
+                    ns_retries = ns_retries - 1
+                error_reason = None
+                if ns_retries == 0 and ns_status == 'PENDING_CREATE':
+                    error_reason = _(
+                        "MES creation is not completed within"
+                        " {wait} seconds as creation of NS(s)").format(
+                        wait=NS_RETRIES * NS_RETRY_WAIT)
+            if mes_mapping.get('VNFFG'):
+                while vnffg_status == "ACTIVE" and vnffg_retries > 0:
+                    time.sleep(VNFFG_RETRY_WAIT)
+                    vnffg_list = mes_mapping['VNFFG']
+                    # Todo: support multiple VNFFGs
+                    vnffg_instance = self._nfv_drivers.invoke(
+                        nfv_dirver,  # How to tell it is Tacker
+                        'vnffg_get',
+                        ns_id=vnffg_list[0],
+                        auth_attr=vim_obj['auth_cred'], )
+                    vnffg_status = vnffg_instance['status']
+                    LOG.debug('status: %s', vnffg_status)
+                    if vnffg_status == 'ACTIVE' or vnffg_status == 'ERROR':
+                        break
+                    vnffg_retries = vnffg_retries - 1
+                error_reason = None
+                if vnffg_retries == 0 and vnffg_status == 'PENDING_CREATE':
+                    error_reason = _(
+                        "MES creation is not completed within"
+                        " {wait} seconds as creation of VNFFG(s)").format(
+                        wait=VNFFG_RETRIES * VNFFG_RETRY_WAIT)
+            if mec_status == "ERROR" or ns_status == "ERROR" or vnffg_status == "ERROR":
+                mes_status = "ERROR"
+            if error_reason:
+                mes_status = "PENDING_CREATE"
 
-            # Check NSD/VNFFGD status
-
-
-        self.spawn_n(_create_mes_wait, self, mes_dict['id'],
-                     mistral_execution.id)
+            super(MesoPlugin, self).create_mes_post(context, mes_id, mes_status, error_reason)
+        self.spawn_n(_create_mes_wait, self, mes_dict['id'])
         return mes_dict
 
     @log.log

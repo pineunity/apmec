@@ -123,9 +123,13 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_create(ns_dict)
 
-    def ns_get(self, auth_attr, ns_name):
+    def ns_get_by_name(self, auth_attr, ns_name):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_get(ns_name)
+
+    def ns_get(self, auth_attr, ns_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.ns_get(ns_id)
 
     def ns_delete(self, auth_attr, ns_name):
         tacker_client = TackerClient(auth_attr)
@@ -147,9 +151,13 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_create(vnffg_dict)
 
-    def vnffg_get(self, auth_attr, vnffg_name):
+    def vnffg_get_by_name(self, auth_attr, vnffg_name):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_get(vnffg_name)
+
+    def vnffg_get(self, auth_attr, vnffg_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.vnffg_get(vnffg_id)
 
     def vnffg_delete(self, auth_attr, vnffg_name):
         tacker_client = TackerClient(auth_attr)
@@ -187,7 +195,7 @@ class TackerClient(object):
         else:
             return None
 
-    def ns_get(self, ns_name):
+    def ns_get_by_name(self, ns_name):
         ns_dict = self.client.list_nsds()
         ns_list = ns_dict['nss']
         ns_id = None
@@ -195,6 +203,10 @@ class TackerClient(object):
             if ns['name'] == ns_name:
                 ns_id = ns['id']
         return ns_id
+
+    def ns_get(self, ns_id):
+        ns_instance = self.client.show_ns(ns_id)
+        return ns_instance['ns']
 
     def ns_delete(self, ns_name):
         nsd_id = self.ns_get(ns_name)
@@ -231,7 +243,7 @@ class TackerClient(object):
         else:
             return None
 
-    def vnffg_get(self, vnffg_name):
+    def vnffg_get_by_name(self, vnffg_name):
         vnffg_dict = self.client.list_vnffgs()
         vnffg_list = vnffg_dict['vnffgs']
         vnffg_id = None
@@ -239,6 +251,10 @@ class TackerClient(object):
             if vnffg['name'] == vnffg_name:
                 vnffg_id = vnffg['id']
         return vnffg_id
+
+    def vnffg_get(self, vnffg_id):
+        vnffg_instance = self.client.show_vnffg(vnffg_id)
+        return vnffg_instance['vnffg']
 
     def vnffg_delete(self, vnffg_name):
         vnffg_id = self.vnffg_get(vnffg_name)

@@ -59,7 +59,8 @@ DEFAULT_ALARM_ACTIONS = ['respawn', 'log', 'log_and_kill', 'notify']
 
 RES_TYPE_MEAD = "mead"
 RES_TYPE_MESD = "mesd"
-RES_TYPE_meca = "mes"
+RES_TYPE_meca = "meca"
+
 RES_TYPE_MEA = "mea"
 RES_TYPE_VIM = "vim"
 RES_TYPE_MECAD = "mecad"
