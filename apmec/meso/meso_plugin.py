@@ -181,7 +181,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         # Create MEAs using MEO APIs
         try:
             meca_name = 'meca' + name
-            meca_arg = {'meca': {'mecad_template': mes['mes']['mesd'], 'name': meca_name}}
+            meca_arg = {'meca': {'mecad_template': mesd['attributes']['mesd'], 'name': meca_name}}
             meca_dict = meo_plugin.create_meca(context, meca_arg)
         except Exception as e:
             LOG.error('Error while creating the MEAs: %s', e)
