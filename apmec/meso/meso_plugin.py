@@ -136,13 +136,13 @@ class MesoPlugin(meso_db.MESOPluginDb):
             if nfv_driver.lower() not in [driver.lower() for driver in constants.NFV_DRIVER]:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
             mesd_dict['attributes']['nsds'] = '-'.join(nsd_tpls)
-            mesd['mesd_mapping']['NSD'] = nsd_tpls
+            mesd_dict['mesd_mapping']['NSD'] = nsd_tpls
         if vnffg_imports:
             vnffgd_tpls = vnffg_imports.get('vnffgd_templates')
             nfv_driver = vnffg_imports.get('nfv_driver')
             if not vnffgd_tpls:
                 raise meso.VNFFGDNotFound(mesd_name=mesd_dict['name'])
-            mesd['mesd_mapping'] = vnffgd_tpls
+            mesd_dict['mesd_mapping'] = vnffgd_tpls
             mesd_dict['attributes']['vnffgds'] = '-'.join(vnffgd_tpls)
             if nfv_driver.lower() not in [driver.lower() for driver in constants.NFV_DRIVER]:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
