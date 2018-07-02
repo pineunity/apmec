@@ -216,7 +216,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         if mesd_dict['imports'].get('nsds'):
             nfv_dirver = mesd_dict['imports']['nsds']['nfv_driver']
             nfv_dirver = nfv_dirver.lower()
-        if mesd_dict['imports'].get('nsds'):
+        if mesd_dict['imports'].get('vnffgds'):
             nfv_dirver = mesd_dict['imports']['vnffgds']['nfv_driver']
             nfv_dirver = nfv_dirver.lower()
 
