@@ -213,10 +213,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
         # Detect MANO driver here:
         # Defined in the Tosca template
         nfv_dirver = None
-        if mesd_dict['import'].get('nsds'):
+        if mesd_dict['imports'].get('nsds'):
             nfv_dirver = mesd_dict['import']['nsds']['nfv_driver']
             nfv_dirver = nfv_dirver.lower()
-        if mesd_dict['import'].get('nsds'):
+        if mesd_dict['imports'].get('nsds'):
             nfv_dirver = mesd_dict['import']['vnffgds']['nfv_driver']
             nfv_dirver = nfv_dirver.lower()
 
