@@ -88,7 +88,7 @@ class MES(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     __tablename__ = 'mes'
     mesd_id = sa.Column(types.Uuid, sa.ForeignKey('mesd.id'))
     mesd = orm.relationship('MESD')
-
+    mes_mapping = sa.Column(types.Json, nullable=True)
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text, nullable=True)
 

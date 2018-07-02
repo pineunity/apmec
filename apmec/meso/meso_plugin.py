@@ -31,6 +31,7 @@ from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meso
 from apmec.plugins.common import constants
+from apmec.mem import vim_client
 
 
 
@@ -71,6 +72,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         self._nfv_drivers = driver_manager.DriverManager(
             'apmec.meso.drivers',
             cfg.CONF.meso.nfv_drivers)
+        self.vim_client = vim_client.VimClient()
 
     def get_auth_dict(self, context):
         auth = CONF.keystone_authtoken
@@ -340,6 +342,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
             super(MesoPlugin, self).create_mes_post(context, mes_id, mes_status, error_reason)
         self.spawn_n(_create_mes_wait, self, mes_dict['id'])
         return mes_dict
+
+    @log.log
+    def _get_from_ns(self, context, nsd_id):
+
 
     @log.log
     def _update_params(self, original, paramvalues):
