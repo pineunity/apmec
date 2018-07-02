@@ -164,7 +164,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         return self._fields(res, fields)
 
     def create_mesd(self, context, mesd):
-        mesd = mesd['mesd']['imports']['']
+        mesd = mesd['mesd']
         LOG.debug('mesd %s', mesd)
         tenant_id = self._get_tenant_id_for_create(context, mesd)
         template_source = mesd.get('template_source')
