@@ -54,7 +54,7 @@ class MESD(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     description = sa.Column(sa.Text)
     # Mesd template source - onboarded
     template_source = sa.Column(sa.String(255), server_default='onboarded')
-
+    mesd_mapping = sa.Column(types.Json, nullable=True)
     # (key, value) pair to spin up
     attributes = orm.relationship('MESDAttribute',
                                   backref='mesd')
