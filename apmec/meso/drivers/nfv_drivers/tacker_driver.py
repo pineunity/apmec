@@ -74,16 +74,6 @@ OPENSTACK_OPTS = [
 cfg.CONF.register_opts(OPTS, 'vim_keys')
 cfg.CONF.register_opts(OPENSTACK_OPTS, 'vim_monitor')
 
-_VALID_RESOURCE_TYPES = {'network': {'client': neutron_client.Client,
-                                     'cmd': 'list_networks',
-                                     'vim_res_name': 'networks',
-                                     'filter_attr': 'name'
-                                     }
-                         }
-
-
-CONNECTION_POINT = 'connection_points'
-
 
 def config_opts():
     return [('vim_keys', OPTS), ('vim_monitor', OPENSTACK_OPTS)]
