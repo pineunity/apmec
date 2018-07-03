@@ -43,13 +43,3 @@ class NfvAbstractDriver(extensions.PluginInterface):
     def get_description(self):
         pass
 
-    @abc.abstractmethod
-    def get_vim_resource_id(self, vim_obj, resource_type, resource_name):
-        """Parses a VIM resource ID from a given type and name
-
-        :param vim_obj: VIM information
-        :param resource_type: type of resource, such as network, compute
-        :param resource_name: name of resource, such at "test-network"
-        :return: ID of resource
-        """
-        pass
