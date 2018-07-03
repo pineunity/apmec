@@ -345,10 +345,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
         return mes_dict
 
     @log.log
-    def _get_from_ns(self, context, nsd_id):
-
-
-    @log.log
     def _update_params(self, original, paramvalues):
         for key, value in (original).items():
             if not isinstance(value, dict) or 'get_input' not in str(value):
