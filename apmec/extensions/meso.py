@@ -65,6 +65,7 @@ class MECDriverNotfound(exceptions.NotFound):
 class NFVDriverNotFound(exceptions.NotFound):
     message = _('NFV driver is not specified for the MESD %(mesd_name)')
 
+
 RESOURCE_ATTRIBUTE_MAP = {
     'mesds': {
         'id': {
