@@ -20,6 +20,7 @@ import eventlet
 import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
+from oslo_utils import uuidutils
 
 
 from apmec import manager
@@ -195,7 +196,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         meca_id = dict()
         # Create MEAs using MEO APIs
         try:
-            meca_name = 'meca' + name
+            meca_name = 'meca' + '-' + name + '-' + uuidutils.generate_uuid()
             meca_arg = {'meca': {'mecad_template': mesd['attributes']['mesd'], 'name': meca_name}}
             meca_dict = meo_plugin.create_meca(context, meca_arg)
             mes_info['mes_mapping']['MECA'] = meca_dict['id']
@@ -229,7 +230,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
           nsds_list = nsds.split('-')
           mes_info['mes_mapping']['NS'] = list()
           for nsd in nsds_list:
-            ns_name = nsd + name
+            ns_name = nsd + name + '-' + uuidutils.generate_uuid()
             nsd_instance = self._nfv_drivers.invoke(
                 nfv_dirver, # How to tell it is Tacker
                 'nsd_get',
@@ -250,7 +251,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
           vnffgds_list = vnffgds.split('-')
           mes_info['mes_mapping']['VNFFG'] = list()
           for vnffgd in vnffgds_list:
-            vnffg_name = vnffgds + name
+            vnffg_name = vnffgds + name + '-' + uuidutils.generate_uuid()
             vnffgd_instance = self._nfv_drivers.invoke(
                 nfv_dirver,  # How to tell it is Tacker
                 'vnffgd_get',
