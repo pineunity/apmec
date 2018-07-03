@@ -21,6 +21,7 @@ import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import uuidutils
+import copy
 
 
 from apmec import manager
@@ -197,11 +198,21 @@ class MesoPlugin(meso_db.MESOPluginDb):
         # Create MEAs using MEO APIs
         try:
             meca_name = 'meca' + '-' + name + '-' + uuidutils.generate_uuid()
-            meca_arg = {'meca': {'mecad_template': mesd['attributes']['mesd'], 'name': meca_name}}
+            # Separate the imports out from template
+            mead_tpl_dict = dict()
+            mead_tpl_dict['imports'] = mesd_dict['imports']['meads']['mead_templates']
+            mecad_dict = copy.deepcopy(mesd_dict)
+            mecad_dict.pop('imports')
+            mecad_dict.update(mead_tpl_dict)
+            mecad_tpl_yaml = yaml.safe_dump(mecad_dict)
+            LOG.debug('mesd %s', mecad_tpl_yaml)
+            meca_arg = {'meca': {'mecad_template': mecad_dict, 'name': meca_name,
+                                 'description': mes_info['description'], 'tenant_id': mes_info['tenant_id'],
+                                 'vim_id': mes_info['vim_id'], 'attributes': {}}}
             meca_dict = meo_plugin.create_meca(context, meca_arg)
             mes_info['mes_mapping']['MECA'] = meca_dict['id']
         except Exception as e:
-            LOG.error('Error while creating the MEAs: %s', e)
+            LOG.error('Error while creating the MECAs: %s', e)
         region_name = mes.setdefault('placement_attr', {}).get(
             'region_name', None)
         vim_res = self.vim_client.get_vim(context, mes['mes']['vim_id'],

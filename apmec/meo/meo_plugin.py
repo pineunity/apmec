@@ -308,7 +308,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meca_db.MECAPluginDb):
 
         # Deploy MEC applications
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
-        mead_imports = inner_mecad_dict['imports']['meads']
+        mead_imports = inner_mecad_dict['imports']
         inner_mecad_dict['imports'] = []
         new_files = []
         for mead_name in mead_imports:
@@ -392,7 +392,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meca_db.MECAPluginDb):
         vim_res = self.vim_client.get_vim(context, meca['meca']['vim_id'],
                                           region_name)
         driver_type = vim_res['vim_type']
-        if not meca['meca']['vim_id']:
+        if not meca['meca'].get('vim_id'):
             meca['meca']['vim_id'] = vim_res['vim_id']
 
         # Step-1
