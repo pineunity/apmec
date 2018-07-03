@@ -204,8 +204,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             mecad_dict = copy.deepcopy(mesd_dict)
             mecad_dict.pop('imports')
             mecad_dict.update(mead_tpl_dict)
-            mecad_tpl_yaml = yaml.safe_dump(mecad_dict)
-            LOG.debug('mesd %s', mecad_tpl_yaml)
+            LOG.debug('mesd %s', mecad_dict)
             meca_arg = {'meca': {'mecad_template': mecad_dict, 'name': meca_name,
                                  'description': mes_info['description'], 'tenant_id': mes_info['tenant_id'],
                                  'vim_id': mes_info['vim_id'], 'attributes': {}}}
