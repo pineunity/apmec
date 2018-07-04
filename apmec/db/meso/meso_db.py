@@ -296,8 +296,8 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         deleted_mes_db = self._make_mes_dict(mes_db)
         return deleted_mes_db
 
-    def delete_mes_post(self, context, mes_id, mistral_obj,
-                       error_reason, soft_delete=True):
+    def delete_mes_post(self, context, mes_id,
+                       error_reason, soft_delete=True, error=False):
         mes = self.get_mes(context, mes_id)
         mesd_id = mes.get('mesd_id')
         with context.session.begin(subtransactions=True):
@@ -305,9 +305,10 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                 self._model_query(context, MES).
                 filter(MES.id == mes_id).
                 filter(MES.status == constants.PENDING_DELETE))
-            if error_reason:
+            if error:
                 query.update({'status': constants.ERROR})
-
+            if error_reason:
+                query.update({'error_reason': error_reason})
             else:
                 if soft_delete:
                     deleted_time_stamp = timeutils.utcnow()

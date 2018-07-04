@@ -332,7 +332,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     vnffg_instance = self._nfv_drivers.invoke(
                         nfv_driver,  # How to tell it is Tacker
                         'vnffg_get',
-                        ns_id=vnffg_list[0],
+                        vnffg_id=vnffg_list[0],
                         auth_attr=vim_res['vim_auth'], )
                     vnffg_status = vnffg_instance['status']
                     LOG.debug('status: %s', vnffg_status)
@@ -439,6 +439,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
             ns_retries = NS_RETRIES
             mec_retries = MEC_RETRIES
             vnffg_retries = VNFFG_RETRIES
+            error_reason_meca = None
+            error_reason_ns = None
+            error_reason_vnffg = None
             # Check MECA
             while mec_status == "PENDING_DELETE" and mec_retries > 0:
                 time.sleep(MEC_RETRY_WAIT)
@@ -455,11 +458,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 if mec_status == 'ERROR':
                     break
                 mec_retries = mec_retries - 1
-            error_reason = None
             if mec_retries == 0 and mec_status == 'PENDING_DELETE':
-                error_reason = _(
+                error_reason_meca = _(
                     "MES deletion is not completed within"
-                    " {wait} seconds as creation of MECA").format(
+                    " {wait} seconds as deletion of MECA").format(
                     wait=MEC_RETRIES * MEC_RETRY_WAIT)
             # Check NS/VNFFG status
             if mes_mapping.get('NS'):
@@ -467,16 +469,16 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     time.sleep(NS_RETRY_WAIT)
                     ns_list = mes_mapping['NS']
                     # Todo: support multiple NSs
-                    is_deleted = True
-                    ns_list = self._nfv_drivers.invoke(
+                    is_existed = self._nfv_drivers.invoke(
                         nfv_driver,  # How to tell it is Tacker
-                        'ns_delete',
+                        'ns_check',
                         ns_id=ns_list[0],
                         auth_attr=vim_res['vim_auth'], )
-
+                    if not is_existed:
+                        break
                     ns_instance = self._nfv_drivers.invoke(
                         nfv_driver,  # How to tell it is Tacker
-                        'ns_delete',
+                        'ns_get',
                         ns_id=ns_list[0],
                         auth_attr=vim_res['vim_auth'], )
                     ns_status = ns_instance['status']
@@ -484,40 +486,46 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     if ns_status == 'ERROR':
                         break
                     ns_retries = ns_retries - 1
-                error_reason = None
-                if ns_retries == 0 and ns_status == 'PENDING_CREATE':
-                    error_reason = _(
-                        "MES creation is not completed within"
-                        " {wait} seconds as creation of NS(s)").format(
+                if ns_retries == 0 and ns_status == 'PENDING_DELETE':
+                    error_reason_ns = _(
+                        "MES deletion is not completed within"
+                        " {wait} seconds as deletion of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
             if mes_mapping.get('VNFFG'):
                 while vnffg_status == "ACTIVE" and vnffg_retries > 0:
                     time.sleep(VNFFG_RETRY_WAIT)
                     vnffg_list = mes_mapping['VNFFG']
                     # Todo: support multiple VNFFGs
+                    is_existed = self._nfv_drivers.invoke(
+                        nfv_driver,  # How to tell it is Tacker
+                        'vnffg_check',
+                        vnffg_id=vnffg_list[0],
+                        auth_attr=vim_res['vim_auth'], )
+                    if not is_existed:
+                        break
                     vnffg_instance = self._nfv_drivers.invoke(
                         nfv_driver,  # How to tell it is Tacker
                         'vnffg_get',
-                        ns_id=vnffg_list[0],
+                        vnffg_id=vnffg_list[0],
                         auth_attr=vim_res['vim_auth'], )
                     vnffg_status = vnffg_instance['status']
                     LOG.debug('status: %s', vnffg_status)
                     if vnffg_status == 'ERROR':
                         break
                     vnffg_retries = vnffg_retries - 1
-                error_reason = None
-                if vnffg_retries == 0 and vnffg_status == 'PENDING_CREATE':
-                    error_reason = _(
-                        "MES creation is not completed within"
-                        " {wait} seconds as creation of VNFFG(s)").format(
+                if vnffg_retries == 0 and vnffg_status == 'PENDING_DELETE':
+                    error_reason_vnffg = _(
+                        "MES deletion is not completed within"
+                        " {wait} seconds as deletion of VNFFG(s)").format(
                         wait=VNFFG_RETRIES * VNFFG_RETRY_WAIT)
+            error = False
             if mec_status == "ERROR" or ns_status == "ERROR" or vnffg_status == "ERROR":
-                mes_status = "ERROR"
-            if error_reason:
-                mes_status = "PENDING_CREATE"
-        if workflow:
-            self.spawn_n(_delete_mes_wait, mes['id'], mistral_execution.id)
-        else:
+                error = True
+            error_reason = None
+            for reason in [error_reason_meca, error_reason_ns, error_reason_vnffg]:
+                error_reason = reason if reason else None
+
             super(MesoPlugin, self).delete_mes_post(
-                context, mes_id, None, None)
+                context, mes_id, error_reason=error_reason, error=error)
+        self.spawn_n(_delete_mes_wait, mes['id'])
         return mes['id']
