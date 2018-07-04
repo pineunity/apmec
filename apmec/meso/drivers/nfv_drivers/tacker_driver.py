@@ -9,74 +9,18 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from keystoneauth1 import identity
-from keystoneauth1 import session
-from tackerclient.v1_0 import client as tacker_client
-
-
-# Copyright 2016 Brocade Communications System, Inc.
-# All Rights Reserved.
-#
-#
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
-
-import os
-import six
-import yaml
-
-from apmec._i18n import _
-from apmec.common import log
-from apmec.extensions import meo
-from apmec.keymgr import API as KEYMGR_API
-from apmec.mistral import mistral_client
-from apmec.meso.drivers.nfv_drivers import abstract_driver
-from apmec.meo.drivers.workflow import workflow_generator
-from apmec.mem import keystone
-
-from keystoneauth1 import exceptions
-from keystoneauth1 import identity
-from keystoneauth1.identity import v2
-from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from oslo_config import cfg
 from oslo_log import log as logging
 
+from apmec.meso.drivers.nfv_drivers import abstract_driver
+
+from tackerclient.v1_0 import client as tacker_client
+
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
-
-OPTS = [cfg.StrOpt('openstack', default='/etc/apmec/vim/fernet_keys',
-                   help='Dir.path to store fernet keys.'),
-        cfg.BoolOpt('use_barbican', default=False,
-                    help=_('Use barbican to encrypt vim password if True, '
-                           'save vim credentials in local file system '
-                           'if False'))
-        ]
-
-# same params as we used in ping monitor driver
-OPENSTACK_OPTS = [
-    cfg.StrOpt('count', default='1',
-               help=_('number of ICMP packets to send')),
-    cfg.StrOpt('timeout', default='1',
-               help=_('number of seconds to wait for a response')),
-    cfg.StrOpt('interval', default='1',
-               help=_('number of seconds to wait between packets'))
-]
-cfg.CONF.register_opts(OPTS, 'vim_keys')
-cfg.CONF.register_opts(OPENSTACK_OPTS, 'vim_monitor')
-
-
-def config_opts():
-    return [('vim_keys', OPTS), ('vim_monitor', OPENSTACK_OPTS)]
 
 
 class Tacker_Driver(abstract_driver.NfvAbstractDriver):
@@ -87,10 +31,6 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
     authorization and validation. The driver is also responsible for
     discovering placement attributes such as regions, availability zones
     """
-
-    def __init__(self):
-        self.keystone = keystone.Keystone()
-        self.keystone.create_key_dir(CONF.vim_keys.openstack)
 
     def get_type(self):
         return 'tacker'
@@ -121,9 +61,13 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_get(ns_id)
 
-    def ns_delete(self, auth_attr, ns_name):
+    def ns_delete_by_name(self, auth_attr, ns_name):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_delete(ns_name)
+
+    def ns_delete(self, auth_attr, ns_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.ns_delete(ns_id)
 
     def vnfd_create(self, auth_attr, vnfd_dict):
         tacker_client = TackerClient(auth_attr)
@@ -149,9 +93,13 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_get(vnffg_id)
 
-    def vnffg_delete(self, auth_attr, vnffg_name):
+    def vnffg_delete_by_name(self, auth_attr, vnffg_name):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_delete(vnffg_name)
+
+    def vnffg_delete(self, auth_attr, vnffg_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.vnffg_delete(vnffg_id)
 
 
 class TackerClient(object):
@@ -198,10 +146,13 @@ class TackerClient(object):
         ns_instance = self.client.show_ns(ns_id)
         return ns_instance['ns']
 
-    def ns_delete(self, ns_name):
-        nsd_id = self.ns_get(ns_name)
-        if nsd_id:
-            self.client.delete_ns(nsd_id)
+    def ns_delete_by_name(self, ns_name):
+        ns_id = self.ns_get_by_name(ns_name)
+        if ns_id:
+            self.client.delete_ns(ns_id)
+
+    def ns_delete(self, ns_id):
+        return self.client.delete(ns_id)
 
     def vnfd_create(self, vnfd_dict):
         vnfd_instance = self.client.create_vnfd(body=vnfd_dict)
@@ -246,7 +197,10 @@ class TackerClient(object):
         vnffg_instance = self.client.show_vnffg(vnffg_id)
         return vnffg_instance['vnffg']
 
-    def vnffg_delete(self, vnffg_name):
-        vnffg_id = self.vnffg_get(vnffg_name)
+    def vnffg_delete_by_name(self, vnffg_name):
+        vnffg_id = self.vnffg_get_by_name(vnffg_name)
         if vnffg_id:
             self.client.delete_vnffg(vnffg_id)
+
+    def vnffg_delete(self, vnffg_id):
+        return self.client.delete_vnffg(vnffg_id)

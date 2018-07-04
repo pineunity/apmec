@@ -36,7 +36,6 @@ from apmec.plugins.common import constants
 from apmec.mem import vim_client
 
 
-
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
 NS_RETRIES = 30
@@ -384,6 +383,17 @@ class MesoPlugin(meso_db.MESOPluginDb):
     @log.log
     def delete_mes(self, context, mes_id):
         mes = super(MesoPlugin, self).get_mes(context, mes_id)
+        mesd = self.get_mesd(context, mes['mesd_id'])
+        mesd_dict = yaml.safe_load(mesd['attributes']['mesd'])
+        nfv_dirver = None
+        if mesd_dict['imports'].get('nsds'):
+            nfv_dirver = mesd_dict['imports']['nsds']['nfv_driver']
+            nfv_dirver = nfv_dirver.lower()
+        if mesd_dict['imports'].get('vnffgds'):
+            nfv_dirver = mesd_dict['imports']['vnffgds']['nfv_driver']
+            nfv_dirver = nfv_dirver.lower()
+        if not nfv_dirver:
+            raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
         vim_res = self.vim_client.get_vim(context, mes['vim_id'])
         driver_type = vim_res['vim_type']
         workflow = None
@@ -393,7 +403,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 'prepare_and_create_workflow',
                 resource='mea',
                 action='delete',
-                auth_dict=self.get_auth_dict(context),
+                auth_dict=vim_res['vim_auth'],
                 kwargs={
                     'mes': mes})
         except meso.NoTasksException:
