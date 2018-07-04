@@ -160,7 +160,7 @@ class TackerClient(object):
             self.client.delete_ns(ns_id)
 
     def ns_check(self, ns_id):
-        ns_dict = self.client.list_nsds()
+        ns_dict = self.client.list_nss()
         ns_list = ns_dict['nss']
         check = False
         for ns in ns_list:
