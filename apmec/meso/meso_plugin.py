@@ -280,9 +280,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         def _create_mes_wait(self_obj, mes_id):
             mes_status = "ACTIVE"
-            ns_status = "ACTIVE"
-            vnffg_status = "ACTIVE"
-            mec_status = "ACTIVE"
+            ns_status = "PENDING_CREATE"
+            vnffg_status = "PENDING_CREATE"
+            mec_status = "PENDING_CREATE"
             ns_retries = NS_RETRIES
             mec_retries = MEC_RETRIES
             vnffg_retries = VNFFG_RETRIES
@@ -304,7 +304,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     wait=MEC_RETRIES * MEC_RETRY_WAIT)
             # Check NS/VNFFG status
             if mes_mapping.get('NS'):
-                while ns_status == "ACTIVE" and ns_retries > 0:
+                while ns_status == "PENDING_CREATE" and ns_retries > 0:
                     time.sleep(NS_RETRY_WAIT)
                     ns_list = mes_mapping['NS']
                     # Todo: support multiple NSs
@@ -325,7 +325,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         " {wait} seconds as creation of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
             if mes_mapping.get('VNFFG'):
-                while vnffg_status == "ACTIVE" and vnffg_retries > 0:
+                while vnffg_status == "PENDING_CREATE" and vnffg_retries > 0:
                     time.sleep(VNFFG_RETRY_WAIT)
                     vnffg_list = mes_mapping['VNFFG']
                     # Todo: support multiple VNFFGs
