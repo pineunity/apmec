@@ -404,11 +404,11 @@ class MesoPlugin(meso_db.MESOPluginDb):
             if not nfv_driver:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
             try:
-                ns_id = self._nfv_drivers.invoke(
+                self._nfv_drivers.invoke(
                     nfv_driver,
                     'ns_delete',
                     ns_id=ns_id,
-                    auth_dict=vim_res['vim_auth'])
+                    auth_attr=vim_res['vim_auth'])
             except Exception as e:
                 LOG.error('Error while deleting the NS(s): %s', e)
         if mes_mapping.get('VNFFG'):
@@ -421,11 +421,11 @@ class MesoPlugin(meso_db.MESOPluginDb):
             if not nfv_driver:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
             try:
-                vnffg_id = self._nfv_drivers.invoke(
+                self._nfv_drivers.invoke(
                     nfv_driver,
                     'vnffg_delete',
                     vnffg_id=vnffg_id,
-                    auth_dict=vim_res['vim_auth'])
+                    auth_attr=vim_res['vim_auth'])
             except Exception as e:
                 LOG.error('Error while deleting the VNFFG(s): %s', e)
 
