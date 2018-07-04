@@ -240,7 +240,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
           nsds_list = nsds.split('-')
           mes_info['mes_mapping']['NS'] = list()
           for nsd in nsds_list:
-            ns_name = nsd + name + '-' + uuidutils.generate_uuid()
+            ns_name = nsd + '-' + name + '-' + uuidutils.generate_uuid()
             nsd_instance = self._nfv_drivers.invoke(
                 nfv_dirver, # How to tell it is Tacker
                 'nsd_get',
@@ -261,7 +261,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
           vnffgds_list = vnffgds.split('-')
           mes_info['mes_mapping']['VNFFG'] = list()
           for vnffgd in vnffgds_list:
-            vnffg_name = vnffgds + name + '-' + uuidutils.generate_uuid()
+            vnffg_name = vnffgds + '-' + name + '-' + uuidutils.generate_uuid()
             vnffgd_instance = self._nfv_drivers.invoke(
                 nfv_dirver,  # How to tell it is Tacker
                 'vnffgd_get',
