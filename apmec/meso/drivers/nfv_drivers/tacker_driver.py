@@ -61,6 +61,10 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_get(ns_id)
 
+    def ns_check(self, auth_attr, ns_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.ns_check(ns_id)
+
     def ns_delete_by_name(self, auth_attr, ns_name):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_delete(ns_name)
@@ -100,6 +104,10 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
     def vnffg_delete(self, auth_attr, vnffg_id):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_delete(vnffg_id)
+
+    def vnffg_check(self, auth_attr, vnffg_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.vnffg_check(vnffg_id)
 
 
 class TackerClient(object):
@@ -150,6 +158,15 @@ class TackerClient(object):
         ns_id = self.ns_get_by_name(ns_name)
         if ns_id:
             self.client.delete_ns(ns_id)
+
+    def ns_check(self, ns_id):
+        ns_dict = self.client.list_nsds()
+        ns_list = ns_dict['nss']
+        check = False
+        for ns in ns_list:
+            if ns['id'] == ns_id:
+                check = True
+        return check
 
     def ns_delete(self, ns_id):
         return self.client.delete(ns_id)
@@ -204,3 +221,12 @@ class TackerClient(object):
 
     def vnffg_delete(self, vnffg_id):
         return self.client.delete_vnffg(vnffg_id)
+
+    def vnffg_check(self, vnffg_id):
+        vnffg_dict = self.client.list_vnffgs()
+        vnffg_list = vnffg_dict['vnffgs']
+        check = False
+        for vnffg in vnffg_list:
+            if vnffg['id'] == vnffg_id:
+                check = True
+        return check

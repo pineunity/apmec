@@ -305,7 +305,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                 self._model_query(context, MES).
                 filter(MES.id == mes_id).
                 filter(MES.status == constants.PENDING_DELETE))
-            if mistral_obj and mistral_obj.state == 'ERROR':
+            if error_reason:
                 query.update({'status': constants.ERROR})
 
             else:
