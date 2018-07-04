@@ -288,7 +288,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             vnffg_retries = VNFFG_RETRIES
             mes_mapping = self.get_mes(context, mes_id)['mes_mapping']
             # Check MECA
-            while mec_status == "ACTIVE" and mec_retries > 0:
+            while mec_status == "PENDING_CREATE" and mec_retries > 0:
                 time.sleep(MEC_RETRY_WAIT)
                 meca_id = mes_mapping['MECA']
                 mec_status = meo_plugin.get_meca(context, meca_id)['status']
@@ -432,7 +432,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
         super(MesoPlugin, self).delete_mes(context, mes_id)
 
         def _delete_mes_wait(mes_id):
-            mes_status = "PENDING_DELETE"
             ns_status = "PENDING_DELETE"
             vnffg_status = "PENDING_DELETE"
             mec_status = "PENDING_DELETE"
@@ -492,7 +491,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         " {wait} seconds as deletion of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
             if mes_mapping.get('VNFFG'):
-                while vnffg_status == "ACTIVE" and vnffg_retries > 0:
+                while vnffg_status == "PENDING_DELETE" and vnffg_retries > 0:
                     time.sleep(VNFFG_RETRY_WAIT)
                     vnffg_list = mes_mapping['VNFFG']
                     # Todo: support multiple VNFFGs

@@ -169,7 +169,7 @@ class TackerClient(object):
         return check
 
     def ns_delete(self, ns_id):
-        return self.client.delete(ns_id)
+        return self.client.delete_ns(ns_id)
 
     def vnfd_create(self, vnfd_dict):
         vnfd_instance = self.client.create_vnfd(body=vnfd_dict)
