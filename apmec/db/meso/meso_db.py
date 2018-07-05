@@ -334,11 +334,9 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             mes_db = self._get_mes_db(context, mes_id, _ACTIVE_UPDATE, constants.PENDING_UPDATE)
             return self._make_mes_dict(mes_db)
 
-    def _update_mes_post(self, context, mes_id, new_mes_mapping, error_reason, mes_status):
+    def _update_mes_post(self, context, mes_id, error_reason, mes_status):
         with context.session.begin(subtransactions=True):
-            mes_db = self._get_resource(context, MES,
-                                       mes_id)
-            mes_db.update({'mes_mappping': new_mes_mapping})
+            mes_db = self._get_resource(context, MES, mes_id)
             mes_db.update({'status': mes_status})
             mes_db.update({'error_reason': error_reason})
             mes_db.update({'updated_at': timeutils.utcnow()})
@@ -351,5 +349,5 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             return self._make_mes_dict(mes_db)
 
     def update_mes(self, context, mes_id, mes):
-        mes_dict = self._update_ns_pre(context, mes_id)
-        self._update_ns_post(context, mes_id, constants.ACTIVE, mes_dict, None)
+        mes_dict = self._update_mes_pre(context, mes_id)
+        self._update_mes_post(context, mes_id, constants.ACTIVE, None)

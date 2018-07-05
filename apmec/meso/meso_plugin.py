@@ -587,7 +587,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
             old_ns_id = old_mes['mes_mapping']['NS'][0]
             ns_arg = {'ns': {'nsd_template': nsd_template}}
-            ns_id = self._nfv_drivers.invoke(
+            ns_dict = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
                 'ns_update',
                 ns_id=old_ns_id,
@@ -611,120 +611,111 @@ class MesoPlugin(meso_db.MESOPluginDb):
             vnffgd_template = yaml.safe_load(vnffgd_dict['attributes']['vnffgd'])
             old_vnffg_id = old_mes['mes_mapping']['VNFFG'][0]
             vnffg_arg = {'vnffg': {'vnffgd_template': vnffgd_template}}
-            ns_id = self._nfv_drivers.invoke(
+            vnffg_dict = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
-                'ns_update',
+                'vnffg_update',
                 vnffg_id=old_vnffg_id,
                 vnffg_dict=vnffg_arg,
                 auth_attr=vim_res['vim_auth'], )
 
-        # Step-1
-        param_values = dict()
-        if 'get_input' in str(nsd_dict):
-            self._process_parameterized_input(ns['ns']['attributes'],
-                                              nsd_dict)
+        mes_dict = super(MesoPlugin, self)._update_mes_pre(context, mes_id)
 
-        # Step-2
-        vnfds = nsd['vnfds']
-        # vnfd_dict is used while generating workflow
-        vnfd_dict = dict()
-        for node_name, node_val in \
-                (nsd_dict['topology_template']['node_templates']).items():
-            if node_val.get('type') not in vnfds.keys():
-                continue
-            vnfd_name = vnfds[node_val.get('type')]
-            if not vnfd_dict.get(vnfd_name):
-                vnfd_dict[vnfd_name] = {
-                    'id': self._get_vnfd_id(vnfd_name, onboarded_vnfds),
-                    'instances': [node_name]
-                }
-            else:
-                vnfd_dict[vnfd_name]['instances'].append(node_name)
-            if not node_val.get('requirements'):
-                continue
-            if not param_values.get(vnfd_name):
-                param_values[vnfd_name] = {}
-            param_values[vnfd_name]['substitution_mappings'] = dict()
-            req_dict = dict()
-            requirements = node_val.get('requirements')
-            for requirement in requirements:
-                req_name = list(requirement.keys())[0]
-                req_val = list(requirement.values())[0]
-                res_name = req_val + ns['ns']['nsd_id'][:11]
-                req_dict[req_name] = res_name
-                if req_val in nsd_dict['topology_template']['node_templates']:
-                    param_values[vnfd_name]['substitution_mappings'][
-                        res_name] = nsd_dict['topology_template'][
-                        'node_templates'][req_val]
-
-            param_values[vnfd_name]['substitution_mappings'][
-                'requirements'] = req_dict
-        ns['vnfd_details'] = vnfd_dict
-        # Step-3
-        kwargs = {'ns': ns, 'params': param_values}
-
-        # NOTE NoTasksException is raised if no tasks.
-        workflow = self._vim_drivers.invoke(
-            driver_type,
-            'prepare_and_create_workflow',
-            resource='vnf',
-            action='create',
-            auth_dict=self.get_auth_dict(context),
-            kwargs=kwargs)
-        try:
-            mistral_execution = self._vim_drivers.invoke(
-                driver_type,
-                'execute_workflow',
-                workflow=workflow,
-                auth_dict=self.get_auth_dict(context))
-        except Exception as ex:
-            LOG.error('Error while executing workflow: %s', ex)
-            self._vim_drivers.invoke(driver_type,
-                                     'delete_workflow',
-                                     workflow_id=workflow['id'],
-                                     auth_dict=self.get_auth_dict(context))
-            raise ex
-        ns_dict = super(NfvoPlugin, self)._update_ns_pre(context, ns_id)
-
-        def _update_ns_wait(self_obj, ns_id, execution_id):
-            exec_state = "RUNNING"
-            mistral_retries = MISTRAL_RETRIES
-            while exec_state == "RUNNING" and mistral_retries > 0:
-                time.sleep(MISTRAL_RETRY_WAIT)
-                exec_state = self._vim_drivers.invoke(
-                    driver_type,
-                    'get_execution',
-                    execution_id=execution_id,
-                    auth_dict=self.get_auth_dict(context)).state
-                LOG.debug('status: %s', exec_state)
-                if exec_state == 'SUCCESS' or exec_state == 'ERROR':
+        def _update_mes_wait(self_obj, mes_id):
+            mes_status = "ACTIVE"
+            ns_status = "PENDING_UPDATE"
+            vnffg_status = "PENDING_UPDATE"
+            mec_status = "PENDING_UPDATE"
+            ns_retries = NS_RETRIES
+            mec_retries = MEC_RETRIES
+            vnffg_retries = VNFFG_RETRIES
+            error_reason_meca = None
+            error_reason_ns = None
+            error_reason_vnffg = None
+            # Check MECA
+            while mec_status == "PENDING_UPDATE" and mec_retries > 0:
+                time.sleep(MEC_RETRY_WAIT)
+                meca_id = old_mes['mes_mapping']['MECA']
+                meca_list = meo_plugin.get_mecas(context)
+                is_deleted = True
+                for meca in meca_list:
+                    if meca_id in meca['id']:
+                        is_deleted = False
+                if is_deleted:
                     break
-                mistral_retries = mistral_retries - 1
+                mec_status = meo_plugin.get_meca(context, meca_id)['status']
+                LOG.debug('status: %s', mec_status)
+                if mec_status == 'ERROR':
+                    break
+                mec_retries = mec_retries - 1
+            if mec_retries == 0 and mec_status == 'PENDING_UPDATE':
+                error_reason_meca = _(
+                    "MES update is not completed within"
+                    " {wait} seconds as update of MECA").format(
+                    wait=MEC_RETRIES * MEC_RETRY_WAIT)
+            # Check NS/VNFFG status
+            if old_mes['mes_mapping'].get('NS'):
+                while ns_status == "PENDING_UPDATE" and ns_retries > 0:
+                    time.sleep(NS_RETRY_WAIT)
+                    ns_list = old_mes['mes_mapping']['NS']
+                    # Todo: support multiple NSs
+                    is_existed = self._nfv_drivers.invoke(
+                        nfv_driver,  # How to tell it is Tacker
+                        'ns_check',
+                        ns_id=ns_list[0],
+                        auth_attr=vim_res['vim_auth'], )
+                    if not is_existed:
+                        break
+                    ns_instance = self._nfv_drivers.invoke(
+                        nfv_driver,  # How to tell it is Tacker
+                        'ns_get',
+                        ns_id=ns_list[0],
+                        auth_attr=vim_res['vim_auth'], )
+                    ns_status = ns_instance['status']
+                    LOG.debug('status: %s', ns_status)
+                    if ns_status == 'ERROR':
+                        break
+                    ns_retries = ns_retries - 1
+                if ns_retries == 0 and ns_status == 'PENDING_UPDATE':
+                    error_reason_ns = _(
+                        "MES update is not completed within"
+                        " {wait} seconds as update of NS(s)").format(
+                        wait=NS_RETRIES * NS_RETRY_WAIT)
+            if old_mes['mes_mapping'].get('VNFFG'):
+                while vnffg_status == "PENDING_UPDATE" and vnffg_retries > 0:
+                    time.sleep(VNFFG_RETRY_WAIT)
+                    vnffg_list = old_mes['mes_mapping']['VNFFG']
+                    # Todo: support multiple VNFFGs
+                    is_existed = self._nfv_drivers.invoke(
+                        nfv_driver,  # How to tell it is Tacker
+                        'vnffg_check',
+                        vnffg_id=vnffg_list[0],
+                        auth_attr=vim_res['vim_auth'], )
+                    if not is_existed:
+                        break
+                    vnffg_instance = self._nfv_drivers.invoke(
+                        nfv_driver,  # How to tell it is Tacker
+                        'vnffg_get',
+                        vnffg_id=vnffg_list[0],
+                        auth_attr=vim_res['vim_auth'], )
+                    vnffg_status = vnffg_instance['status']
+                    LOG.debug('status: %s', vnffg_status)
+                    if vnffg_status == 'ERROR':
+                        break
+                    vnffg_retries = vnffg_retries - 1
+                if vnffg_retries == 0 and vnffg_status == 'PENDING_UPDATE':
+                    error_reason_vnffg = _(
+                        "MES update is not completed within"
+                        " {wait} seconds as update of VNFFG(s)").format(
+                        wait=VNFFG_RETRIES * VNFFG_RETRY_WAIT)
+
+            if mec_status == "ERROR" or ns_status == "ERROR" or vnffg_status == "ERROR":
+                mes_status = "ERROR"
             error_reason = None
-            if mistral_retries == 0 and exec_state == 'RUNNING':
-                error_reason = _(
-                    "NS update is not completed within"
-                    " {wait} seconds as creation of mistral"
-                    " execution {mistral} is not completed").format(
-                    wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
-                    mistral=execution_id)
-            exec_obj = self._vim_drivers.invoke(
-                driver_type,
-                'get_execution',
-                execution_id=execution_id,
-                auth_dict=self.get_auth_dict(context))
+            for reason in [error_reason_meca, error_reason_ns, error_reason_vnffg]:
+                if reason:
+                    error_reason = reason
+                    mes_status = "PENDING_UPDATE"
+            super(MesoPlugin, self)._update_mes_post(context, mes_id, error_reason, mes_status)
 
-            self._vim_drivers.invoke(driver_type,
-                                     'delete_execution',
-                                     execution_id=execution_id,
-                                     auth_dict=self.get_auth_dict(context))
-            self._vim_drivers.invoke(driver_type,
-                                     'delete_workflow',
-                                     workflow_id=workflow['id'],
-                                     auth_dict=self.get_auth_dict(context))
-            super(NfvoPlugin, self)._update_ns_post(context, ns_id, exec_obj,
-                                                    vnfd_dict, error_reason)
-
-        self.spawn_n(_update_ns_wait, self, ns_dict['id'],
-                     mistral_execution.id)
+        self.spawn_n(_update_mes_wait, self, mes_dict['id'])
         return mes_dict
