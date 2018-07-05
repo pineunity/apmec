@@ -561,7 +561,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         vim_res = self.vim_client.get_vim(context, old_mes['vim_id'],
                                           region_name)
         # Compare new_mesd_mapping and old_mesd_mapping to figure out which is updated
-        if old_mesd_mapping['MECA'] != new_mesd_mapping['MECA']:
+        if not new_mesd_mapping:
             # Update MECA
             meo_plugin = manager.ApmecManager.get_service_plugins()['MEO']
             # Build the MECA template here
