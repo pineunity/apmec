@@ -244,7 +244,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             ns_name = nsd + '-' + name + '-' + uuidutils.generate_uuid()
             nsd_instance = self._nfv_drivers.invoke(
                 nfv_driver, # How to tell it is Tacker
-                'nsd_get',
+                'nsd_get_by_name',
                 nsd_name=nsd,
                 auth_attr=vim_res['vim_auth'],)
             if nsd_instance:
@@ -265,8 +265,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
             vnffg_name = vnffgds + '-' + name + '-' + uuidutils.generate_uuid()
             vnffgd_instance = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
-                'vnffgd_get',
-                nsd_name=vnffgd,
+                'vnffgd_get_by_name',
+                vnffgd_name=vnffgd,
                 auth_attr=vim_res['vim_auth'], )
             if vnffgd_instance:
                 vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
