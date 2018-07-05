@@ -45,9 +45,13 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.nsd_create(nsd_dict)
 
-    def nsd_get(self, auth_attr, nsd_name):
+    def nsd_get_by_name(self, auth_attr, nsd_name):
         tacker_client = TackerClient(auth_attr)
-        return tacker_client.nsd_get(nsd_name)
+        return tacker_client.nsd_get_by_name(nsd_name)
+
+    def nsd_get(self, auth_attr, nsd_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.nsd_get(nsd_id)
 
     def ns_create(self, auth_attr, ns_dict):
         tacker_client = TackerClient(auth_attr)
@@ -73,6 +77,10 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_delete(ns_id)
 
+    def ns_update(self, auth_attr, ns_id, ns_dict):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.ns_update(ns_id, ns_dict)
+
     def vnfd_create(self, auth_attr, vnfd_dict):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnfd_create(vnfd_dict)
@@ -81,9 +89,13 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnf_create(vnf_dict)
 
-    def vnffgd_get(self, auth_attr, vnffgd_name):
+    def vnffgd_get_by_name(self, auth_attr, vnffgd_name):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffgd_get(vnffgd_name)
+
+    def vnffgd_get(self, auth_attr, vnffgd_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.vnffgd_get(vnffgd_id)
 
     def vnffg_create(self, auth_attr, vnffg_dict):
         tacker_client = TackerClient(auth_attr)
@@ -109,6 +121,10 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffg_check(vnffg_id)
 
+    def vnffg_update(self, auth_attr, vnffg_id, vnffg_dict):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.ns_update(vnffg_id, vnffg_dict)
+
 
 class TackerClient(object):
     """Tacker Client class for VNFM and NFVO negotiation"""
@@ -125,7 +141,7 @@ class TackerClient(object):
         else:
             return None
 
-    def nsd_get(self, nsd_name):
+    def nsd_get_by_name(self, nsd_name):
         nsd_dict = self.client.list_nsds()
         nsd_list = nsd_dict['nsds']
         nsd_id = None
@@ -133,6 +149,10 @@ class TackerClient(object):
             if nsd['name'] == nsd_name:
                 nsd_id = nsd['id']
         return nsd_id
+
+    def nsd_get(self, nsd_id):
+        nsd_dict = self.client.show_nsd(nsd_id)
+        return nsd_dict['ns']
 
     def ns_create(self, ns_dict):
         ns_instance = self.client.create_ns(body=ns_dict)
@@ -171,6 +191,9 @@ class TackerClient(object):
     def ns_delete(self, ns_id):
         return self.client.delete_ns(ns_id)
 
+    def ns_update(self, ns_id, ns_dict):
+        return self.client.update_ns(ns_id, ns_dict)
+
     def vnfd_create(self, vnfd_dict):
         vnfd_instance = self.client.create_vnfd(body=vnfd_dict)
         if vnfd_instance:
@@ -185,7 +208,7 @@ class TackerClient(object):
         else:
             return None
 
-    def vnffgd_get(self, vnffgd_name):
+    def vnffgd_get_by_name(self, vnffgd_name):
         vnffgd_dict = self.client.list_vnffgds()
         vnffgd_list = vnffgd_dict['vnffgds']
         vnffgd_id = None
@@ -193,6 +216,10 @@ class TackerClient(object):
             if vnffgd['name'] == vnffgd_name:
                 vnffgd_id = vnffgd['id']
         return vnffgd_id
+
+    def vnffgd_get(self, vnffgd_id):
+        vnffgd_instance = self.client.show_vnffgd(vnffgd_id)
+        return vnffgd_instance['vnffgd']
 
     def vnffg_create(self, vnffgd_dict):
         vnffg_instance = self.client.create_vnffg(body=vnffgd_dict)
@@ -230,3 +257,6 @@ class TackerClient(object):
             if vnffg['id'] == vnffg_id:
                 check = True
         return check
+
+    def vnffg_update(self, vnffg_id, vnffg_dict):
+        return self.client.update_ns(vnffg_id, vnffg_dict)

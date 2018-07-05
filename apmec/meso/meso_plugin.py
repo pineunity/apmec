@@ -23,6 +23,8 @@ from oslo_log import log as logging
 from oslo_utils import uuidutils
 import copy
 
+from oslo_utils import excutils
+from oslo_utils import strutils
 
 from apmec import manager
 from apmec._i18n import _
@@ -528,3 +530,201 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 context, mes_id, error_reason=error_reason, error=error)
         self.spawn_n(_delete_mes_wait, mes['id'])
         return mes['id']
+
+    def update_mes(self, context, mes_id, mes):
+        mes_info = mes['mes']
+        old_mes = super(MesoPlugin, self).get_mes(context, mes_id)
+        old_mesd = self.get_mesd(context, old_mes['mesd_id'])
+        old_mesd_mapping = old_mesd['mesd_mapping']
+        name = old_mes['name']
+        # create inline mesd if given by user
+        if mes_info.get('mesd_template'):
+            mes_name = utils.generate_resource_name(name, 'inline')
+            mesd = {'mesd': {'tenant_id': old_mes['tenant_id'],
+                           'name': mes_name,
+                           'attributes': {
+                               'mesd': mes_info['mesd_template']},
+                           'template_source': 'inline',
+                           'description': old_mes['description']}}
+            try:
+                mes_info['mesd_id'] = \
+                    self.create_mesd(context, mesd).get('id')
+            except Exception:
+                with excutils.save_and_reraise_exception():
+                    super(MesoPlugin, self)._update_mes_status(context, mes_id, constants.ACTIVE)
+
+        mesd = self.get_mesd(context, mes_info['mesd_id'])
+        mesd_dict = yaml.safe_load(mesd['attributes']['mesd'])
+        new_mesd_mapping = mesd['mesd_mapping']
+        region_name = mes.setdefault('placement_attr', {}).get(
+            'region_name', None)
+        vim_res = self.vim_client.get_vim(context, old_mes['vim_id'],
+                                          region_name)
+        # Compare new_mesd_mapping and old_mesd_mapping to figure out which is updated
+        if old_mesd_mapping['MECA'] != new_mesd_mapping['MECA']:
+            # Update MECA
+            meo_plugin = manager.ApmecManager.get_service_plugins()['MEO']
+            # Build the MECA template here
+            mecad_id = new_mesd_mapping['MECA']
+            mecad = meo_plugin.get_mecad(context, mecad_id)
+            mecad_template = yaml.safe_load(mecad['attributes']['mecad'])
+            old_meca_id = old_mes['mes_mapping']['MECA']
+            meca_id = meo_plugin.update_meca(context, old_meca_id, mecad_template)
+        if old_mesd_mapping.get('NS') != new_mesd_mapping.get("NS"):
+            # Todo: Support multiple NSs
+            nfv_driver = None
+            if mesd_dict['imports'].get('nsds'):
+                nfv_driver = mesd_dict['imports']['nsds']['nfv_driver']
+                nfv_driver = nfv_driver.lower()
+            if not nfv_driver:
+                raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
+            nsd_id = new_mesd_mapping['NS'][0]
+            nsd_dict = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'nsd_get',
+                nsd_id=nsd_id,
+                auth_attr=vim_res['vim_auth'], )
+            nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
+            old_ns_id = old_mes['mes_mapping']['NS'][0]
+            ns_arg = {'ns': {'nsd_template': nsd_template}}
+            ns_id = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'ns_update',
+                ns_id=old_ns_id,
+                ns_dict=ns_arg,
+                auth_attr=vim_res['vim_auth'], )
+
+        if old_mesd_mapping.get('VNFFG') != new_mesd_mapping.get("VNFFG"):
+            # Todo: Support multiple VNFFGs
+            nfv_driver = None
+            if mesd_dict['imports'].get('vnffgds'):
+                nfv_driver = mesd_dict['imports']['vnffgds']['nfv_driver']
+                nfv_driver = nfv_driver.lower()
+            if not nfv_driver:
+                raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
+            vnffgd_id = new_mesd_mapping['VNFFGD'][0]
+            vnffgd_dict = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'vnffgd_get',
+                vnffgd_id=vnffgd_id,
+                auth_attr=vim_res['vim_auth'], )
+            vnffgd_template = yaml.safe_load(vnffgd_dict['attributes']['vnffgd'])
+            old_vnffg_id = old_mes['mes_mapping']['VNFFG'][0]
+            vnffg_arg = {'vnffg': {'vnffgd_template': vnffgd_template}}
+            ns_id = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'ns_update',
+                vnffg_id=old_vnffg_id,
+                vnffg_dict=vnffg_arg,
+                auth_attr=vim_res['vim_auth'], )
+
+        # Step-1
+        param_values = dict()
+        if 'get_input' in str(nsd_dict):
+            self._process_parameterized_input(ns['ns']['attributes'],
+                                              nsd_dict)
+
+        # Step-2
+        vnfds = nsd['vnfds']
+        # vnfd_dict is used while generating workflow
+        vnfd_dict = dict()
+        for node_name, node_val in \
+                (nsd_dict['topology_template']['node_templates']).items():
+            if node_val.get('type') not in vnfds.keys():
+                continue
+            vnfd_name = vnfds[node_val.get('type')]
+            if not vnfd_dict.get(vnfd_name):
+                vnfd_dict[vnfd_name] = {
+                    'id': self._get_vnfd_id(vnfd_name, onboarded_vnfds),
+                    'instances': [node_name]
+                }
+            else:
+                vnfd_dict[vnfd_name]['instances'].append(node_name)
+            if not node_val.get('requirements'):
+                continue
+            if not param_values.get(vnfd_name):
+                param_values[vnfd_name] = {}
+            param_values[vnfd_name]['substitution_mappings'] = dict()
+            req_dict = dict()
+            requirements = node_val.get('requirements')
+            for requirement in requirements:
+                req_name = list(requirement.keys())[0]
+                req_val = list(requirement.values())[0]
+                res_name = req_val + ns['ns']['nsd_id'][:11]
+                req_dict[req_name] = res_name
+                if req_val in nsd_dict['topology_template']['node_templates']:
+                    param_values[vnfd_name]['substitution_mappings'][
+                        res_name] = nsd_dict['topology_template'][
+                        'node_templates'][req_val]
+
+            param_values[vnfd_name]['substitution_mappings'][
+                'requirements'] = req_dict
+        ns['vnfd_details'] = vnfd_dict
+        # Step-3
+        kwargs = {'ns': ns, 'params': param_values}
+
+        # NOTE NoTasksException is raised if no tasks.
+        workflow = self._vim_drivers.invoke(
+            driver_type,
+            'prepare_and_create_workflow',
+            resource='vnf',
+            action='create',
+            auth_dict=self.get_auth_dict(context),
+            kwargs=kwargs)
+        try:
+            mistral_execution = self._vim_drivers.invoke(
+                driver_type,
+                'execute_workflow',
+                workflow=workflow,
+                auth_dict=self.get_auth_dict(context))
+        except Exception as ex:
+            LOG.error('Error while executing workflow: %s', ex)
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_workflow',
+                                     workflow_id=workflow['id'],
+                                     auth_dict=self.get_auth_dict(context))
+            raise ex
+        ns_dict = super(NfvoPlugin, self)._update_ns_pre(context, ns_id)
+
+        def _update_ns_wait(self_obj, ns_id, execution_id):
+            exec_state = "RUNNING"
+            mistral_retries = MISTRAL_RETRIES
+            while exec_state == "RUNNING" and mistral_retries > 0:
+                time.sleep(MISTRAL_RETRY_WAIT)
+                exec_state = self._vim_drivers.invoke(
+                    driver_type,
+                    'get_execution',
+                    execution_id=execution_id,
+                    auth_dict=self.get_auth_dict(context)).state
+                LOG.debug('status: %s', exec_state)
+                if exec_state == 'SUCCESS' or exec_state == 'ERROR':
+                    break
+                mistral_retries = mistral_retries - 1
+            error_reason = None
+            if mistral_retries == 0 and exec_state == 'RUNNING':
+                error_reason = _(
+                    "NS update is not completed within"
+                    " {wait} seconds as creation of mistral"
+                    " execution {mistral} is not completed").format(
+                    wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
+                    mistral=execution_id)
+            exec_obj = self._vim_drivers.invoke(
+                driver_type,
+                'get_execution',
+                execution_id=execution_id,
+                auth_dict=self.get_auth_dict(context))
+
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_execution',
+                                     execution_id=execution_id,
+                                     auth_dict=self.get_auth_dict(context))
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_workflow',
+                                     workflow_id=workflow['id'],
+                                     auth_dict=self.get_auth_dict(context))
+            super(NfvoPlugin, self)._update_ns_post(context, ns_id, exec_obj,
+                                                    vnfd_dict, error_reason)
+
+        self.spawn_n(_update_ns_wait, self, ns_dict['id'],
+                     mistral_execution.id)
+        return mes_dict
