@@ -1,0 +1,2 @@
+Firstly, run scripts randomly for the request
+Then, put the requirements inside the template

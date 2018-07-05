@@ -9,7 +9,8 @@ imports:
     mec_driver: Apmec
   nsds:
     nsd_templates:
-      - nsd1
+      - requirements:
+
     nfv_driver: Tacker
   vnffgds:
     vnffg_template:

@@ -14,17 +14,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import copy
 import time
 
 import eventlet
 import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
-from oslo_utils import uuidutils
-import copy
-
 from oslo_utils import excutils
-from oslo_utils import strutils
+from oslo_utils import uuidutils
 
 from apmec import manager
 from apmec._i18n import _
@@ -34,9 +32,10 @@ from apmec.common import utils
 from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meso
-from apmec.plugins.common import constants
 from apmec.mem import vim_client
+from apmec.plugins.common import constants
 
+from apmec.meso.placment_policy import placement_policy
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
@@ -178,6 +177,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
         step-1: Call MEO API to create MEAs
         step-2: Call Tacker drivers to create NSs
         """
+        # Placement policy
+        # Step 1: Figure out how many NSs in the system - make a dict: Ns-ID{VNF-ID:NumNFs}
+        # Step 2: Determine the request requires how many NFs inside the NS
+        # Reform the request: {VNF-ID:NumofVDUs}
+        # if system is empty then continuously process the request
+
+
+
         mes_info = mes['mes']
         name = mes_info['name']
         mes_info['mes_mapping'] = dict()
