@@ -144,11 +144,11 @@ class TackerClient(object):
     def nsd_get_by_name(self, nsd_name):
         nsd_dict = self.client.list_nsds()
         nsd_list = nsd_dict['nsds']
-        nsd_id = None
+        nsd_dict = None
         for nsd in nsd_list:
             if nsd['name'] == nsd_name:
-                nsd_id = nsd['id']
-        return nsd_id
+                nsd_dict = nsd
+        return nsd_dict
 
     def nsd_get(self, nsd_id):
         nsd_dict = self.client.show_nsd(nsd_id)
@@ -211,11 +211,11 @@ class TackerClient(object):
     def vnffgd_get_by_name(self, vnffgd_name):
         vnffgd_dict = self.client.list_vnffgds()
         vnffgd_list = vnffgd_dict['vnffgds']
-        vnffgd_id = None
+        vnffgd_dict = None
         for vnffgd in vnffgd_list:
             if vnffgd['name'] == vnffgd_name:
-                vnffgd_id = vnffgd['id']
-        return vnffgd_id
+                vnffgd_dict = vnffgd
+        return vnffgd_dict
 
     def vnffgd_get(self, vnffgd_id):
         vnffgd_instance = self.client.show_vnffgd(vnffgd_id)
