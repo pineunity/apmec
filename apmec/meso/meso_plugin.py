@@ -147,7 +147,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             nfv_driver = vnffg_imports.get('nfv_driver')
             if not vnffgd_tpls:
                 raise meso.VNFFGDNotFound(mesd_name=mesd_dict['name'])
-            mesd_dict['mesd_mapping'] = vnffgd_tpls
+            mesd_dict['mesd_mapping']['VNFFGD'] = vnffgd_tpls
             mesd_dict['attributes']['vnffgds'] = '-'.join(vnffgd_tpls)
             if nfv_driver.lower() not in [driver.lower() for driver in constants.NFV_DRIVER]:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
@@ -635,26 +635,27 @@ class MesoPlugin(meso_db.MESOPluginDb):
             error_reason_ns = None
             error_reason_vnffg = None
             # Check MECA
-            while mec_status == "PENDING_UPDATE" and mec_retries > 0:
-                time.sleep(MEC_RETRY_WAIT)
-                meca_id = old_mes['mes_mapping']['MECA']
-                meca_list = meo_plugin.get_mecas(context)
-                is_deleted = True
-                for meca in meca_list:
-                    if meca_id in meca['id']:
-                        is_deleted = False
-                if is_deleted:
-                    break
-                mec_status = meo_plugin.get_meca(context, meca_id)['status']
-                LOG.debug('status: %s', mec_status)
-                if mec_status == 'ERROR':
-                    break
-                mec_retries = mec_retries - 1
-            if mec_retries == 0 and mec_status == 'PENDING_UPDATE':
-                error_reason_meca = _(
-                    "MES update is not completed within"
-                    " {wait} seconds as update of MECA").format(
-                    wait=MEC_RETRIES * MEC_RETRY_WAIT)
+            if not new_mesd_mapping:
+                while mec_status == "PENDING_UPDATE" and mec_retries > 0:
+                    time.sleep(MEC_RETRY_WAIT)
+                    meca_id = old_mes['mes_mapping']['MECA']
+                    meca_list = meo_plugin.get_mecas(context)
+                    is_deleted = True
+                    for meca in meca_list:
+                        if meca_id in meca['id']:
+                            is_deleted = False
+                    if is_deleted:
+                        break
+                    mec_status = meo_plugin.get_meca(context, meca_id)['status']
+                    LOG.debug('status: %s', mec_status)
+                    if mec_status == 'ERROR':
+                        break
+                    mec_retries = mec_retries - 1
+                if mec_retries == 0 and mec_status == 'PENDING_UPDATE':
+                    error_reason_meca = _(
+                        "MES update is not completed within"
+                        " {wait} seconds as update of MECA").format(
+                        wait=MEC_RETRIES * MEC_RETRY_WAIT)
             # Check NS/VNFFG status
             if new_mesd_mapping.get("NSD"):
                 while ns_status == "PENDING_UPDATE" and ns_retries > 0:

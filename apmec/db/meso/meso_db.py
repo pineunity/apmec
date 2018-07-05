@@ -340,7 +340,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             mes_db.update({'status': mes_status})
             mes_db.update({'error_reason': error_reason})
             mes_db.update({'updated_at': timeutils.utcnow()})
-            mes_dict = self._make_ns_dict(mes_db)
+            mes_dict = self._make_mes_dict(mes_db)
         return mes_dict
 
     def _update_mes_status(self, context, mes_id, new_status):
