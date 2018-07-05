@@ -616,7 +616,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meca_db.MECAPluginDb):
         meca_old = super(MeoPlugin, self).get_meca(context, meca_id)
         name = meca_old['name']
         # create inline meafgd if given by user
-        if meca_info.get('nsd_template'):
+        if meca_info.get('mecad_template'):
             meca_name = utils.generate_resource_name(name, 'inline')
             mecad = {'mecad': {'tenant_id': meca_old['tenant_id'],
                            'name': meca_name,
