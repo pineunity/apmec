@@ -210,7 +210,7 @@ RESOURCE_ATTRIBUTE_MAP = {
         },
         'mesd_template': {
             'allow_post': True,
-            'allow_put': False,
+            'allow_put': True,
             'validate': {'type:dict_or_nodata': None},
             'is_visible': True,
             'default': None,
@@ -307,3 +307,6 @@ class MESOPluginBase(service_base.MECPluginBase):
     def delete_mes(self, context, mes_id):
         pass
 
+    @abc.abstractmethod
+    def update_mes(self, context, mes_id, mes):
+        pass

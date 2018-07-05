@@ -330,7 +330,7 @@ RESOURCE_ATTRIBUTE_MAP = {
         },
         'mecad_template': {
             'allow_post': True,
-            'allow_put': False,
+            'allow_put': True,
             'validate': {'type:dict_or_nodata': None},
             'is_visible': True,
             'default': None,
@@ -455,6 +455,10 @@ class MECAPluginBase(service_base.MECPluginBase):
 
     @abc.abstractmethod
     def delete_meca(self, context, meca_id):
+        pass
+
+    @abc.abstractmethod
+    def delete_meca(self, context, meca_id, meca):
         pass
 
 
