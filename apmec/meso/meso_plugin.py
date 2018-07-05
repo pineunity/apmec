@@ -573,7 +573,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             mecad_arg = {'meca': {'mecad_template': mecad_dict}}
             old_meca_id = old_mes['mes_mapping']['MECA']
             meca_id = meo_plugin.update_meca(context, old_meca_id, mecad_arg)
-        if old_mesd_mapping.get('NSD') != new_mesd_mapping.get("NSD"):
+        if new_mesd_mapping.get("NSD"):
             # Todo: Support multiple NSs
             nfv_driver = None
             if mesd_dict['imports'].get('nsds'):
@@ -597,7 +597,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 ns_dict=ns_arg,
                 auth_attr=vim_res['vim_auth'], )
 
-        if old_mesd_mapping.get('VNFFGD') != new_mesd_mapping.get("VNFFGD"):
+        if new_mesd_mapping.get("VNFFGD"):
             # Todo: Support multiple VNFFGs
             nfv_driver = None
             if mesd_dict['imports'].get('vnffgds'):
@@ -656,7 +656,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     " {wait} seconds as update of MECA").format(
                     wait=MEC_RETRIES * MEC_RETRY_WAIT)
             # Check NS/VNFFG status
-            if old_mesd_mapping.get('NSD') != new_mesd_mapping.get("NSD"):
+            if new_mesd_mapping.get("NSD"):
                 while ns_status == "PENDING_UPDATE" and ns_retries > 0:
                     time.sleep(NS_RETRY_WAIT)
                     ns_list = old_mes['mes_mapping']['NS']
@@ -683,7 +683,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         "MES update is not completed within"
                         " {wait} seconds as update of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
-            if old_mesd_mapping.get('VNFFGD') != new_mesd_mapping.get("VNFFGD"):
+            if new_mesd_mapping.get("VNFFGD"):
                 while vnffg_status == "PENDING_UPDATE" and vnffg_retries > 0:
                     time.sleep(VNFFG_RETRY_WAIT)
                     vnffg_list = old_mes['mes_mapping']['VNFFG']
