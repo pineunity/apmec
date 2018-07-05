@@ -631,7 +631,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meca_db.MECAPluginDb):
                 with excutils.save_and_reraise_exception():
                     super(MeoPlugin, self)._update_meca_status(context, meca_id, constants.ACTIVE)
 
-        mecad = self.get_nsd(context, meca_info['mecad_id'])
+        mecad = self.get_mecad(context, meca_info['mecad_id'])
         mecad_dict = yaml.safe_load(mecad['attributes']['mecad'])
         mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
         onboarded_meads = mem_plugin.get_meads(context, [])
