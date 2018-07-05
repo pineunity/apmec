@@ -458,7 +458,7 @@ class MECAPluginBase(service_base.MECPluginBase):
         pass
 
     @abc.abstractmethod
-    def delete_meca(self, context, meca_id, meca):
+    def update_meca(self, context, meca_id, meca):
         pass
 
 
