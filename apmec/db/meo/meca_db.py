@@ -381,3 +381,53 @@ class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
         return self._get_collection(context, MECA,
                                     self._make_meca_dict,
                                     filters=filters, fields=fields)
+
+    def _update_meca_pre(self, context, meca_id):
+        with context.session.begin(subtransactions=True):
+            meca_db = self._get_meca_db(context, meca_id, _ACTIVE_UPDATE, constants.PENDING_UPDATE)
+            return self._make_meca_dict(meca_db)
+
+    def _update_meca_post(self, context, meca_id, mistral_obj,
+            mead_dict, error_reason):
+        output = ast.literal_eval(mistral_obj.output)
+        new_mgmt_urls = dict()
+        new_mea_ids = dict()
+        if len(output) > 0:
+            for mead_name, mead_val in iteritems(mead_dict):
+                for instance in mead_val['instances']:
+                    if 'mgmt_url_' + instance in output:
+                        new_mgmt_urls[instance] = ast.literal_eval(
+                            output['mgmt_url_' + instance].strip())
+                        new_mea_ids[instance] = output['mea_id_' + instance]
+
+        if not new_mea_ids:
+            mea_ids = None
+        if not new_mgmt_urls:
+            mgmt_urls = None
+        status = constants.ACTIVE if mistral_obj.state == 'SUCCESS' \
+            else constants.ERROR
+        with context.session.begin(subtransactions=True):
+            meca_db = self._get_resource(context, MECA,
+                                       meca_id)
+            mgmt_urls = ast.literal_eval(meca_db.mgmt_urls)
+            mgmt_urls.update(new_mgmt_urls)
+            mgmt_urls = str(mgmt_urls)
+            mea_ids = ast.literal_eval(meca_db.mea_ids)
+            mea_ids.update(new_mea_ids)
+            mea_ids = str(mea_ids)
+            meca_db.update({'mea_ids': mea_ids})
+            meca_db.update({'mgmt_urls': mgmt_urls})
+            meca_db.update({'status': status})
+            meca_db.update({'error_reason': error_reason})
+            meca_db.update({'updated_at': timeutils.utcnow()})
+            meca_dict = self._make_meca_dict(meca_db)
+        return meca_dict
+
+    def _update_meca_status(self, context, meca_id, new_status):
+        with context.session.begin(subtransactions=True):
+            meca_db = self._get_meca_db(context, meca_id, _ACTIVE_UPDATE, new_status)
+            return self._make_meca_dict(meca_db)
+
+    def update_meca(self, context, meca_id, meca):
+        meca_dict = self._update_meca_pre(context, meca_id)
+        self._update_meca_post(context, meca_id, constants.ACTIVE, meca_dict, None)

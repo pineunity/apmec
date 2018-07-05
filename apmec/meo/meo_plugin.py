@@ -40,6 +40,7 @@ from apmec.extensions import meo
 from apmec.keymgr import API as KEYMGR_API
 from apmec import manager
 from apmec.meo.workflows.vim_monitor import vim_monitor_utils
+from apmec.plugins.common import constants
 from apmec.mem import vim_client
 
 from apmec.catalogs.tosca import utils as toscautils
@@ -608,3 +609,145 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meca_db.MECAPluginDb):
             super(MeoPlugin, self).delete_meca_post(
                 context, meca_id, None, None)
         return meca['id']
+
+    @log.log
+    def update_meca(self, context, meca_id, meca):
+        meca_info = meca['meca']
+        meca_old = super(MeoPlugin, self).get_meca(context, meca_id)
+        name = meca_old['name']
+        # create inline meafgd if given by user
+        if meca_info.get('nsd_template'):
+            meca_name = utils.generate_resource_name(name, 'inline')
+            mecad = {'mecad': {'tenant_id': meca_old['tenant_id'],
+                           'name': meca_name,
+                           'attributes': {
+                               'mecad': meca_info['mecad_template']},
+                           'template_source': 'inline',
+                           'description': meca_old['description']}}
+            try:
+                meca_info['mecad_id'] = \
+                    self.create_mecad(context, mecad).get('id')
+            except Exception:
+                with excutils.save_and_reraise_exception():
+                    super(MeoPlugin, self)._update_meca_status(context, meca_id, constants.ACTIVE)
+
+        mecad = self.get_nsd(context, meca_info['mecad_id'])
+        mecad_dict = yaml.safe_load(mecad['attributes']['mecad'])
+        mem_plugin = manager.ApmecManager.get_service_plugins()['MEM']
+        onboarded_meads = mem_plugin.get_meads(context, [])
+        region_name = meca.setdefault('placement_attr', {}).get(
+            'region_name', None)
+        vim_res = self.vim_client.get_vim(context, meca_old['vim_id'],
+                                          region_name)
+        driver_type = vim_res['vim_type']
+
+        # Step-1
+        param_values = dict()
+        if 'get_input' in str(mecad_dict):
+            self._process_parameterized_input(meca['meca']['attributes'],
+                                              mecad_dict)
+
+        # Step-2
+        meads = mecad['meads']
+        # mead_dict is used while generating workflow
+        mead_dict = dict()
+        for node_name, node_val in \
+                (mecad_dict['topology_template']['node_templates']).items():
+            if node_val.get('type') not in meads.keys():
+                continue
+            mead_name = meads[node_val.get('type')]
+            if not mead_dict.get(mead_name):
+                mead_dict[mead_name] = {
+                    'id': self._get_mead_id(mead_name, onboarded_meads),
+                    'instances': [node_name]
+                }
+            else:
+                mead_dict[mead_name]['instances'].append(node_name)
+            if not node_val.get('requirements'):
+                continue
+            if not param_values.get(mead_name):
+                param_values[mead_name] = {}
+            param_values[mead_name]['substitution_mappings'] = dict()
+            req_dict = dict()
+            requirements = node_val.get('requirements')
+            for requirement in requirements:
+                req_name = list(requirement.keys())[0]
+                req_val = list(requirement.values())[0]
+                res_name = req_val + meca['meca']['mecad_id'][:11]
+                req_dict[req_name] = res_name
+                if req_val in mecad_dict['topology_template']['node_templates']:
+                    param_values[mead_name]['substitution_mappings'][
+                        res_name] = mecad_dict['topology_template'][
+                        'node_templates'][req_val]
+
+            param_values[mead_name]['substitution_mappings'][
+                'requirements'] = req_dict
+        meca['mead_details'] = mead_dict
+        # Step-3
+        kwargs = {'meca': meca, 'params': param_values}
+
+        # NOTE NoTasksException is raised if no tasks.
+        workflow = self._vim_drivers.invoke(
+            driver_type,
+            'prepare_and_create_workflow',
+            resource='mea',
+            action='create',
+            auth_dict=self.get_auth_dict(context),
+            kwargs=kwargs)
+        try:
+            mistral_execution = self._vim_drivers.invoke(
+                driver_type,
+                'execute_workflow',
+                workflow=workflow,
+                auth_dict=self.get_auth_dict(context))
+        except Exception as ex:
+            LOG.error('Error while executing workflow: %s', ex)
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_workflow',
+                                     workflow_id=workflow['id'],
+                                     auth_dict=self.get_auth_dict(context))
+            raise ex
+        meca_dict = super(MeoPlugin, self)._update_meca_pre(context, meca_id)
+
+        def _update_meca_wait(self_obj, meca_id, execution_id):
+            exec_state = "RUNNING"
+            mistral_retries = MISTRAL_RETRIES
+            while exec_state == "RUNNING" and mistral_retries > 0:
+                time.sleep(MISTRAL_RETRY_WAIT)
+                exec_state = self._vim_drivers.invoke(
+                    driver_type,
+                    'get_execution',
+                    execution_id=execution_id,
+                    auth_dict=self.get_auth_dict(context)).state
+                LOG.debug('status: %s', exec_state)
+                if exec_state == 'SUCCESS' or exec_state == 'ERROR':
+                    break
+                mistral_retries = mistral_retries - 1
+            error_reason = None
+            if mistral_retries == 0 and exec_state == 'RUNNING':
+                error_reason = _(
+                    "MECA update is not completed within"
+                    " {wait} seconds as creation of mistral"
+                    " execution {mistral} is not completed").format(
+                    wait=MISTRAL_RETRIES * MISTRAL_RETRY_WAIT,
+                    mistral=execution_id)
+            exec_obj = self._vim_drivers.invoke(
+                driver_type,
+                'get_execution',
+                execution_id=execution_id,
+                auth_dict=self.get_auth_dict(context))
+
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_execution',
+                                     execution_id=execution_id,
+                                     auth_dict=self.get_auth_dict(context))
+            self._vim_drivers.invoke(driver_type,
+                                     'delete_workflow',
+                                     workflow_id=workflow['id'],
+                                     auth_dict=self.get_auth_dict(context))
+            super(MeoPlugin, self)._update_meca_post(context, meca_id, exec_obj,
+                                                    mead_dict, error_reason)
+
+        self.spawn_n(_update_meca_wait, self, meca_dict['id'],
+                     mistral_execution.id)
+        return meca_dict
