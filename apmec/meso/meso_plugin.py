@@ -14,15 +14,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import copy
 import time
 
 import eventlet
 import yaml
 from oslo_config import cfg
 from oslo_log import log as logging
-from oslo_utils import excutils
 from oslo_utils import uuidutils
+import copy
+
+from oslo_utils import excutils
+from oslo_utils import strutils
 
 from apmec import manager
 from apmec._i18n import _
@@ -32,10 +34,9 @@ from apmec.common import utils
 from apmec.db.meso import meso_db
 from apmec.extensions import common_services as cs
 from apmec.extensions import meso
-from apmec.mem import vim_client
 from apmec.plugins.common import constants
+from apmec.mem import vim_client
 
-from apmec.meso.placment_policy import placement_policy
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
@@ -177,14 +178,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
         step-1: Call MEO API to create MEAs
         step-2: Call Tacker drivers to create NSs
         """
-        # Placement policy
-        # Step 1: Figure out how many NSs in the system - make a dict: Ns-ID{VNF-ID:NumNFs}
-        # Step 2: Determine the request requires how many NFs inside the NS
-        # Reform the request: {VNF-ID:NumofVDUs}
-        # if system is empty then continuously process the request
-
-
-
         mes_info = mes['mes']
         name = mes_info['name']
         mes_info['mes_mapping'] = dict()
@@ -255,7 +248,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 nsd_name=nsd,
                 auth_attr=vim_res['vim_auth'],)
             if nsd_instance:
-                ns_arg = {'ns': {'nsd_id': nsd_instance, 'name': ns_name}}
+                ns_arg = {'ns': {'nsd_id': nsd_instance['id'], 'name': ns_name}}
                 ns_id = self._nfv_drivers.invoke(
                     nfv_driver,  # How to tell it is Tacker
                     'ns_create',
@@ -276,7 +269,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 vnffgd_name=vnffgd,
                 auth_attr=vim_res['vim_auth'], )
             if vnffgd_instance:
-                vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance, 'name': vnffg_name}}
+                vnffg_arg = {'vnffg': {'vnffgd_id': vnffgd_instance['id'], 'name': vnffg_name}}
                 vnffg_id = self._nfv_drivers.invoke(
                     nfv_driver,  # How to tell it is Tacker
                     'vnffg_create',
@@ -568,7 +561,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         vim_res = self.vim_client.get_vim(context, old_mes['vim_id'],
                                           region_name)
         # Compare new_mesd_mapping and old_mesd_mapping to figure out which is updated
-        if not new_mesd_mapping:
+        if mesd_dict['imports'].get('meads'):
             # Update MECA
             meo_plugin = manager.ApmecManager.get_service_plugins()['MEO']
             # Build the MECA template here
@@ -580,19 +573,18 @@ class MesoPlugin(meso_db.MESOPluginDb):
             mecad_arg = {'meca': {'mecad_template': mecad_dict}}
             old_meca_id = old_mes['mes_mapping']['MECA']
             meca_id = meo_plugin.update_meca(context, old_meca_id, mecad_arg)
-        if new_mesd_mapping.get("NSD"):
+        if mesd_dict['imports'].get('nsds'):
             # Todo: Support multiple NSs
             nfv_driver = None
-            if mesd_dict['imports'].get('nsds'):
-                nfv_driver = mesd_dict['imports']['nsds']['nfv_driver']
-                nfv_driver = nfv_driver.lower()
+            nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')
             if not nfv_driver:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
-            nsd_id = new_mesd_mapping['NSD'][0]
+            nfv_driver = nfv_driver.lower()
+            nsd_name = new_mesd_mapping['NSD'][0]
             nsd_dict = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
-                'nsd_get',
-                nsd_id=nsd_id,
+                'nsd_get_by_name',
+                nsd_name=nsd_name,
                 auth_attr=vim_res['vim_auth'], )
             nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
             old_ns_id = old_mes['mes_mapping']['NS'][0]
@@ -604,19 +596,18 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 ns_dict=ns_arg,
                 auth_attr=vim_res['vim_auth'], )
 
-        if new_mesd_mapping.get("VNFFGD"):
+        if mesd_dict['imports'].get('vnffgds'):
             # Todo: Support multiple VNFFGs
             nfv_driver = None
-            if mesd_dict['imports'].get('vnffgds'):
-                nfv_driver = mesd_dict['imports']['vnffgds']['nfv_driver']
-                nfv_driver = nfv_driver.lower()
+            nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')
             if not nfv_driver:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
-            vnffgd_id = new_mesd_mapping['VNFFGD'][0]
+            nfv_driver = nfv_driver.lower()
+            vnffgd_name = new_mesd_mapping['VNFFGD'][0]
             vnffgd_dict = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
-                'vnffgd_get',
-                vnffgd_id=vnffgd_id,
+                'vnffgd_get_by_name',
+                vnffgd_name=vnffgd_name,
                 auth_attr=vim_res['vim_auth'], )
             vnffgd_template = yaml.safe_load(vnffgd_dict['attributes']['vnffgd'])
             old_vnffg_id = old_mes['mes_mapping']['VNFFG'][0]
