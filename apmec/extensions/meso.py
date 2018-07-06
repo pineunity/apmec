@@ -176,6 +176,14 @@ RESOURCE_ATTRIBUTE_MAP = {
             'is_visible': True,
             'default': '',
         },
+        'reused': {
+            'allow_post': False,
+            'allow_put': False,
+            'convert_to': attr.convert_none_to_empty_dict,
+            'validate': {'type:dict_or_nodata': None},
+            'is_visible': True,
+            'default': '',
+        },
         'mesd_id': {
             'allow_post': True,
             'allow_put': False,

@@ -38,3 +38,7 @@ def upgrade(active_plugins=None, options=None):
    op.add_column('mes',
                  sa.Column('mes_mapping',
                            types.Json, nullable=True))
+
+   op.add_column('mes',
+                 sa.Column('reused',
+                           types.Json, nullable=True))

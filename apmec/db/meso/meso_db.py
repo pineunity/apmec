@@ -89,6 +89,7 @@ class MES(model_base.BASE, models_v1.HasId, models_v1.HasTenant,
     mesd_id = sa.Column(types.Uuid, sa.ForeignKey('mesd.id'))
     mesd = orm.relationship('MESD')
     mes_mapping = sa.Column(types.Json, nullable=True)
+    reused = sa.Column(types.Json, nullable=True)
     name = sa.Column(sa.String(255), nullable=False)
     description = sa.Column(sa.Text, nullable=True)
 
@@ -158,7 +159,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         LOG.debug('mes_db %s', mes_db)
         res = {}
         key_list = ('id', 'tenant_id', 'mesd_id', 'name', 'description', 'mes_mapping',
-                    'mea_ids', 'status', 'mgmt_urls', 'error_reason',
+                    'mea_ids', 'status', 'mgmt_urls', 'error_reason', 'reused',
                     'vim_id', 'created_at', 'updated_at')
         res.update((key, mes_db[key]) for key in key_list)
         return self._fields(res, fields)
@@ -252,6 +253,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         name = mes.get('name')
         mes_mapping = mes['mes_mapping']
         mes_id = uuidutils.generate_uuid()
+        mes_reuse = mes['reused']
         try:
             with context.session.begin(subtransactions=True):
                 mesd_db = self._get_resource(context, MESD,
@@ -263,6 +265,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                            mea_ids=None,
                            status=constants.PENDING_CREATE,
                            mes_mapping=mes_mapping,
+                           reused=mes_reuse,
                            mgmt_urls=None,
                            mesd_id=mesd_id,
                            vim_id=vim_id,

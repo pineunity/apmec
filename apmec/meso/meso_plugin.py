@@ -236,7 +236,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         # vim_obj = meo_plugin.get_vim(context, mes['mes']['vim_id'], mask_password=False)
         # self._build_vim_auth(context, vim_obj)
-        def _find_ns(context, mesd):
+        def _find_vnfs(mesd):
             nsd_id = mesd['mesd_mapping'].get('NSD')[0]
             nsd_instance = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
@@ -245,12 +245,66 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 auth_attr=vim_res['vim_auth'], )
             nsd_dict = yaml.safe_load(nsd_instance['attributes']['nsd'])
             vnf_list = nsd_dict['imports']
-            return vnf_list
+            return nsd_id, vnf_list
+
+        def _find_vnfds(mes):
+            ns_id = mes['mes_mapping'].get('NS')[0]
+            ns_instance = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'ns_get',
+                ns_id=ns_id,
+                auth_attr=vim_res['vim_auth'], )
+            vnf_dict = ns_instance['vnf_ids']
+            vnfd_list = list()
+            for vnf_name, vnf_id in vnf_dict.items():
+                vnf_instance = self._nfv_drivers.invoke(
+                    nfv_driver,  # How to tell it is Tacker
+                    'vnf_get',
+                    vnf_id=vnf_id,
+                    auth_attr=vim_res['vim_auth'], )
+                vnfd_id = vnf_instance['id']
+                vnfd_instance = self._nfv_drivers.invoke(
+                    nfv_driver,  # How to tell it is Tacker
+                    'vnfd_get',
+                    vnfd_id=vnfd_id,
+                    auth_attr=vim_res['vim_auth'], )
+                vnfd_list.append(vnfd_instance['name'])
+            return mes['id'], ns_id, vnfd_list
+
+        def _find_meads(mes):
+            meca_id = mes['mes_mapping'].get('MECA')
+            meca = meo_plugin.get_meca(context, meca_id)
+            mead_dict = meca['mea_ids']
+            return mes['id'], len(mead_dict)
+
+        def _run_meso_algorithm(context, req_vnfd_list):
+            is_accepted = False
+            al_mes_dict = self.get_mess(context)
+            ns_candidate = dict()
+            for al_mes in al_mes_dict['mess']:
+                ns_candidate[al_mes['id']] = dict()
+                mes_id, ns_id, vnfd_list = _find_vnfds(al_mes)
+                ns_candidate[al_mes['id']][ns_id] = 0
+                for req_vnfd_name in req_vnfd_list:
+                    for sys_vnfd_name in vnfd_list:
+                        if req_vnfd_name == sys_vnfd_name:
+                            ns_candidate[al_mes['id']][ns_id] = ns_candidate[al_mes['id']][ns_id] + 1
+            # Step 1: Take the best fit
+            # Check with the VM capacity
+            bf_candidate = dict()
+            for mes_id, ns_dict in ns_candidate.items():
+                for al_ns_id, len_ns in ns_dict.items():
+                    if len(req_vnfd_list) == len_ns:
+                        bf_candidate[mes_id] = al_ns_id
+            # Check the number of MEAs to know how many times the NS is re-used
+
+            return is_accepted
+
         nsds = mesd['attributes'].get('nsds')
         if nsds:
             # For framework evaluation
             if mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
-                req_dict = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
+                req_nf_list = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
 
 
             nsds_list = nsds.split('-')

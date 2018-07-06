@@ -89,6 +89,14 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnf_create(vnf_dict)
 
+    def vnf_get(self, auth_attr, vnf_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.vnf_get(vnf_id)
+
+    def vnfd_get(self, auth_attr, vnfd_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.vnfd_get(vnfd_id)
+
     def vnffgd_get_by_name(self, auth_attr, vnffgd_name):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.vnffgd_get(vnffgd_name)
@@ -207,6 +215,14 @@ class TackerClient(object):
             return vnf_instance['vnf']['id']
         else:
             return None
+
+    def vnf_get(self, vnf_id):
+        vnf_instance = self.client.show_vnf(vnf_id)
+        return vnf_instance['vnf']
+
+    def vnfd_get(self, vnfd_id):
+        vnfd_instance = self.client.show_vnfd(vnfd_id)
+        return vnfd_instance['vnfd']
 
     def vnffgd_get_by_name(self, vnffgd_name):
         vnffgd_dict = self.client.list_vnffgds()
