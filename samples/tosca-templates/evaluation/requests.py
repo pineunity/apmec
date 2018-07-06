@@ -63,10 +63,14 @@ for i in req_nf_list:
 
 tosca_req_list = list()
 for nf, nf_instance in req_sfc.items():
-    vnf_name = 'VNF' + str(nf)
-    VNF = SAMPLE[vnf_name]
+    index = 'VNF' + str(nf)
+    VNF = SAMPLE[index]
     sample = VNF[nf_instance-1]
-    tosca_req_list.append(sample)
+    vnf_name = "VNF" + str(nf+1)
+    sample_dict = dict()
+    sample_dict['name'] = vnf_name
+    sample_dict['vnfd_template'] = sample
+    tosca_req_list.append(sample_dict)
 
 import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
 

@@ -271,7 +271,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 vnfd_list.append(vnfd_instance['name'])
             return mes['id'], al_ns_id, vnfd_list
 
-        def _find_vnf_ins(context, cd_mes):
+        def _find_vnf_insgpejr(context, cd_mes):
             ns_id = mes['mes_mapping'].get('NS')[0]
             ns_instance = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
@@ -287,50 +287,72 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         vnf_ins_dict[vnf_id] = len(mgmt_dict)
             return vnf_ins_dict
 
-        def _find_meads(cd_mes):
-            cd_meca_id = cd_mes['mes_mapping'].get('MECA')
-            meca = meo_plugin.get_meca(context, cd_meca_id)
-            mead_dict = meca['mea_ids']
-            return cd_mes['id'], len(mead_dict)
+        def _find_vnf_ins(cd_mes):
+            al_ns_id = cd_mes['mes_mapping'].get('NS')[0]
+            if not al_ns_id:
+                return
+            ns_instance = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'ns_get',
+                ns_id=al_ns_id,
+                auth_attr=vim_res['vim_auth'], )
+            vnf_dict = ns_instance['vnf_ids']
+            # mgmt_url = ns_instance['mgmt_urls']
+            return ns_instance['id'], vnf_dict
 
-
-        def _run_meso_algorithm(context, req_vnfd_list):
-            reused_dict = dict()
+        def _run_meso_algorithm(req_vnf_list):
             is_accepted = False
             al_mes_dict = self.get_mess(context)
             ns_candidate = dict()
             for al_mes in al_mes_dict['mess']:
-                ns_candidate[al_mes['id']] = dict()
-                mes_id, al_ns_id, vnfd_list = _find_vnfds(al_mes)
-                ns_candidate[al_mes['id']][al_ns_id] = 0
-                for req_vnfd_name in req_vnfd_list:
-                    for sys_vnfd_name in vnfd_list:
-                        if req_vnfd_name == sys_vnfd_name:
-                            ns_candidate[al_mes['id']][al_ns_id] = ns_candidate[al_mes['id']][al_ns_id] + 1
-            # Step 1: Take the best fit
-            # Check with the VM capacity
-            bf_candidate = dict()
-            for mes_id, ns_dict in ns_candidate.items():
-                for al_ns_id, len_ns in ns_dict.items():
-                    if len(req_vnfd_list) == len_ns:
-                        bf_candidate[mes_id] = al_ns_id
-            # Check the re-used capacity
-            for mes_id, al_ns_id in bf_candidate.items():
-                mes_data = self.get_mes(context, mes_id)
-                if mes_data['reused'].get('NS'):
-                    reused_dict = mes_data['reused'].get('NS')
-                    for vnfd_name in req_vnfd_list:
-                        for sys_vnfd_name, reused_val in reused_dict.items():
-                            if sys_vnfd_name == vnfd_name:
+                ns_candidate[al_mes['id']] = 0
+                al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
+                ns_candidate[al_mes['id']][al_ns_id] = dict()
+                for req_vnf_dict in req_vnf_list:
+                    for vnf_name, al_vnf_id in al_vnf_dict.items():
+                        if req_vnf_dict['name'] == vnf_name:
+                            # ns_candidate[al_mes['id']] = ns_candidate[al_mes['id']] + 1
+                            # if req_vnf_dict['nf_ins'] <= al_mes['reused'][vnf_name]:
+                            avail = al_mes['reused'][vnf_name] - req_vnf_dict['nf_ins']
+                            ns_candidate[al_mes['id']][al_ns_id].update({vnf_name: avail})
 
+            ns_cds = dict()
+            deep_ns = dict()
+            for mesid, ns_data_dict in ns_candidate.items():
+                ns_cds[mesid] = 0
+                deep_ns[mesid] = 0
+                for nsid, resev_dict in ns_data_dict.items():
+                    if len(resev_dict) == len(req_vnf_list):
+                        nf_ins_list = [nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins >= 0]
+                        if len(nf_ins_list) == len(resev_dict):
+                            total_ins = sum(nf_ins_list)
+                            ns_cds[mesid] = total_ins
+                        else:
+                            extra_nf_ins_list = [-nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins < 0]
+                            total_ins = sum(extra_nf_ins_list)
+                            deep_ns[mesid] = total_ins
+                        # is_accepted = True
+                        # return is_accepted, mesid, ns_data_dict
+            selected_mes1 = min(ns_cds, key=ns_cds.get)
+            if selected_mes1:
+                is_accepted = True
+                return is_accepted, selected_mes1, None
+            selected_mes2 = min(deep_ns, key=deep_ns.get)
+            if selected_mes2:
+                is_accepted = True
+                return is_accepted, selected_mes2, ns_candidate[selected_mes2]
 
-            return is_accepted, reused_dict
+            return is_accepted, None, None
 
         nsds = mesd['attributes'].get('nsds')
         if nsds:
             # For framework evaluation
             if mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
-                req_nf_list = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
+                req_nf_dict = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
+                req_nf_list =  list()
+                for vnf_dict in req_nf_dict:
+                    req_nf_list.append({'name': vnf_dict['name'], 'nf_ins':int(vnf_dict['vnfd_template'][5])})
+                is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_algorithm(req_nf_list)
 
 
             nsds_list = nsds.split('-')
