@@ -152,7 +152,7 @@ class TackerClient(object):
 
     def nsd_get(self, nsd_id):
         nsd_dict = self.client.show_nsd(nsd_id)
-        return nsd_dict['ns']
+        return nsd_dict['nsd']
 
     def ns_create(self, ns_dict):
         ns_instance = self.client.create_ns(body=ns_dict)

@@ -236,6 +236,16 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         # vim_obj = meo_plugin.get_vim(context, mes['mes']['vim_id'], mask_password=False)
         # self._build_vim_auth(context, vim_obj)
+        def _find_ns(context, mesd):
+            nsd_id = mesd['mesd_mapping'].get('NSD')[0]
+            nsd_instance = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'nsd_get',
+                nsd_name=nsd_id,
+                auth_attr=vim_res['vim_auth'], )
+            nsd_dict = yaml.safe_load(nsd_instance['attributes']['nsd'])
+            vnf_list = nsd_dict['imports']
+            return vnf_list
         nsds = mesd['attributes'].get('nsds')
         if nsds:
             # For framework evaluation
