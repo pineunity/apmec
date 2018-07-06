@@ -5,15 +5,23 @@ imports:
   meads:
     mead_templates:
       - mead1
+      - mead2
     mec_driver: Apmec
   nsds:
     nsd_templates:
-      - requirements: {}
+      - requirements:
+
+    nfv_driver: Tacker
+  vnffgds:
+    vnffg_template:
+      - vnffgd1
     nfv_driver: Tacker
 
 topology_template:
   node_templates:
       MEA1:
         type: tosca.nodes.mec.MEA1
+      MEA2:
+        type: tosca.nodes.mec.MEA2
 
 

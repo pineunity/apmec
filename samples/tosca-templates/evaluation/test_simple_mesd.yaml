@@ -1,10 +1,14 @@
 description: Import MEADs(already on-boarded) and NSD (already on-boarded) with input
   parameters
 imports:
-  meads: [mead1]
+  meads:
+    mead_templates:
+      - mead4
+    mec_driver: Apmec
   nsds:
     nsd_templates:
-      requirements: [vnfd42]
+      requirements: [vnfd21, vnfd33, vnfd42]
+    nfv_driver: Tacker
 topology_template:
   node_templates:
     MEA4: {type: tosca.nodes.mec.MEA4}
