@@ -248,11 +248,11 @@ class MesoPlugin(meso_db.MESOPluginDb):
             return nsd_id, vnf_list
 
         def _find_vnfds(mes):
-            ns_id = mes['mes_mapping'].get('NS')[0]
+            al_ns_id = mes['mes_mapping'].get('NS')[0]
             ns_instance = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
                 'ns_get',
-                ns_id=ns_id,
+                ns_id=al_ns_id,
                 auth_attr=vim_res['vim_auth'], )
             vnf_dict = ns_instance['vnf_ids']
             vnfd_list = list()
@@ -269,26 +269,44 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     vnfd_id=vnfd_id,
                     auth_attr=vim_res['vim_auth'], )
                 vnfd_list.append(vnfd_instance['name'])
-            return mes['id'], ns_id, vnfd_list
+            return mes['id'], al_ns_id, vnfd_list
 
-        def _find_meads(mes):
-            meca_id = mes['mes_mapping'].get('MECA')
-            meca = meo_plugin.get_meca(context, meca_id)
+        def _find_vnf_ins(context, cd_mes):
+            ns_id = mes['mes_mapping'].get('NS')[0]
+            ns_instance = self._nfv_drivers.invoke(
+                nfv_driver,  # How to tell it is Tacker
+                'ns_get',
+                ns_id=ns_id,
+                auth_attr=vim_res['vim_auth'], )
+            vnf_dict = ns_instance['vnf_ids']
+            mgmt_url = ns_instance['mgmt_urls']
+            vnf_ins_dict = dict()
+            for vnf_name, vnf_id in vnf_dict.items():
+                for mgmt_name,  mgmt_dict in mgmt_url.items():
+                    if vnf_name == mgmt_name:
+                        vnf_ins_dict[vnf_id] = len(mgmt_dict)
+            return vnf_ins_dict
+
+        def _find_meads(cd_mes):
+            cd_meca_id = cd_mes['mes_mapping'].get('MECA')
+            meca = meo_plugin.get_meca(context, cd_meca_id)
             mead_dict = meca['mea_ids']
-            return mes['id'], len(mead_dict)
+            return cd_mes['id'], len(mead_dict)
+
 
         def _run_meso_algorithm(context, req_vnfd_list):
+            reused_dict = dict()
             is_accepted = False
             al_mes_dict = self.get_mess(context)
             ns_candidate = dict()
             for al_mes in al_mes_dict['mess']:
                 ns_candidate[al_mes['id']] = dict()
-                mes_id, ns_id, vnfd_list = _find_vnfds(al_mes)
-                ns_candidate[al_mes['id']][ns_id] = 0
+                mes_id, al_ns_id, vnfd_list = _find_vnfds(al_mes)
+                ns_candidate[al_mes['id']][al_ns_id] = 0
                 for req_vnfd_name in req_vnfd_list:
                     for sys_vnfd_name in vnfd_list:
                         if req_vnfd_name == sys_vnfd_name:
-                            ns_candidate[al_mes['id']][ns_id] = ns_candidate[al_mes['id']][ns_id] + 1
+                            ns_candidate[al_mes['id']][al_ns_id] = ns_candidate[al_mes['id']][al_ns_id] + 1
             # Step 1: Take the best fit
             # Check with the VM capacity
             bf_candidate = dict()
@@ -296,9 +314,17 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 for al_ns_id, len_ns in ns_dict.items():
                     if len(req_vnfd_list) == len_ns:
                         bf_candidate[mes_id] = al_ns_id
-            # Check the number of MEAs to know how many times the NS is re-used
+            # Check the re-used capacity
+            for mes_id, al_ns_id in bf_candidate.items():
+                mes_data = self.get_mes(context, mes_id)
+                if mes_data['reused'].get('NS'):
+                    reused_dict = mes_data['reused'].get('NS')
+                    for vnfd_name in req_vnfd_list:
+                        for sys_vnfd_name, reused_val in reused_dict.items():
+                            if sys_vnfd_name == vnfd_name:
 
-            return is_accepted
+
+            return is_accepted, reused_dict
 
         nsds = mesd['attributes'].get('nsds')
         if nsds:
@@ -690,6 +716,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         mes_dict = super(MesoPlugin, self)._update_mes_pre(context, mes_id)
 
         def _update_mes_wait(self_obj, mes_id):
+            args = dict()
             mes_status = "ACTIVE"
             ns_status = "PENDING_UPDATE"
             vnffg_status = "PENDING_UPDATE"
@@ -750,6 +777,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         "MES update is not completed within"
                         " {wait} seconds as update of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
+                args['NS'] =
+
+
+
+
+
             if new_mesd_mapping.get("VNFFGD"):
                 while vnffg_status == "PENDING_UPDATE" and vnffg_retries > 0:
                     time.sleep(VNFFG_RETRY_WAIT)
@@ -785,7 +818,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 if reason:
                     error_reason = reason
                     mes_status = "PENDING_UPDATE"
-            super(MesoPlugin, self)._update_mes_post(context, mes_id, error_reason, mes_status)
+            super(MesoPlugin, self)._update_mes_post(context, mes_id, error_reason, mes_status, args)
 
         self.spawn_n(_update_mes_wait, self, mes_dict['id'])
         return mes_dict

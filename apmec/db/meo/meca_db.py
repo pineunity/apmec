@@ -294,8 +294,8 @@ class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
             for mead_name, mead_val in iteritems(mead_dict):
                 for instance in mead_val['instances']:
                     if 'mgmt_url_' + instance in output:
-                        mgmt_urls[instance] = ast.literal_eval(
-                            output['mgmt_url_' + instance].strip())
+                        mgmt_url_dict = ast.literal_eval(output['mgmt_url_' + instance].strip())
+                        mgmt_urls[instance] = mgmt_url_dict.values()
                         mea_ids[instance] = output['mea_id_' + instance]
             mea_ids = str(mea_ids)
             mgmt_urls = str(mgmt_urls)
@@ -396,14 +396,14 @@ class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
             for mead_name, mead_val in iteritems(mead_dict):
                 for instance in mead_val['instances']:
                     if 'mgmt_url_' + instance in output:
-                        new_mgmt_urls[instance] = ast.literal_eval(
-                            output['mgmt_url_' + instance].strip())
+                        mgmt_url_dict = ast.literal_eval(output['mgmt_url_' + instance].strip())
+                        new_mgmt_urls[instance] = mgmt_url_dict.values()
                         new_mea_ids[instance] = output['mea_id_' + instance]
 
         if not new_mea_ids:
-            mea_ids = None
+            new_mea_ids = None
         if not new_mgmt_urls:
-            mgmt_urls = None
+            new_mgmt_urls = None
         status = constants.ACTIVE if mistral_obj.state == 'SUCCESS' \
             else constants.ERROR
         with context.session.begin(subtransactions=True):
