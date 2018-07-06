@@ -407,9 +407,14 @@ class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
         status = constants.ACTIVE if mistral_obj.state == 'SUCCESS' \
             else constants.ERROR
         with context.session.begin(subtransactions=True):
-            meca_db = self._get_resource(context, MECA,
-                                       meca_id)
+            meca_db = self._get_resource(context, MECA, meca_id)
             mgmt_urls = ast.literal_eval(meca_db.mgmt_urls)
+            for mea_name, mgmt_dict in mgmt_urls.items():
+                for new_mea_name, new_mgmt_dict in new_mgmt_urls.items():
+                    if new_mea_name == mea_name:
+                        extra_mgmt = new_mgmt_urls.pop(new_mea_name)
+                        mgmt_urls[mea_name].extend(extra_mgmt)
+
             mgmt_urls.update(new_mgmt_urls)
             mgmt_urls = str(mgmt_urls)
             mea_ids = ast.literal_eval(meca_db.mea_ids)
