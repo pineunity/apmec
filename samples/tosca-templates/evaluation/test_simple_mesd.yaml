@@ -4,7 +4,7 @@ imports:
   meads: [mead1]
   nsds:
     nsd_templates:
-      requirements: {VNF1: 2}
+      requirements: [vnfd42]
 topology_template:
   node_templates:
     MEA4: {type: tosca.nodes.mec.MEA4}
