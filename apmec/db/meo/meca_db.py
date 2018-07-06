@@ -296,7 +296,8 @@ class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
                     if 'mgmt_url_' + instance in output:
                         mgmt_url_dict = ast.literal_eval(output['mgmt_url_' + instance].strip())
                         mgmt_urls[instance] = mgmt_url_dict.values()
-                        mea_ids[instance] = output['mea_id_' + instance]
+                        mea_ids[instance] = list()
+                        mea_ids[instance].append(output['mea_id_' + instance])
             mea_ids = str(mea_ids)
             mgmt_urls = str(mgmt_urls)
 
@@ -418,6 +419,11 @@ class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
             mgmt_urls.update(new_mgmt_urls)
             mgmt_urls = str(mgmt_urls)
             mea_ids = ast.literal_eval(meca_db.mea_ids)
+            for mea_name, mea_id_list in mea_ids.items():
+                for new_mea_name, new_mead_id_list in new_mea_ids.items():
+                    if new_mea_name == mea_name:
+                        extra_id = new_mea_ids.pop(new_mea_name)
+                        mea_ids[mea_name].extend(extra_id)
             mea_ids.update(new_mea_ids)
             mea_ids = str(mea_ids)
             meca_db.update({'mea_ids': mea_ids})
