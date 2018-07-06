@@ -37,6 +37,29 @@ topology_template:
         - virtualBinding:
             node: VDU1
 
+    VDU2:
+      type: tosca.nodes.nfv.VDU.Tacker
+      properties:
+        flavor: m1.small
+        image: ubuntu-xenial
+        mgmt_driver: noop
+        availability_zone: nova
+        config_drive: true
+        key_name: mykey
+        config: |
+          param0: key1
+          param1: key2
+    CP21:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        order: 0
+        management: true
+        anti_spoofing_protection: false
+      requirements:
+        - virtualLink:
+            node: VL1
+        - virtualBinding:
+            node: VDU2
 
     VL1:
       type: tosca.nodes.nfv.VL
@@ -44,12 +67,4 @@ topology_template:
         network_name: net0
         vendor: Tacker
 
-    FIP11:
-      type: tosca.nodes.network.FloatingIP
-      properties:
-        floating_network: external
-        floating_ip_address: 203.203.203.100
-      requirements:
-        - link:
-            node: CP11
 

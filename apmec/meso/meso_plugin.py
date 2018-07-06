@@ -238,24 +238,28 @@ class MesoPlugin(meso_db.MESOPluginDb):
         # self._build_vim_auth(context, vim_obj)
         nsds = mesd['attributes'].get('nsds')
         if nsds:
-          nsds_list = nsds.split('-')
-          mes_info['mes_mapping']['NS'] = list()
-          for nsd in nsds_list:
-            ns_name = nsd + '-' + name + '-' + uuidutils.generate_uuid()
-            nsd_instance = self._nfv_drivers.invoke(
-                nfv_driver, # How to tell it is Tacker
-                'nsd_get_by_name',
-                nsd_name=nsd,
-                auth_attr=vim_res['vim_auth'],)
-            if nsd_instance:
-                ns_arg = {'ns': {'nsd_id': nsd_instance['id'], 'name': ns_name}}
-                ns_id = self._nfv_drivers.invoke(
-                    nfv_driver,  # How to tell it is Tacker
-                    'ns_create',
-                    ns_dict=ns_arg,
-                    auth_attr=vim_res['vim_auth'], )
-                mes_info['mes_mapping']['NS'].append(ns_id)
-            # Call tacker client driver
+            # For framework evaluation
+            if mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
+                req_dict = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
+
+
+            nsds_list = nsds.split('-')
+            mes_info['mes_mapping']['NS'] = list()
+            for nsd in nsds_list:
+              ns_name = nsd + '-' + name + '-' + uuidutils.generate_uuid()
+              nsd_instance = self._nfv_drivers.invoke(
+                  nfv_driver, # How to tell it is Tacker
+                  'nsd_get_by_name',
+                  nsd_name=nsd,
+                  auth_attr=vim_res['vim_auth'],)
+              if nsd_instance:
+                  ns_arg = {'ns': {'nsd_id': nsd_instance['id'], 'name': ns_name}}
+                  ns_id = self._nfv_drivers.invoke(
+                      nfv_driver,  # How to tell it is Tacker
+                      'ns_create',
+                      ns_dict=ns_arg,
+                      auth_attr=vim_res['vim_auth'], )
+                  mes_info['mes_mapping']['NS'].append(ns_id)
 
         vnffgds = mesd['attributes'].get('vnffgds')
         if vnffgds:
