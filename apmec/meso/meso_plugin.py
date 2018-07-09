@@ -292,7 +292,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             nsd_template = mesd_dict['imports']['nsds']['nsd_templates']
             if isinstance(nsd_template, dict):
                 if nsd_template.get('requirements'):
-                    req_nf_dict = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
+                    req_nf_dict = nsd_template['requirements']
                     req_nf_list = list()
                     for vnf_dict in req_nf_dict:
                         # Todo: make the requests more natural
@@ -622,26 +622,29 @@ class MesoPlugin(meso_db.MESOPluginDb):
         name = old_mes['name']
         lftover = dict()
         # create inline mesd if given by user
+
         def _update_mesd_template(req_mesd_dict):
             build_nsd_dict = dict()
             if req_mesd_dict['imports'].get('nsds'):
                 args['NS'] = dict()
                 # Todo: Support multiple NSs
                 # For framework evaluation
-                if req_mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
-                    old_reused = old_mes['reused']
-                    vnf_mapping_list = req_mesd_dict['imports']['nsds']['nsd_templates']['requirements']
-                    for vnf_mapping_dict in vnf_mapping_list:
-                        for old_vnf_name, old_nfins in old_reused.items():
-                            if vnf_mapping_dict['name'] == old_vnf_name:
-                                # Todo: remember to change with  VM capacity
-                                diff = old_nfins - vnf_mapping_dict['nf_ins']
-                                if diff >= 0:
-                                    old_reused[old_vnf_name] = diff
-                                else:
+                nsd_templates = req_mesd_dict['imports']['nsds']['nsd_templates']
+                if isinstance(nsd_templates, dict):
+                    if nsd_templates.get('requirements'):
+                        old_reused = old_mes['reused']
+                        vnf_mapping_list = nsd_templates['requirements']
+                        for vnf_mapping_dict in vnf_mapping_list:
+                            for old_vnf_name, old_nfins in old_reused.items():
+                                if vnf_mapping_dict['name'] == old_vnf_name:
+                                    # Todo: remember to change with  VM capacity
+                                    diff = old_nfins - vnf_mapping_dict['nf_ins']
+                                    if diff >= 0:
+                                        old_reused[old_vnf_name] = diff
+                                    else:
 
-                                    lftover.update({old_vnf_name: -diff})
-                                    old_reused[old_vnf_name] = -diff
+                                        lftover.update({old_vnf_name: -diff})
+                                        old_reused[old_vnf_name] = -diff
 
                 formal_req = list()
                 for nf_name, nf_ins in lftover.items():
