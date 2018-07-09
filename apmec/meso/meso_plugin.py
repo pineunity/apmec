@@ -258,6 +258,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 for req_vnf_dict in req_vnf_list:
                     for vnf_name, al_vnf_id in al_vnf_dict.items():
                         if req_vnf_dict['name'] == vnf_name:
+                            # Todo: remember to change this with VM capacity
                             avail = al_mes['reused'][vnf_name] - req_vnf_dict['nf_ins']
                             ns_candidate[al_mes['id']][al_ns_id].update({vnf_name: avail})
 
@@ -267,7 +268,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 for nsid, resev_dict in ns_data_dict.items():
                     if len(resev_dict) == len(req_vnf_list):
                         nf_ins_list = [nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins >= 0]
-                        if len(nf_ins_list) == len(resev_dict):
+                        if len(nf_ins_list) == len(req_vnf_list):
                             total_ins = sum(nf_ins_list)
                             ns_cds[mesid] = total_ins
                         else:
@@ -290,9 +291,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
             # For framework evaluation
             if mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
                 req_nf_dict = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
-                req_nf_list =  list()
+                req_nf_list = list()
                 for vnf_dict in req_nf_dict:
-                    req_nf_list.append({'name': vnf_dict['name'], 'nf_ins':int(vnf_dict['vnfd_template'][5])})
+                    # Todo: make the requests more natural
+                    req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
                 is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_algorithm(req_nf_list)
                 if is_accepted:
                     new_mesd_dict = dict()
@@ -403,8 +405,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 args['NS'] = dict()
 
                 for vnf_name, mgmt_url_list in ns_instance_list.items():
+                    # Todo: remember to change this with VM capacity
                     args['NS'][vnf_name] = len(mgmt_url_list)
-
 
             if mes_mapping.get('VNFFG'):
                 while vnffg_status == "PENDING_CREATE" and vnffg_retries > 0:
@@ -615,10 +617,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         args = dict()
         mes_info = mes['mes']
         old_mes = super(MesoPlugin, self).get_mes(context, mes_id)
-        old_mesd = self.get_mesd(context, old_mes['mesd_id'])
-        old_mesd_mapping = old_mesd['mesd_mapping']
         name = old_mes['name']
-        new_reused = old_mes['reused']
         lftover = dict()
         # create inline mesd if given by user
         def _update_mesd_template(req_mesd_dict):
@@ -633,12 +632,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     for vnf_mapping_dict in vnf_mapping_list:
                         for old_vnf_name, old_nfins in old_reused.items():
                             if vnf_mapping_dict['name'] == old_vnf_name:
+                                # Todo: remember to change with  VM capacity
                                 diff = old_nfins - vnf_mapping_dict['nf_ins']
                                 if diff >= 0:
                                     old_reused[old_vnf_name] = diff
                                 else:
 
                                     lftover.update({old_vnf_name: -diff})
+                                    old_reused[old_vnf_name] = -diff
 
                 formal_req = list()
                 for nf_name, nf_ins in lftover.items():
