@@ -286,6 +286,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             mes_db.update({'status': mes_status})
             mes_db.update({'error_reason': error_reason})
             mes_db.update({'updated_at': timeutils.utcnow()})
+            mes_db.update({'reused': args.get("NS")})
             mes_dict = self._make_mes_dict(mes_db)
         return mes_dict
 
@@ -336,12 +337,13 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
             mes_db = self._get_mes_db(context, mes_id, _ACTIVE_UPDATE, constants.PENDING_UPDATE)
             return self._make_mes_dict(mes_db)
 
-    def _update_mes_post(self, context, mes_id, error_reason, mes_status):
+    def _update_mes_post(self, context, mes_id, error_reason, mes_status, args):
         with context.session.begin(subtransactions=True):
             mes_db = self._get_resource(context, MES, mes_id)
             mes_db.update({'status': mes_status})
             mes_db.update({'error_reason': error_reason})
             mes_db.update({'updated_at': timeutils.utcnow()})
+            mes_db.update({'reused': args.get('NS')})
             mes_dict = self._make_mes_dict(mes_db)
         return mes_dict
 

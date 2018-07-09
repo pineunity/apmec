@@ -15,6 +15,7 @@
 #    under the License.
 
 import time
+import ast
 
 import eventlet
 import yaml
@@ -397,8 +398,13 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     'ns_get',
                     ns_id=ns_list[0],
                     auth_attr=vim_res['vim_auth'], )
-                ns_instance_list = ns_cd['mgmt_urls']
-                for
+                ns_instance_dict = ns_cd['mgmt_urls']
+                ns_instance_list = ast.literal_eval(ns_instance_dict)
+                args['NS'] = dict()
+
+                for vnf_name, mgmt_url_list in ns_instance_list.items():
+                    args['NS'][vnf_name] = len(mgmt_url_list)
+
 
             if mes_mapping.get('VNFFG'):
                 while vnffg_status == "PENDING_CREATE" and vnffg_retries > 0:
@@ -605,22 +611,22 @@ class MesoPlugin(meso_db.MESOPluginDb):
         self.spawn_n(_delete_mes_wait, mes['id'])
         return mes['id']
 
-
     def update_mes(self, context, mes_id, mes):
+        args = dict()
         mes_info = mes['mes']
         old_mes = super(MesoPlugin, self).get_mes(context, mes_id)
         old_mesd = self.get_mesd(context, old_mes['mesd_id'])
         old_mesd_mapping = old_mesd['mesd_mapping']
         name = old_mes['name']
         new_reused = old_mes['reused']
-
+        lftover = dict()
         # create inline mesd if given by user
         def _update_mesd_template(req_mesd_dict):
             build_nsd_dict = dict()
             if req_mesd_dict['imports'].get('nsds'):
+                args['NS'] = dict()
                 # Todo: Support multiple NSs
                 # For framework evaluation
-                lftover = dict()
                 if req_mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
                     old_reused = old_mes['reused']
                     vnf_mapping_list = req_mesd_dict['imports']['nsds']['nsd_templates']['requirements']
@@ -801,11 +807,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         "MES update is not completed within"
                         " {wait} seconds as update of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
-                args['NS'] =
-
-
-
-
+                args['NS'] = old_mes['reused']
 
             if new_mesd_mapping.get("VNFFGD"):
                 while vnffg_status == "PENDING_UPDATE" and vnffg_retries > 0:
