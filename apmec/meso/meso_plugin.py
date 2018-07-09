@@ -289,21 +289,23 @@ class MesoPlugin(meso_db.MESOPluginDb):
         nsds = mesd['attributes'].get('nsds')
         if nsds:
             # For framework evaluation
-            if mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
-                req_nf_dict = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
-                req_nf_list = list()
-                for vnf_dict in req_nf_dict:
-                    # Todo: make the requests more natural
-                    req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
-                is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_algorithm(req_nf_list)
-                if is_accepted:
-                    new_mesd_dict = dict()
-                    ref_mesd_dict = copy.deepcopy(mesd_dict)
-                    ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = req_nf_list
-                    new_mesd_dict['mes'] = dict()
-                    new_mesd_dict['mes'] = {'mesd_template': ref_mesd_dict}
-                    self.update_mes(context,cd_mes_id, new_mesd_dict)
-                    return new_mesd_dict
+            nsd_template = mesd_dict['imports']['nsds']['nsd_templates']
+            if isinstance(nsd_template, dict):
+                if nsd_template.get('requirements'):
+                    req_nf_dict = mesd_dict['imports']['nsds']['nsd_templates'].get('requirements')
+                    req_nf_list = list()
+                    for vnf_dict in req_nf_dict:
+                        # Todo: make the requests more natural
+                        req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
+                    is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_algorithm(req_nf_list)
+                    if is_accepted:
+                        new_mesd_dict = dict()
+                        ref_mesd_dict = copy.deepcopy(mesd_dict)
+                        ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = req_nf_list
+                        new_mesd_dict['mes'] = dict()
+                        new_mesd_dict['mes'] = {'mesd_template': ref_mesd_dict}
+                        self.update_mes(context,cd_mes_id, new_mesd_dict)
+                        return new_mesd_dict
 
             nsds_list = nsds.split('-')
             mes_info['mes_mapping']['NS'] = list()
