@@ -1,8 +1,8 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 
-description: Demo Sample VNFD1
+description: Demo Sample VNFD52
 node_types:
-  tosca.nodes.nfv.VNF1:
+  tosca.nodes.nfv.VNF5:
     requirements:
       - virtualLink1:
           type: tosca.nodes.nfv.VL
@@ -10,7 +10,7 @@ node_types:
 
 topology_template:
   substitution_mappings:
-    node_type: tosca.nodes.nfv.VNF1
+    node_type: tosca.nodes.nfv.VNF5
 
   node_templates:
     VDU1:
@@ -20,6 +20,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         availability_zone: nova
+        user_data_format: RAW
         config_drive: true
         key_name: mykey
         config: |
@@ -44,6 +45,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         availability_zone: nova
+        user_data_format: RAW
         config_drive: true
         key_name: mykey
         config: |

@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 
-description: Demo Sample VNFD1
+description: Demo Sample VNFD12
 node_types:
   tosca.nodes.nfv.VNF1:
     requirements:
@@ -20,6 +20,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         availability_zone: nova
+        user_data_format: RAW
         config_drive: true
         key_name: mykey
         config: |
@@ -44,6 +45,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         availability_zone: nova
+        user_data_format: RAW
         config_drive: true
         key_name: mykey
         config: |
