@@ -253,7 +253,6 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         name = mes.get('name')
         mes_mapping = mes['mes_mapping']
         mes_id = uuidutils.generate_uuid()
-        mes_reuse = mes['reused']
         try:
             with context.session.begin(subtransactions=True):
                 mesd_db = self._get_resource(context, MESD,
@@ -265,7 +264,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
                            mea_ids=None,
                            status=constants.PENDING_CREATE,
                            mes_mapping=mes_mapping,
-                           reused=mes_reuse,
+                           reused=None,
                            mgmt_urls=None,
                            mesd_id=mesd_id,
                            vim_id=vim_id,
@@ -279,7 +278,7 @@ class MESOPluginDb(meso.MESOPluginBase, db_base.CommonDbMixin):
         return self._make_mes_dict(mes_db)
 
     def create_mes_post(self, context, mes_id,
-                        mes_status, error_reason):
+                        mes_status, error_reason, args):
         LOG.debug('mes ID %s', mes_id)
         with context.session.begin(subtransactions=True):
             mes_db = self._get_resource(context, MES,

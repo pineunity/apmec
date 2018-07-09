@@ -46,6 +46,7 @@ MEC_RETRIES = 30
 MEC_RETRY_WAIT = 6
 VNFFG_RETRIES = 30
 VNFFG_RETRY_WAIT = 6
+NF_CAP_MAX = 3
 
 
 def config_opts():
@@ -233,60 +234,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
             nfv_driver = nfv_driver.lower()
 
         ##########################################
-
-        # vim_obj = meo_plugin.get_vim(context, mes['mes']['vim_id'], mask_password=False)
-        # self._build_vim_auth(context, vim_obj)
-        def _find_vnfs(mesd):
-            nsd_id = mesd['mesd_mapping'].get('NSD')[0]
-            nsd_instance = self._nfv_drivers.invoke(
-                nfv_driver,  # How to tell it is Tacker
-                'nsd_get',
-                nsd_name=nsd_id,
-                auth_attr=vim_res['vim_auth'], )
-            nsd_dict = yaml.safe_load(nsd_instance['attributes']['nsd'])
-            vnf_list = nsd_dict['imports']
-            return nsd_id, vnf_list
-
-        def _find_vnfds(mes):
-            al_ns_id = mes['mes_mapping'].get('NS')[0]
-            ns_instance = self._nfv_drivers.invoke(
-                nfv_driver,  # How to tell it is Tacker
-                'ns_get',
-                ns_id=al_ns_id,
-                auth_attr=vim_res['vim_auth'], )
-            vnf_dict = ns_instance['vnf_ids']
-            vnfd_list = list()
-            for vnf_name, vnf_id in vnf_dict.items():
-                vnf_instance = self._nfv_drivers.invoke(
-                    nfv_driver,  # How to tell it is Tacker
-                    'vnf_get',
-                    vnf_id=vnf_id,
-                    auth_attr=vim_res['vim_auth'], )
-                vnfd_id = vnf_instance['id']
-                vnfd_instance = self._nfv_drivers.invoke(
-                    nfv_driver,  # How to tell it is Tacker
-                    'vnfd_get',
-                    vnfd_id=vnfd_id,
-                    auth_attr=vim_res['vim_auth'], )
-                vnfd_list.append(vnfd_instance['name'])
-            return mes['id'], al_ns_id, vnfd_list
-
-        def _find_vnf_insgpejr(context, cd_mes):
-            ns_id = mes['mes_mapping'].get('NS')[0]
-            ns_instance = self._nfv_drivers.invoke(
-                nfv_driver,  # How to tell it is Tacker
-                'ns_get',
-                ns_id=ns_id,
-                auth_attr=vim_res['vim_auth'], )
-            vnf_dict = ns_instance['vnf_ids']
-            mgmt_url = ns_instance['mgmt_urls']
-            vnf_ins_dict = dict()
-            for vnf_name, vnf_id in vnf_dict.items():
-                for mgmt_name,  mgmt_dict in mgmt_url.items():
-                    if vnf_name == mgmt_name:
-                        vnf_ins_dict[vnf_id] = len(mgmt_dict)
-            return vnf_ins_dict
-
         def _find_vnf_ins(cd_mes):
             al_ns_id = cd_mes['mes_mapping'].get('NS')[0]
             if not al_ns_id:
@@ -296,31 +243,26 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 'ns_get',
                 ns_id=al_ns_id,
                 auth_attr=vim_res['vim_auth'], )
-            vnf_dict = ns_instance['vnf_ids']
-            # mgmt_url = ns_instance['mgmt_urls']
-            return ns_instance['id'], vnf_dict
+            al_vnf_dict = ns_instance['vnf_ids']
+            return ns_instance['id'], al_vnf_dict
 
         def _run_meso_algorithm(req_vnf_list):
             is_accepted = False
             al_mes_dict = self.get_mess(context)
             ns_candidate = dict()
             for al_mes in al_mes_dict['mess']:
-                ns_candidate[al_mes['id']] = 0
+                ns_candidate[al_mes['id']] = dict()
                 al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
                 ns_candidate[al_mes['id']][al_ns_id] = dict()
                 for req_vnf_dict in req_vnf_list:
                     for vnf_name, al_vnf_id in al_vnf_dict.items():
                         if req_vnf_dict['name'] == vnf_name:
-                            # ns_candidate[al_mes['id']] = ns_candidate[al_mes['id']] + 1
-                            # if req_vnf_dict['nf_ins'] <= al_mes['reused'][vnf_name]:
                             avail = al_mes['reused'][vnf_name] - req_vnf_dict['nf_ins']
                             ns_candidate[al_mes['id']][al_ns_id].update({vnf_name: avail})
 
             ns_cds = dict()
             deep_ns = dict()
             for mesid, ns_data_dict in ns_candidate.items():
-                ns_cds[mesid] = 0
-                deep_ns[mesid] = 0
                 for nsid, resev_dict in ns_data_dict.items():
                     if len(resev_dict) == len(req_vnf_list):
                         nf_ins_list = [nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins >= 0]
@@ -331,14 +273,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             extra_nf_ins_list = [-nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins < 0]
                             total_ins = sum(extra_nf_ins_list)
                             deep_ns[mesid] = total_ins
-                        # is_accepted = True
-                        # return is_accepted, mesid, ns_data_dict
-            selected_mes1 = min(ns_cds, key=ns_cds.get)
-            if selected_mes1:
+            if ns_cds:
+                selected_mes1 = min(ns_cds, key=ns_cds.get)
                 is_accepted = True
                 return is_accepted, selected_mes1, None
-            selected_mes2 = min(deep_ns, key=deep_ns.get)
-            if selected_mes2:
+            if deep_ns:
+                selected_mes2 = min(deep_ns, key=deep_ns.get)
                 is_accepted = True
                 return is_accepted, selected_mes2, ns_candidate[selected_mes2]
 
@@ -353,7 +293,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 for vnf_dict in req_nf_dict:
                     req_nf_list.append({'name': vnf_dict['name'], 'nf_ins':int(vnf_dict['vnfd_template'][5])})
                 is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_algorithm(req_nf_list)
-
+                if is_accepted:
+                    new_mesd_dict = dict()
+                    ref_mesd_dict = copy.deepcopy(mesd_dict)
+                    ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = req_nf_list
+                    new_mesd_dict['mes'] = dict()
+                    new_mesd_dict['mes'] = {'mesd_template': ref_mesd_dict}
+                    self.update_mes(context,cd_mes_id, new_mesd_dict)
+                    return new_mesd_dict
 
             nsds_list = nsds.split('-')
             mes_info['mes_mapping']['NS'] = list()
@@ -397,6 +344,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         mes_dict = super(MesoPlugin, self).create_mes(context, mes)
 
         def _create_mes_wait(self_obj, mes_id):
+            args = dict()
             mes_status = "ACTIVE"
             ns_status = "PENDING_CREATE"
             vnffg_status = "PENDING_CREATE"
@@ -406,9 +354,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
             vnffg_retries = VNFFG_RETRIES
             mes_mapping = self.get_mes(context, mes_id)['mes_mapping']
             # Check MECA
+            meca_id = mes_mapping['MECA']
             while mec_status == "PENDING_CREATE" and mec_retries > 0:
                 time.sleep(MEC_RETRY_WAIT)
-                meca_id = mes_mapping['MECA']
                 mec_status = meo_plugin.get_meca(context, meca_id)['status']
                 LOG.debug('status: %s', mec_status)
                 if mec_status == 'ACTIVE' or mec_status == 'ERROR':
@@ -422,9 +370,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     wait=MEC_RETRIES * MEC_RETRY_WAIT)
             # Check NS/VNFFG status
             if mes_mapping.get('NS'):
+                ns_list = mes_mapping['NS']
                 while ns_status == "PENDING_CREATE" and ns_retries > 0:
                     time.sleep(NS_RETRY_WAIT)
-                    ns_list = mes_mapping['NS']
                     # Todo: support multiple NSs
                     ns_instance = self._nfv_drivers.invoke(
                         nfv_driver,  # How to tell it is Tacker
@@ -442,6 +390,16 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         "MES creation is not completed within"
                         " {wait} seconds as creation of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
+
+                # Determine args
+                ns_cd = self._nfv_drivers.invoke(
+                    nfv_driver,  # How to tell it is Tacker
+                    'ns_get',
+                    ns_id=ns_list[0],
+                    auth_attr=vim_res['vim_auth'], )
+                ns_instance_list = ns_cd['mgmt_urls']
+                for
+
             if mes_mapping.get('VNFFG'):
                 while vnffg_status == "PENDING_CREATE" and vnffg_retries > 0:
                     time.sleep(VNFFG_RETRY_WAIT)
@@ -468,7 +426,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             if error_reason:
                 mes_status = "PENDING_CREATE"
 
-            super(MesoPlugin, self).create_mes_post(context, mes_id, mes_status, error_reason)
+            super(MesoPlugin, self).create_mes_post(context, mes_id, mes_status, error_reason, args)
         self.spawn_n(_create_mes_wait, self, mes_dict['id'])
         return mes_dict
 
@@ -647,19 +605,62 @@ class MesoPlugin(meso_db.MESOPluginDb):
         self.spawn_n(_delete_mes_wait, mes['id'])
         return mes['id']
 
+
     def update_mes(self, context, mes_id, mes):
         mes_info = mes['mes']
         old_mes = super(MesoPlugin, self).get_mes(context, mes_id)
         old_mesd = self.get_mesd(context, old_mes['mesd_id'])
         old_mesd_mapping = old_mesd['mesd_mapping']
         name = old_mes['name']
+        new_reused = old_mes['reused']
+
         # create inline mesd if given by user
+        def _update_mesd_template(req_mesd_dict):
+            build_nsd_dict = dict()
+            if req_mesd_dict['imports'].get('nsds'):
+                # Todo: Support multiple NSs
+                # For framework evaluation
+                lftover = dict()
+                if req_mesd_dict['imports']['nsds']['nsd_templates'].get('requirements'):
+                    old_reused = old_mes['reused']
+                    vnf_mapping_list = req_mesd_dict['imports']['nsds']['nsd_templates']['requirements']
+                    for vnf_mapping_dict in vnf_mapping_list:
+                        for old_vnf_name, old_nfins in old_reused.items():
+                            if vnf_mapping_dict['name'] == old_vnf_name:
+                                diff = old_nfins - vnf_mapping_dict['nf_ins']
+                                if diff >= 0:
+                                    old_reused[old_vnf_name] = diff
+                                else:
+
+                                    lftover.update({old_vnf_name: -diff})
+
+                formal_req = list()
+                for nf_name, nf_ins in lftover.items():
+                    vnfd_name = nf_name.lower() + str(nf_ins)
+                    formal_req.append(vnfd_name)
+
+                if formal_req:
+                    build_nsd_dict['tosca_definitions_version'] = 'tosca_simple_profile_for_nfv_1_0_0'
+                    build_nsd_dict['description'] = old_mes['description']
+                    build_nsd_dict['imports'] = formal_req
+                    build_nsd_dict['topology_template'] = dict()
+                    build_nsd_dict['topology_template']['node_templates'] = dict()
+                    for nf_name, nf_ins in lftover.items():
+                        vnfd_name = nf_name.lower() + str(nf_ins)
+                        node = 'tosca.nodes.nfv.' + vnfd_name
+                        build_nsd_dict['topology_template']['node_templates'].update({vnfd_name: node})
+            return build_nsd_dict
+
         if mes_info.get('mesd_template'):
+            # Build vnf_dict here
+            req_mesd_dict = yaml.safe_load(mes_info['mesd_template'])
+            new_mesd_template = _update_mesd_template(req_mesd_dict)
+            actual_mesd_template = new_mesd_template if new_mesd_template else mes_info['mesd_template']
             mes_name = utils.generate_resource_name(name, 'inline')
             mesd = {'mesd': {'tenant_id': old_mes['tenant_id'],
                            'name': mes_name,
                            'attributes': {
-                               'mesd': mes_info['mesd_template']},
+                               'mesd': actual_mesd_template},
                            'template_source': 'inline',
                            'description': old_mes['description']}}
             try:
@@ -689,8 +690,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
             mecad_arg = {'meca': {'mecad_template': mecad_dict}}
             old_meca_id = old_mes['mes_mapping']['MECA']
             meca_id = meo_plugin.update_meca(context, old_meca_id, mecad_arg)
-        if mesd_dict['imports'].get('nsds'):
-            # Todo: Support multiple NSs
+
+
             nfv_driver = None
             nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')
             if not nfv_driver:
@@ -704,6 +705,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 auth_attr=vim_res['vim_auth'], )
             nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
             old_ns_id = old_mes['mes_mapping']['NS'][0]
+
             ns_arg = {'ns': {'nsd_template': nsd_template}}
             ns_dict = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
