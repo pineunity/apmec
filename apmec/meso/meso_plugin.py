@@ -240,7 +240,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         def _find_vnf_ins(cd_mes):
             al_ns_id_list = cd_mes['mes_mapping'].get('NS')
             if not al_ns_id_list:
-                return
+                return None, None
             al_ns_id = al_ns_id_list[0]
             ns_instance = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
@@ -257,6 +257,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
             ns_candidate = dict()
             for al_mes in al_mes_list:
                 ns_candidate[al_mes['id']] = dict()
+                if al_mes['status'] != "ACTIVE":
+                    continue
                 al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
                 if not al_ns_id:
                     continue
