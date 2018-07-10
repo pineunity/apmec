@@ -150,12 +150,12 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
         self.definition[self.wf_identifier]['input'] = []
         for mea in mea_ids.keys():
             mea_key = 'mea_id_' + mea
-            self.definition[self.wf_identifier]['input'].append(mea_key)
             meca_dict['mead_details'][mea] = dict()
             instances_dict = dict()
             instances_dict['instances'] = list()
             for index, mea_id in enumerate(mea_ids[mea]):
                 mea_key_cp = mea_key + str(index)
+                self.definition[self.wf_identifier]['input'].append(mea_key_cp)
                 mea_name = mea + str(index)
                 self.input_dict[mea_key_cp] = mea_id
                 instances_dict['instances'].append(mea_name)
