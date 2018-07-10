@@ -142,17 +142,19 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 raise meso.NSDNotFound(mesd_name=mesd_dict['name'])
             if nfv_driver.lower() not in [driver.lower() for driver in constants.NFV_DRIVER]:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
-            mesd_dict['attributes']['nsds'] = '-'.join(nsd_tpls)
-            mesd_dict['mesd_mapping']['NSD'] = nsd_tpls
+            if isinstance(nsd_tpls, list):
+                mesd_dict['attributes']['nsds'] = '-'.join(nsd_tpls)
+                mesd_dict['mesd_mapping']['NSD'] = nsd_tpls
         if vnffg_imports:
             vnffgd_tpls = vnffg_imports.get('vnffgd_templates')
             nfv_driver = vnffg_imports.get('nfv_driver')
             if not vnffgd_tpls:
                 raise meso.VNFFGDNotFound(mesd_name=mesd_dict['name'])
-            mesd_dict['mesd_mapping']['VNFFGD'] = vnffgd_tpls
-            mesd_dict['attributes']['vnffgds'] = '-'.join(vnffgd_tpls)
             if nfv_driver.lower() not in [driver.lower() for driver in constants.NFV_DRIVER]:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
+            if isinstance(vnffgd_tpls, list):
+                mesd_dict['mesd_mapping']['VNFFGD'] = vnffgd_tpls
+                mesd_dict['attributes']['vnffgds'] = '-'.join(vnffgd_tpls)
 
         if ('description' not in mesd_dict or
                 mesd_dict['description'] == ''):
@@ -244,14 +246,15 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 'ns_get',
                 ns_id=al_ns_id,
                 auth_attr=vim_res['vim_auth'], )
-            al_vnf_dict = ns_instance['vnf_ids']
+            al_vnf = ns_instance['vnf_ids']
+            al_vnf_dict = ast.literal_eval(al_vnf)
             return ns_instance['id'], al_vnf_dict
 
         def _run_meso_algorithm(req_vnf_list):
             is_accepted = False
-            al_mes_dict = self.get_mess(context)
+            al_mes_list = self.get_mess(context)
             ns_candidate = dict()
-            for al_mes in al_mes_dict['mess']:
+            for al_mes in al_mes_list:
                 ns_candidate[al_mes['id']] = dict()
                 al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
                 ns_candidate[al_mes['id']][al_ns_id] = dict()
@@ -303,7 +306,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         ref_mesd_dict = copy.deepcopy(mesd_dict)
                         ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = req_nf_list
                         new_mesd_dict['mes'] = dict()
-                        new_mesd_dict['mes'] = {'mesd_template': ref_mesd_dict}
+                        new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
                         self.update_mes(context,cd_mes_id, new_mesd_dict)
                         return new_mesd_dict
 
@@ -704,6 +707,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             meca_id = meo_plugin.update_meca(context, old_meca_id, mecad_arg)
 
 
+        if new_mesd_mapping.get('NSD'):
             nfv_driver = None
             nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')
             if not nfv_driver:
@@ -726,7 +730,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 ns_dict=ns_arg,
                 auth_attr=vim_res['vim_auth'], )
 
-        if mesd_dict['imports'].get('vnffgds'):
+        if new_mesd_mapping.get('vnffgds'):
             # Todo: Support multiple VNFFGs
             nfv_driver = None
             nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')
