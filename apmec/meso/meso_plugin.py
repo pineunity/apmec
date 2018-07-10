@@ -713,7 +713,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
             old_meca_id = old_mes['mes_mapping']['MECA']
             meca_id = meo_plugin.update_meca(context, old_meca_id, mecad_arg)
 
-
         if new_mesd_mapping.get('NSD'):
             nfv_driver = None
             nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')

@@ -423,7 +423,7 @@ class MECAPluginDb(meo.MECAPluginBase, db_base.CommonDbMixin):
                 for new_mea_name, new_mead_id_list in new_mea_ids.items():
                     if new_mea_name == mea_name:
                         extra_id = new_mea_ids.pop(new_mea_name)
-                        mea_ids[mea_name].extend(extra_id)
+                        mea_ids[mea_name].append(extra_id)
             mea_ids.update(new_mea_ids)
             mea_ids = str(mea_ids)
             meca_db.update({'mea_ids': mea_ids})
