@@ -199,24 +199,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         mesd = self.get_mesd(context, mes['mes']['mesd_id'])
         mesd_dict = yaml.safe_load(mesd['attributes']['mesd'])
         meo_plugin = manager.ApmecManager.get_service_plugins()['MEO']
-        meca_id = dict()
-        # Create MEAs using MEO APIs
-        try:
-            meca_name = 'meca' + '-' + name + '-' + uuidutils.generate_uuid()
-            # Separate the imports out from template
-            mead_tpl_dict = dict()
-            mead_tpl_dict['imports'] = mesd_dict['imports']['meads']['mead_templates']
-            mecad_dict = copy.deepcopy(mesd_dict)
-            mecad_dict.pop('imports')
-            mecad_dict.update(mead_tpl_dict)
-            LOG.debug('mesd %s', mecad_dict)
-            meca_arg = {'meca': {'mecad_template': mecad_dict, 'name': meca_name,
-                                 'description': mes_info['description'], 'tenant_id': mes_info['tenant_id'],
-                                 'vim_id': mes_info['vim_id'], 'attributes': {}}}
-            meca_dict = meo_plugin.create_meca(context, meca_arg)
-            mes_info['mes_mapping']['MECA'] = meca_dict['id']
-        except Exception as e:
-            LOG.error('Error while creating the MECAs: %s', e)
+
         region_name = mes.setdefault('placement_attr', {}).get(
             'region_name', None)
         vim_res = self.vim_client.get_vim(context, mes['mes']['vim_id'],
@@ -334,7 +317,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                   mes_info['mes_mapping']['NS'].append(ns_id)
 
         vnffgds = mesd['attributes'].get('vnffgds')
-        if mesd_dict['imports']['vnffgds']:
+        if mesd_dict['imports'].get('vnffgds'):
           vnffgds_list = vnffgds.split('-')
           mes_info['mes_mapping']['VNFFG'] = list()
           for vnffgd in vnffgds_list:
@@ -352,6 +335,25 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     vnffg_dict=vnffg_arg,
                     auth_attr=vim_res['vim_auth'], )
                 mes_info['mes_mapping']['VNFFG'].append(vnffg_id)
+
+        meca_id = dict()
+        # Create MEAs using MEO APIs
+        try:
+            meca_name = 'meca' + '-' + name + '-' + uuidutils.generate_uuid()
+            # Separate the imports out from template
+            mead_tpl_dict = dict()
+            mead_tpl_dict['imports'] = mesd_dict['imports']['meads']['mead_templates']
+            mecad_dict = copy.deepcopy(mesd_dict)
+            mecad_dict.pop('imports')
+            mecad_dict.update(mead_tpl_dict)
+            LOG.debug('mesd %s', mecad_dict)
+            meca_arg = {'meca': {'mecad_template': mecad_dict, 'name': meca_name,
+                                 'description': mes_info['description'], 'tenant_id': mes_info['tenant_id'],
+                                 'vim_id': mes_info['vim_id'], 'attributes': {}}}
+            meca_dict = meo_plugin.create_meca(context, meca_arg)
+            mes_info['mes_mapping']['MECA'] = meca_dict['id']
+        except Exception as e:
+            LOG.error('Error while creating the MECAs: %s', e)
             # Call Tacker client driver
 
         mes_dict = super(MesoPlugin, self).create_mes(context, mes)
