@@ -85,6 +85,7 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
         meads = meca['mead_details']
         task_dict = dict()
         for mead_name, mead_info in (meads).items():
+            # mead_info is a list of mead_id
             nodes = mead_info['instances']
             for node in nodes:
                 task = 'delete_mea_%s' % node
@@ -150,8 +151,15 @@ class WorkflowGenerator(workflow_generator.WorkflowGeneratorBase):
         for mea in mea_ids.keys():
             mea_key = 'mea_id_' + mea
             self.definition[self.wf_identifier]['input'].append(mea_key)
-            self.input_dict[mea_key] = mea_ids[mea]
-            meca_dict['mead_details'][mea] = {'instances': [mea]}
+            meca_dict['mead_details'][mea] = dict()
+            instances_dict = dict()
+            instances_dict['instances'] = list()
+            for index, mea_id in enumerate(mea_ids[mea]):
+                mea_key_cp = mea_key + str(index)
+                mea_name = mea + str(index)
+                self.input_dict[mea_key_cp] = mea_id
+                instances_dict['instances'].append(mea_name)
+            meca_dict['mead_details'][mea].update(instances_dict)
         self.definition[self.wf_identifier]['tasks'] = dict()
         self.definition[self.wf_identifier]['tasks'].update(
             self._add_delete_mea_tasks(meca_dict))
