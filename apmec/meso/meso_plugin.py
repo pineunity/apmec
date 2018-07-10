@@ -824,7 +824,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         "MES update is not completed within"
                         " {wait} seconds as update of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
-                args['NS'] = old_mes['reused']
 
             if new_mesd_mapping.get("VNFFGD"):
                 while vnffg_status == "PENDING_UPDATE" and vnffg_retries > 0:
@@ -853,7 +852,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         "MES update is not completed within"
                         " {wait} seconds as update of VNFFG(s)").format(
                         wait=VNFFG_RETRIES * VNFFG_RETRY_WAIT)
-
+            args['NS'] = old_mes['reused']
             if mec_status == "ERROR" or ns_status == "ERROR" or vnffg_status == "ERROR":
                 mes_status = "ERROR"
             error_reason = None
