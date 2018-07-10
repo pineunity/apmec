@@ -238,9 +238,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         ##########################################
         def _find_vnf_ins(cd_mes):
-            al_ns_id = cd_mes['mes_mapping'].get('NS')[0]
-            if not al_ns_id:
+            al_ns_id_list = cd_mes['mes_mapping'].get('NS')
+            if not al_ns_id_list:
                 return
+            al_ns_id = al_ns_id_list[0]
             ns_instance = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
                 'ns_get',
@@ -257,6 +258,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
             for al_mes in al_mes_list:
                 ns_candidate[al_mes['id']] = dict()
                 al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
+                if not al_ns_id:
+                    continue
                 ns_candidate[al_mes['id']][al_ns_id] = dict()
                 for req_vnf_dict in req_vnf_list:
                     for vnf_name, al_vnf_id in al_vnf_dict.items():
@@ -290,7 +293,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             return is_accepted, None, None
 
         nsds = mesd['attributes'].get('nsds')
-        if nsds:
+        if mesd_dict['imports'].get('nsds'):
             # For framework evaluation
             nsd_template = mesd_dict['imports']['nsds']['nsd_templates']
             if isinstance(nsd_template, dict):
@@ -329,7 +332,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                   mes_info['mes_mapping']['NS'].append(ns_id)
 
         vnffgds = mesd['attributes'].get('vnffgds')
-        if vnffgds:
+        if mesd_dict['imports']['vnffgds']:
           vnffgds_list = vnffgds.split('-')
           mes_info['mes_mapping']['VNFFG'] = list()
           for vnffgd in vnffgds_list:
