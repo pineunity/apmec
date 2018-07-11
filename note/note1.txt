@@ -1,1 +1,5 @@
 - Framework-eval worked well when the number of instances is still available
+
+- WIP: when the number of instances is not enough but the size of NS is same
+
+- Next: Add new NFs to NS
