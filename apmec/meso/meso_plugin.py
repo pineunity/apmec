@@ -633,7 +633,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         lftover = dict()
         # create inline mesd if given by user
 
-        def _update_mesd_template(req_mesd_dict):
+        def _update_nsd_template(req_mesd_dict):
             build_nsd_dict = dict()
             if req_mesd_dict['imports'].get('nsds'):
                 args['NS'] = dict()
@@ -675,14 +675,11 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         if mes_info.get('mesd_template'):
             # Build vnf_dict here
-            req_mesd_dict = yaml.safe_load(mes_info['mesd_template'])
-            new_mesd_template = _update_mesd_template(req_mesd_dict)
-            actual_mesd_template = new_mesd_template if new_mesd_template else mes_info['mesd_template']
             mes_name = utils.generate_resource_name(name, 'inline')
             mesd = {'mesd': {'tenant_id': old_mes['tenant_id'],
                            'name': mes_name,
                            'attributes': {
-                               'mesd': actual_mesd_template},
+                               'mesd': mes_info['mesd_template'},
                            'template_source': 'inline',
                            'description': old_mes['description']}}
             try:
@@ -713,22 +710,28 @@ class MesoPlugin(meso_db.MESOPluginDb):
             old_meca_id = old_mes['mes_mapping']['MECA']
             meca_id = meo_plugin.update_meca(context, old_meca_id, mecad_arg)
 
-        if new_mesd_mapping.get('NSD'):
+        if mesd_dict['imports'].get('nsds'):
             nfv_driver = None
             nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')
             if not nfv_driver:
                 raise meso.NFVDriverNotFound(mesd_name=mesd_dict['name'])
             nfv_driver = nfv_driver.lower()
-            nsd_name = new_mesd_mapping['NSD'][0]
-            nsd_dict = self._nfv_drivers.invoke(
-                nfv_driver,  # How to tell it is Tacker
-                'nsd_get_by_name',
-                nsd_name=nsd_name,
-                auth_attr=vim_res['vim_auth'], )
-            nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
+
+            req_mesd_dict = yaml.safe_load(mes_info['mesd_template'])
+            new_nsd_template = _update_nsd_template(req_mesd_dict)
+            nsd_template = None
+            if isinstance(new_mesd_mapping.get('NSD'), list):
+                nsd_name = new_mesd_mapping['NSD'][0]
+                nsd_dict = self._nfv_drivers.invoke(
+                    nfv_driver,  # How to tell it is Tacker
+                    'nsd_get_by_name',
+                    nsd_name=nsd_name,
+                    auth_attr=vim_res['vim_auth'], )
+                nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
+            actual_nsd_template = new_nsd_template if new_nsd_template else nsd_template
             old_ns_id = old_mes['mes_mapping']['NS'][0]
 
-            ns_arg = {'ns': {'nsd_template': nsd_template}}
+            ns_arg = {'ns': {'nsd_template': actual_nsd_template}}
             ns_dict = self._nfv_drivers.invoke(
                 nfv_driver,  # How to tell it is Tacker
                 'ns_update',
@@ -736,7 +739,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 ns_dict=ns_arg,
                 auth_attr=vim_res['vim_auth'], )
 
-        if new_mesd_mapping.get('vnffgds'):
+        if mesd_dict['imports'].get('vnffgds'):
             # Todo: Support multiple VNFFGs
             nfv_driver = None
             nfv_driver = mesd_dict['imports']['nsds'].get('nfv_driver')
@@ -774,7 +777,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             error_reason_ns = None
             error_reason_vnffg = None
             # Check MECA
-            if not new_mesd_mapping:
+            if mesd_dict['imports'].get('meads'):
                 while mec_status == "PENDING_UPDATE" and mec_retries > 0:
                     time.sleep(MEC_RETRY_WAIT)
                     meca_id = old_mes['mes_mapping']['MECA']
@@ -796,7 +799,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         " {wait} seconds as update of MECA").format(
                         wait=MEC_RETRIES * MEC_RETRY_WAIT)
             # Check NS/VNFFG status
-            if new_mesd_mapping.get("NSD"):
+            if mesd_dict['imports'].get('nsds'):
                 while ns_status == "PENDING_UPDATE" and ns_retries > 0:
                     time.sleep(NS_RETRY_WAIT)
                     ns_list = old_mes['mes_mapping']['NS']
@@ -824,7 +827,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         " {wait} seconds as update of NS(s)").format(
                         wait=NS_RETRIES * NS_RETRY_WAIT)
 
-            if new_mesd_mapping.get("VNFFGD"):
+            if mesd_dict['imports'].get('vnffgds'):
                 while vnffg_status == "PENDING_UPDATE" and vnffg_retries > 0:
                     time.sleep(VNFFG_RETRY_WAIT)
                     vnffg_list = old_mes['mes_mapping']['VNFFG']
