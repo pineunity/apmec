@@ -679,7 +679,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             mesd = {'mesd': {'tenant_id': old_mes['tenant_id'],
                            'name': mes_name,
                            'attributes': {
-                               'mesd': mes_info['mesd_template'},
+                               'mesd': mes_info['mesd_template']},
                            'template_source': 'inline',
                            'description': old_mes['description']}}
             try:
