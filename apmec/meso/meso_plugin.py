@@ -658,7 +658,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
                 formal_req = list()
                 for nf_name, nf_ins in lftover.items():
-                    vnfd_name = nf_name.lower() + str(nf_ins)
+                    vnfd_name = 'vnfd' + nf_name[3] + str(nf_ins)
                     formal_req.append(vnfd_name)
 
                 if formal_req:
@@ -668,9 +668,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     build_nsd_dict['topology_template'] = dict()
                     build_nsd_dict['topology_template']['node_templates'] = dict()
                     for nf_name, nf_ins in lftover.items():
-                        vnfd_name = nf_name.lower() + str(nf_ins)
-                        node = 'tosca.nodes.nfv.' + vnfd_name
-                        build_nsd_dict['topology_template']['node_templates'].update({vnfd_name: node})
+                        node = 'tosca.nodes.nfv.' + nf_name
+                        node_dict = dict()
+                        node_dict['type'] = node
+                        build_nsd_dict['topology_template']['node_templates'].update({nf_name: node_dict})
             return build_nsd_dict
 
         if mes_info.get('mesd_template'):
