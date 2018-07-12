@@ -230,6 +230,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 'ns_get',
                 ns_id=al_ns_id,
                 auth_attr=vim_res['vim_auth'], )
+            if ns_instance['status'] != 'ACTIVE':
+                return None, None
             al_vnf = ns_instance['vnf_ids']
             al_vnf_dict = ast.literal_eval(al_vnf)
             return ns_instance['id'], al_vnf_dict
