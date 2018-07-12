@@ -277,7 +277,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
             return is_accepted, None, None
 
-        nsds = mesd['attributes'].get('nsds')
+        build_nsd_dict = dict()
         if mesd_dict['imports'].get('nsds'):
             # For framework evaluation
             nsd_template = mesd_dict['imports']['nsds']['nsd_templates']
@@ -297,24 +297,50 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
                         self.update_mes(context,cd_mes_id, new_mesd_dict)
                         return new_mesd_dict
+                    else:
+                        # Create the inline NS with the following template
+                        import_list = list()
+                        node_dict = dict()
+                        for vnfd in req_nf_dict:
+                            import_list.append(vnfd['vnfd_template'])
+                            node = 'tosca.nodes.nfv.' + vnfd['name']
+                            node_dict[vnfd['name']] = {'type': node}
+                        build_nsd_dict['tosca_definitions_version'] = 'tosca_simple_profile_for_nfv_1_0_0'
+                        build_nsd_dict['description'] = mes_info['description']
+                        build_nsd_dict['imports'] = import_list
+                        build_nsd_dict['topology_template'] = dict()
+                        build_nsd_dict['topology_template']['node_templates'] = node_dict
 
-            nsds_list = nsds.split('-')
+            nsds = mesd['attributes'].get('nsds')
             mes_info['mes_mapping']['NS'] = list()
-            for nsd in nsds_list:
-              ns_name = nsd + '-' + name + '-' + uuidutils.generate_uuid()
-              nsd_instance = self._nfv_drivers.invoke(
-                  nfv_driver, # How to tell it is Tacker
-                  'nsd_get_by_name',
-                  nsd_name=nsd,
-                  auth_attr=vim_res['vim_auth'],)
-              if nsd_instance:
-                  ns_arg = {'ns': {'nsd_id': nsd_instance['id'], 'name': ns_name}}
-                  ns_id = self._nfv_drivers.invoke(
-                      nfv_driver,  # How to tell it is Tacker
-                      'ns_create',
-                      ns_dict=ns_arg,
-                      auth_attr=vim_res['vim_auth'], )
-                  mes_info['mes_mapping']['NS'].append(ns_id)
+            if nsds:
+                nsds_list = nsds.split('-')
+                for nsd in nsds_list:
+                  ns_name = nsd + '-' + name + '-' + uuidutils.generate_uuid()
+                  nsd_instance = self._nfv_drivers.invoke(
+                      nfv_driver, # How to tell it is Tacker
+                      'nsd_get_by_name',
+                      nsd_name=nsd,
+                      auth_attr=vim_res['vim_auth'],)
+                  if nsd_instance:
+                      ns_arg = {'ns': {'nsd_id': nsd_instance['id'], 'name': ns_name}}
+                      ns_id = self._nfv_drivers.invoke(
+                          nfv_driver,  # How to tell it is Tacker
+                          'ns_create',
+                          ns_dict=ns_arg,
+                          auth_attr=vim_res['vim_auth'], )
+                      mes_info['mes_mapping']['NS'].append(ns_id)
+            if build_nsd_dict:
+                ns_name = 'nsd' + name + '-' + uuidutils.generate_uuid()
+                ns_arg = {'ns': {'nsd_template': build_nsd_dict, 'name': ns_name,
+                                     'description': mes_info['description'], 'vim_id': '',
+                                 'tenant_id': mes_info['tenant_id'], 'attributes': {}}}
+                ns_id = self._nfv_drivers.invoke(
+                    nfv_driver,  # How to tell it is Tacker
+                    'ns_create',
+                    ns_dict=ns_arg,
+                    auth_attr=vim_res['vim_auth'], )
+                mes_info['mes_mapping']['NS'].append(ns_id)
 
         vnffgds = mesd['attributes'].get('vnffgds')
         if mesd_dict['imports'].get('vnffgds'):
