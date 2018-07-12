@@ -225,11 +225,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
             if not al_ns_id_list:
                 return None, None
             al_ns_id = al_ns_id_list[0]
-            ns_instance = self._nfv_drivers.invoke(
-                nfv_driver,  # How to tell it is Tacker
-                'ns_get',
-                ns_id=al_ns_id,
-                auth_attr=vim_res['vim_auth'], )
+            try:
+                ns_instance = self._nfv_drivers.invoke(
+                    nfv_driver,  # How to tell it is Tacker
+                    'ns_get',
+                    ns_id=al_ns_id,
+                    auth_attr=vim_res['vim_auth'], )
+            except:
+                return None, None
             if ns_instance['status'] != 'ACTIVE':
                 return None, None
             al_vnf = ns_instance['vnf_ids']
