@@ -17,7 +17,6 @@ while [ $count -le $COUNT ]
 do
   # call request function
   sudo python requests.py
-  count=$(( $count+1 ))
   mes_name="mes"
   mes_name+=$count
   ns_name="ns"
@@ -30,6 +29,10 @@ do
   # Initiate the nss and mea using tacker api and apmec api
   apmec mea-create --mead_template sepa-mead.yaml $mea_name &
   tacker ns-create --nsd_template sepa-nsd.yaml $ns_name &
+
+  count=$(( $count+1 ))
+
+done
 
 
 
