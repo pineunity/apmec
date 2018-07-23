@@ -25,15 +25,17 @@ def sepa_import_requirements(sample, req_list):
     with open(path, 'r') as f:
       sample_dict = yaml.safe_load(f.read())
 
-    sample_dict['node_templates'] = dict()
+    sample_dict['topology_template'] = dict()
+    sample_dict['topology_template']['node_templates'] = dict()
     sample_dict['imports'] = list()
     # req_list is list odf vnfdson edge2
     for sepa_sample in req_list:
         vnfd_sample = sepa_sample['vnfd_template'] + '-' + 'edge2'
         sample_dict['imports'].append(vnfd_sample)
         node_dict = dict()
-        node_dict[sepa_sample['name']] = 'tosca.nodes.nfv.' + sepa_sample['name']
-        sample_dict['node_templates'].update(node_dict)
+        node_dict[sepa_sample['name']] = dict()
+        node_dict[sepa_sample['name']]['type'] = 'tosca.nodes.nfv.' + sepa_sample['name']
+        sample_dict['topology_template']['node_templates'].update(node_dict)
 
     with open(path, 'w') as f:
         yaml.safe_dump(sample_dict, f)
