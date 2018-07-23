@@ -7,13 +7,26 @@ from numpy import random as random_choice
 
 # it should return two template for the cooperation and separation approaches
 
-def import_requirements(sample, req_list):
+def coop_import_requirements(sample, req_list):
     base_path = os.path.dirname(os.path.abspath(__file__))
     path = base_path + '/' + sample
     with open(path, 'r') as f:
       sample_dict = yaml.safe_load(f.read())
 
     sample_dict['imports']['nsds']['nsd_templates']['requirements'] = req_list
+
+    with open(path, 'w') as f:
+        yaml.safe_dump(sample_dict, f)
+
+
+def sepa_import_requirements(sample, req_list):
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    path = base_path + '/' + sample
+    with open(path, 'r') as f:
+      sample_dict = yaml.safe_load(f.read())
+
+    # req_list is list odf vnfdson edge2
+    sample_dict['imports'] = req_list
 
     with open(path, 'w') as f:
         yaml.safe_dump(sample_dict, f)
@@ -63,6 +76,7 @@ for i in req_nf_list:
 # Transform the request to the TOSCA template
 
 tosca_req_list = list()
+sepa_req_list = list()
 for nf, nf_instance in req_sfc.items():
     index = 'VNF' + str(nf)
     VNF = SAMPLE[index]
@@ -73,12 +87,8 @@ for nf, nf_instance in req_sfc.items():
     sample_dict['vnfd_template'] = sample
     tosca_req_list.append(sample_dict)
 
-import_requirements(sample='coop-mesd.yaml', req_list=tosca_req_list)
-import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
+coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req_list)
+sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
 
 
-
-# request_vms = 0
-# for nf_index, nf_ins in req_sfc.items():
-#    request_vms = request_vms + nf_ins
 
