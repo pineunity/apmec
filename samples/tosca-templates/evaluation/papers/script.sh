@@ -11,7 +11,7 @@ COUNT=50
 
 # call source openrc admin admin
 ostack=/home/ostack/tung-apmec/apmec-eval/devstack
-sample_dir=/opt/stack/apmec/samples/tosca-templates/evaluation/papers
+sample_dir=/opt/stack/apmec/samples/tosca-templates/evaluation/papers/
 
 cd $ostack
 source openrc admin admin
@@ -30,14 +30,13 @@ do
   mea_name="mea"
   mea_name+=$count
   # initiate the mes using apmec api
-  apmec mes-create --mesd-template sepa-mesd.yaml $mes_name &
+  apmec mes-create --mesd-template $sample_dir/sepa-mesd.yaml $mes_name &
 
   # Initiate the nss and mea using tacker api and apmec api
-  apmec mea-create --mead_template sepa-mead.yaml $mea_name &
-  tacker ns-create --nsd_template sepa-nsd.yaml $ns_name &
+  apmec mea-create --mead_template $sample_dir/sepa-mead.yaml $mea_name &
+  tacker ns-create --nsd_template $sample_dir/sepa-nsd.yaml $ns_name &
 
   count=$(( $count+1 ))
-
 done
 
 
