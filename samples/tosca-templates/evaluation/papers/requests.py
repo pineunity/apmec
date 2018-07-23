@@ -5,6 +5,7 @@ from random import randint
 import random
 from numpy import random as random_choice
 
+# it should return two template for the cooperation and separation approaches
 
 def import_requirements(sample, req_list):
     base_path = os.path.dirname(os.path.abspath(__file__))
@@ -72,7 +73,10 @@ for nf, nf_instance in req_sfc.items():
     sample_dict['vnfd_template'] = sample
     tosca_req_list.append(sample_dict)
 
-import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
+import_requirements(sample='coop-mesd.yaml', req_list=tosca_req_list)
+import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
+
+
 
 # request_vms = 0
 # for nf_index, nf_ins in req_sfc.items():

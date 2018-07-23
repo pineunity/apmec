@@ -20,7 +20,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         user_data_format: RAW
-        availability_zone: nova
+        availability_zone: nova:edge1
         config_drive: true
         key_name: mykey
         config: |
