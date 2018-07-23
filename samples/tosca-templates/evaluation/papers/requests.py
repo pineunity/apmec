@@ -25,8 +25,15 @@ def sepa_import_requirements(sample, req_list):
     with open(path, 'r') as f:
       sample_dict = yaml.safe_load(f.read())
 
+    sample_dict['node_templates'] = dict()
+    sample_dict['imports'] = list()
     # req_list is list odf vnfdson edge2
-    sample_dict['imports'] = req_list
+    for sepa_sample in req_list:
+        vnfd_sample = sepa_sample['vnfd_template'] + '-' + 'edge2'
+        sample_dict['imports'].append(vnfd_sample)
+        node_dict = dict()
+        node_dict[sepa_sample['name']] = 'tosca.nodes.nfv.' + sepa_sample['name']
+        sample_dict['node_templates'].update(node_dict)
 
     with open(path, 'w') as f:
         yaml.safe_dump(sample_dict, f)
@@ -76,7 +83,6 @@ for i in req_nf_list:
 # Transform the request to the TOSCA template
 
 tosca_req_list = list()
-sepa_req_list = list()
 for nf, nf_instance in req_sfc.items():
     index = 'VNF' + str(nf)
     VNF = SAMPLE[index]
@@ -86,6 +92,7 @@ for nf, nf_instance in req_sfc.items():
     sample_dict['name'] = vnf_name
     sample_dict['vnfd_template'] = sample
     tosca_req_list.append(sample_dict)
+
 
 coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req_list)
 sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
