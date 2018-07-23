@@ -11,7 +11,7 @@ COUNT=50
 
 # call source openrc admin admin
 ostack=/home/ostack/tung-apmec/apmec-eval/devstack
-sample_dir=/opt/stack/apmec/samples/tosca-templates/evaluation/papers/
+sample_dir=/opt/stack/apmec/samples/tosca-templates/evaluation/papers
 
 cd $ostack
 source openrc admin admin
