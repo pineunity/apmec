@@ -30,14 +30,14 @@ do
   mea_name="mea"
   mea_name+=$count
   # initiate the mes using apmec api
-  apmec mes-create --mesd-template $sample_dir/sepa-mesd.yaml $mes_name &
+  apmec mes-create --mesd-template $sample_dir/coop-mesd.yaml $mes_name &
 
   # Initiate the nss and mea using tacker api and apmec api
-  apmec mea-create --mead_template $sample_dir/sepa-mead.yaml $mea_name &
-  tacker ns-create --nsd_template $sample_dir/sepa-nsd.yaml $ns_name &
+  apmec mea-create --mead-template $sample_dir/sepa-mead.yaml $mea_name &
+  tacker ns-create --nsd-template $sample_dir/sepa-nsd.yaml $ns_name &
 
   count=$(( $count+1 ))
 done
 
-
+exit 1
 
