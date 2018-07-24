@@ -7,6 +7,8 @@ edge2_dir=/opt/stack/apmec/samples/tosca-templates/evaluation/papers/edge2
 
 cd $home
 
+sudo nova-manage cell_v2 discover_hosts
+
 glance image-create --name "ubuntu-xenial" --disk-format qcow2 --container-format bare --min-disk=3 --visibility public --file xenial-server-cloudimg-amd64-disk1.img --progress
 
 openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
