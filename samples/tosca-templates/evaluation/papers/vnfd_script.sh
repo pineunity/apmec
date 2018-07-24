@@ -23,10 +23,10 @@ do
 done
 
 index=0
-for sample in $edge2_dir/*
+for sample_edge2 in $edge2_dir/*
 do
-  vnfd_name=${vnfd_edge1[$count]}
-  tacker vnfd-create --vnfd-file $sample $vnfd_name
+  vnfd_name=${vnfd_edge2[$index]}
+  tacker vnfd-create --vnfd-file $sample_edge2 $vnfd_name
   (( index++ ))
 
 done
