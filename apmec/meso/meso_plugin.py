@@ -451,7 +451,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 for vnf_name, mgmt_url_list in ns_instance_list.items():
                     # Todo: remember to change this with VM capacity
                     vm_capacity = 3
-                    args['NS'][vnf_name] = [vm_capacity] * len(mgmt_url_list)
+                    orig = [vm_capacity] * len(mgmt_url_list)
+                    args['NS'][vnf_name] = [(val - 1) for val in orig]
 
             if mes_mapping.get('VNFFG'):
                 while vnffg_status == "PENDING_CREATE" and vnffg_retries > 0:
