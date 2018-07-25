@@ -255,7 +255,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     for vnf_name, al_vnf_id in al_vnf_dict.items():
                         if req_vnf_dict['name'] == vnf_name:
                             # Todo: remember to change this with VM capacity
-                            avail = al_mes['reused'][vnf_name] - req_vnf_dict['nf_ins']
+                            len_diff = len([lend for lend in al_mes['reused'][vnf_name] if lend > 0])
+                            avail = len_diff - req_vnf_dict['nf_ins']
                             ns_candidate[al_mes['id']][al_ns_id].update({vnf_name: avail})
 
             ns_cds = dict()
@@ -449,7 +450,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
                 for vnf_name, mgmt_url_list in ns_instance_list.items():
                     # Todo: remember to change this with VM capacity
-                    args['NS'][vnf_name] = len(mgmt_url_list)
+                    vm_capacity = 3
+                    args['NS'][vnf_name] = [vm_capacity] * len(mgmt_url_list)
 
             if mes_mapping.get('VNFFG'):
                 while vnffg_status == "PENDING_CREATE" and vnffg_retries > 0:
@@ -662,6 +664,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         old_mes = super(MesoPlugin, self).get_mes(context, mes_id)
         name = old_mes['name']
         lftover = dict()
+        vm_capacity = 3
         # create inline mesd if given by user
 
         def _update_nsd_template(req_mesd_dict):
@@ -676,16 +679,22 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         old_reused = old_mes['reused']
                         vnf_mapping_list = nsd_templates['requirements']
                         for vnf_mapping_dict in vnf_mapping_list:
-                            for old_vnf_name, old_nfins in old_reused.items():
+                            for old_vnf_name, old_nfins_list in old_reused.items():
                                 if vnf_mapping_dict['name'] == old_vnf_name:
                                     # Todo: remember to change with  VM capacity
-                                    diff = old_nfins - vnf_mapping_dict['nf_ins']
-                                    if diff >= 0:
-                                        old_reused[old_vnf_name] = diff
-                                    else:
-
+                                    len_diff = len([lend for lend in old_nfins_list if lend > 0])
+                                    diff = len_diff - vnf_mapping_dict['nf_ins']
+                                    if diff < 0:
                                         lftover.update({old_vnf_name: -diff})
-                                        old_reused[old_vnf_name] = -diff
+                                        old_reused[old_vnf_name].extend([vm_capacity] * (-diff))
+                                    # old_reused[old_vnf_name] = diff
+                                    temp = vnf_mapping_dict['nf_ins']
+                                    for index, nfins in enumerate(old_nfins_list):
+                                        if nfins > 0:
+                                            old_nfins_list[index] = old_nfins_list[index] - 1
+                                            temp = temp - 1
+                                        if temp == 0:
+                                            break
 
                 formal_req = list()
                 for nf_name, nf_ins in lftover.items():
