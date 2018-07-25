@@ -761,15 +761,15 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     auth_attr=vim_res['vim_auth'], )
                 nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
             actual_nsd_template = new_nsd_template if new_nsd_template else nsd_template
-            old_ns_id = old_mes['mes_mapping']['NS'][0]
-
-            ns_arg = {'ns': {'nsd_template': actual_nsd_template}}
-            ns_dict = self._nfv_drivers.invoke(
-                nfv_driver,  # How to tell it is Tacker
-                'ns_update',
-                ns_id=old_ns_id,
-                ns_dict=ns_arg,
-                auth_attr=vim_res['vim_auth'], )
+            if actual_nsd_template:
+                old_ns_id = old_mes['mes_mapping']['NS'][0]
+                ns_arg = {'ns': {'nsd_template': actual_nsd_template}}
+                ns_dict = self._nfv_drivers.invoke(
+                    nfv_driver,  # How to tell it is Tacker
+                    'ns_update',
+                    ns_id=old_ns_id,
+                    ns_dict=ns_arg,
+                    auth_attr=vim_res['vim_auth'], )
 
         if mesd_dict['imports'].get('vnffgds'):
             # Todo: Support multiple VNFFGs
