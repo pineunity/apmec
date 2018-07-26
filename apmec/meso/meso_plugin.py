@@ -16,6 +16,7 @@
 
 import time
 import ast
+import random
 
 import eventlet
 import yaml
@@ -47,11 +48,17 @@ MEC_RETRIES = 30
 MEC_RETRY_WAIT = 6
 VNFFG_RETRIES = 30
 VNFFG_RETRY_WAIT = 6
-NF_CAP_MAX = 3
 
 
 def config_opts():
     return [('meso', MesoPlugin.OPTS)]
+
+
+NF_CAP_MAX = 3
+VNF_LIST = ['VNF1', 'VNF2', 'VNF2', 'VNF3', 'VNF4', 'VNF5', 'VNF6']
+VM_CAPA = dict()
+for vnf_name in VNF_LIST:
+    VM_CAPA[vnf_name] = random.randint(1, NF_CAP_MAX)
 
 
 class MesoPlugin(meso_db.MESOPluginDb):
@@ -450,7 +457,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
                 for vnf_name, mgmt_url_list in ns_instance_list.items():
                     # Todo: remember to change this with VM capacity
-                    vm_capacity = 3
+                    vm_capacity = VM_CAPA[vnf_name]
                     orig = [vm_capacity] * len(mgmt_url_list)
                     args['NS'][vnf_name] = [(val - 1) for val in orig]
 
@@ -665,7 +672,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
         old_mes = super(MesoPlugin, self).get_mes(context, mes_id)
         name = old_mes['name']
         lftover = dict()
-        vm_capacity = 3
+        #vm_capacity = 3
         # create inline mesd if given by user
 
         def _update_nsd_template(req_mesd_dict):
@@ -687,6 +694,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                     diff = len_diff - vnf_mapping_dict['nf_ins']
                                     if diff < 0:
                                         lftover.update({old_vnf_name: -diff})
+                                        vm_capacity = VM_CAPA[old_vnf_name]
                                         old_reused[old_vnf_name].extend([vm_capacity] * (-diff))
                                     # old_reused[old_vnf_name] = diff
                                     temp = vnf_mapping_dict['nf_ins']
