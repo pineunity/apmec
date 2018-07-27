@@ -19,7 +19,7 @@ topology_template:
         flavor: m1.small
         image: ubuntu-xenial
         mgmt_driver: noop
-        availability_zone: nova:edge2
+        availability_zone: nova:edge1
         config_drive: true
         user_data: |
           #!/bin/sh
