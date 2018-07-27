@@ -23,7 +23,7 @@ openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
 
 # Connect net0 with router
 
-openstack router add router1 subnet0
+openstack router add subnet router1 subnet0
 
 count=0
 for sample in $edge1_dir/*
