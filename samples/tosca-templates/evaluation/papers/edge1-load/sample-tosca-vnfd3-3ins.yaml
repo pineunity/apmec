@@ -29,7 +29,7 @@ topology_template:
           sudo service resolvconf restart
           sudo apt-get -y update
           sudo apt-get install -y stress-ng
-          stress-ng --cpu 1 10
+          stress-ng --cpu 1 5 --vm-bytes $(awk '/MemAvailable/{printf "%d\n", $2 * 0.05;}' < /proc/meminfo)k -m 1
         config: |
           param0: key1
           param1: key2
@@ -60,7 +60,7 @@ topology_template:
           sudo service resolvconf restart
           sudo apt-get -y update
           sudo apt-get install -y stress-ng
-          stress-ng --cpu 1 10
+          stress-ng --cpu 1 5 --vm-bytes $(awk '/MemAvailable/{printf "%d\n", $2 * 0.05;}' < /proc/meminfo)k -m 1
         key_name: mykey
         config: |
           param0: key1
@@ -92,7 +92,7 @@ topology_template:
           sudo service resolvconf restart
           sudo apt-get -y update
           sudo apt-get install -y stress-ng
-          stress-ng --cpu 1 10
+          stress-ng --cpu 1 5 --vm-bytes $(awk '/MemAvailable/{printf "%d\n", $2 * 0.05;}' < /proc/meminfo)k -m 1
         key_name: mykey
         config: |
           param0: key1

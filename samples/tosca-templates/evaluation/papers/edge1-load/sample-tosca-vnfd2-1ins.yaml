@@ -6,13 +6,7 @@ node_types:
     requirements:
       - virtualLink1:
           type: tosca.nodes.nfv.VL
-          required: trueuser_data: |
-          #!/bin/sh
-          echo "nameserver 8.8.8.8" | sudo tee /etc/resolvconf/resolv.conf.d/head
-          sudo service resolvconf restart
-          sudo apt-get -y update
-          sudo apt-get install -y stress-ng
-          stress-ng --cpu 1 10
+          required: true
 
 topology_template:
   substitution_mappings:
@@ -34,7 +28,7 @@ topology_template:
           sudo service resolvconf restart
           sudo apt-get -y update
           sudo apt-get install -y stress-ng
-          stress-ng --cpu 1 10
+          stress-ng --cpu 1 5 --vm-bytes $(awk '/MemAvailable/{printf "%d\n", $2 * 0.05;}' < /proc/meminfo)k -m 1
         key_name: mykey
         config: |
           param0: key1
