@@ -309,7 +309,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         new_mesd_dict['mes'] = dict()
                         new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
                         self.update_mes(context,cd_mes_id, new_mesd_dict)
-                        return new_mesd_dict
+                        return cd_mes_id
                     else:
                         # Create the inline NS with the following template
                         import_list = list()
