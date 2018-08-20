@@ -9,8 +9,8 @@ imports:
     nsd_templates:
       requirements:
       - {name: VNF2, vnfd_template: vnfd22}
-      - {name: VNF5, vnfd_template: vnfd51}
+      - {name: VNF3, vnfd_template: vnfd32}
 topology_template:
   node_templates:
-    MEA4: {type: tosca.nodes.mec.MEA1}
+    MEA1: {type: tosca.nodes.mec.MEA1}
 tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0

@@ -54,7 +54,7 @@ VNF5 = ['vnfd51', 'vnfd52', 'vnfd53']
 
 VNF6 = ['vnfd61', 'vnfd62', 'vnfd63']
 
-sys_Nmax = 6  # Number of NFs -- > Maximum of NFs
+sys_Nmax = 3  # Number of NFs -- > Maximum of NFs
 vm_capacity = 3
 min_resue = 0.5  # Set the reuse factor of the NS
 req_Nmax = 3

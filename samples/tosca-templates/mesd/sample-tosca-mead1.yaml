@@ -46,7 +46,7 @@ topology_template:
         order: 0
         management: true
         anti_spoofing_protection: false
-      requirements:
+      requirements:ssh-keygen -f "/root/.ssh/known_hosts" -R 10.10.0.4
         - virtualLink:
             node: VL1
         - virtualBinding:
