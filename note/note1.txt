@@ -3,3 +3,12 @@
 - WIP: when the number of instances is not enough but the size of NS is same
 
 - Next: Add new NFs to NS
+
+
+-------------------------------------
+Current code:
+
+The NS service is reused if the number of NFs in the requested NSs is same with the offered NS
+
+The VM capacity = 2
+

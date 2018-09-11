@@ -31,7 +31,15 @@ VNF5 = ['vnfd51', 'vnfd52', 'vnfd53']
 
 VNF6 = ['vnfd61', 'vnfd62', 'vnfd63']
 
-sys_Nmax = 6  # Number of NFs -- > Maximum of NFs
+VNF7 = ['vnfd71', 'vnfd72', 'vnfd73']
+
+VNF8 = ['vnfd81', 'vnfd82', 'vnfd83']
+
+VNF9 = ['vnfd91', 'vnfd92', 'vnfd93']
+
+VNF10 = ['vnfd101', 'vnfd102', 'vnfd103']
+
+sys_Nmax = 10  # Number of NFs -- > Maximum of NFs
 vm_capacity = 3
 min_resue = 0.5  # Set the reuse factor of the NS
 req_Nmax = 3
@@ -44,7 +52,7 @@ req_Nmax_ins = 3
 
 # Fixed with number of NF instance and change the length of SFCs
 
-SAMPLE = {'VNF0': VNF1, 'VNF1': VNF2, 'VNF2': VNF3, 'VNF3': VNF4, 'VNF4':VNF5, 'VNF5': VNF6}
+SAMPLE = {'VNF0': VNF1, 'VNF1': VNF2, 'VNF2': VNF3, 'VNF3': VNF4, 'VNF4':VNF5, 'VNF5': VNF6, 'VNF6': VNF7, 'VNF7': VNF8, 'VNF8': VNF9, 'VNF9': VNF10}
 
 NSins_list = [1, 2, 3, 4, 5, 6]
 sys_nf_list = range(0, sys_Nmax)
