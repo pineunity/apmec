@@ -343,12 +343,12 @@ function mec_heat_translator_install {
 
 }
 
-#function apmec_horizon_install {
-#    git_clone_by_name "apmec-horizon"
-#    setup_dev_lib "apmec-horizon"
-#    sudo cp $DEST/apmec-horizon/apmec_horizon/enabled/* $DEST/horizon/openstack_dashboard/enabled/
-#    restart_apache_server
-#}
+function apmec_horizon_install {
+    git_clone_by_name "apmec-horizon"
+    setup_dev_lib "apmec-horizon"
+    sudo cp $DEST/apmec-horizon/apmec_horizon/enabled/* $DEST/horizon/openstack_dashboard/enabled/
+    restart_apache_server
+}
 
 function apmec_client_install {
     git_clone_by_name "python-apmecclient"
