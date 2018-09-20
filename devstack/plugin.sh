@@ -26,8 +26,8 @@ if is_service_enabled apmec; then
         create_apmec_accounts
 
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
-        echo_summary "Installing apmec horizon"
-        apmec_horizon_install
+        #echo_summary "Installing apmec horizon"
+        #apmec_horizon_install
         # Initialize and start the apmec service
         echo_summary "Initializing Apmec"
         init_apmec
