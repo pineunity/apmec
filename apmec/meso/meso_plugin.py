@@ -55,7 +55,7 @@ def config_opts():
 
 
 NF_CAP_MAX = 3
-VNF_LIST = ['VNF1', 'VNF2', 'VNF2', 'VNF3', 'VNF4', 'VNF5', 'VNF6']
+VNF_LIST = ['VNF0', 'VNF1', 'VNF2', 'VNF3', 'VNF4', 'VNF5', 'VNF6', 'VNF7', 'VNF8', 'VNF9']
 VM_CAPA = dict()
 for vnf_name in VNF_LIST:
     VM_CAPA[vnf_name] = random.randint(1, NF_CAP_MAX)
