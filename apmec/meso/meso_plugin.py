@@ -246,7 +246,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             al_vnf_dict = ast.literal_eval(al_vnf)
             return ns_instance['id'], al_vnf_dict
 
-        def _run_meso_algorithm(req_vnf_list):
+        def _run_meso_rsfca(req_vnf_list):
             is_accepted = False
             al_mes_list = self.get_mess(context)
             ns_candidate = dict()
@@ -290,6 +290,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
             return is_accepted, None, None
 
+        def _run_meso_rvnfa(req_vnf_list):
+            return
+
+        def _run_meso_ha(req_vnf_list):
+            return
+
         build_nsd_dict = dict()
         if mesd_dict['imports'].get('nsds'):
             # For framework evaluation
@@ -301,7 +307,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     for vnf_dict in req_nf_dict:
                         # Todo: make the requests more natural
                         req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
-                    is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_algorithm(req_nf_list)
+                    is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_rsfca(req_nf_list)
                     if is_accepted:
                         new_mesd_dict = dict()
                         ref_mesd_dict = copy.deepcopy(mesd_dict)
