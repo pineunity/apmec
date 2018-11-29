@@ -291,6 +291,27 @@ class MesoPlugin(meso_db.MESOPluginDb):
             return is_accepted, None, None
 
         def _run_meso_rvnfa(req_vnf_list):
+            al_mes_list = self.get_mess(context)
+            ns_candidate = dict()
+            for al_mes in al_mes_list:
+                ns_candidate[al_mes['id']] = dict()
+                if al_mes['status'] != 'ACTIVE':
+                    continue
+                al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
+                if not al_ns_id:
+                    continue
+                ns_candidate[al_mes['id']][al_ns_id] = dict()
+                for req_vnf_dict in req_vnf_list:
+                    for vnf_name, al_vnf_id in al_vnf_dict.items():
+                        if req_vnf_dict['name'] == vnf_name:
+                            # Todo: remember to change this with VM capacity
+                            len_diff = len([lend for lend in al_mes['reused'][vnf_name] if lend > 0])
+                            avail = len_diff - req_vnf_dict['nf_ins']
+                            ns_candidate[al_mes['id']][al_ns_id].update({vnf_name: avail})
+
+            ns_candidate = dict()
+            for req_vnf_dicr in req_nf_dict.items():
+                for vnf_name, al_vnf_id
             return
 
         def _run_meso_ha(req_vnf_list):
