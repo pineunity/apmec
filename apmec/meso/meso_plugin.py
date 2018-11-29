@@ -296,18 +296,21 @@ class MesoPlugin(meso_db.MESOPluginDb):
             return is_accepted, None, None
 
         def _run_meso_rvnfa(req_vnf_list):
-            final_candidate = dict()
+            final_candidate = dict()   # Consider using the OrderDict
+            candidate_set = dict()
             ns_candidate = _generic_ns_set(req_vnf_list)
             for req_vnf_dict in req_vnf_list:
                 req_vnf_name = req_vnf_dict['name']
-                final_candidate[req_vnf_name] = list()
+                candidate_set[req_vnf_name] = list()
                 for mes_id, mes_info in ns_candidate.items():
                     for ns_id, ns_info_dict in mes_info.items():
                         if req_vnf_name in ns_info_dict:
                             slots = ns_info_dict[req_vnf_name]
-                            final_candidate[req_vnf_name].append({'mes_id': mes_id, 'slots': slots})
-                            min_slot = min([mes_candidate['slots'] for mes_candidate in final_candidate])
-
+                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'slots': slots})
+                min_slot = min([mes_candidate['slots'] for mes_candidate in candidate_set])
+                mes_list =\
+                    [mes_candidate['mes_id'] for mes_candidate in candidate_set if mes_candidate['slots'] == min_slot]     # noqa
+                final_candidate[req_vnf_name] = mes_list[0]
             # ns_candidate = dict()
             # for req_vnf_dicr in req_nf_dict.items():
             #     for vnf_name, al_vnf_id
