@@ -314,7 +314,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
             # ns_candidate = dict()
             # for req_vnf_dicr in req_nf_dict.items():
             #     for vnf_name, al_vnf_id
-            return
+            # return the list of NSs must be updated
+            return final_candidate
 
         def _run_meso_ha(req_vnf_list):
             return
