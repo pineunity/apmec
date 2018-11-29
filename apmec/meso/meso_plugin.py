@@ -246,8 +246,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             al_vnf_dict = ast.literal_eval(al_vnf)
             return ns_instance['id'], al_vnf_dict
 
-        def _run_meso_rsfca(req_vnf_list):
-            is_accepted = False
+        def _generic_ns_set(req_vnf_list):
             al_mes_list = self.get_mess(context)
             ns_candidate = dict()
             for al_mes in al_mes_list:
@@ -265,7 +264,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             len_diff = len([lend for lend in al_mes['reused'][vnf_name] if lend > 0])
                             avail = len_diff - req_vnf_dict['nf_ins']
                             ns_candidate[al_mes['id']][al_ns_id].update({vnf_name: avail})
+        #   The rest will be treated differently by the algorithms
+                return ns_candidate
 
+        def _run_meso_rsfca(req_vnf_list):
+            is_accepted = False
+            ns_candidate = _generic_ns_set(req_nf_list)
             ns_cds = dict()
             deep_ns = dict()
             for mesid, ns_data_dict in ns_candidate.items():
