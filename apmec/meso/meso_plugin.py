@@ -297,9 +297,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         def _run_meso_rvnfa(req_vnf_list):
             final_candidate = dict()
-            ns_candidate = _generic_ns_set(req_nf_dict)
-            for mes_id, mes_info in ns_candidate.items():
-                for ns_id, ns_info in mes_info.items():
+            ns_candidate = _generic_ns_set(req_vnf_list)
+            for req_vnf_dict in req_vnf_list:
+                for mes_id, mes_info in ns_candidate.items():
+                    for ns_id, ns_info_dict in mes_info.items():
+                        if req_vnf_dict['name'] in ns_info_dict:
+                            final_candidate[req_vnf_dict['name']] = mes_id
 
             ns_candidate = dict()
             for req_vnf_dicr in req_nf_dict.items():
