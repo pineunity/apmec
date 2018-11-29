@@ -274,6 +274,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             deep_ns = dict()
             for mesid, ns_data_dict in ns_candidate.items():
                 for nsid, resev_dict in ns_data_dict.items():
+                    # This is the heart of the rvnfa
                     if len(resev_dict) == len(req_vnf_list):
                         nf_ins_list = [nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins >= 0]
                         if len(nf_ins_list) == len(req_vnf_list):
