@@ -299,14 +299,17 @@ class MesoPlugin(meso_db.MESOPluginDb):
             final_candidate = dict()
             ns_candidate = _generic_ns_set(req_vnf_list)
             for req_vnf_dict in req_vnf_list:
+                req_vnf_name = req_vnf_dict['name']
+                final_candidate[req_vnf_name] = list()
                 for mes_id, mes_info in ns_candidate.items():
                     for ns_id, ns_info_dict in mes_info.items():
-                        if req_vnf_dict['name'] in ns_info_dict:
-                            final_candidate[req_vnf_dict['name']] = mes_id
+                        if req_vnf_name in ns_info_dict:
+                            slots = ns_info_dict[req_vnf_name]
+                            final_candidate[req_vnf_name].append({'mes_id':mes_id, 'slots':slots})
 
-            ns_candidate = dict()
-            for req_vnf_dicr in req_nf_dict.items():
-                for vnf_name, al_vnf_id
+            # ns_candidate = dict()
+            # for req_vnf_dicr in req_nf_dict.items():
+            #     for vnf_name, al_vnf_id
             return
 
         def _run_meso_ha(req_vnf_list):
