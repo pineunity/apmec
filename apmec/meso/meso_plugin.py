@@ -267,9 +267,10 @@ class MesoPlugin(meso_db.MESOPluginDb):
         #   The rest will be treated differently by the algorithms
                 return ns_candidate
 
-        def _run_meso_rsfca(req_vnf_list):
+        def _run_meso_rsfca(req_vnf_list, ns_candidate=None):
             is_accepted = False
-            ns_candidate = _generic_ns_set(req_nf_list)
+            if not ns_candidate:
+                ns_candidate = _generic_ns_set(req_nf_list)
             ns_cds = dict()
             deep_ns = dict()
             for mesid, ns_data_dict in ns_candidate.items():
@@ -306,19 +307,60 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     for ns_id, ns_info_dict in mes_info.items():
                         if req_vnf_name in ns_info_dict:
                             slots = ns_info_dict[req_vnf_name]
-                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'slots': slots})
-                min_slot = min([mes_candidate['slots'] for mes_candidate in candidate_set])
-                mes_list =\
-                    [mes_candidate['mes_id'] for mes_candidate in candidate_set if mes_candidate['slots'] == min_slot]     # noqa
-                final_candidate[req_vnf_name] = mes_list[0]
-            # ns_candidate = dict()
-            # for req_vnf_dicr in req_nf_dict.items():
-            #     for vnf_name, al_vnf_id
+                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'ns_id': ns_id, 'slots': slots})
+                exp_slot_list = [mes_candidate['slots'] for mes_candidate in candidate_set if mes_candidate['slots']>=0]
+                if exp_slot_list:
+                    min_slot = min(exp_slot_list)
+                    mes_list =\
+                        [mes_candidate['mes_id'] for mes_candidate in candidate_set if mes_candidate['slots'] == min_slot]     # noqa
+                    final_candidate[req_vnf_name] = mes_list[0]
             # return the list of NSs must be updated
             return final_candidate
 
         def _run_meso_ha(req_vnf_list):
-            return
+            final_candidate = None
+            ns_candidate = _generic_ns_set(req_vnf_list)
+            is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
+            if is_accepted:
+                return is_accepted, cd_mes_id, cd_vnf_dict
+            else:
+                ns_list = list()
+                for mes_id, mes_info_dict in ns_candidate.items():
+                    for ns_id, ns_info_dict in mes_info_dict.items():
+                        lenNF = len(ns_info_dict)
+                        ns_list.append({'mes_id': mes_id, 'ns_id': ns_id,
+                                        'numNFs': lenNF, 'vnf_dict': ns_info_dict})
+                maxNFs = max([ns_info['numNFs'] for ns_info in ns_list])
+                first_filter_list = list()
+                second_filter_list = list()
+                for ns_info in ns_list:
+                    if ns_info['numNFs'] == maxNFs:
+                        mes_id = ns_info['mes_id']
+                        exp_NFs = [slots for exp_vnf_name, slots in ns_info['vnf_dict'] if slots >= 0]
+                        unexp_NFs = [-slots for exp_vnf_name, slots in ns_info['vnf_dict'] if slots < 0]
+                        if len(exp_NFs) == maxNFs:
+                            first_filter_list.append(
+                                {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
+                                 'numNFins': sum(exp_NFs), 'vnf_dict': ns_info_dict})
+                        else:
+                            second_filter_list.append(
+                                {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
+                                 'numNFins': sum(unexp_NFs), 'vnf_dict': ns_info_dict})
+                if first_filter_list:
+                    exp_slot = min([exp_mes['numNFins'] for exp_mes in first_filter_list])
+                    exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['numNFins'] == exp_slot]
+                    final_candidate = exp_mes_list[0]
+                if second_filter_list:
+                    unexp_slot = min([exp_mes['numNFins'] for exp_mes in second_filter_list])
+                    exp_mes_list = [exp_mes for exp_mes in second_filter_list if
+                                    exp_mes['numNFins'] == unexp_slot]
+                    final_candidate = exp_mes_list[0]
+
+                if final_candidate:
+                    remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if vnf_dict['name'] not in final_candidate[vnf_dict]]
+                    remain_sfc_list = _run_meso_rvnfa(remain_list)
+
+            return final_candidate, remain_sfc_list
 
         build_nsd_dict = dict()
         if mesd_dict['imports'].get('nsds'):
