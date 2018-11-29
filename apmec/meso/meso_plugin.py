@@ -305,7 +305,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     for ns_id, ns_info_dict in mes_info.items():
                         if req_vnf_name in ns_info_dict:
                             slots = ns_info_dict[req_vnf_name]
-                            final_candidate[req_vnf_name].append({'mes_id':mes_id, 'slots':slots})
+                            final_candidate[req_vnf_name].append({'mes_id': mes_id, 'slots': slots})
+                            min_slot = min([mes_candidate['slots'] for mes_candidate in final_candidate])
 
             # ns_candidate = dict()
             # for req_vnf_dicr in req_nf_dict.items():
