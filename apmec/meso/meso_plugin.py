@@ -419,6 +419,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         build_nsd_dict['topology_template'] = dict()
                         build_nsd_dict['topology_template']['node_templates'] = node_dict
 
+                    # Temp update the new NFs
                     ha_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
                     if required_info:
                         for mes_id, mes_info_list in required_info.items():
@@ -803,53 +804,56 @@ class MesoPlugin(meso_db.MESOPluginDb):
         #vm_capacity = 3
         # create inline mesd if given by user
 
-        def _update_nsd_template(req_mesd_dict):
-            build_nsd_dict = dict()
-            if req_mesd_dict['imports'].get('nsds'):
-                args['NS'] = dict()
-                # Todo: Support multiple NSs
-                # For framework evaluation
-                nsd_templates = req_mesd_dict['imports']['nsds']['nsd_templates']
-                if isinstance(nsd_templates, dict):
-                    if nsd_templates.get('requirements'):
-                        old_reused = old_mes['reused']
-                        vnf_mapping_list = nsd_templates['requirements']
-                        for vnf_mapping_dict in vnf_mapping_list:
-                            for old_vnf_name, old_nfins_list in old_reused.items():
-                                if vnf_mapping_dict['name'] == old_vnf_name:
-                                    # Todo: remember to change with  VM capacity
-                                    len_diff = len([lend for lend in old_nfins_list if lend > 0])
-                                    diff = len_diff - vnf_mapping_dict['nf_ins']
-                                    if diff < 0:
-                                        lftover.update({old_vnf_name: -diff})
-                                        vm_capacity = VM_CAPA[old_vnf_name]
-                                        old_reused[old_vnf_name].extend([vm_capacity] * (-diff))
-                                    # old_reused[old_vnf_name] = diff
-                                    temp = vnf_mapping_dict['nf_ins']
-                                    for index, nfins in enumerate(old_nfins_list):
-                                        if nfins > 0:
-                                            old_nfins_list[index] = old_nfins_list[index] - 1
-                                            temp = temp - 1
-                                        if temp == 0:
-                                            break
 
-                formal_req = list()
-                for nf_name, nf_ins in lftover.items():
-                    vnfd_name = 'vnfd' + nf_name[3] + str(nf_ins)
-                    formal_req.append(vnfd_name)
+        #  Should move this part to the create_mes for the consensus
 
-                if formal_req:
-                    build_nsd_dict['tosca_definitions_version'] = 'tosca_simple_profile_for_nfv_1_0_0'
-                    build_nsd_dict['description'] = old_mes['description']
-                    build_nsd_dict['imports'] = formal_req
-                    build_nsd_dict['topology_template'] = dict()
-                    build_nsd_dict['topology_template']['node_templates'] = dict()
-                    for nf_name, nf_ins in lftover.items():
-                        node = 'tosca.nodes.nfv.' + nf_name
-                        node_dict = dict()
-                        node_dict['type'] = node
-                        build_nsd_dict['topology_template']['node_templates'].update({nf_name: node_dict})
-            return build_nsd_dict
+        # def _update_nsd_template(req_mesd_dict):
+        #     build_nsd_dict = dict()
+        #     if req_mesd_dict['imports'].get('nsds'):
+        #         args['NS'] = dict()
+        #         # Todo: Support multiple NSs
+        #         # For framework evaluation
+        #         nsd_templates = req_mesd_dict['imports']['nsds']['nsd_templates']
+        #         if isinstance(nsd_templates, dict):
+        #             if nsd_templates.get('requirements'):
+        #                 old_reused = old_mes['reused']
+        #                 vnf_mapping_list = nsd_templates['requirements']
+        #                 for vnf_mapping_dict in vnf_mapping_list:
+        #                     for old_vnf_name, old_nfins_list in old_reused.items():
+        #                         if vnf_mapping_dict['name'] == old_vnf_name:
+        #                             # Todo: remember to change with  VM capacity
+        #                             len_diff = len([lend for lend in old_nfins_list if lend > 0])
+        #                             diff = len_diff - vnf_mapping_dict['nf_ins']
+        #                             if diff < 0:
+        #                                 lftover.update({old_vnf_name: -diff})
+        #                                 vm_capacity = VM_CAPA[old_vnf_name]
+        #                                 old_reused[old_vnf_name].extend([vm_capacity] * (-diff))
+        #                             # old_reused[old_vnf_name] = diff
+        #                             temp = vnf_mapping_dict['nf_ins']
+        #                             for index, nfins in enumerate(old_nfins_list):
+        #                                 if nfins > 0:
+        #                                     old_nfins_list[index] = old_nfins_list[index] - 1
+        #                                     temp = temp - 1
+        #                                 if temp == 0:
+        #                                     break
+        #
+        #         formal_req = list()
+        #         for nf_name, nf_ins in lftover.items():
+        #             vnfd_name = 'vnfd' + nf_name[3] + str(nf_ins)
+        #             formal_req.append(vnfd_name)
+        #
+        #         if formal_req:
+        #             build_nsd_dict['tosca_definitions_version'] = 'tosca_simple_profile_for_nfv_1_0_0'
+        #             build_nsd_dict['description'] = old_mes['description']
+        #             build_nsd_dict['imports'] = formal_req
+        #             build_nsd_dict['topology_template'] = dict()
+        #             build_nsd_dict['topology_template']['node_templates'] = dict()
+        #             for nf_name, nf_ins in lftover.items():
+        #                 node = 'tosca.nodes.nfv.' + nf_name
+        #                 node_dict = dict()
+        #                 node_dict['type'] = node
+        #                 build_nsd_dict['topology_template']['node_templates'].update({nf_name: node_dict})
+        #     return build_nsd_dict
 
         if mes_info.get('mesd_template'):
             # Build vnf_dict here
