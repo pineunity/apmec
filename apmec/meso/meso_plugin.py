@@ -268,7 +268,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 return ns_candidate
 
         def _run_meso_rsfca(req_vnf_list, ns_candidate=None):
-            is_accepted = False
+            rsfca_is_accepted = False
             if not ns_candidate:
                 ns_candidate = _generic_ns_set(req_nf_list)
             ns_cds = dict()
@@ -287,14 +287,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             deep_ns[mesid] = total_ins
             if ns_cds:
                 selected_mes1 = min(ns_cds, key=ns_cds.get)
-                is_accepted = True
-                return is_accepted, {selected_mes1: None}
+                rsfca_is_accepted = True
+                return rsfca_is_accepted, selected_mes1
             if deep_ns:
                 selected_mes2 = min(deep_ns, key=deep_ns.get)
-                is_accepted = True
-                return is_accepted, {selected_mes2: None}
+                rsfca_is_accepted = True
+                return rsfca_is_accepted, selected_mes2
 
-            return is_accepted, None
+            return rsfca_is_accepted, None
 
         def _run_meso_rvnfa(req_vnf_list):
             required_info = dict()
@@ -304,11 +304,11 @@ class MesoPlugin(meso_db.MESOPluginDb):
             for req_vnf_dict in req_vnf_list:
                 req_vnf_name = req_vnf_dict['name']
                 candidate_set[req_vnf_name] = list()
-                for mes_id, mes_info in ns_candidate.items():
-                    for ns_id, ns_info_dict in mes_info.items():
+                for mes_id, mes_info_dict in ns_candidate.items():
+                    for exp_ns_id, ns_info_dict in mes_info_dict.items():
                         if req_vnf_name in ns_info_dict:
                             slots = ns_info_dict[req_vnf_name]
-                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'ns_id': ns_id, 'slots': slots})
+                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'ns_id': exp_ns_id, 'slots': slots})
                 exp_slot_list = [mes_candidate['slots'] for mes_candidate in candidate_set if mes_candidate['slots'] >= 0]    # noqa
                 if exp_slot_list:
                     min_slot = min(exp_slot_list)
