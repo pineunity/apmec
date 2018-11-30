@@ -315,19 +315,21 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     min_slot = min(exp_slot_list)
                     mes_list =\
                         [mes_candidate['mes_id'] for mes_candidate in candidate_set if mes_candidate['slots'] == min_slot]     # noqa
-                    final_candidate[req_vnf_name] = mes_list[0]
+                    final_candidate[req_vnf_name] = {'mes_id':mes_list[0], 'nf_ins':min_slot}
             if len(final_candidate) == len(req_nf_list):
                 rvnfa_is_accepted = True
             else:
                 for remain_vnf_dict in req_nf_list:
-                    if remain_vnf_dict['vnf_name'] not in final_candidate:
-                        remain_list.append(remain_vnf_dict)
-            for req_vnf_name, orig_mes_id in final_candidate:
+                    if remain_vnf_dict['name'] not in final_candidate:
+                        remain_list.append(remain_vnf_dict)    # good one
+            for req_vnf_name, mixed_mes_info in final_candidate:
+                orig_mes_id = mixed_mes_info['mes_id']
+                orig_nf_ins = mixed_mes_info['nf_ins']
                 if orig_mes_id not in required_info:
-                    required_info[orig_mes_id] = list()
-                    required_info[orig_mes_id].append(req_vnf_name)
+                    required_info[orig_mes_id] = dict()
+                    required_info[orig_mes_id].update({req_vnf_name:orig_nf_ins})
                 else:
-                    required_info[orig_mes_id].append(req_vnf_name)
+                    required_info[orig_mes_id].update({req_vnf_name:orig_nf_ins})
             # return the list of NSs must be updated, when to create new mes?
             return rvnfa_is_accepted, required_info, remain_list
 
@@ -374,7 +376,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
                 if final_candidate:
                     mes_id = final_candidate['mes_id']
-                    required_info[mes_id] = final_candidate['vnf_dict'].keys()
+                    required_info[mes_id] = final_candidate['vnf_dict']
                     rvnfa_remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if exp_vnf_dict['name'] not in final_candidate['vnf_dict']]    # noqa
                     rvnfa_is_accepted, rvnfa_required_info, remain_list = _run_meso_rvnfa(rvnfa_remain_list)
                     required_info.update(rvnfa_required_info)
@@ -393,15 +395,16 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     for vnf_dict in req_nf_dict:
                         # Todo: make the requests more natural
                         req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
-                    is_accepted, cd_mes_id = _run_meso_rsfca(req_nf_list)
+                    is_accepted, mes_info_dict = _run_meso_rsfca(req_nf_list)
                     if is_accepted:
-                        new_mesd_dict = dict()
-                        ref_mesd_dict = copy.deepcopy(mesd_dict)
-                        ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = req_nf_list
-                        new_mesd_dict['mes'] = dict()
-                        new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
-                        self.update_mes(context,cd_mes_id, new_mesd_dict)
-                        return cd_mes_id
+                        for cd_mes_id, mes_dict in mes_info_dict.items():
+                            new_mesd_dict = dict()
+                            ref_mesd_dict = copy.deepcopy(mesd_dict)
+                            ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_dict
+                            new_mesd_dict['mes'] = dict()
+                            new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
+                            self.update_mes(context,cd_mes_id, new_mesd_dict)
+                            return cd_mes_id
                     else:
                         # Create the inline NS with the following template
                         import_list = list()
@@ -420,13 +423,13 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     # ha_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
                     rvnfa_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
                     if required_info:
-                        for mes_id, mes_info_list in required_info.items():
+                        for mes_id, mes_dict in required_info.items():
                             new_mesd_dict = dict()
                             ref_mesd_dict = copy.deepcopy(mesd_dict)
-                            ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_info_list
+                            ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_dict
                             new_mesd_dict['mes'] = dict()
                             new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
-                            self.update_mes(context, cd_mes_id, new_mesd_dict)
+                            self.update_mes(context, mes_id, new_mesd_dict)
                     if remain_list:
                         # reform the vnf_dict
                         vnf_info_tpl = list()
