@@ -429,8 +429,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
                             self.update_mes(context, cd_mes_id, new_mesd_dict)
                     if remain_list:
-                        import_list = list()
-                        node_dict = dict()
                         # reform the vnf_dict
                         vnf_info_tpl = list()
                         for vnf_dict in remain_list:
@@ -438,6 +436,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             node_name = vnf_dict['name']
                             vnfd_tpl = 'vnfd' + node_name[3] + str(vnf_ins)
                             vnf_info_tpl.append({'name': node_name, 'vnfd_template': vnfd_tpl})
+                        import_list = list()
+                        node_dict = dict()
                         for vnfd in vnf_info_tpl:
                             import_list.append(vnfd['vnfd_template'])
                             node = 'tosca.nodes.nfv.' + vnfd['name']
