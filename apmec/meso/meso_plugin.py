@@ -397,8 +397,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         # Todo: make the requests more natural
                         req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
                     is_accepted, cd_mes_id = _run_meso_rsfca(req_nf_list)
-                    _run_meso_ha(req_nf_list)
-                    _run_meso_ha(req_nf_list)
                     if is_accepted:
                         new_mesd_dict = dict()
                         ref_mesd_dict = copy.deepcopy(mesd_dict)
@@ -420,6 +418,39 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         build_nsd_dict['imports'] = import_list
                         build_nsd_dict['topology_template'] = dict()
                         build_nsd_dict['topology_template']['node_templates'] = node_dict
+
+                    ha_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
+                    if required_info:
+                        for mes_id, mes_info_list in required_info.items():
+                            new_mesd_dict = dict()
+                            ref_mesd_dict = copy.deepcopy(mesd_dict)
+                            ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_info_list
+                            new_mesd_dict['mes'] = dict()
+                            new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
+                            self.update_mes(context, cd_mes_id, new_mesd_dict)
+                    if remain_list:
+                        import_list = list()
+                        node_dict = dict()
+                        # reform the vnf_dict
+                        vnf_info_tpl = list()
+                        for vnf_dict in remain_list:
+                            vnf_ins = vnf_dict['nf_ins']
+                            node_name = vnf_dict['name']
+                            vnfd_tpl = 'vnfd' + node_name[3] + str(vnf_ins)
+                            vnf_info_tpl.append({'name': node_name, 'vnfd_template': vnfd_tpl})
+                        for vnfd in vnf_info_tpl:
+                            import_list.append(vnfd['vnfd_template'])
+                            node = 'tosca.nodes.nfv.' + vnfd['name']
+                            node_dict[vnfd['name']] = {'type': node}
+                        build_nsd_dict['tosca_definitions_version'] = 'tosca_simple_profile_for_nfv_1_0_0'
+                        build_nsd_dict['description'] = mes_info['description']
+                        build_nsd_dict['imports'] = import_list
+                        build_nsd_dict['topology_template'] = dict()
+                        build_nsd_dict['topology_template']['node_templates'] = node_dict
+
+
+                    rvnfa_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
+
 
             nsds = mesd['attributes'].get('nsds')
             mes_info['mes_mapping']['NS'] = list()
