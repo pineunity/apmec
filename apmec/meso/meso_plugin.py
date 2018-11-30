@@ -288,15 +288,16 @@ class MesoPlugin(meso_db.MESOPluginDb):
             if ns_cds:
                 selected_mes1 = min(ns_cds, key=ns_cds.get)
                 is_accepted = True
-                return is_accepted, selected_mes1, None
+                return is_accepted, {selected_mes1: None}
             if deep_ns:
                 selected_mes2 = min(deep_ns, key=deep_ns.get)
                 is_accepted = True
-                return is_accepted, selected_mes2, ns_candidate[selected_mes2]
+                return is_accepted, {selected_mes2: None}
 
-            return is_accepted, None, None
+            return is_accepted, None
 
         def _run_meso_rvnfa(req_vnf_list):
+            required_info = dict()
             final_candidate = dict()   # Consider using the OrderDict
             candidate_set = dict()
             ns_candidate = _generic_ns_set(req_vnf_list)
@@ -314,17 +315,24 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     mes_list =\
                         [mes_candidate['mes_id'] for mes_candidate in candidate_set if mes_candidate['slots'] == min_slot]     # noqa
                     final_candidate[req_vnf_name] = mes_list[0]
+            for req_vnf_name, mes_id in final_candidate:
+                if mes_id not in required_info:
+                    required_info[mes_id] = list()
+                    required_info[mes_id].append(req_vnf_name)
+                else:
+                    required_info[mes_id].append(req_vnf_name)
             # return the list of NSs must be updated
-            return final_candidate
+            return required_info
 
         def _run_meso_ha(req_vnf_list):
             final_candidate = None
-            remain_sfc_list = list()
+            required_info = dict()
             ha_is_accepted = False
             ns_candidate = _generic_ns_set(req_vnf_list)
-            ha_is_accepted, ha_cd_mes_id, ha_cd_vnf_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
+            ha_is_accepted, ha_cd_mes_id = _run_meso_rsfca(req_nf_list, ns_candidate)
             if ha_is_accepted:
-                return ha_is_accepted, ha_cd_mes_id, ha_cd_vnf_dict
+                required_info[ha_cd_mes_id] = None
+                return ha_is_accepted, required_info
             else:
                 ns_list = list()
                 for mes_id, mes_info_dict in ns_candidate.items():
@@ -359,10 +367,14 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     final_candidate = exp_mes_list[0]
 
                 if final_candidate:
+                    mes_id = final_candidate['mes_id']
+                    required_info[mes_id] = final_candidate['vnf_dict'].keys()
                     remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if exp_vnf_dict['name'] not in final_candidate['vnf_dict']]    # noqa
-                    remain_sfc_list = _run_meso_rvnfa(remain_list)
+                    remain_mes_dict = _run_meso_rvnfa(remain_list)
+                    required_info.update(remain_mes_dict)
+            # only return the mes_id and the mes_info need to update
 
-            return ha_is_accepted, final_candidate, remain_sfc_list
+            return ha_is_accepted, required_info
 
         build_nsd_dict = dict()
         if mesd_dict['imports'].get('nsds'):
@@ -375,7 +387,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     for vnf_dict in req_nf_dict:
                         # Todo: make the requests more natural
                         req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
-                    is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_rsfca(req_nf_list)
+                    is_accepted, cd_mes_id = _run_meso_rsfca(req_nf_list)
+                    _run_meso_ha(req_nf_list)
+                    _run_meso_ha(req_nf_list)
                     if is_accepted:
                         new_mesd_dict = dict()
                         ref_mesd_dict = copy.deepcopy(mesd_dict)
