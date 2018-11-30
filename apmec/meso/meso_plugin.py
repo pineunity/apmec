@@ -256,45 +256,45 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
                 if not al_ns_id:
                     continue
-                ns_candidate[al_mes['id']][al_ns_id] = dict()
+                ns_candidate[al_mes['id']] = dict()
                 for req_vnf_dict in req_vnf_list:
                     for vnf_name, al_vnf_id in al_vnf_dict.items():
                         if req_vnf_dict['name'] == vnf_name:
                             # Todo: remember to change this with VM capacity
                             len_diff = len([lend for lend in al_mes['reused'][vnf_name] if lend > 0])
                             avail = len_diff - req_vnf_dict['nf_ins']
-                            ns_candidate[al_mes['id']][al_ns_id].update({vnf_name: avail})
+                            ns_candidate[al_mes['id']].update({vnf_name: avail})
         #   The rest will be treated differently by the algorithms
                 return ns_candidate
 
         def _run_meso_rsfca(req_vnf_list, ns_candidate=None):
             rsfca_is_accepted = False
+            required_info_dict = dict()
             if not ns_candidate:
                 ns_candidate = _generic_ns_set(req_nf_list)
             ns_cds = dict()
             deep_ns = dict()
             for mesid, ns_data_dict in ns_candidate.items():
-                for nsid, resev_dict in ns_data_dict.items():
                     # This is the heart of the rvnfa
-                    if len(resev_dict) == len(req_vnf_list):
-                        nf_ins_list = [nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins >= 0]
+                    if len(ns_data_dict) == len(req_vnf_list):
+                        nf_ins_list = [nf_ins for nf_name, nf_ins in ns_data_dict.items() if nf_ins >= 0]
                         if len(nf_ins_list) == len(req_vnf_list):
                             total_ins = sum(nf_ins_list)
                             ns_cds[mesid] = total_ins
                         else:
-                            extra_nf_ins_list = [-nf_ins for nf_name, nf_ins in resev_dict.items() if nf_ins < 0]
+                            extra_nf_ins_list = [-nf_ins for nf_name, nf_ins in ns_data_dict.items() if nf_ins < 0]
                             total_ins = sum(extra_nf_ins_list)
                             deep_ns[mesid] = total_ins
             if ns_cds:
                 selected_mes1 = min(ns_cds, key=ns_cds.get)
+                required_info_dict[selected_mes1] = ns_candidate[selected_mes1]
                 rsfca_is_accepted = True
-                return rsfca_is_accepted, selected_mes1
             if deep_ns:
                 selected_mes2 = min(deep_ns, key=deep_ns.get)
+                required_info_dict[selected_mes2] = ns_candidate[selected_mes2]
                 rsfca_is_accepted = True
-                return rsfca_is_accepted, selected_mes2
 
-            return rsfca_is_accepted, None
+            return rsfca_is_accepted, required_info_dict
 
         def _run_meso_rvnfa(req_vnf_list):
             remain_list = list()
@@ -307,10 +307,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 req_vnf_name = req_vnf_dict['name']
                 candidate_set[req_vnf_name] = list()
                 for mes_id, mes_info_dict in ns_candidate.items():
-                    for exp_ns_id, ns_info_dict in mes_info_dict.items():
-                        if req_vnf_name in ns_info_dict:
-                            slots = ns_info_dict[req_vnf_name]
-                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'ns_id': exp_ns_id, 'slots': slots})
+                        if req_vnf_name in mes_info_dict:
+                            slots = mes_info_dict[req_vnf_name]
+                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'slots': slots})
                 exp_slot_list = [mes_candidate['slots'] for mes_candidate in candidate_set if mes_candidate['slots'] >= 0]    # noqa
                 if exp_slot_list:
                     min_slot = min(exp_slot_list)
@@ -323,12 +322,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 for remain_vnf_dict in req_nf_list:
                     if remain_vnf_dict['vnf_name'] not in final_candidate:
                         remain_list.append(remain_vnf_dict)
-            for req_vnf_name, mes_id in final_candidate:
-                if mes_id not in required_info:
-                    required_info[mes_id] = list()
-                    required_info[mes_id].append(req_vnf_name)
+            for req_vnf_name, orig_mes_id in final_candidate:
+                if orig_mes_id not in required_info:
+                    required_info[orig_mes_id] = list()
+                    required_info[orig_mes_id].append(req_vnf_name)
                 else:
-                    required_info[mes_id].append(req_vnf_name)
+                    required_info[orig_mes_id].append(req_vnf_name)
             # return the list of NSs must be updated, when to create new mes?
             return rvnfa_is_accepted, required_info, remain_list
 
@@ -338,17 +337,15 @@ class MesoPlugin(meso_db.MESOPluginDb):
             remain_list = list()
             ha_is_accepted = False
             ns_candidate = _generic_ns_set(req_vnf_list)
-            ha_is_accepted, ha_cd_mes_id = _run_meso_rsfca(req_nf_list, ns_candidate)
+            ha_is_accepted, ha_mes_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
             if ha_is_accepted:
-                required_info[ha_cd_mes_id] = None
-                return ha_is_accepted, required_info
+                return ha_is_accepted, ha_mes_dict
             else:
                 ns_list = list()
                 for mes_id, mes_info_dict in ns_candidate.items():
-                    for ck_ns_id, ns_info_dict in mes_info_dict.items():
-                        lenNF = len(ns_info_dict)
-                        ns_list.append({'mes_id': mes_id, 'ns_id': ck_ns_id,
-                                        'numNFs': lenNF, 'vnf_dict': ns_info_dict})
+                        lenNF = len(mes_info_dict)
+                        ns_list.append({'mes_id': mes_id, 'numNFs': lenNF,
+                                        'vnf_dict': mes_info_dict})
                 maxNFs = max([ns_info['numNFs'] for ns_info in ns_list])
                 first_filter_list = list()
                 second_filter_list = list()
@@ -359,12 +356,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         unexp_NFs = [-slots for exp_vnf_name, slots in ns_info['vnf_dict'] if slots < 0]
                         if len(exp_NFs) == maxNFs:
                             first_filter_list.append(
-                                {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
-                                 'numSlots': sum(exp_NFs), 'vnf_dict': ns_info_dict})
+                                {'mes_id': mes_id, 'numSlots': sum(exp_NFs),
+                                 'vnf_dict': ns_info['vnf_dict']})
                         else:
                             second_filter_list.append(
                                 {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
-                                 'numSlots': sum(unexp_NFs), 'vnf_dict': ns_info_dict})
+                                 'numSlots': sum(unexp_NFs), 'vnf_dict': ns_info['vnf_dict']})
                 if first_filter_list:
                     exp_slot = min([exp_mes['numSlots'] for exp_mes in first_filter_list])
                     exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['numSlots'] == exp_slot]
@@ -420,7 +417,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         build_nsd_dict['topology_template']['node_templates'] = node_dict
 
                     # Temp update the new NFs
-                    ha_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
+                    # ha_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
                     rvnfa_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
                     if required_info:
                         for mes_id, mes_info_list in required_info.items():
