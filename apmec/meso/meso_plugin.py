@@ -321,7 +321,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             final_candidate = None
             remain_sfc_list = list()
             ns_candidate = _generic_ns_set(req_vnf_list)
-            is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
+            ha_is_accepted, ha_cd_mes_id, ha_cd_vnf_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
             if is_accepted:
                 return is_accepted, cd_mes_id, cd_vnf_dict
             else:
@@ -361,7 +361,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if vnf_dict['name'] not in final_candidate[vnf_dict]]
                     remain_sfc_list = _run_meso_rvnfa(remain_list)
 
-            return final_candidate, remain_sfc_list
+            return ha_is_accepted, final_candidate, remain_sfc_list
 
         build_nsd_dict = dict()
         if mesd_dict['imports'].get('nsds'):
