@@ -359,7 +359,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     final_candidate = exp_mes_list[0]
 
                 if final_candidate:
-                    remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if vnf_dict['name'] not in final_candidate[vnf_dict]]
+                    remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if exp_vnf_dict['name'] not in final_candidate['vnf_dict']]    # noqa
                     remain_sfc_list = _run_meso_rvnfa(remain_list)
 
             return ha_is_accepted, final_candidate, remain_sfc_list
