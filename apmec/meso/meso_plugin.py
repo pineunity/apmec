@@ -349,11 +349,11 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                 {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
                                  'numSlots': sum(unexp_NFs), 'vnf_dict': ns_info_dict})
                 if first_filter_list:
-                    exp_slot = min([exp_mes['numNFins'] for exp_mes in first_filter_list])
+                    exp_slot = min([exp_mes['numSlots'] for exp_mes in first_filter_list])
                     exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['numSlots'] == exp_slot]
                     final_candidate = exp_mes_list[0]
                 if second_filter_list:
-                    unexp_slot = min([exp_mes['numNFins'] for exp_mes in second_filter_list])
+                    unexp_slot = min([exp_mes['numSlots'] for exp_mes in second_filter_list])
                     exp_mes_list = [exp_mes for exp_mes in second_filter_list if
                                     exp_mes['numSlots'] == unexp_slot]
                     final_candidate = exp_mes_list[0]
