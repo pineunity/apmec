@@ -319,6 +319,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
 
         def _run_meso_ha(req_vnf_list):
             final_candidate = None
+            remain_sfc_list = list()
             ns_candidate = _generic_ns_set(req_vnf_list)
             is_accepted, cd_mes_id, cd_vnf_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
             if is_accepted:
