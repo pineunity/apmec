@@ -343,19 +343,19 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         if len(exp_NFs) == maxNFs:
                             first_filter_list.append(
                                 {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
-                                 'numNFins': sum(exp_NFs), 'vnf_dict': ns_info_dict})
+                                 'numSlots': sum(exp_NFs), 'vnf_dict': ns_info_dict})
                         else:
                             second_filter_list.append(
                                 {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
-                                 'numNFins': sum(unexp_NFs), 'vnf_dict': ns_info_dict})
+                                 'numSlots': sum(unexp_NFs), 'vnf_dict': ns_info_dict})
                 if first_filter_list:
                     exp_slot = min([exp_mes['numNFins'] for exp_mes in first_filter_list])
-                    exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['numNFins'] == exp_slot]
+                    exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['numSlots'] == exp_slot]
                     final_candidate = exp_mes_list[0]
                 if second_filter_list:
                     unexp_slot = min([exp_mes['numNFins'] for exp_mes in second_filter_list])
                     exp_mes_list = [exp_mes for exp_mes in second_filter_list if
-                                    exp_mes['numNFins'] == unexp_slot]
+                                    exp_mes['numSlots'] == unexp_slot]
                     final_candidate = exp_mes_list[0]
 
                 if final_candidate:
