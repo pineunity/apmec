@@ -308,7 +308,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         if req_vnf_name in ns_info_dict:
                             slots = ns_info_dict[req_vnf_name]
                             candidate_set[req_vnf_name].append({'mes_id': mes_id, 'ns_id': ns_id, 'slots': slots})
-                exp_slot_list = [mes_candidate['slots'] for mes_candidate in candidate_set if mes_candidate['slots']>=0]
+                exp_slot_list = [mes_candidate['slots'] for mes_candidate in candidate_set if mes_candidate['slots'] >= 0]    # noqa
                 if exp_slot_list:
                     min_slot = min(exp_slot_list)
                     mes_list =\
@@ -320,16 +320,17 @@ class MesoPlugin(meso_db.MESOPluginDb):
         def _run_meso_ha(req_vnf_list):
             final_candidate = None
             remain_sfc_list = list()
+            ha_is_accepted = False
             ns_candidate = _generic_ns_set(req_vnf_list)
             ha_is_accepted, ha_cd_mes_id, ha_cd_vnf_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
-            if is_accepted:
-                return is_accepted, cd_mes_id, cd_vnf_dict
+            if ha_is_accepted:
+                return ha_is_accepted, ha_cd_mes_id, ha_cd_vnf_dict
             else:
                 ns_list = list()
                 for mes_id, mes_info_dict in ns_candidate.items():
-                    for ns_id, ns_info_dict in mes_info_dict.items():
+                    for ck_ns_id, ns_info_dict in mes_info_dict.items():
                         lenNF = len(ns_info_dict)
-                        ns_list.append({'mes_id': mes_id, 'ns_id': ns_id,
+                        ns_list.append({'mes_id': mes_id, 'ns_id': ck_ns_id,
                                         'numNFs': lenNF, 'vnf_dict': ns_info_dict})
                 maxNFs = max([ns_info['numNFs'] for ns_info in ns_list])
                 first_filter_list = list()
