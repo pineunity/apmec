@@ -906,6 +906,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     nsd_name=nsd_name,
                     auth_attr=vim_res['vim_auth'], )
                 nsd_template = yaml.safe_load(nsd_dict['attributes']['nsd'])
+            # Determine whether we need to update the given ns or just from requirements
             actual_nsd_template = new_nsd_template if new_nsd_template else nsd_template
             if actual_nsd_template:
                 old_ns_id = old_mes['mes_mapping']['NS'][0]
