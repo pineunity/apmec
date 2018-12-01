@@ -356,20 +356,20 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         unexp_NFs = [-slots for exp_vnf_name, slots in ns_info['vnf_dict'] if slots < 0]
                         if len(exp_NFs) == maxNFs:
                             first_filter_list.append(
-                                {'mes_id': mes_id, 'numSlots': sum(exp_NFs),
+                                {'mes_id': mes_id, 'slots': sum(exp_NFs),
                                  'vnf_dict': ns_info['vnf_dict']})
                         else:
                             second_filter_list.append(
                                 {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
-                                 'numSlots': sum(unexp_NFs), 'vnf_dict': ns_info['vnf_dict']})
+                                 'slots': sum(unexp_NFs), 'vnf_dict': ns_info['vnf_dict']})
                 if first_filter_list:
-                    exp_slot = min([exp_mes['numSlots'] for exp_mes in first_filter_list])
-                    exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['numSlots'] == exp_slot]
+                    exp_slot = min([exp_mes['slots'] for exp_mes in first_filter_list])
+                    exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['slots'] == exp_slot]
                     final_candidate = exp_mes_list[0]
                 if second_filter_list:
-                    unexp_slot = min([exp_mes['numSlots'] for exp_mes in second_filter_list])
+                    unexp_slot = min([exp_mes['slots'] for exp_mes in second_filter_list])
                     exp_mes_list = [exp_mes for exp_mes in second_filter_list if
-                                    exp_mes['numSlots'] == unexp_slot]
+                                    exp_mes['slots'] == unexp_slot]
                     final_candidate = exp_mes_list[0]
 
                 if final_candidate:
@@ -381,7 +381,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     ha_required_info.update(rvnf_required_info)
             # only return the mes_id and the mes_info need to update
 
-            return ha_is_accepted, ha_required_info, remain_list
+            return ha_is_accepted, ha_required_info, ha_remain_list
 
         build_nsd_dict = dict()
         if mesd_dict['imports'].get('nsds'):
