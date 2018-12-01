@@ -324,12 +324,12 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         remain_list.append(remain_vnf_dict)    # good one
             for req_vnf_name, mixed_mes_info in final_candidate:
                 orig_mes_id = mixed_mes_info['mes_id']
-                orig_nf_ins = mixed_mes_info['slots']
+                nf_slots = mixed_mes_info['slots']
                 if orig_mes_id not in required_info:
                     required_info[orig_mes_id] = dict()
-                    required_info[orig_mes_id].update({req_vnf_name:orig_nf_ins})
+                    required_info[orig_mes_id].update({req_vnf_name: nf_slots})
                 else:
-                    required_info[orig_mes_id].update({req_vnf_name:orig_nf_ins})
+                    required_info[orig_mes_id].update({req_vnf_name: nf_slots})
             # return the list of NSs must be updated, when to create new mes?
             return rvnfa_is_accepted, required_info, remain_list
 
