@@ -305,17 +305,17 @@ class MesoPlugin(meso_db.MESOPluginDb):
             ns_candidate = _generic_ns_set(req_vnf_list)
             for req_vnf_dict in req_vnf_list:
                 req_vnf_name = req_vnf_dict['name']
-                candidate_set[req_vnf_name] = list()
+                candidate_set = list()
                 for mes_id, mes_info_dict in ns_candidate.items():
                         if req_vnf_name in mes_info_dict:
                             slots = mes_info_dict[req_vnf_name]
-                            candidate_set[req_vnf_name].append({'mes_id': mes_id, 'slots': slots})
+                            candidate_set.append({'mes_id': mes_id, 'slots': slots})
                 exp_slot_list = [mes_candidate['slots'] for mes_candidate in candidate_set if mes_candidate['slots'] >= 0]    # noqa
                 if exp_slot_list:
                     min_slot = min(exp_slot_list)
                     mes_list =\
                         [mes_candidate['mes_id'] for mes_candidate in candidate_set if mes_candidate['slots'] == min_slot]     # noqa
-                    final_candidate[req_vnf_name] = {'mes_id':mes_list[0], 'nf_ins':min_slot}
+                    final_candidate[req_vnf_name] = {'mes_id':mes_list[0], 'slots':min_slot}
             if len(final_candidate) == len(req_nf_list):
                 rvnfa_is_accepted = True
             else:
@@ -324,7 +324,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         remain_list.append(remain_vnf_dict)    # good one
             for req_vnf_name, mixed_mes_info in final_candidate:
                 orig_mes_id = mixed_mes_info['mes_id']
-                orig_nf_ins = mixed_mes_info['nf_ins']
+                orig_nf_ins = mixed_mes_info['slots']
                 if orig_mes_id not in required_info:
                     required_info[orig_mes_id] = dict()
                     required_info[orig_mes_id].update({req_vnf_name:orig_nf_ins})
