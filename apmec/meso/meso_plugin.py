@@ -803,10 +803,6 @@ class MesoPlugin(meso_db.MESOPluginDb):
         old_mes = super(MesoPlugin, self).get_mes(context, mes_id)
         name = old_mes['name']
         lftover = dict()
-        #vm_capacity = 3
-        # create inline mesd if given by user
-
-
         #  Should move this part to the create_mes for the consensus
 
         def _update_nsd_template(req_mesd_dict):
@@ -819,17 +815,15 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 if isinstance(nsd_templates, dict):
                     if nsd_templates.get('requirements'):
                         old_reused = old_mes['reused']
-                        vnf_mapping_list = nsd_templates['requirements']
-                        for vnf_mapping_dict in vnf_mapping_list:
+                        vnf_mapping_dict = nsd_templates['requirements']
+                        for vnf_mapping_name, vnf_mapping_avail_nfins in vnf_mapping_dict.items():
                             for old_vnf_name, old_nfins_list in old_reused.items():
-                                if vnf_mapping_dict['name'] == old_vnf_name:
+                                if vnf_mapping_name == old_vnf_name:
                                     # Todo: remember to change with  VM capacity
-                                    len_diff = len([lend for lend in old_nfins_list if lend > 0])
-                                    diff = len_diff - vnf_mapping_dict['nf_ins']
-                                    if diff < 0:
-                                        lftover.update({old_vnf_name: -diff})
+                                    if vnf_mapping_avail_nfins < 0:
+                                        lftover.update({old_vnf_name: -vnf_mapping_avail_nfins})
                                         vm_capacity = VM_CAPA[old_vnf_name]
-                                        old_reused[old_vnf_name].extend([vm_capacity] * (-diff))
+                                        old_reused[old_vnf_name].extend([vm_capacity] * (-vnf_mapping_avail_nfins))
                                     # old_reused[old_vnf_name] = diff
                                     temp = vnf_mapping_dict['nf_ins']
                                     for index, nfins in enumerate(old_nfins_list):
