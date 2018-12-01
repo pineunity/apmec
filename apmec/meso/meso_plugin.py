@@ -396,6 +396,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         req_nf_list.append({'name': vnf_dict['name'], 'nf_ins': int(vnf_dict['vnfd_template'][5])})
                     is_accepted, mes_info_dict = _run_meso_rsfca(req_nf_list)
                     if is_accepted:
+                        update_list = list()
                         for cd_mes_id, mes_dict in mes_info_dict.items():
                             new_mesd_dict = dict()
                             ref_mesd_dict = copy.deepcopy(mesd_dict)
@@ -403,7 +404,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             new_mesd_dict['mes'] = dict()
                             new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
                             self.update_mes(context,cd_mes_id, new_mesd_dict)
-                            return cd_mes_id
+                            update_list.append(cd_mes_id)
+                        return update_list
                     else:
                         # Create the inline NS with the following template
                         import_list = list()
@@ -419,16 +421,20 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         build_nsd_dict['topology_template']['node_templates'] = node_dict
 
                     # Temp update the new NFs
+                    # For these cases, remember when to update the MEA
                     # ha_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
                     rvnfa_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
                     if required_info:
-                        for mes_id, mes_dict in required_info.items():
+                        update_list = list()
+                        for cd_mes_id, mes_dict in required_info.items():
                             new_mesd_dict = dict()
                             ref_mesd_dict = copy.deepcopy(mesd_dict)
                             ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_dict
                             new_mesd_dict['mes'] = dict()
                             new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
-                            self.update_mes(context, mes_id, new_mesd_dict)
+                            self.update_mes(context, cd_mes_id, new_mesd_dict)
+                            update_list.append(cd_mes_id)
+                        return update_list
                     if remain_list:
                         # reform the vnf_dict
                         vnf_info_tpl = list()
