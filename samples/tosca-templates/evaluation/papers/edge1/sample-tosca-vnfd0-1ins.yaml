@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 
-description: Demo Sample VNFD102
+description: Demo Sample VNFD101
 node_types:
   tosca.nodes.nfv.VNF10:
     requirements:
@@ -19,8 +19,7 @@ topology_template:
         flavor: m1.small
         image: ubuntu-xenial
         mgmt_driver: noop
-        availability_zone: nova:edge1-demo
-        user_data_format: RAW
+        availability_zone: nova:edge1
         config_drive: true
         key_name: mykey
         config: |
@@ -37,31 +36,6 @@ topology_template:
             node: VL1
         - virtualBinding:
             node: VDU1
-
-    VDU2:
-      type: tosca.nodes.nfv.VDU.Tacker
-      properties:
-        flavor: m1.small
-        image: ubuntu-xenial
-        mgmt_driver: noop
-        availability_zone: nova:edge1-demo
-        user_data_format: RAW
-        config_drive: true
-        key_name: mykey
-        config: |
-          param0: key1
-          param1: key2
-    CP21:
-      type: tosca.nodes.nfv.CP.Tacker
-      properties:
-        order: 0
-        management: true
-        anti_spoofing_protection: false
-      requirements:
-        - virtualLink:
-            node: VL1
-        - virtualBinding:
-            node: VDU2
 
     VL1:
       type: tosca.nodes.nfv.VL

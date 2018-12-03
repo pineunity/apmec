@@ -19,7 +19,7 @@ topology_template:
         flavor: m1.small
         image: ubuntu-xenial
         mgmt_driver: noop
-        availability_zone: nova:edge1-demo
+        availability_zone: nova:edge2
         config_drive: true
         key_name: mykey
         config: |

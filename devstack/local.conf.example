@@ -1,4 +1,4 @@
-[[local|localrc]]
+[[local|localrc]]demo
 SERVICE_TOKEN=devstack
 ADMIN_PASSWORD=devstack
 MYSQL_PASSWORD=devstack

@@ -20,7 +20,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         user_data_format: RAW
-        availability_zone: nova:edge2-demo
+        availability_zone: nova:edge2
         config_drive: true
         key_name: mykey
         config: |
@@ -45,11 +45,11 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         user_data_format: RAW
-        availability_zone: nova:edge2-demo
+        availability_zone: nova:edge2
         config_drive: true
         key_name: mykey
         config: |
-          param0: key1
+          param0: key1demo
           param1: key2
     CP21:
       type: tosca.nodes.nfv.CP.Tacker
@@ -70,7 +70,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         user_data_format: RAW
-        availability_zone: nova:edge2-demo
+        availability_zone: nova:edge2
         config_drive: true
         key_name: mykey
         config: |
