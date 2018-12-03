@@ -1,62 +1,86 @@
 [[local|localrc]]
-############################################################
-# Customize the following HOST_IP based on your installation
-############################################################
-HOST_IP=10.18.161.164
-
+SERVICE_TOKEN=devstack
 ADMIN_PASSWORD=devstack
 MYSQL_PASSWORD=devstack
 RABBIT_PASSWORD=devstack
 SERVICE_PASSWORD=$ADMIN_PASSWORD
-SERVICE_TOKEN=devstack
 
-############################################################
-# Customize the following section based on your installation
-############################################################
+HOST_IP=192.168.1.238
+SERVICE_HOST=192.168.1.238
+SYSLOG=True
+SYSLOG_HOST=$HOST_IP
+SYSLOG_PORT=516
 
-# Pip
-PIP_USE_MIRRORS=False
-USE_GET_PIP=1
+GIT_BASE=${GIT_BASE:-https://git.openstack.org}
 
-#OFFLINE=False
-#RECLONE=True
-
-# Logging
 LOGFILE=$DEST/logs/stack.sh.log
-VERBOSE=True
-ENABLE_DEBUG_LOG_LEVEL=True
-ENABLE_VERBOSE_LOG_LEVEL=True
-
-# Neutron ML2 with OpenVSwitch
-
-Q_PLUGIN=ml2
-Q_AGENT=openvswitch
-
-#PUBLIC NETWORK CONFIGURATION
-Q_USE_PROVIDERNET_FOR_PUBLIC=False
-FLOATING_RANGE=10.12.161.0/24
-Q_FLOATING_ALLOCATION_POOL="start=10.12.161.150,end=10.12.161.201"
-PUBLIC_NETWORK_NAME=external
-PUBLIC_NETWORK_GATEWAY=10.12.161.1
-PUBLIC_PHYSICAL_NETWORK=public
-
-# Required for l3-agent to connect to external-network-bridge
-PUBLIC_BRIDGE=br-ext
-
-#PRIVATE NETWORK CONFIGURATION
-
-NETWORK_GATEWAY=${NETWORK_GATEWAY:-15.0.0.1}
-FIXED_RANGE=${FIXED_RANGE:-15.0.0.0/24}
-
-enable_plugin heat https://git.openstack.org/openstack/ master
-enable_plugin networking-sfc git://git.openstack.org/openstack/networking-sfc master
-enable_plugin barbican https://git.openstack.org/openstack/barbican
-enable_plugin apmec https://github.com/pineunity/apmec.git master
-
-enable_service n-novnc
-enable_service n-cauth
+LOGDAYS=2
 
 disable_service tempest
 
-#APMEC CONFIGURATION
+RECLONE=FALSE
+PIP_UPGRADE=False
+
+MULTI_HOST=1
+
+
+NEUTRON_CREATE_INITIAL_NETWORKS=True
+
+# Disable Nova Networking
+disable_service n-net
+
+# Disable Nova Compute : if you dont want to install nova compute in controller node
+disable_service n-cpu
+
+# Neutron - Networking Service
+enable_service q-svc
+enable_service q-agt
+enable_service q-dhcp
+enable_service q-l3
+enable_service q-meta
+enable_service neutron
+
+# Cinder
+disable_service c-api
+disable_service c-sch
+disable_service c-vol
+
+
+Q_USE_PROVIDERNET_FOR_PUBLIC=False
+FLOATING_RANGE=203.203.203.0/24
+Q_FLOATING_ALLOCATION_POOL="start=203.203.203.2,end=203.203.203.250"
+PUBLIC_NETWORK_NAME=external
+PUBLIC_NETWORK_GATEWAY=203.203.203.1
+PUBLIC_PHYSICAL_NETWORK=public
+
+Q_USE_SECGROUP=False
+LIBVIRT_FIREWALL_DRIVER=nova.virt.firewall.NoopFirewallDriver
+
+#Heat
+enable_plugin heat https://github.com/openstack/heat.git
+
+#Mistral
+
+enable_plugin mistral https://github.com/pineunity/mec-mistral.git master
+
+enable_plugin barbican https://github.com/openstack/barbican.git master
+
 USE_BARBICAN=True
+
+
+#Apmec
+
+enable_plugin python-apmecclient https://github.com/pineunity/python-apmecclient.git  apmec-refactor
+
+enable_plugin apmec-horizon https://github.com/pineunity/apmec-horizon.git apmec-refactor
+
+
+enable_plugin networking-sfc https://github.com/openstack/networking-sfc.git
+
+#enable_plugin apmec https://github.com/pineunity/apmec.git framework-eval
+
+enable_plugin apmec https://github.com/pineunity/apmec.git 5gsummit
+
+
+USE_BARBICAN=True
+enable_plugin tacker https://github.com/pineunity/mano-tacker.git framework-eval
