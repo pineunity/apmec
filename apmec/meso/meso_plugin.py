@@ -265,7 +265,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             avail = len_diff - req_vnf_dict['nf_ins']
                             ns_candidate[al_mes['id']].update({vnf_name: avail})
         #   The rest will be treated differently by the algorithms
-                return ns_candidate
+            return ns_candidate
 
         def _run_meso_rsfca(req_vnf_list, ns_candidate=None):
             rsfca_is_accepted = False
