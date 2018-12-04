@@ -820,13 +820,15 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         for vnf_mapping_name, vnf_mapping_avail_nfins in vnf_mapping_dict.items():
                             for old_vnf_name, old_nfins_list in old_reused.items():
                                 if vnf_mapping_name == old_vnf_name:
+                                    orig_len = len([slots for slots in old_nfins_list if slots > 0])
                                     # Todo: remember to change with  VM capacity
                                     if vnf_mapping_avail_nfins < 0:
                                         lftover.update({old_vnf_name: -vnf_mapping_avail_nfins})
                                         vm_capacity = VM_CAPA[old_vnf_name]
                                         old_reused[old_vnf_name].extend([vm_capacity] * (-vnf_mapping_avail_nfins))
                                     # old_reused[old_vnf_name] = diff
-                                    temp = vnf_mapping_avail_nfins
+                                    temp = orig_len - vnf_mapping_avail_nfins
+                                    LOG.debug('temp: %s', temp)
                                     for index, nfins in enumerate(old_nfins_list):
                                         if nfins > 0:
                                             old_nfins_list[index] = old_nfins_list[index] - 1
