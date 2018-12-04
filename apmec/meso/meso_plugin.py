@@ -826,7 +826,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                         vm_capacity = VM_CAPA[old_vnf_name]
                                         old_reused[old_vnf_name].extend([vm_capacity] * (-vnf_mapping_avail_nfins))
                                     # old_reused[old_vnf_name] = diff
-                                    temp = vnf_mapping_dict['nf_ins']
+                                    temp = vnf_mapping_avail_nfins
                                     for index, nfins in enumerate(old_nfins_list):
                                         if nfins > 0:
                                             old_nfins_list[index] = old_nfins_list[index] - 1
