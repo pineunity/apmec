@@ -309,7 +309,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 candidate_set = list()
                 for ck_mes_id, mes_data_dict in ns_candidate.items():
                         if req_vnf_name in mes_data_dict:
-                            slots = mes_info_dict[req_vnf_name]
+                            slots = mes_data_dict[req_vnf_name]
                             candidate_set.append({'mes_id': ck_mes_id, 'slots': slots})
                 exp_slot_list = [mes_candidate['slots'] for mes_candidate in candidate_set if mes_candidate['slots'] >= 0]    # noqa
                 if exp_slot_list:
