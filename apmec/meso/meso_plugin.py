@@ -335,7 +335,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             return rvnfa_is_accepted, rvnfa_required_info, rvnfa_remain_list
 
         def _run_meso_ha(req_vnf_list):
-            final_candidate = None
+            final_candidate_id = None
             ha_required_info = dict()
             ha_remain_list = list()
             ha_is_accepted = False
@@ -360,26 +360,23 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         unexp_NFs = [-slots for exp_vnf_name, slots in ns_candidate[mes_id].items() if slots < 0]
                         if len(exp_NFs) == maxNFs:
                             first_filter_list.append(
-                                {'mes_id': mes_id, 'slots': sum(exp_NFs),
-                                 'vnf_dict': ns_info['vnf_dict']})
+                                {'mes_id': mes_id, 'slots': sum(exp_NFs)})
                         else:
                             second_filter_list.append(
-                                {'mes_id': mes_id, 'slots': sum(unexp_NFs),
-                                 'vnf_dict': ns_info['vnf_dict']})
+                                {'mes_id': mes_id, 'slots': sum(unexp_NFs)})
                 if first_filter_list:
                     exp_slot = min([exp_mes['slots'] for exp_mes in first_filter_list])
-                    exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['slots'] == exp_slot]
-                    final_candidate = exp_mes_list[0]
+                    exp_mes_list = [exp_mes['mes_id'] for exp_mes in first_filter_list if exp_mes['slots'] == exp_slot]
+                    final_candidate_id = exp_mes_list[0]
                 if second_filter_list:
                     unexp_slot = min([exp_mes['slots'] for exp_mes in second_filter_list])
-                    exp_mes_list = [exp_mes for exp_mes in second_filter_list if
+                    exp_mes_list = [exp_mes['mes_id'] for exp_mes in second_filter_list if
                                     exp_mes['slots'] == unexp_slot]
-                    final_candidate = exp_mes_list[0]
+                    final_candidate_id = exp_mes_list[0]
 
-                if final_candidate:
-                    final_mes_id = final_candidate['mes_id']
-                    ha_required_info[final_mes_id] = final_candidate['vnf_dict']
-                    rvnf_remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if exp_vnf_dict['name'] not in final_candidate['vnf_dict']]    # noqa
+                if final_candidate_id:
+                    ha_required_info[final_candidate_id] = ns_candidate[final_candidate_id]
+                    rvnf_remain_list = [exp_vnf_dict for exp_vnf_dict in req_vnf_list if exp_vnf_dict['name'] not in ns_candidate[final_candidate_id]]    # noqa
                     vnf_is_accepted, rvnf_required_info, rvnf_remain_list = _run_meso_rvnfa(rvnf_remain_list)
                     ha_remain_list.extend(rvnf_remain_list)
                     ha_required_info.update(rvnf_required_info)
