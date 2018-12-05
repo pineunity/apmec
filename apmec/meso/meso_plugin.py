@@ -341,7 +341,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             ha_is_accepted = False
             ns_candidate = _generic_ns_set(req_vnf_list)
             if not ns_candidate:
-                return ha_is_accepted, None
+                return ha_is_accepted, None, None
             ha_is_accepted, ha_mes_dict = _run_meso_rsfca(req_nf_list, ns_candidate)
             if ha_is_accepted:
                 return ha_is_accepted, ha_mes_dict
