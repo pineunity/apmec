@@ -359,8 +359,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                                  'vnf_dict': ns_info['vnf_dict']})
                         else:
                             second_filter_list.append(
-                                {'mes_id': mes_id, 'ns_id': ns_info['ns_id'],
-                                 'slots': sum(unexp_NFs), 'vnf_dict': ns_info['vnf_dict']})
+                                {'mes_id': mes_id, 'slots': sum(unexp_NFs),
+                                 'vnf_dict': ns_info['vnf_dict']})
                 if first_filter_list:
                     exp_slot = min([exp_mes['slots'] for exp_mes in first_filter_list])
                     exp_mes_list = [exp_mes for exp_mes in first_filter_list if exp_mes['slots'] == exp_slot]
