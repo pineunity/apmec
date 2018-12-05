@@ -351,8 +351,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                 for ns_info in ns_list:
                     if ns_info['numNFs'] == maxNFs:
                         mes_id = ns_info['mes_id']
-                        exp_NFs = [slots for exp_vnf_name, slots in ns_candidate[mes_id] if slots >= 0]
-                        unexp_NFs = [-slots for exp_vnf_name, slots in ns_candidate[mes_id] if slots < 0]
+                        exp_NFs = [slots for exp_vnf_name, slots in ns_candidate[mes_id].items() if slots >= 0]
+                        unexp_NFs = [-slots for exp_vnf_name, slots in ns_candidate[mes_id].items() if slots < 0]
                         if len(exp_NFs) == maxNFs:
                             first_filter_list.append(
                                 {'mes_id': mes_id, 'slots': sum(exp_NFs),
