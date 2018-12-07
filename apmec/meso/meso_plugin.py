@@ -303,7 +303,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             final_candidate = dict()   # Consider using the OrderDict
             ns_candidate = _generic_ns_set(req_vnf_list)
             if not ns_candidate:
-                return rvnfa_is_accepted, None, None
+                return rvnfa_is_accepted, None, req_vnf_list
             for req_vnf_dict in req_vnf_list:
                 req_vnf_name = req_vnf_dict['name']
                 candidate_set = list()
@@ -425,7 +425,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
                     # For these cases, remember when to update the MEA
 
                     ha_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
-                    rvnfa_is_accepted, required_info, remain_list = _run_meso_ha(req_nf_list)
+                    rvnfa_is_accepted, required_info, remain_list = _run_meso_rvnfa(req_nf_list)
                     if required_info:
                         update_list = list()
                         for cd_mes_id, mes_dict in required_info.items():
