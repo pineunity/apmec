@@ -34,10 +34,6 @@ do
   apmec mes-create --mesd-template $sample_dir/coop-mesd.yaml $mes_name
   exec_time = $((($(date +%s%N) - $starting_time)/1000000))
   echo $exec_time
-  # Initiate the nss and mea using tacker api and apmec api
-  #apmec mea-create --mead-template $sample_dir/sepa-mead.yaml $mea_name &
-  #tacker ns-create --nsd-template $sample_dir/sepa-nsd.yaml $ns_name &
-
   count=$(( $count+1 ))
 done
 
