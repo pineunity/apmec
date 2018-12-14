@@ -34,6 +34,7 @@ do
   apmec mes-create --mesd-template $sample_dir/coop-mesd.yaml $mes_name
   exec_time = $((($(date +%s%N) - $starting_time)/1000000))
   echo $exec_time
+  sleep(600)
   count=$(( $count+1 ))
 done
 
