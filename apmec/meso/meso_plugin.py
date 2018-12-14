@@ -404,9 +404,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_dict
                             new_mesd_dict['mes'] = dict()
                             new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
-                            self.update_mes(context,cd_mes_id, new_mesd_dict)
-                            update_list.append(cd_mes_id)
-                        return {}
+                            return self.update_mes(context,cd_mes_id, new_mesd_dict)
+                            # update_list.append(cd_mes_id)
+                        # return {}
                     else:
                         # Create the inline NS with the following template
                         import_list = list()
