@@ -32,8 +32,14 @@ do
   # determine the execution time
   starting_time = $(date +%s%N)
   apmec mes-create --mesd-template $sample_dir/coop-mesd.yaml $mes_name
+  mes_id=$(mes-create --mesd-template $sample_dir/coop-mesd.yaml $mes_name | grep mes | awk '{print $2}')
   exec_time = $((($(date +%s%N) - $starting_time)/1000000))
   echo $exec_time
+  bash pros_time.sh $mes_id
+  service_time = $((($(date +%s%N) - $starting_time)/1000000))
+  echo $service_time
+  # check whether the MES is active
+
   sleep(600)
   count=$(( $count+1 ))
 done
