@@ -6,7 +6,7 @@
 # For sepa, call apmec api to create mea and call tacker api to create NSs
 
 
-COUNT=50
+COUNT=1
 
 
 # call source openrc admin admin
