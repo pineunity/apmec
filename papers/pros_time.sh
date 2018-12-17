@@ -1,15 +1,18 @@
 
-mes_status="PEND_CREATE"
+check="False"
 
-while [ "$mes_status"  != "ACTIVE" ]
+while [ "$check" == "False" ]
 
 do
-mes_status=$(apmec mes-show $1 | grep status | awk '{print $4}')
+mes_status=$(apmec mes-list | grep meso | awk '{print $8}')
 
-if [[ "$mes_status" == "ACTIVE"  ]]; then
-   echo $mes_status
+if [[ "$mes_status" != *"PENDING"*  ]]; then
+#echo "Right"
+check="True"
 fi
 
 done
+
+echo "Done"
 
 exit 1
