@@ -19,7 +19,7 @@ topology_template:
         flavor: m1.small
         image: ubuntu-xenial
         mgmt_driver: noop
-        availability_zone: nova:edge2
+        availability_zone: nova:edge2-demo
         user_data_format: RAW
         config_drive: true
         key_name: mykey
@@ -51,7 +51,7 @@ topology_template:
         flavor: m1.small
         image: ubuntu-xenial
         mgmt_driver: noop
-        availability_zone: nova:edge2
+        availability_zone: nova:edge2-demo
         user_data_format: RAW
         config_drive: true
         user_data: |
@@ -83,7 +83,7 @@ topology_template:
         flavor: m1.small
         image: ubuntu-xenial
         mgmt_driver: noop
-        availability_zone: nova:edge2
+        availability_zone: nova:edge2-demo
         user_data_format: RAW
         config_drive: true
         user_data: |

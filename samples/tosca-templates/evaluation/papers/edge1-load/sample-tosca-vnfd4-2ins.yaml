@@ -20,7 +20,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         user_data_format: RAW
-        availability_zone: nova:edge1
+        availability_zone: nova:edge1-demo
         config_drive: true
         key_name: mykey
         user_data: |
@@ -52,7 +52,7 @@ topology_template:
         image: ubuntu-xenial
         mgmt_driver: noop
         user_data_format: RAW
-        availability_zone: nova:edge1
+        availability_zone: nova:edge1-demo
         config_drive: true
         user_data: |
           #!/bin/sh
