@@ -402,6 +402,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             new_mesd_dict = dict()
                             ref_mesd_dict = copy.deepcopy(mesd_dict)
                             ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_dict
+                            # Update the VNFFGD requirements here
+
                             new_mesd_dict['mes'] = dict()
                             new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
                             return self.update_mes(context,cd_mes_id, new_mesd_dict)
@@ -432,6 +434,8 @@ class MesoPlugin(meso_db.MESOPluginDb):
                             new_mesd_dict = dict()
                             ref_mesd_dict = copy.deepcopy(mesd_dict)
                             ref_mesd_dict['imports']['nsds']['nsd_templates']['requirements'] = mes_dict
+                            # Update the VNFFGD requirements here
+
                             new_mesd_dict['mes'] = dict()
                             new_mesd_dict['mes'] = {'mesd_template': yaml.safe_dump(ref_mesd_dict)}
                             self.update_mes(context, cd_mes_id, new_mesd_dict)
