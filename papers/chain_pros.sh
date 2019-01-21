@@ -37,3 +37,10 @@ neutron port-pair-group-create ppg1 --port-pairs pp1 pp2
 # Create port chain without classifier:
 
 neutron port-chain-create pc1  --port-pair-group ppg1
+
+
+# get vnf_ids
+
+ns_nname='ns1'
+
+vnf_ids=$(tacker ns-show $ns_name | grep -w vnf_ids | awk -F'[{|}]' '{print $4}')
