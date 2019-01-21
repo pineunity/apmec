@@ -64,7 +64,11 @@ for vnf_id in $vnf_ids; do
        #echo $cp_id
        neutron port-pair-create $cp_name --ingress $cp_id --egress $cp_id
     done
-    neutron port-pair-group-create ppg1 --port-pairs $cp_names
+    neutron port-pair-group-create $vnf_id --port-pairs $cp_names
 done
+
+
+neutron port-chain-create pc1 --port-pair-group
+
 
 
