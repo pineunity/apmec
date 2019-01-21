@@ -38,9 +38,16 @@ neutron port-pair-group-create ppg1 --port-pairs pp1 pp2
 
 neutron port-chain-create pc1  --port-pair-group ppg1
 
+# get VNF resources
 
 # get vnf_ids
 
 ns_nname='ns1'
 
 vnf_ids=$(tacker ns-show $ns_name | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
+
+for vnf_id in $vnf_ids; do
+    #echo $vnf_id
+    eval vnf_id=$vnf_id
+    tacker vnf-resource-list  $vnf_id
+done
