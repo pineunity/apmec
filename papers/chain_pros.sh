@@ -43,4 +43,4 @@ neutron port-chain-create pc1  --port-pair-group ppg1
 
 ns_nname='ns1'
 
-vnf_ids=$(tacker ns-show $ns_name | grep -w vnf_ids | awk -F'[{|}]' '{print $4}')
+vnf_ids=$(tacker ns-show $ns_name | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
