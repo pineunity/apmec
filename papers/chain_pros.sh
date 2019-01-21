@@ -8,6 +8,13 @@
 
 COUNT=20
 
+VDU1='VDU1'
+VDU2='VDU2'
+VDU3='VDU3'
+
+CP1='CP11'
+CP2='CP21'
+CP3='CP31'
 
 # call source openrc admin admin
 
@@ -50,4 +57,7 @@ for vnf_id in $vnf_ids; do
     #echo $vnf_id
     eval vnf_id=$vnf_id
     tacker vnf-resource-list  $vnf_id
+    cp_id=$(tacker vnf-resource-list $vnf_id | grep CP | awk '{print $2}')
+    # create port-pair-group here
 done
+
