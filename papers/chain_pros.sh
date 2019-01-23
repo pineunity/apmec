@@ -79,7 +79,16 @@ for vnf_id in $vnf_ids; do
 done
 
 
-neutron port-chain-create pc1 --port-pair-group
+pc_creation="neutron port-chain-create"
+pc_name="pc1"
+prefix="--port-pair-group"
+params=""
 
+for ppg_name in $pp_list; do
+    param+=$prefix" "$ppg_name
+
+pc_creation+=$pc_name" "$pc_name" "$params
+
+eval $pc_creation
 
 
