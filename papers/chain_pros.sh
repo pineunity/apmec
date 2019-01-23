@@ -45,6 +45,10 @@ neutron port-pair-group-create ppg1 --port-pairs pp1 pp2
 
 neutron port-chain-create pc1  --port-pair-group ppg1
 
+# Update port-chain
+
+neutron port-chain-update pc1 --port-pair-group pp2
+
 # get VNF resources
 
 # get vnf_ids
