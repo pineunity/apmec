@@ -8,14 +8,6 @@
 
 COUNT=20
 
-VDU1='VDU1'
-VDU2='VDU2'
-VDU3='VDU3'
-
-CP1='CP11'
-CP2='CP21'
-CP3='CP31'
-
 # call source openrc admin admin
 
 
