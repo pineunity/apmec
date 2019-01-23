@@ -27,9 +27,10 @@ cd $sample_dir
 
 starting_time=$(date +%s%N)
 
-ns_name='ns1'
+#ns_name='ns1'
 
-vnf_ids=$(tacker ns-show $ns_name | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
+# Make NS name like an input
+vnf_ids=$(tacker ns-show $1 | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
 
 ppg_list=""
 
