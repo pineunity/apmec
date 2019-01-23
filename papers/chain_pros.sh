@@ -55,6 +55,7 @@ neutron port-chain-update pc1 --port-pair-group pp2
 
 ns_nname='ns1'
 
+
 vnf_ids=$(tacker ns-show $ns_name | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
 
 for vnf_id in $vnf_ids; do
@@ -66,7 +67,8 @@ for vnf_id in $vnf_ids; do
     for cp_name in $cp_names; do
        cp_id=$(tacker vnf-resource-list $vnf_id | grep $cp_name | awk '{print $4}')
        #echo $cp_id
-       neutron port-pair-create $cp_name --ingress $cp_id --egress $cp_id
+       pp_name=$cp_name+$vnf_id
+       neutron port-pair-create $pp_name --ingress $cp_id --egress $cp_id
     done
     # change the ppq since it is duplicated between NSs
     # should be attched to "ns1"
