@@ -36,3 +36,12 @@ neutron port-chain-create pc1  --port-pair-group ppg1
 # Update port-chain
 
 neutron port-chain-update pc1 --port-pair-group pp2
+
+
+# Sample output of the SFC creation:
+
+22903
+
+25454
+
+28700
