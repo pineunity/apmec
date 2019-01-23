@@ -12,3 +12,6 @@ The NS service is reused if the number of NFs in the requested NSs is same with 
 
 The VM capacity = 2
 
+
+Note for SFC creation:
+how to keep the order of the CPs since they define the order of NFs
