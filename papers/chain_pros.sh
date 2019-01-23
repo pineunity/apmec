@@ -22,6 +22,11 @@ cd $sample_dir
 
 # get vnf_ids
 
+# How to decide to create chain
+
+
+starting_time=$(date +%s%N)
+
 ns_name='ns1'
 
 vnf_ids=$(tacker ns-show $ns_name | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
@@ -73,4 +78,5 @@ done
 pc_creation+=$pc_name$params
 eval $pc_creation
 
-
+exec_time=$((($(date +%s%N) - $starting_time)/1000000))
+echo $exec_time
