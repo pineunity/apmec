@@ -60,11 +60,13 @@ for vnf_id in $vnf_ids; do
     cp_names=$(tacker vnf-resource-list $vnf_id | grep CP | awk '{print $2}')
     # create port-pair-group here
     for cp_name in $cp_names; do
-       cp_id=$(tacker vnf-resource-list vnf23 | grep $cp_name | awk '{print $4}')
+       cp_id=$(tacker vnf-resource-list $vnf_id | grep $cp_name | awk '{print $4}')
        #echo $cp_id
        neutron port-pair-create $cp_name --ingress $cp_id --egress $cp_id
     done
-    neutron port-pair-group-create $vnf_id --port-pairs $cp_names # change the ppq since it is duplicated between NSs
+    # change the ppq since it is duplicated between NSs
+    # should be attched to "ns1"
+    neutron port-pair-group-create $vnf_id --port-pairs $cp_names
 done
 
 
