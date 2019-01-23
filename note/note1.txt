@@ -14,3 +14,25 @@ The VM capacity = 2
 
 
 Note for SFC creation:
+# get VNF info
+tacker vnf-resource-list 48c5df99-e656-4120-afee-5293b1fd3bc2
+
+
+# Create pp1
+neutron port-pair-create pp1 --ingress 20136e5a-8c4f-49f9-98b3-de2b2a71974c --egress 20136e5a-8c4f-49f9-98b3-de2b2a71974c
+
+
+# Create pp2 of the same VNF
+neutron port-pair-create pp2 --ingress 9b8e5888-dd20-47fe-91cd-3381c3a27099 --egress 9b8e5888-dd20-47fe-91cd-3381c3a27099
+
+
+# Create port-pair-group
+neutron port-pair-group-create ppg1 --port-pairs pp1 pp2
+
+# Create port chain without classifier:
+
+neutron port-chain-create pc1  --port-pair-group ppg1
+
+# Update port-chain
+
+neutron port-chain-update pc1 --port-pair-group pp2
