@@ -20,7 +20,7 @@ exit 1
 
 ############################## Test ################################
 
-all_check="False"
+check="False"
 
 newly_crdNS=""
 
