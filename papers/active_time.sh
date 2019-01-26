@@ -22,9 +22,7 @@ exit 1
 
 all_check="False"
 
-crd_check='False'
-
-newly_crdNS=''
+newly_crdNS=""
 
 while [ "$check" == "False" ]
 
@@ -36,16 +34,24 @@ if [[ "$mes_status" != *"PENDING"*  ]]; then
 check="True"
 fi
 
-if [[ "crd_check" == "False"  ]]; then
-
 if [[ "$mes_status" == *"PENDING_CREATE"*  ]]; then
-crd_check="True"
-fi
+
+mes_id=$(apmec mes-list | grep "PENDING_CREATE" | awk '{print $2}')
+ns_id=$(apmec mes-show $mes_id | grep mes_mapping | awk -F'[][]' '{print $2}')
+newly_crdNS=$ns_id
+echo $ns_id
 
 fi
-
 
 done
+
+if [[ "$newly_crdNS" != ""  ]]; then
+
+eval eval_ns_id=$newly_crdNS
+
+bash chain_pros.sh $eval_ns_id
+
+fi
 
 echo "Done"
 
