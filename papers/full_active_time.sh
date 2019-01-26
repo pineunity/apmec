@@ -40,6 +40,14 @@ fi
 
 done
 
+if [[ "$newly_crdNS" != ""  ]]; then
+
+eval eval_ns_id=$newly_crdNS
+
+bash chain_pros.sh $eval_ns_id
+
+fi
+
 echo "NS created is finished..."
 
 eval eval_ns_id=$newly_crdNS
