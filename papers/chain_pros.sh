@@ -22,7 +22,12 @@ cd $sample_dir
 
 # get vnf_ids
 
-# How to decide to create chain
+# How to decide to create chain. Following modes:
+
+compare vnfd info between the old one and the new request
+
+- Create new chain. Inputs: chain name
+- Update the old chain: chain name and
 
 
 starting_time=$(date +%s%N)
