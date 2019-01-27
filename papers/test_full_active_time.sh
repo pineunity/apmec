@@ -61,7 +61,7 @@ if [[ "$newly_crdNS" != ""  ]]; then
 
 eval eval_ns_id=$newly_crdNS
 
-bash chain_pros.sh $eval_ns_id
+bash newly_crd_chain_pros.sh $eval_ns_id
 
 fi
 
@@ -69,7 +69,7 @@ if [[ "$newly_crdNS" != ""  ]]; then
 
 eval eval_ns_id=$newly_crdNS
 
-bash chain_pros.sh $eval_ns_id
+bash upd_chain_pros.sh $eval_ns_id
 
 fi
 
