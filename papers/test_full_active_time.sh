@@ -12,7 +12,7 @@ check="False"
 crd_check="False"
 newly_crdNS=''
 upd_check="False"
-updNS=''
+upd_NS=''
 
 while [ "$check" == "False" ]
 
@@ -67,7 +67,7 @@ fi
 
 if [[ "$newly_crdNS" != ""  ]]; then
 
-eval eval_ns_id=$newly_crdNS
+eval eval_ns_id=$upd_NS
 
 bash upd_chain_pros.sh $eval_ns_id
 
