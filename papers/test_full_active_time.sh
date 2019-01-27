@@ -65,8 +65,8 @@ bash newly_crd_chain_pros.sh $eval_ns_id
 
 echo "SFC created is finished..."
 
-
 fi
+
 
 if [[ "$newly_crdNS" != ""  ]]; then
 
@@ -75,8 +75,6 @@ eval eval_ns_id=$upd_NS
 bash upd_chain_pros.sh $eval_ns_id
 
 echo "SFC created is finished..."
-
-
 fi
 
 
