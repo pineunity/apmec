@@ -74,7 +74,7 @@ eval eval_ns_id=$upd_NS
 
 bash upd_chain_pros.sh $eval_ns_id
 
-echo "SFC created is finished..."
+echo "SFC updated is finished..."
 fi
 
 
