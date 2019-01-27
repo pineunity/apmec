@@ -12,6 +12,7 @@ check="False"
 crd_check="False"
 newly_crdNS=''
 upd_check="False"
+updNS=''
 
 while [ "$check" == "False" ]
 
@@ -44,13 +45,10 @@ fi
 if [[ "$upd_check" == "False"  ]]; then
 
 if [[ "$mes_status" == *"PENDING_UPDATE"*  ]]; then
-#echo "Right"
 mes_id=$(apmec mes-list | grep "PENDING_UPDATE" | awk '{print $2}')
 ns_id=$(apmec mes-show $mes_id | grep mes_mapping | awk -F'[][]' '{print $2}')    # Find the updated NS
-newly_crdNS=$ns_id
-#eval ns_id=$ns_id
-#bash chain_pros.sh $ns_id
-crd_check="True"
+upd_NS=$ns_id
+upd_check="True"
 echo $ns_id
 
 fi
@@ -58,6 +56,14 @@ fi
 fi
 
 done
+
+if [[ "$newly_crdNS" != ""  ]]; then
+
+eval eval_ns_id=$newly_crdNS
+
+bash chain_pros.sh $eval_ns_id
+
+fi
 
 if [[ "$newly_crdNS" != ""  ]]; then
 
