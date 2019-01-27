@@ -13,6 +13,7 @@ crd_check="False"
 newly_crdNS=''
 upd_check="False"
 upd_NS=''
+pre_vnf_ids=''
 
 while [ "$check" == "False" ]
 
@@ -47,6 +48,7 @@ if [[ "$upd_check" == "False"  ]]; then
 if [[ "$mes_status" == *"PENDING_UPDATE"*  ]]; then
 mes_id=$(apmec mes-list | grep "PENDING_UPDATE" | awk '{print $2}')
 ns_id=$(apmec mes-show $mes_id | grep mes_mapping | awk -F'[][]' '{print $2}')    # Find the updated NS
+pre_vnf_ids=$(tacker ns-show $1 | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
 upd_NS=$ns_id
 upd_check="True"
 echo $ns_id
@@ -68,11 +70,11 @@ echo "SFC created is finished..."
 fi
 
 
-if [[ "$newly_crdNS" != ""  ]]; then
+if [[ "$upd_NS" != ""  ]]; then
 
 eval eval_ns_id=$upd_NS
 
-bash upd_chain_pros.sh $eval_ns_id
+bash upd_chain_pros.sh $eval_ns_id $pre_vnf_ids
 
 echo "SFC updated is finished..."
 fi
