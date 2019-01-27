@@ -18,24 +18,14 @@ cd $ostack
 source openrc admin admin
 cd $sample_dir
 
-# get VNF resources
-
-# get vnf_ids
-
-# How to decide to create chain. Following modes:
-
-compare vnfd info between the old one and the new request
-
-- Create new chain. Inputs: chain name
-- Update the old chain: chain name and
-
-
 starting_time=$(date +%s%N)
 
 #ns_name='ns1'
 
 # Make NS name like an input
 vnf_ids=$(tacker ns-show $1 | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
+
+newly_vnf_ids=${vnf_ids%"$2"}  # The difference
 
 ppg_list=""
 
