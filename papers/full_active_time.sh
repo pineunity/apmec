@@ -6,8 +6,6 @@ source openrc admin admin
 
 cd $sample_dir
 
-apmec mes-create --mesd-template $sample_dir/coop-mesd.yaml mes1
-
 check="False"
 crd_check="False"
 newly_crdNS=''
