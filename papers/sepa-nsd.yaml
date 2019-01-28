@@ -1,10 +1,7 @@
 description: Import VNDs(already on-boarded) without param
-imports: [vnfd22-edge2, vnfd51-edge2]
+imports: [vnfd51-edge2]
 node_templates: {VNF2: tosca.nodes.nfv.VNF2, VNF5: tosca.nodes.nfv.VNF5}
 topology_template:
   node_templates:
-    VNF1: {type: tosca.nodes.nfv.VNF1}
-    VNF2: {type: tosca.nodes.nfv.VNF2}
-    VNF3: {type: tosca.nodes.nfv.VNF3}
-    VNF4: {type: tosca.nodes.nfv.VNF4}
+    VNF5: {type: tosca.nodes.nfv.VNF5}
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0

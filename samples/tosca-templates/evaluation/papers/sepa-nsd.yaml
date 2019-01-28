@@ -1,5 +1,5 @@
 description: Import VNDs(already on-boarded) without param
-imports: [vnfd13-edge2, vnfd23-edge2, vnfd33-edge2]
+imports: [vnfd11-edge2, vnfd21-edge2, vnfd31-edge2]
 topology_template:
   node_templates:
     VNF1: {type: tosca.nodes.nfv.VNF1}

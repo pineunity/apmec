@@ -6,9 +6,10 @@ import random
 from numpy import random as random_choice
 
 # it should return two template for the cooperation and separation approaches
+base_path = os.path.dirname(os.path.abspath(__file__))
+
 
 def coop_import_requirements(sample, req_list):
-    base_path = os.path.dirname(os.path.abspath(__file__))
     path = base_path + '/' + sample
     with open(path, 'r') as f:
       sample_dict = yaml.safe_load(f.read())
@@ -95,6 +96,9 @@ for nf, nf_instance in req_sfc.items():
     sample_dict['vnfd_template'] = sample
     tosca_req_list.append(sample_dict)
 
+req_path = base_path + '/' + 'requests.txt'
+with open(req_path, 'a') as f:
+        f.write("%s\n" % tosca_req_list)
 
 coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req_list)
 sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)

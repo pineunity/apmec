@@ -1,0 +1,2 @@
+[{'name': 'VNF1', 'vnfd_template': 'vnfd11'}, {'name': 'VNF6', 'vnfd_template': 'vnfd63'}]
+[{'name': 'VNF5', 'vnfd_template': 'vnfd51'}]
