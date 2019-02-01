@@ -250,9 +250,9 @@ class MesoPlugin(meso_db.MESOPluginDb):
             al_mes_list = self.get_mess(context)
             ns_candidate = dict()
             for al_mes in al_mes_list:
-                ns_candidate[al_mes['id']] = dict()
                 if al_mes['status'] != "ACTIVE":
                     continue
+                ns_candidate[al_mes['id']] = dict()
                 al_ns_id, al_vnf_dict = _find_vnf_ins(al_mes)
                 if not al_ns_id:
                     continue
