@@ -55,7 +55,7 @@ ns_ids=$(apmec mes-show $mes_id | grep mes_mapping | awk -F'[][]' '{print $2}') 
 for raw_ns_id in $ns_ids; do
    eval ns_id=$raw_ns_id
    pre_vnf_ids=$(tacker ns-show $ns_id | grep -w vnf_ids | awk -F'[][]' '{print $2, $4, $6}')
-   ns_is_array[raw_ns_id]=$pre_vnf_id
+   ns_is_array[$raw_ns_id]=$pre_vnf_id
 done
 upd_check="True"
 #echo $ns_id
