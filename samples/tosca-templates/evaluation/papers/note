@@ -7,4 +7,10 @@ Install vIMS on a single VM: https://github.com/Metaswitch/clearwater-docker
 
 
 
-chain: forwarder - suricata - vIMS,
+chain: forwarder - suricata - vIMS. Maximum 3 VNFs at each node
+
+In case, the real topology cannot work:
+
+Use tc delay to simulate latency between host
+Use 5 compute nodes, 1 controller node
+Maximum 10 VNFs on each node
