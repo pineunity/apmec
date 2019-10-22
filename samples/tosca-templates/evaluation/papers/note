@@ -1,1 +1,10 @@
 We have 5 VNFs, each node randomly 3 VNFs among them
+
+IDS: Suricata, Snort, and Bro
+https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Suricata_Installation
+
+Install vIMS on a single VM: https://github.com/Metaswitch/clearwater-docker
+
+
+
+chain: forwarder - suricata - vIMS,
