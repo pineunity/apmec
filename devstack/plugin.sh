@@ -36,8 +36,6 @@ if is_service_enabled apmec; then
         echo_summary "Installing apmec client"
         apmec_client_install
         if [[ "${APMEC_MODE}" == "all" ]]; then
-            echo_summary "Modifying Heat policy.json file"
-            modify_heat_flavor_policy_rule
             echo_summary "Setup initial apmec network"
             apmec_create_initial_network
             echo_summary "Check and download images for apmec initial"
