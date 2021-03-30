@@ -38,6 +38,10 @@ set +o xtrace
 # Defaults
 # --------
 
+if is_ssl_enabled_service "apmec" || is_service_enabled tls-proxy; then
+    APMEC_PROTOCOL="https"
+fi
+
 # Set up default directories
 GITREPO["apmec-horizon"]=${APMECHORIZON_REPO:-${CUSTOM_BASE}/apmec-horizon.git}
 GITBRANCH["apmec-horizon"]=${APMECHORIZON_BRANCH:-apmec-refactor}
@@ -73,6 +77,7 @@ APMEC_CONF=$APMEC_CONF_DIR/apmec.conf
 APMEC_DB_NAME=${APMEC_DB_NAME:-apmec}
 # Default Apmec Port
 APMEC_PORT=${APMEC_PORT:-9896}
+APMEC_PORT_INT=${APMEC_PORT_INT:-19896}       # TODO(FIX)
 # Default Apmec Host
 APMEC_HOST=${APMEC_HOST:-$SERVICE_HOST}
 # Default protocol
@@ -169,9 +174,15 @@ function start_apmec {
     sudo systemctl enable devstack@apmec-conductor.service
     sudo systemctl restart devstack@apmec-conductor.service
     echo "Waiting for Apmec to start..."
-    # if ! timeout $SERVICE_TIMEOUT sh -c "while ! wget --no-proxy -q -O- $service_protocol://$APMEC_HOST:$service_port; do sleep 1; done"; then
-    if ! wait_for_service $SERVICE_TIMEOUT $service_protocol://$APMEC_HOST:$service_port; then
+      if is_ssl_enabled_service "apmec"; then
+        ssl_ca="--ca-certificate=${SSL_BUNDLE_FILE}"
+    fi
+    if ! timeout $SERVICE_TIMEOUT sh -c "while ! wget ${ssl_ca} --no-proxy -q -O- $service_protocol://$APMEC_HOST:$service_port; do sleep 1; done"; then
         die $LINENO "Apmec did not start"
+    fi
+    # Start proxy if enabled
+    if is_service_enabled tls-proxy; then
+        start_tls_proxy '*' $APMEC_PORT $APMEC_HOST $APMEC_PORT_INT &
     fi
 }
 
@@ -218,6 +229,14 @@ function configure_apmec {
     else
         # Show user_name and project_name by default like in nova
         iniset $APMEC_CONF DEFAULT logging_context_format_string "%(asctime)s.%(msecs)03d %(levelname)s %(name)s [%(request_id)s %(user_name)s %(project_name)s] %(instance)s%(message)s"
+    fi
+
+    if is_ssl_enabled_service "apmec"; then
+        ensure_certificates APMEC
+
+        iniset $APMEC_CONF DEFAULT use_ssl True
+        iniset $APMEC_CONF DEFAULT ssl_cert_file "$APMEC_SSL_CERT"
+        iniset $APMEC_CONF DEFAULT ssl_key_file "$APMEC_SSL_KEY"
     fi
 
     # server
