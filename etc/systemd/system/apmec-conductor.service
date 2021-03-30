@@ -1,0 +1,12 @@
+[Unit]
+Description = OpenStack apmec conductor service
+
+[Service]
+ExecReload = /bin/kill -HUP $MAINPID
+TimeoutStopSec = 300
+KillMode = process
+WorkingDirectory = /tmp
+ExecStart=/usr/local/bin/apmec-conductor --config-file /etc/apmec/apmec.conf
+
+[Install]
+WantedBy = multi-user.target
