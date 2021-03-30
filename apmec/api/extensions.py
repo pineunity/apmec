@@ -15,16 +15,16 @@
 #    under the License.
 
 import abc
-import imp
 import os
 
 from oslo_config import cfg
 from oslo_log import log as logging
+from oslo_utils import importutils
 import routes
-import six
 import webob.dec
 import webob.exc
 
+from apmec._i18n import _
 from apmec.common import exceptions
 import apmec.extensions
 from apmec import policy
@@ -34,8 +34,7 @@ from apmec import wsgi
 LOG = logging.getLogger(__name__)
 
 
-@six.add_metaclass(abc.ABCMeta)
-class PluginInterface(object):
+class PluginInterface(object, metaclass=abc.ABCMeta):
 
     @classmethod
     def __subclasshook__(cls, klass):
@@ -325,7 +324,7 @@ class ExtensionMiddleware(wsgi.Middleware):
         """Return a dict of ActionExtensionController-s by collection."""
         action_controllers = {}
         for action in ext_mgr.get_actions():
-            if action.collection not in action_controllers.keys():
+            if action.collection not in action_controllers:
                 controller = ActionExtensionController(application)
                 mapper.connect("/%s/:(id)/action.:(format)" %
                                action.collection,
@@ -344,7 +343,7 @@ class ExtensionMiddleware(wsgi.Middleware):
         """Returns a dict of RequestExtensionController-s by collection."""
         request_ext_controllers = {}
         for req_ext in ext_mgr.get_request_extensions():
-            if req_ext.key not in request_ext_controllers.keys():
+            if req_ext.key not in request_ext_controllers:
                 controller = RequestExtensionController(application)
                 mapper.connect(req_ext.url_route + '.:(format)',
                                action='process',
@@ -464,7 +463,7 @@ class ExtensionManager(object):
         # is made in a whole iteration
         while exts_to_process:
             processed_ext_count = len(processed_exts)
-            for ext_name, ext in exts_to_process.items():
+            for ext_name, ext in list(exts_to_process.items()):
                 if not hasattr(ext, 'get_extended_resources'):
                     del exts_to_process[ext_name]
                     continue
@@ -540,7 +539,8 @@ class ExtensionManager(object):
                 mod_name, file_ext = os.path.splitext(os.path.split(f)[-1])
                 ext_path = os.path.join(path, f)
                 if file_ext.lower() == '.py' and not mod_name.startswith('_'):
-                    mod = imp.load_source(mod_name, ext_path)
+                    mod = importutils.import_module(
+                        'apmec.extensions.' + mod_name)
                     ext_name = mod_name[0].upper() + mod_name[1:]
                     new_ext_class = getattr(mod, ext_name, None)
                     if not new_ext_class:

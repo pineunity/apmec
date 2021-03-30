@@ -19,6 +19,3 @@ _translators = oslo_i18n.TranslatorFactory(domain='apmec')
 # The primary translation function using the well-known name "_"
 _ = _translators.primary
 
-
-def enable_lazy(enable=True):
-    return oslo_i18n.enable_lazy(enable)

@@ -18,8 +18,7 @@ from oslo_config import cfg
 import oslo_i18n
 from oslo_log import log as logging
 from oslo_policy import policy as oslo_policy
-from six import iteritems
-from six.moves.urllib import parse as urllib_parse
+from urllib import parse as urllib_parse
 from webob import exc
 
 from apmec.common import constants
@@ -35,11 +34,11 @@ def get_filters(request, attr_info, skips=None):
     Returns a dict of lists for the filters:
     check=a&check=b&name=Bob&
     becomes:
-    {'check': [u'a', u'b'], 'name': [u'Bob']}
+    {'check': ['a', 'b'], 'name': ['Bob']}
     """
     res = {}
     skips = skips or []
-    for key, values in iteritems(request.GET.dict_of_lists()):
+    for key, values in request.GET.dict_of_lists().items():
         if key in skips:
             continue
         values = [v for v in values if v]
@@ -148,8 +147,8 @@ def get_sorts(request, attr_info):
                 'asc': constants.SORT_DIRECTION_ASC,
                 'desc': constants.SORT_DIRECTION_DESC})
         raise exc.HTTPBadRequest(explanation=msg)
-    return zip(sort_keys,
-               [x == constants.SORT_DIRECTION_ASC for x in sort_dirs])
+    return list(zip(sort_keys,
+                    [x == constants.SORT_DIRECTION_ASC for x in sort_dirs]))
 
 
 def get_page_reverse(request):
@@ -229,7 +228,7 @@ class PaginationEmulatedHelper(PaginationHelper):
 class PaginationNativeHelper(PaginationEmulatedHelper):
 
     def update_args(self, args):
-        if self.primary_key not in dict(args.get('sorts', [])).keys():
+        if self.primary_key not in dict(args.get('sorts', [])):
             args.setdefault('sorts', []).append((self.primary_key, True))
         args.update({'limit': self.limit, 'marker': self.marker,
                      'page_reverse': self.page_reverse})
@@ -266,7 +265,7 @@ class SortingEmulatedHelper(SortingHelper):
     def update_fields(self, original_fields, fields_to_add):
         if not original_fields:
             return
-        for key in dict(self.sort_dict).keys():
+        for key in dict(self.sort_dict):
             if key not in original_fields:
                 original_fields.append(key)
                 fields_to_add.append(key)
@@ -274,11 +273,21 @@ class SortingEmulatedHelper(SortingHelper):
     def sort(self, items):
         def cmp_func(obj1, obj2):
             for key, direction in self.sort_dict:
-                ret = cmp(obj1[key], obj2[key])
+                o1 = obj1[key]
+                o2 = obj2[key]
+
+                if o1 is None and o2 is None:
+                    ret = 0
+                elif o1 is None and o2 is not None:
+                    ret = -1
+                elif o1 is not None and o2 is None:
+                    ret = 1
+                else:
+                    ret = (o1 > o2) - (o1 < o2)
                 if ret:
                     return ret * (1 if direction else -1)
             return 0
-        return sorted(items, cmp=cmp_func)
+        return sorted(items, key=cmp_to_key(cmp_func))
 
 
 class SortingNativeHelper(SortingHelper):
