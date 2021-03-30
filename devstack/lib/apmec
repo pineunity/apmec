@@ -73,8 +73,6 @@ APMEC_CONF=$APMEC_CONF_DIR/apmec.conf
 APMEC_DB_NAME=${APMEC_DB_NAME:-apmec}
 # Default Apmec Port
 APMEC_PORT=${APMEC_PORT:-9896}
-# Default Apmec Internal Port when using TLS proxy
-APMEC_PORT_INT=${APMEC_PORT_INT:-19896}       # TODO(FIX)
 # Default Apmec Host
 APMEC_HOST=${APMEC_HOST:-$SERVICE_HOST}
 # Default protocol
@@ -120,12 +118,13 @@ function create_apmec_cache_dir {
 
 # Migrated from keystone_data.sh
 function create_apmec_accounts {
+    echo "Tung: Create apmec accounts"
     if is_service_enabled apmec; then
         create_service_user "apmec"
         get_or_create_role "advsvc"
         create_service_user "apmec" "advsvc"
         create_service_user "apmec" "admin"
-
+        echo "Tung: enter servive enabled"
         local apmec_service=$(get_or_create_service "apmec" \
             "mec-orchestration" "Apmec MEC Orchestration Service")
         get_or_create_endpoint $apmec_service \
