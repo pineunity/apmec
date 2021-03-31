@@ -62,6 +62,7 @@ GITDIR["python-apmecclient"]=$DEST/python-apmecclient
 
 APMEC_DIR=$DEST/apmec
 APMEC_AUTH_CACHE_DIR=${APMEC_AUTH_CACHE_DIR:-/var/cache/apmec}
+APMEC_DATA_DIR=${APMEC_DATA_DIR:=$DATA_DIR/apmec}
 
 # Support entry points installation of console scripts
 if [[ -d $APMEC_DIR/bin/apmec-server ]]; then
