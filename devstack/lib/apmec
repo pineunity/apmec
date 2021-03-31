@@ -207,6 +207,11 @@ function _create_apmec_conf_dir {
     sudo install -d -o $STACK_USER $APMEC_CONF_DIR
 }
 
+function _create_apmec_data_dirs {
+    # Create tacker data folder
+    sudo install -d -o $STACK_USER $APMEC_DATA_DIR
+}
+
 # configure_apmec()
 # Set common config for all apmec server and agents.
 function configure_apmec {
@@ -223,6 +228,8 @@ function configure_apmec {
     iniset $APMEC_CONF database connection `database_connection_url $APMEC_DB_NAME`
     iniset $APMEC_CONF DEFAULT state_path $DATA_DIR/apmec
     iniset $APMEC_CONF DEFAULT use_syslog $SYSLOG
+
+    _create_apmec_data_dirs
 
     # Format logging
     if [ "$LOG_COLOR" == "True" ] && [ "$SYSLOG" == "False" ]; then
