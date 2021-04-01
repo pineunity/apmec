@@ -25,7 +25,6 @@ import oslo_i18n
 from oslo_service import service as common_service
 
 from apmec import _i18n
-_i18n.enable_lazy()
 from apmec.common import config
 from apmec import service
 

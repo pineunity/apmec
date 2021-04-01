@@ -175,7 +175,7 @@ function start_apmec {
     sudo systemctl enable devstack@apmec-conductor.service
     sudo systemctl restart devstack@apmec-conductor.service
     echo "Waiting for Apmec to start..."
-      if is_ssl_enabled_service "apmec"; then
+    if is_ssl_enabled_service "apmec"; then
         ssl_ca="--ca-certificate=${SSL_BUNDLE_FILE}"
     fi
     if ! timeout $SERVICE_TIMEOUT sh -c "while ! wget ${ssl_ca} --no-proxy -q -O- $service_protocol://$APMEC_HOST:$service_port; do sleep 1; done"; then
