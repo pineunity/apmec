@@ -253,7 +253,7 @@ class MeoPlugin(meo_db_plugin.MeoPluginDb, meca_db.MECAPluginDb):
             LOG.warning('Unable to decode VIM auth')
             raise meo.VimNotFoundException(
                 'Unable to decode VIM auth key')
-        return f.decrypt(cred)
+        return f.decrypt(cred).decode('utf-8')
 
     @staticmethod
     def _find_vim_key(vim_id):
