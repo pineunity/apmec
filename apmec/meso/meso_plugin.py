@@ -580,20 +580,20 @@ class MesoPlugin(meso_db.MESOPluginDb):
                         wait=NS_RETRIES * NS_RETRY_WAIT)
 
                 # Determine args
-                ns_cd = self._nfv_drivers.invoke(
-                    nfv_driver,  # How to tell it is Tacker
-                    'ns_get',
-                    ns_id=ns_list[0],
-                    auth_attr=vim_res['vim_auth'], )
-                ns_instance_dict = ns_cd['mgmt_urls']
-                ns_instance_list = ast.literal_eval(ns_instance_dict)
-                args['NS'] = dict()
+                #ns_cd = self._nfv_drivers.invoke(
+                #    nfv_driver,  # How to tell it is Tacker
+                #    'ns_get',
+                #    ns_id=ns_list[0],
+                #    auth_attr=vim_res['vim_auth'], )
+                #ns_instance_dict = ns_cd['mgmt_urls']
+                #ns_instance_list = ast.literal_eval(ns_instance_dict)
+                #args['NS'] = dict()
 
-                for vnf_name, mgmt_url_list in ns_instance_list.items():
+                #for vnf_name, mgmt_url_list in ns_instance_list.items():
                     # Todo: remember to change this with VM capacity
-                    vm_capacity = VM_CAPA[vnf_name]
-                    orig = [vm_capacity] * len(mgmt_url_list)
-                    args['NS'][vnf_name] = [(val - 1) for val in orig]
+                #    vm_capacity = VM_CAPA[vnf_name]
+                #    orig = [vm_capacity] * len(mgmt_url_list)
+                #    args['NS'][vnf_name] = [(val - 1) for val in orig]
 
             if mes_mapping.get('VNFFG'):
                 while vnffg_status == "PENDING_CREATE" and vnffg_retries > 0:
