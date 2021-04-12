@@ -359,7 +359,7 @@ class OpenStack_Driver(abstract_vim_driver.VimAbstractDriver):
     def execute_workflow(self, workflow, auth_dict=None):
         return self.get_mistral_client(auth_dict)\
             .executions.create(
-                workflow_identifier=workflow['id'],
+                wf_identifier=workflow['id'],
                 workflow_input=workflow['input'],
                 wf_params={})
 
