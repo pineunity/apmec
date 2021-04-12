@@ -77,6 +77,10 @@ class Tacker_Driver(abstract_driver.NfvAbstractDriver):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_delete(ns_id)
 
+    def ns_delete_force(self, auth_attr, ns_id):
+        tacker_client = TackerClient(auth_attr)
+        return tacker_client.ns_delete_force(ns_id)
+
     def ns_update(self, auth_attr, ns_id, ns_dict):
         tacker_client = TackerClient(auth_attr)
         return tacker_client.ns_update(ns_id, ns_dict)
@@ -198,6 +202,10 @@ class TackerClient(object):
 
     def ns_delete(self, ns_id):
         return self.client.delete_ns(ns_id)
+
+    def ns_delete_force(self, ns_id):
+        body = {'ns': {'attributes': {'force': True}}}
+        return self.client.delete_ns(ns_id, body)
 
     def ns_update(self, ns_id, ns_dict):
         return self.client.update_ns(ns_id, ns_dict)

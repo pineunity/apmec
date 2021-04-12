@@ -677,7 +677,7 @@ class MesoPlugin(meso_db.MESOPluginDb):
             try:
                 self._nfv_drivers.invoke(
                     nfv_driver,
-                    'ns_delete',
+                    'ns_delete_force',
                     ns_id=ns_id,
                     auth_attr=vim_res['vim_auth'])
             except Exception as e:
