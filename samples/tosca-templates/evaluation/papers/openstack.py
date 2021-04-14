@@ -2,7 +2,7 @@
 from keystoneauth1 import identity
 import sys
 import yaml
-import os
+#import os
 from keystoneauth1 import identity
 from keystoneauth1 import session
 
@@ -12,10 +12,6 @@ import apmec_client
 
 # from novaclient.v2 import client as nova_client
 from novaclient import client as nova_client
-
-
-first_arg = sys.argv[1]  # Function name
-second_arg = sys.argv[2]  # Data
 
 
 auth = identity.Password(auth_url='http://192.168.0.4/identity/v3',
@@ -50,41 +46,30 @@ mec_tenant_id = mec_vim_info['tenant_id']
 
 
 def nfins_tracking():
-    nfins_dict = getattr(nfv_client, first_arg)()
+    nfins_dict = getattr(nfv_client, 'nfins_tracking')()
     return nfins_dict
 
 
-if 'ns_create' in first_arg:
+def ns_create(ns_name):
     sepa_sample = yaml_file(sample='sepa-nsd.yaml')
-    ns_dict = {'ns': {'nsd_template': sepa_sample, 'name': second_arg,
+    ns_dict = {'ns': {'nsd_template': sepa_sample, 'name': ns_name,
                          'description': '', 'tenant_id': nfv_tenant_id,
                                      'vim_id': '', 'attributes': {}}}
     #print nfv_client.ns_create(ns_dict)
-    print(getattr(nfv_client, first_arg)(ns_dict))
+    return getattr(nfv_client, 'ns_create')(ns_dict)
 
 
-if 'mes_create' in first_arg:
-    coop_sample = yaml_file(sample='coop-mesd.yaml')
-    mes_dict = {'mes': {'mesd_template': coop_sample, 'name': second_arg,
+def mes_create(mes_name):
+    coop_sample = yaml_file(sample='test_simple_mesd.yaml')
+    mes_dict = {'mes': {'mesd_template': coop_sample, 'name': mes_name,
                          'description': '', 'tenant_id': mec_tenant_id,
                                      'vim_id': '', 'attributes': {}}}
-    print(mes_dict)
-    mes_instance = getattr(mec_client, first_arg)(mes_dict)
-    print(mes_instance)
-    # if not isinstance(mes_id, dict):
-    #     mes_info = mec_client.mes_get(mes_id)
-    #     reused_dict = mes_info['reused']
-    #     print reused_dict
-    # else:
-    #     print None
+    # print(mes_dict)
+    mes_instance = getattr(mec_client, 'mes_create')(mes_dict)
+    return mes_instance
 
-if 'tracking' in first_arg:
-    print(nfins_tracking())
-
-if 'get_nfins' in first_arg:
+def get_nfins():
     n_client = nova_client.Client(version='2', session=sess)
-    # print len(n_client.servers.list(search_opts={'status': 'ACTIVE'}))
-    print(len(n_client.servers.list()))
+    return len(n_client.servers.list())
 
-sys.stdout.flush()
 

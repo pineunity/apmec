@@ -4,6 +4,17 @@ import os
 from random import randint
 import random
 from numpy import random as random_choice
+import time
+from collections import OrderedDict
+import sys
+import openstack
+import uuid
+
+import apmec_sap
+import apmec_jvp
+import apmec_baseline
+
+first_arg = sys.argv[1]
 
 # it should return two template for the cooperation and separation approaches
 
@@ -40,25 +51,12 @@ def sepa_import_requirements(sample, req_list):
     with open(path, 'w') as f:
         yaml.safe_dump(sample_dict, f)
 
+# Randomize the properties of VNF between m1.tiny, m1.small, m1.medium, m1.large among 10 VNFs
 
-VNF1 = ['vnfd11', 'vnfd12', 'vnfd13']
-
-VNF2 = ['vnfd21', 'vnfd22', 'vnfd23']
-
-
-VNF3 = ['vnfd31', 'vnfd32', 'vnfd33']
-
-VNF4 = ['vnfd41', 'vnfd42', 'vnfd43']
-
-VNF5 = ['vnfd51', 'vnfd52', 'vnfd53']
-
-VNF6 = ['vnfd61', 'vnfd62', 'vnfd63']
-
-sys_Nmax = 3  # Number of NFs -- > Maximum of NFs
-vm_capacity = 3
-min_resue = 0.5  # Set the reuse factor of the NS
+sys_Nmax = 10  # Number of NFs -- > Maximum of NFs
+vm_max_capacity = 10
 req_Nmax = 3
-req_Nmax_ins = 3
+req_Nmax_ins = 1
 
 # Set the number of NF instances for NFs
 # NumNFinstances = constrained_sum_sample_pos(N,M)
@@ -67,37 +65,88 @@ req_Nmax_ins = 3
 
 # Fixed with number of NF instance and change the length of SFCs
 
-SAMPLE = {'VNF0': VNF1, 'VNF1': VNF2, 'VNF2': VNF3, 'VNF3': VNF4, 'VNF4':VNF5, 'VNF5': VNF6}
+SAMPLE = {'VNF0': 'vnfd11', 'VNF1': 'vnfd21', 'VNF2': 'vnfd31', 'VNF3': 'vnfd41', 'VNF4':'vnfd51', 'VNF5': 'vnfd61', 'VNF6': 'vnfd71', 'VNF7': 'vnfd81', 'VNF8': 'vnfd91', 'VNF9': 'vnfd101'}
 
-NSins_list = [1, 2, 3, 4, 5, 6]
+VM_CAP = OrderedDict()
+
+for index, vnf_name in enumerate(SAMPLE.keys()):
+    VM_CAP[vnf_name] = random.randint(1, vm_max_capacity)
+
+# NSins_list = [1, 2, 3, 4, 5, 6]
 sys_nf_list = range(0, sys_Nmax)
-nf_set = dict()
-for i in range(0, sys_Nmax):
-    nf_set[i] = randint(1, vm_capacity)
+
+#nf_set = dict()
+#for i in range(0, sys_Nmax):
+#    nf_set[i] = randint(1, vm_capacity)
+
 lenSFC = randint(1, req_Nmax)
 # Build the NS request
 req_nf_list = random_choice.choice(sys_nf_list, lenSFC, replace=False)
-req_sfc = dict()
-for i in req_nf_list:
-    nf_instances = randint(1, req_Nmax_ins)
-    req_sfc.update({i: nf_instances})
-
 # Transform the request to the TOSCA template
 
 tosca_req_list = list()
-for nf, nf_instance in req_sfc.items():
+for nf in req_nf_list:
     index = 'VNF' + str(nf)
-    VNF = SAMPLE[index]
-    sample = VNF[nf_instance-1]
+    sample = SAMPLE[index]
     vnf_name = "VNF" + str(nf+1)
     sample_dict = dict()
     sample_dict['name'] = vnf_name
     sample_dict['vnfd_template'] = sample
     tosca_req_list.append(sample_dict)
 
+# coop_import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
+# sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
 
-coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req_list)
-sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
+# Run algoritm here
+
+if 'sap' in first_arg:
+    sys_vnf_list = OrderedDict()
+    sap_system_dict = OrderedDict()
+    sap = apmec_sap.SAP(sap_system_dict, VM_CAP)
+    new_vnf_list, reused_vnf_list = sap.execute()
+    coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
+    mes_name = 'mes-' + uuid.uuid4()
+    openstack.mes_create(mes_name)
+    # sleep here until mes is active
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
