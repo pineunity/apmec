@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_profile_for_mec_1_0_0
 
-description: Import MEADs(already on-boarded) and NSD (already on-boarded) with input parameters
+description: MEC service description
 imports:
   meads:
     mead_templates:
