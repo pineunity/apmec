@@ -41,10 +41,11 @@ def yaml_file(sample):
     return sample_dict
 
 # Get tenant if from vim
-nfv_vim_info = nfv_client.vim_get(vim_name='VIM0')
+nfv_vim_info = nfv_client.vim_get(vim_name='vim0')
+#print(nfv_vim_info)
 nfv_tenant_id = nfv_vim_info['tenant_id']
 
-mec_vim_info = mec_client.vim_get(vim_name='VIM0')
+mec_vim_info = mec_client.vim_get(vim_name='vim0')
 mec_tenant_id = mec_vim_info['tenant_id']
 
 
@@ -59,7 +60,7 @@ if 'ns_create' in first_arg:
                          'description': '', 'tenant_id': nfv_tenant_id,
                                      'vim_id': '', 'attributes': {}}}
     #print nfv_client.ns_create(ns_dict)
-    print getattr(nfv_client, first_arg)(ns_dict)
+    print(getattr(nfv_client, first_arg)(ns_dict))
 
 
 if 'mes_create' in first_arg:
@@ -67,8 +68,9 @@ if 'mes_create' in first_arg:
     mes_dict = {'mes': {'mesd_template': coop_sample, 'name': second_arg,
                          'description': '', 'tenant_id': mec_tenant_id,
                                      'vim_id': '', 'attributes': {}}}
+    print(mes_dict)
     mes_instance = getattr(mec_client, first_arg)(mes_dict)
-    print mes_instance
+    print(mes_instance)
     # if not isinstance(mes_id, dict):
     #     mes_info = mec_client.mes_get(mes_id)
     #     reused_dict = mes_info['reused']
@@ -77,11 +79,12 @@ if 'mes_create' in first_arg:
     #     print None
 
 if 'tracking' in first_arg:
-    print nfins_tracking()
+    print(nfins_tracking())
 
 if 'get_nfins' in first_arg:
     n_client = nova_client.Client(version='2', session=sess)
     # print len(n_client.servers.list(search_opts={'status': 'ACTIVE'}))
-    print len(n_client.servers.list())
+    print(len(n_client.servers.list()))
 
 sys.stdout.flush()
+
