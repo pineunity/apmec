@@ -54,7 +54,7 @@ def sepa_import_requirements(sample, req_list):
 # Randomize the properties of VNF between m1.tiny, m1.small, m1.medium, m1.large among 10 VNFs
 
 sys_Nmax = 10  # Number of NFs -- > Maximum of NFs
-vm_max_capacity = 10
+vm_max_capacity = 10  # valiadate how many instances for m1.large
 req_Nmax = 3
 req_Nmax_ins = 1
 
@@ -97,12 +97,23 @@ for nf in req_nf_list:
 # coop_import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
 # sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
 
-# Run algoritm here
+def update_vnf_list():
+    vnf_list = openstack.nfins_tracking()
+    
+
+
+# Run algorithm here
+
+comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
 
 if 'sap' in first_arg:
-    sys_vnf_list = OrderedDict()
+    mes_id = uuid.uuid4()
+    sys_vnf_dict = OrderedDict()   # store mes_id and ordered vnf list
     sap_system_dict = OrderedDict()
-    sap = apmec_sap.SAP(sap_system_dict, VM_CAP)
+    # update vnf_list
+    vnf_list = openstack.nfins_tracking()
+    
+    sap = apmec_sap.SAP(tosca_req_list, sap_system_dict, VM_CAP)
     new_vnf_list, reused_vnf_list = sap.execute()
     coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
     mes_name = 'mes-' + uuid.uuid4()
