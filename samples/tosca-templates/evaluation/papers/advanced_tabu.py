@@ -26,10 +26,11 @@ MAX = 10**6
 
 
 class AdvTabu(object):
-    def __init__(self, req_dict, sys_nf_info, vm_cap):
+    def __init__(self, req_dict, graph, sys_nf_info, vm_cap):
         self.graph = graph
         # self.ns_dict = system_ns_dict
         self.req_dict = req_dict
+        self.sfc_dict = req_dict.keys()
         self.tabu_list = list()
         self.req_id = uuid.uuid4()
         self.vm_cap = vm_cap
@@ -71,16 +72,10 @@ class AdvTabu(object):
                 continue
             bst_cost = solution_info_dict['total_cost']
 
-            # print 'new-cost  curr-cost init-cost:', bst_cost, final_best_cost, solution_info_dict
-
-            # print bst_candidate, solution_info_dict['detailed_path']
-            # bst_candidate, bst_cost = self.find_best_neighborhood(curr_solution, policy='paid')
             # A solution belong to the current visiting VNF back to its original physical node
             if self.in_tabu_list(match_dict):   # Tabu list is a list of vnf_index:node:instance
                 # override if meet aspiration condition
                 if bst_cost < final_best_cost:
-                    # this makes sure there is only one mapping vnf_index:node_index in tabu list
-                    # print 'Stop by to see tabu list decreases'
                     # import time
                     # time.sleep(10)
                     self.tabu_list_remove(match_dict)

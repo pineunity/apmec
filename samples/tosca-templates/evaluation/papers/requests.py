@@ -88,12 +88,13 @@ tosca_req_list = list()
 for nf in req_nf_list:
     index = 'VNF' + str(nf)
     sample = SAMPLE[index]
-    vnf_name = "VNF" + str(nf+1)
+    #vnf_name = "VNF" + str(nf+1)
     sample_dict = dict()
-    sample_dict['name'] = vnf_name
+    sample_dict['name'] = index
     sample_dict['vnfd_template'] = sample
     tosca_req_list.append(sample_dict)
 
+# req dict: VNF1: vnfd11, ..., VNF10: vnfd101
 # coop_import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
 # sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
 
@@ -102,18 +103,24 @@ def update_vnf_list():
     
 
 
-# Run algorithm here
-
-comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
+# Run algorithm here to store network function and instances
+def initiate_graph()
+    graph = OrderedDict()
+    comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
+    for node in comp_node_list:
+        graph[node] = OrderedDict()
+    return graph
 
 if 'sap' in first_arg:
+    graph = initiate_graph()
+
     mes_id = uuid.uuid4()
     sys_vnf_dict = OrderedDict()   # store mes_id and ordered vnf list
     sap_system_dict = OrderedDict()
     # update vnf_list
     vnf_list = openstack.nfins_tracking()
     
-    sap = apmec_sap.SAP(tosca_req_list, sap_system_dict, VM_CAP)
+    sap = apmec_sap.SAP(tosca_req_list, graph, sap_system_dict, VM_CAP)
     new_vnf_list, reused_vnf_list = sap.execute()
     coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
     mes_name = 'mes-' + uuid.uuid4()
