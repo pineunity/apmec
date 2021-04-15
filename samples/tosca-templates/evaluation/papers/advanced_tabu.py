@@ -19,9 +19,7 @@ def split_path(path):
 
 # Set weight for problem optimization
 ALPHA = 0.6  # weight for computation cost
-GAMMA = 0.6   # chain config cost should be greater than routing cost
-BETA = 0.4  # weight for routing cost
-DELTA = 0.4  # weight for reliability cost
+BETA = 0.4  # weight for config cost
 TABU_ITER_MAX = 30   # Tabu size: stop after algorithm reaches this size
 LOOP_ITER_MAX = 10   # Number of iterations is executed for each tabu search
 MAX = 10**6
@@ -107,9 +105,6 @@ class AdvTabu(object):
                 print "Tabu++ worked here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         if final_best_cost >= MAX:
             print "Tabu++: unable to find better solution due the the constraint"
-            # print "Service latency:", self.lat
-            # print "Total node processing latency:", sum([self.nf_prop['proc_delay'][nf] for nf in self.sfc_dict.keys()])
-            # time.sleep(5)
             return None, None
         print "=========="
         print 'Tabu++ list:', len(self.tabu_list)
@@ -128,7 +123,6 @@ class AdvTabu(object):
         est_graph = copy.deepcopy(self.graph)
 
         if strategy == 'random':
-            total_lat = 0
             for index, nf_index in enumerate(self.sfc_dict.keys()):
                 src_dict = OrderedDict()
                 if index:
@@ -183,7 +177,6 @@ class AdvTabu(object):
         solution_info_dict['detailed_path'] = list()
         curr_solution = OrderedDict()
         bst_graph = copy.deepcopy(self.graph)
-        total_lat = 0
         for index, vnf_index in enumerate(new_solution.keys()):
             src_dict = OrderedDict()
             if index:
@@ -195,7 +188,6 @@ class AdvTabu(object):
             comp_cost_dict, config_cost_dict = self.post_comp_config_cost_func(vnf_index, src_dict, node_candidate_dict, bst_graph)
             if comp_cost_dict.get(pnode) is None:
                 return None          # also means that loop will be automatically broken
-            rel_cost_dict = self.rel_cost_func(vnf_index, node_candidate)
             curr_solution[vnf_index] = node_candidate_dict
             curr_cost = ALPHA*comp_cost_dict[pnode] + BETA*config_cost_dict[pnode]     # noqa
             solution_info_dict['total_cost'] = solution_info_dict['total_cost'] + curr_cost
@@ -241,60 +233,6 @@ class AdvTabu(object):
 
         return visited_solution
 
-    # apply proposed Tabu strategies here
-    # There are 2 main strategies: randomly pick VNF and randomly pick node candidate
-    # def find_best_neighborhood(self, curr_solution, policy):
-    #     bst_cost_dict = OrderedDict()
-    #     picked_vnf = None
-    #     picked_index = None
-    #     # apply random VNF first
-    #     if policy == 'random':
-    #         picked_vnf = random.choice(self.sfc_dict.keys())
-    #
-    #     # from nf_index in nf_dict, find index in chain
-    #     picked_index = self.sfc_dict.keys().index(picked_vnf) if picked_vnf is not None else picked_index
-    #     visited_node_dict = curr_solution[self.sfc_dict.keys()[picked_index]]
-    #     node_candidate = list()
-    #     for node in self.graph.nodes():
-    #         # if node != visited_node:
-    #         if picked_vnf in self.graph.node[node]['allowed_vnf_list']:
-    #             node_candidate.append(node)
-    #     candidate_list = list()
-    #     for vnode in node_candidate:
-    #         new_solution = self.find_match(curr_solution, picked_vnf, vnode)
-    #         if new_solution is None:
-    #             continue
-    #         solution_info_dict = self.post_cal_total_cost(new_solution)
-    #         if solution_info_dict is not None:
-    #             temp_candidate_dict = OrderedDict()
-    #             temp_candidate_dict['solution'] = copy.deepcopy(new_solution)
-    #             temp_candidate_dict['solution_info_dict'] = copy.deepcopy(solution_info_dict)
-    #             # print 'Temp solution', new_solution
-    #             # print 'Temp total cost', temp_candidate_dict['solution_info_dict']['total_cost']
-    #             # print 'Temp routing cost', temp_candidate_dict['solution_info_dict']['routing_cost']
-    #             candidate_list.append(temp_candidate_dict)
-    #         else:
-    #             continue
-    #     if not candidate_list:
-    #         return None, None, None
-    #     else:
-    #         final_bst_cost = min([candidate['solution_info_dict']['total_cost'] for candidate in candidate_list])
-    #         final_candidate_list = [candidate for candidate in candidate_list if candidate['solution_info_dict']['total_cost'] == final_bst_cost]
-    #         # Can think about strict constrain here
-    #         final_candidate = final_candidate_list[0]
-    #         final_solution = final_candidate['solution']
-    #         # print 'Final solution', final_solution
-    #         # print 'Final total cost', final_bst_cost
-    #         # print 'Routing cost', final_candidate['solution_info_dict']['routing_cost']
-    #         final_solution_info_dict = final_candidate['solution_info_dict']
-    #
-    #     return {picked_vnf: final_solution[picked_vnf]}, final_solution, final_solution_info_dict
-    #     # Since the final result did not change, the same trial is run at the end
-
-
-        # apply proposed Tabu strategies here
-        # There are 2 main strategies: randomly pick VNF and randomly pick node candidate
-
     def find_best_neighborhood(self, curr_solution, policy):
         bst_cost_dict = OrderedDict()
         picked_vnf = None
@@ -302,13 +240,9 @@ class AdvTabu(object):
         # apply random VNF first
         if policy == 'random':
             picked_vnf = random.choice(self.sfc_dict.keys())
-
-        # from nf_index in nf_dict, find index in chain
-        # print 'Tabu++: visted VNF', picked_vnf
         picked_index = self.sfc_dict.keys().index(picked_vnf)
         node_candidate = list()
         for node in self.graph.nodes():
-            # if node != visited_node:
             if picked_vnf in self.graph.node[node]['allowed_vnf_list']:
                 node_candidate.append(node)
 
@@ -347,86 +281,6 @@ class AdvTabu(object):
             if tabu_dict == match_dict:
                 self.tabu_list.pop(tabu_index)
 
-    # Calculate the routing cost cost
-    def routing_cost_func(self, node_candidate, curr_solution, graph):
-        path_dict = OrderedDict()
-        path_lat = OrderedDict()
-        # comm_cost includes key (target node) and value(comm_cost)
-        curr_routing_cost = OrderedDict()
-        source_node = None
-        if curr_solution:
-            curr_len = len(curr_solution)
-            source_node_dict = curr_solution.values()[curr_len - 1]
-            source_node = source_node_dict.keys()[0]
-        for node in node_candidate:
-            if node == source_node or not curr_solution:
-                curr_routing_cost[node] = 0
-                path_dict[node] = list()
-                path_lat[node] = 0
-            else:
-                # This can return a list of paths, strictly condition needed
-                # this will be a number of nodes for routing cost
-                path_list = nx.all_shortest_paths(graph, source=source_node, target=node)
-                # path_list = nx.all_shortest_paths(self.graph, source=source_node, target=node, weight='delay')
-                # Add constrains for link capacity. Traffic rate is also considered as link rate
-                filtered_path = list()
-                # Determine the current link usage the existing source and destination for link
-                # Find link with lowest latency: path = [1 5 7]
-                # visited_path = list()
-                for path in path_list:
-                    illegal_path = False
-                    for pindex, pnode in enumerate(path):
-                        if pindex < len(path) - 1:
-                            p_snode = pnode
-                            p_dnode = path[pindex+1]
-                            # determine the BW usage between them. Check whether there are same NS
-                            # across 2 physical nodes
-                            if not nx.has_path(graph, p_snode, p_dnode):
-                                print 'Tabu++: There is no direct link. Revise comm_cost_func'
-                                return
-
-                            self.update_curr_link_usage(p_snode, p_dnode, graph)
-                            if graph[p_snode][p_dnode]['curr_load'] + self.req_requirements['rate'] > graph[p_snode][p_dnode]['maxBW']:
-                                illegal_path = True
-                                break
-
-                    if not illegal_path:
-
-                        filtered_path.append(path)
-
-                # nx.dijkstra_path(rdgraph, source=0, target=5, weight='avail')
-                # remember here paths can have same cost but different length
-                if not filtered_path:
-                    continue
-                else:
-                    path_candidate = OrderedDict()
-                    for pi, dpath in enumerate(filtered_path):
-                        spath = split_path(dpath)
-                        curr_load = 0
-                        exp_load = 0
-                        for pair in spath:
-                            src_node = pair[0]
-                            dst_node = pair[1]
-                            self.update_curr_link_usage(src_node, dst_node, graph)
-                            curr_load += graph[src_node][dst_node]['curr_load']
-                            exp_load += self.req_requirements['rate']
-                        path_candidate[pi] = exp_load / float(curr_load + exp_load)
-                    selected_pi = min(path_candidate, key=path_candidate.get)
-                    path_dict[node] = filtered_path[selected_pi]
-                    lat_data = 0
-                    for pindex, pnode in enumerate(path_dict[node]):
-                        if pindex < len(path_dict[node]) - 1:
-                            p_snode = pnode
-                            p_dnode = path_dict[node][pindex+1]
-                            lat_data += graph[p_snode][p_dnode]['delay']
-                    path_lat[node] = lat_data
-
-                    curr_routing_cost[node] = path_candidate[selected_pi]
-        return curr_routing_cost, path_dict, path_lat
-
-    # This is used to calculate chain configuration cost
-    # if need new resource for dst_node or src_node, config_cost = 1
-    # config_cost = 0 when both src_node and dst_node are reused
     # Perfect match will be: VNF-index: node-index: instance-index
     def chain_config_cost(self, dst_nf, src_dict, node_candidate):
         # calculate number of consecutive VNFs
@@ -600,14 +454,6 @@ class AdvTabu(object):
                     for ns_id, ns_info_dict in self.sys_ns_dict.items():   # ns_id changed here
                         mapping_dict = ns_info_dict['mapping']
                         for map_index, orig_nf in enumerate(mapping_dict.keys()):
-                            # if src_dict:
-                                # print 'check the match'
-                                # print {orig_nf: mapping_dict[orig_nf]}
-                                # print src_dict
-                                # import time
-                                # time.sleep(2)
-                            # print 'mapping dict:', {orig_nf: mapping_dict[orig_nf]}
-                            # print 'src dict:', src_dict
                             if {orig_nf: mapping_dict[orig_nf]} == src_dict:
                                 print 'Tabu++ : Source check worked!!!'
                                 # print 'Destination dict', dst_dict
@@ -655,55 +501,6 @@ class AdvTabu(object):
             # print 'Maximum shared!!!!!!!!!!!!!!!!!!!!!!!!!!', max_ns
             most_shared_list = [inst_id for inst_id, ns_list in inst_candidate.items() if len(ns_list) == max_ns]
             return most_shared_list[0]
-
-    # Calculate the reliability cost. Re-examine it
-    def rel_cost_func(self, nf_index, node_candidate):
-        rel_cost = OrderedDict()
-        for node in node_candidate:
-            node_rel = self.graph.node[node]['rel']
-            origin_nf_rel = self.nf_prop['rel'][nf_index]
-            nf_rel = origin_nf_rel * node_rel
-            rel_cost[node] = nf_rel
-        return rel_cost
-
-    # The good thing of paid is calculate the reliability of all VNFs on the same node
-    # type_of_search=single, cluster
-    # mention the case when the candidate gets over resources
-    def paid_engine(self, candidate, type_of_search):
-        sum_node_weight = 0
-        # candidate is a dict (vnf_index, node)
-        if type_of_search == 'single':
-            conv_candidate = self.find_coloc(candidate.values())
-            update_rel_node = OrderedDict()
-            for target_node, vnf_list in conv_candidate.items():
-                update_rel_node[target_node] = self.graph.node[target_node]['rel']
-                for vnf_index in vnf_list:
-                    update_rel_node[target_node] = update_rel_node[target_node] * self.nf_prop['rel'][vnf_index]
-
-            for nf_index, target_node in candidate.items():
-                # determine the reuse factor here
-                # load_index = req_load/curr_load      # This is VNF-level index
-                req_load = self.req_requirements['proc_cap']
-                inst_dict = OrderedDict()
-                if self.graph.node[target_node]['instances'].get(nf_index):
-                    nf_inst_dict = self.graph.node[target_node]['instances'][nf_index]
-                    for inst_index, inst_info_list in nf_inst_dict.items():
-                        total_load = sum([inst_info_dict['req_load'] for inst_info_dict in inst_info_list if inst_info_dict['lifetime'] >= self.timer])
-                        if req_load + total_load <= self.nf_prop['proc_cap'][nf_index]:
-                            inst_dict[inst_index] = total_load
-                if inst_dict:
-                    min_load = min([load for inst_index, load in inst_dict.items()])
-                else:
-                    vnf_load = self.nf_prop['proc_cap'][nf_index]
-                    curr_node_load = self.graph.node[target_node]['curr_load']
-                    total_node_cap = self.graph.node[target_node]['cpu']
-                    if (vnf_load + curr_node_load) > total_node_cap:
-                        return None
-                    min_load = 0
-                reuse_factor = req_load/float(min_load+req_load)
-                sum_node_weight = sum_node_weight + update_rel_node[target_node]/reuse_factor
-
-        return sum_node_weight
 
     def find_coloc(self, candidate):
         conv_candidate = OrderedDict()
