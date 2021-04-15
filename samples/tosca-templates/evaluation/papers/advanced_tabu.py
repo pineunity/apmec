@@ -124,14 +124,8 @@ class AdvTabu(object):
                     prev_vnf = self.sfc_dict.keys()[index - 1]
                     src_dict[prev_vnf] = copy.deepcopy(curr_solution[prev_vnf])
                 
-                node_candidate = list()
-                for node in est_graph.nodes():
-                    if nf_index in est_graph.node[node]['allowed_vnf_list']:
-                        node_candidate.append(node)
-
                 # Run comp cost function
-                comp_cost_dict, config_cost_dict, match_dict = self.pre_comp_config_cost_func(nf_index, src_dict,
-                                                                                              node_candidate[:], est_graph)
+                comp_cost_dict, config_cost_dict, match_dict = self.pre_comp_config_cost_func(nf_index, src_dict, est_graph)
 
                 local_node_candidate = OrderedDict()
                 for node in node_candidate:
@@ -314,7 +308,7 @@ class AdvTabu(object):
                         graph[src_node][dst_node]['curr_load'] + req['rate']
 
     # Combine comp cost and config cost - chain aware
-    def pre_comp_config_cost_func(self, nf_index, src_dict, node_candidate, graph):
+    def pre_comp_config_cost_func(self, nf_index, src_dict, graph):
         req_load = self.req_requirements['proc_cap']
         vnf_load = self.nf_prop['proc_cap'][nf_index]
         # comm_cost includes key (target node) and value(comm_cost)
@@ -324,11 +318,7 @@ class AdvTabu(object):
         node_match = OrderedDict()
         load_dict = OrderedDict()
         # Determine a set of possible instances on a visited node
-        for node in node_candidate:
-            # curr_node_load = graph.node[node]['curr_load']
-            # total_node_cap = graph.node[node]['cpu']
-            # exp_node_load = curr_node_load + vnf_load
-            # cni = vnf_load / float(exp_node_load)          # computation node index
+        for node in graph.keys():
             inst_existed = False
             if graph.node[node]['instances'].get(nf_index):
                 nf_inst_dict = graph.node[node]['instances'][nf_index]

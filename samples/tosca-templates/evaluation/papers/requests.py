@@ -109,23 +109,31 @@ def initiate_graph()
     comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
     for node in comp_node_list:
         graph[node] = OrderedDict()
+        graph[node]['instances'] = OrderedDict()
     return graph
 
 if 'sap' in first_arg:
     graph = initiate_graph()
-
-    mes_id = uuid.uuid4()
-    sys_vnf_dict = OrderedDict()   # store mes_id and ordered vnf list
-    sap_system_dict = OrderedDict()
-    # update vnf_list
-    vnf_list = openstack.nfins_tracking()
+ 
+    cont = True
+    vm_count = 0
+    req_count = 0
+    while cont:
+        mes_id = uuid.uuid4()
+        sys_vnf_dict = OrderedDict()   # store mes_id and ordered vnf list
+        sap_system_dict = OrderedDict()
+        # update vnf_list
+        vnf_list = openstack.nfins_tracking()
     
-    sap = apmec_sap.SAP(tosca_req_list, graph, sap_system_dict, VM_CAP)
-    new_vnf_list, reused_vnf_list = sap.execute()
-    coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
-    mes_name = 'mes-' + uuid.uuid4()
-    openstack.mes_create(mes_name)
-    # sleep here until mes is active
+        sap = apmec_sap.SAP(tosca_req_list, graph, sap_system_dict, VM_CAP)
+        new_vnf_list, reused_vnf_list = sap.execute()
+        coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
+        mes_name = 'mes-' + uuid.uuid4()
+        openstack.mes_create(mes_name)
+        # sleep here until mes is active
+        # update graph only if mes is active
+        # if mes is active, increase req_count and update vm_count
+    
     
 
 
