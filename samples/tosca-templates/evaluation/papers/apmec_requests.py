@@ -117,7 +117,6 @@ def initiate_graph():
         graph[node]['instances'] = OrderedDict()
     return graph
 
-
 # KPI here:
 #  1. Number of accepted requests
 #  2. Number of used VMs for NFV network services
@@ -132,8 +131,9 @@ def reform_tosca_list(solution):
        orig_vnf_name = 'VNF' + str(vnfi+1)
        sample = SAMPLE[vnf_name]
        sample_dict = dict()
-       sample_dict['name'] = index
+       sample_dict['name'] = orig_vnf_name
        sample_dict['vnfd_template'] = sample
+       tosca_list.append(sample_dict)
     return tosca_list
 
 if 'sap' in first_arg:
@@ -155,13 +155,15 @@ if 'sap' in first_arg:
             break
         # new_vnf_list, reused_vnf_list = sap.execute()
         print "Solution:", solution
+        tosca_req = reform_tosca_list(solution)
+        print "Tosca format:", tosca_req
         # print "System dict:", sap_system_dict
         print "SAP config cost:", sap_config_cost
         new_vnf_list = list()
-        coop_import_requirements(sample='coop-mesd.yaml', req_list=new_vnf_list)
+        coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req)
         mes_name = 'mes-' + str(uuid.uuid4())
         # openstack_plugin.mes_create(mes_name)
-        # cont = False
+        cont = False
         # sleep here until mes is active
         # update graph only if mes is active
         # if mes is active, increase req_count and update vm_count
