@@ -7,7 +7,7 @@ from numpy import random as random_choice
 import time
 from collections import OrderedDict
 import sys
-import openstack_plugin
+#import openstack_plugin
 import uuid
 
 import apmec_sap
@@ -135,15 +135,15 @@ if 'sap' in first_arg:
         sap_total_cost, sap_comp_cost, sap_config_cost, solution = apmec_sap.sap(req_list, graph, sap_system_dict, VM_CAP)
         if not sap_total_cost:
             print 'Request is rejected!'
-            continue
+            break
         # new_vnf_list, reused_vnf_list = sap.execute()
         print "Solution:", solution
         print "System dict:", sap_system_dict
         new_vnf_list = list()
         coop_import_requirements(sample='coop-mesd.yaml', req_list=new_vnf_list)
         mes_name = 'mes-' + str(uuid.uuid4())
-        openstack_plugin.mes_create(mes_name)
-        cont = False
+        # openstack_plugin.mes_create(mes_name)
+        # cont = False
         # sleep here until mes is active
         # update graph only if mes is active
         # if mes is active, increase req_count and update vm_count

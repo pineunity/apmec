@@ -294,7 +294,7 @@ class AdvTabu(object):
         for node in graph.keys():
             inst_existed = False
             if graph[node]['instances'].get(nf_index):
-                nf_inst_dict = graph['instances'][nf_index]
+                nf_inst_dict = graph[node]['instances'][nf_index]
                 node_match[node] = list()
                 load_dict[node] = OrderedDict()
                 for inst_index, inst_info_list in nf_inst_dict.items():
