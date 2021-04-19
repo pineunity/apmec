@@ -27,16 +27,15 @@ MAX = 10**6
 
 
 class AdvTabu(object):
-    def __init__(self, req_dict, graph, sys_nf_info, vm_cap):
+    def __init__(self, req_list, graph, sys_nf_info, vm_cap):
         self.graph = graph
         # self.ns_dict = system_ns_dict
-        self.req_dict = req_dict
-        self.sfc_dict = req_dict.keys()
+        self.sfc_dict = req_list
         self.tabu_list = list()
         self.req_id = uuid.uuid4()
         self.vm_cap = vm_cap
         self.sys_ns_dict = sys_nf_info
-        self.NSlen = len(req_dict)
+        self.NSlen = len(req_list)
         self.inst_mapping = OrderedDict()    # used for reuse, this is later used to update graph
         self.shared_path_dict = OrderedDict()
 
@@ -112,10 +111,10 @@ class AdvTabu(object):
         est_graph = copy.deepcopy(self.graph)
 
         if strategy == 'random':
-            for index, nf_index in enumerate(self.sfc_dict.keys()):
+            for index, nf_index in enumerate(self.sfc_dict):
                 src_dict = OrderedDict()
                 if index:
-                    prev_vnf = self.sfc_dict.keys()[index - 1]
+                    prev_vnf = self.sfc_dict[index - 1]
                     src_dict[prev_vnf] = copy.deepcopy(curr_solution[prev_vnf])
                 
                 # Run comp cost function
@@ -161,7 +160,7 @@ class AdvTabu(object):
         for index, vnf_index in enumerate(new_solution.keys()):
             src_dict = OrderedDict()
             if index:
-                prev_vnf = self.sfc_dict.keys()[index - 1]
+                prev_vnf = self.sfc_dict[index - 1]
                 src_dict[prev_vnf] = copy.deepcopy(curr_solution[prev_vnf])
             node_candidate_dict = new_solution[vnf_index]
             node_candidate = node_candidate_dict.keys()
@@ -182,8 +181,8 @@ class AdvTabu(object):
         req_load = 1
         visited_solution = copy.deepcopy(orig_solution)
         prev_node_dict = visited_solution[visited_vnf]
-        curr_node_load = self.graph.node[visited_node]['load']
-        total_node_cap = self.graph.node[visited_node]['cap']
+        curr_node_load = self.graph[visited_node]['load']
+        total_node_cap = self.graph[visited_node]['cap']
         if self.graph[visited_node]['instances'].get(visited_vnf) is None:
             if {visited_node: None} != prev_node_dict:
                 if (vnf_load + curr_node_load) > total_node_cap:
@@ -218,12 +217,11 @@ class AdvTabu(object):
         picked_index = None
         # apply random VNF first
         if policy == 'random':
-            picked_vnf = random.choice(self.sfc_dict.keys())
-        picked_index = self.sfc_dict.keys().index(picked_vnf)
+            picked_vnf = random.choice(self.sfc_dict)
+        picked_index = self.sfc_dict.index(picked_vnf)
         node_candidate = list()
-        for node in self.graph.nodes():
-            if picked_vnf in self.graph.node[node]['allowed_vnf_list']:
-                node_candidate.append(node)
+        for node in self.graph:
+            node_candidate.append(node)
 
         trial_node = random.choice(node_candidate)    # does not make any sense to the chain configuration
         new_solution = self.find_match(curr_solution, picked_vnf, trial_node)
@@ -315,7 +313,7 @@ class AdvTabu(object):
 
             if not inst_existed:
                 # Limit the number of node by overal node capacity
-                curr_node_load = graph[node]['curr_load']
+                curr_node_load = graph[node]['load']
                 total_node_cap = graph[node]['cap']
                 if (vnf_load + curr_node_load) > total_node_cap:
                     final_dst_node[node] = None

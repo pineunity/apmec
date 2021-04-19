@@ -80,7 +80,7 @@ for nf, nf_instance in req_sfc.items():
     sample_dict['vnfd_template'] = sample
     tosca_req_list.append(sample_dict)
 
-import_requirements(sample='coop-mesd.yaml', req_list=tosca_req_list)
+import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
 
 # request_vms = 0
 # for nf_index, nf_ins in req_sfc.items():

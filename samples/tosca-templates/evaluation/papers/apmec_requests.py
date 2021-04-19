@@ -79,24 +79,20 @@ sys_nf_list = range(0, sys_Nmax)
 #for i in range(0, sys_Nmax):
 #    nf_set[i] = randint(1, vm_capacity)
 
-def request_generator():
-    lenSFC = randint(1, req_Nmax)
-    # Build the NS request
-    req_nf_list = random_choice.choice(sys_nf_list, lenSFC, replace=False)
-    # Transform the request to the TOSCA template
+lenSFC = randint(1, req_Nmax)
+# Build the NS request
+req_nf_list = random_choice.choice(sys_nf_list, lenSFC, replace=False)
+# Transform the request to the TOSCA template
 
-    req_list = list()
-    tosca_req_list = list()
-    for nf in req_nf_list:
-        index = 'VNF' + str(nf)
-        req_list.append(index)
-        sample = SAMPLE[index]
-        #vnf_name = "VNF" + str(nf+1)
-        sample_dict = dict()
-        sample_dict['name'] = index
-        sample_dict['vnfd_template'] = sample
-        tosca_req_list.append(sample_dict)
-    return req_list, tosca_req_list
+tosca_req_list = list()
+for nf in req_nf_list:
+    index = 'VNF' + str(nf)
+    sample = SAMPLE[index]
+    #vnf_name = "VNF" + str(nf+1)
+    sample_dict = dict()
+    sample_dict['name'] = index
+    sample_dict['vnfd_template'] = sample
+    tosca_req_list.append(sample_dict)
 
 # req dict: VNF1: vnfd11, ..., VNF10: vnfd101
 # coop_import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
@@ -114,7 +110,6 @@ def initiate_graph():
     for node in comp_node_list:
         graph[node] = OrderedDict()
         graph[node]['cap'] = VM_CAP
-        graph[node]['load'] = 0
         graph[node]['instances'] = OrderedDict()
     return graph
 
@@ -126,21 +121,20 @@ if 'sap' in first_arg:
     vm_count = 0
     req_count = 0
     while cont:
-        req_list, tosca_list = request_generator()
         mes_id = uuid.uuid4()
         sys_vnf_dict = OrderedDict()   # store mes_id and ordered vnf list
         sap_system_dict = OrderedDict()
         # update vnf_list
         # vnf_list = openstack.nfins_tracking()
-        sap_total_cost, sap_comp_cost, sap_config_cost, solution = apmec_sap.sap(req_list, graph, sap_system_dict, VM_CAP)
+
+        sap_total_cost, sap_comp_cost, sap_config_cost = apmec_sap.sap(tosca_req_list, graph, sap_system_dict, VM_CAP)
         if not sap_total_cost:
             print 'Request is rejected!'
             continue
         # new_vnf_list, reused_vnf_list = sap.execute()
-        print solution
         new_vnf_list = list()
-        coop_import_requirements(sample='coop-mesd.yaml', req_list=new_vnf_list)
-        mes_name = 'mes-' + str(uuid.uuid4())
+        coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
+        mes_name = 'mes-' + uuid.uuid4()
         openstack.mes_create(mes_name)
         cont = False
         # sleep here until mes is active
