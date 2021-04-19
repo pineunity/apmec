@@ -84,19 +84,18 @@ def request_generator():
     # Build the NS request
     req_nf_list = random_choice.choice(sys_nf_list, lenSFC, replace=False)
     # Transform the request to the TOSCA template
-
     req_list = list()
-    tosca_req_list = list()
+    #tosca_req_list = list()
     for nf in req_nf_list:
         index = 'VNF' + str(nf)
         req_list.append(index)
-        sample = SAMPLE[index]
-        #vnf_name = "VNF" + str(nf+1)
-        sample_dict = dict()
-        sample_dict['name'] = index
-        sample_dict['vnfd_template'] = sample
-        tosca_req_list.append(sample_dict)
-    return req_list, tosca_req_list
+    #    sample = SAMPLE[index]
+    #    #vnf_name = "VNF" + str(nf+1)
+    #    sample_dict = dict()
+    #    sample_dict['name'] = index
+    #    sample_dict['vnfd_template'] = sample
+    #    tosca_req_list.append(sample_dict)
+    return req_list
 
 # req dict: VNF1: vnfd11, ..., VNF10: vnfd101
 # coop_import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
@@ -119,6 +118,24 @@ def initiate_graph():
     return graph
 
 
+# KPI here:
+#  1. Number of accepted requests
+#  2. Number of used VMs for NFV network services
+#  3. Chain configuration cost
+
+def reform_tosca_list(solution):
+    tosca_list = list()
+    for vnfi, vnf_name in enumerate(solution.keys()):
+       inst = solution[vnf_name]
+       if inst is None:
+           continue
+       orig_vnf_name = 'VNF' + str(vnfi+1)
+       sample = SAMPLE[vnf_name]
+       sample_dict = dict()
+       sample_dict['name'] = index
+       sample_dict['vnfd_template'] = sample
+    return tosca_list
+
 if 'sap' in first_arg:
     graph = initiate_graph()
     cont = True
@@ -126,7 +143,7 @@ if 'sap' in first_arg:
     req_count = 0
     sap_system_dict = OrderedDict()
     while cont:
-        req_list, tosca_list = request_generator()
+        req_list = request_generator()
         print "=================================="
         print "Request:", req_list
         mes_id = uuid.uuid4()
@@ -137,7 +154,7 @@ if 'sap' in first_arg:
             print 'Request is rejected!'
             break
         # new_vnf_list, reused_vnf_list = sap.execute()
-        # print "Solution:", solution
+        print "Solution:", solution
         # print "System dict:", sap_system_dict
         print "SAP config cost:", sap_config_cost
         new_vnf_list = list()
