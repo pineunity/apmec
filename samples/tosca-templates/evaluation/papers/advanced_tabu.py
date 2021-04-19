@@ -26,6 +26,7 @@ MAX = 10**6
 
 NODE_CAP = 10
 
+
 class AdvTabu(object):
     def __init__(self, req_dict, graph, sys_nf_info, vm_cap):
         self.graph = graph
@@ -322,7 +323,7 @@ class AdvTabu(object):
         for node in graph.keys():
             inst_existed = False
             if graph[node]['instances'].get(nf_index):
-                nf_inst_list = graph[node]['instances'][nf_index]
+                nf_inst_dict = graph['instances'][nf_index]
                 node_match[node] = list()
                 load_dict[node] = OrderedDict()
                 for inst_index, inst_info_list in nf_inst_dict.items():
@@ -336,7 +337,6 @@ class AdvTabu(object):
                         print 'current load', total_load
                         print 'Req load', req_load
                         print 'expected load', (total_load+req_load)
-                        print 'VNF cap', self.nf_prop['proc_cap'][nf_index]
                         # import time
                         # time.sleep(3)
                 # if inst_load:
