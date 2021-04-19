@@ -380,7 +380,7 @@ class AdvTabu(object):
                     target_inst_id = max(local_ins_dict, key=local_ins_dict.get)
                     final_dst_node[cd_node] = target_inst_id
                     config_cost[cd_node] = 0
-                    curr_node_load = graph.node[cd_node]['curr_load']
+                    curr_node_load = graph[cd_node]['load']
                     exp_node_load = curr_node_load + vnf_load
                     cni = vnf_load / float(exp_node_load)          # computation node index
                     curr_comp_cost[cd_node] = cni * req_load / float(req_load + local_ins_dict[target_inst_id])
@@ -396,14 +396,14 @@ class AdvTabu(object):
 
     # Combine comp cost and config cost - chain aware
     def post_comp_config_cost_func(self, nf_index, src_dict, node_dict, graph):
-        vnf_load = self.nf_prop['proc_cap'][nf_index]
+        vnf_load = 1
         # comm_cost includes key (target node) and value(comm_cost)
         curr_comp_cost = OrderedDict()
         config_cost = OrderedDict()
         for visited_node, visited_instance in node_dict.items():            # instance can be None here
             if visited_instance is None:
-                curr_node_load = graph.node[visited_node]['curr_load']
-                total_node_cap = graph.node[visited_node]['cpu']
+                curr_node_load = graph[visited_node]['load']
+                total_node_cap = graph[visited_node]['cap']
                 if (vnf_load + curr_node_load) > total_node_cap:
                     continue
                 exp_node_load = curr_node_load + vnf_load

@@ -26,6 +26,7 @@ def split_path(path):
             split_list.append((val, nxt_val))
     return split_list
 
+
 class Tabu(object):
     def __init__(self, nf_prop, req_dict, graph, sys_ns_dict, timer):
         self.graph = graph
