@@ -102,15 +102,15 @@ def update_vnf_list():
     vnf_list = openstack.nfins_tracking()
     
 
-
 # Run algorithm here to store network function and instances
-def initiate_graph()
+def initiate_graph():
     graph = OrderedDict()
     comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
     for node in comp_node_list:
         graph[node] = OrderedDict()
         graph[node]['instances'] = OrderedDict()
     return graph
+
 
 if 'sap' in first_arg:
     graph = initiate_graph()
