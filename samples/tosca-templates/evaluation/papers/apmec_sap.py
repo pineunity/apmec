@@ -4,14 +4,14 @@ import uuid
 from advanced_tabu import AdvTabu
 
 
-def scamp(system_ns_dict, graph, nf_prop, vm_cap):
+def sap(system_ns_dict, graph, nf_prop, vm_cap):
     # graph will be changed automatically in Tabu
     tabu_solver = AdvTabu(nf_prop, graph, system_ns_dict, vm_cap)
     # ns_candidate is formed as {node:instance}
     ns_candidate, result_dict = tabu_solver.execute_tabu()
     if not ns_candidate:
         print "Algorithm is finished!!!"
-        return None, None, None, None, None, None
+        return None, None, None
     ns_id = tabu_solver.getReqID()
     total_cost = result_dict['total_cost']
     comp_cost = result_dict['comp_cost']

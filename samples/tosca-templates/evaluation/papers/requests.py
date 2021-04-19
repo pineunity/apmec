@@ -127,9 +127,12 @@ if 'sap' in first_arg:
         sap_system_dict = OrderedDict()
         # update vnf_list
         vnf_list = openstack.nfins_tracking()
-    
-        sap = apmec_sap.SAP(tosca_req_list, graph, sap_system_dict, VM_CAP)
-        new_vnf_list, reused_vnf_list = sap.execute()
+
+        sap_total_cost, sap_comp_cost, sap_config_cost = apmec_sap.sap(tosca_req_list, graph, sap_system_dict, VM_CAP)
+        if not sap_total_cost:
+            print 'Request is rejected!'
+            continue
+        # new_vnf_list, reused_vnf_list = sap.execute()
         coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
         mes_name = 'mes-' + uuid.uuid4()
         openstack.mes_create(mes_name)
