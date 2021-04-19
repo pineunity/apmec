@@ -24,6 +24,7 @@ TABU_ITER_MAX = 30   # Tabu size: stop after algorithm reaches this size
 LOOP_ITER_MAX = 10   # Number of iterations is executed for each tabu search
 MAX = 10**6
 
+NODE_CAP = 10
 
 class AdvTabu(object):
     def __init__(self, req_dict, graph, sys_nf_info, vm_cap):
@@ -309,8 +310,8 @@ class AdvTabu(object):
 
     # Combine comp cost and config cost - chain aware
     def pre_comp_config_cost_func(self, nf_index, src_dict, graph):
-        req_load = self.req_requirements['proc_cap']
-        vnf_load = self.nf_prop['proc_cap'][nf_index]
+        req_load = 1
+        vnf_load = 1
         # comm_cost includes key (target node) and value(comm_cost)
         curr_comp_cost = OrderedDict()
         config_cost = OrderedDict()
@@ -320,16 +321,14 @@ class AdvTabu(object):
         # Determine a set of possible instances on a visited node
         for node in graph.keys():
             inst_existed = False
-            if graph.node[node]['instances'].get(nf_index):
-                nf_inst_dict = graph.node[node]['instances'][nf_index]
+            if graph[node]['instances'].get(nf_index):
+                nf_inst_list = graph[node]['instances'][nf_index]
                 node_match[node] = list()
-                # print 'Checked node', node
                 load_dict[node] = OrderedDict()
                 for inst_index, inst_info_list in nf_inst_dict.items():
-                    total_load = sum([inst_info_dict['req_load'] for inst_info_dict in inst_info_list if inst_info_dict['lifetime'] >= self.timer])
-                    if req_load + total_load <= self.nf_prop['proc_cap'][nf_index]:
+                    total_load = len(inst_info_list)
+                    if total_load + req_load <= self.vm_cap[nf_index]:
                         inst_existed = True
-                        # node_match[node].append({'id': inst_index, 'curr_load': total_load})
                         load_dict[node][inst_index] = total_load
                         node_match[node].append(inst_index)
                     else:
