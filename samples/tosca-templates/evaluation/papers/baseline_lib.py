@@ -22,6 +22,7 @@ def split_path(path):
             split_list.append((val, nxt_val))
     return split_list
 
+
 class BaselineLib(object):
     def __init__(self, nf_prop, req_dict, graph, sys_ns_dict, timer):
         self.graph = graph
@@ -43,10 +44,7 @@ class BaselineLib(object):
         solution_info_dict = OrderedDict()
         solution_info_dict['total_cost'] = 0
         solution_info_dict['config_cost'] = 0
-        solution_info_dict['routing_cost'] = 0
         solution_info_dict['comp_cost'] = 0
-        solution_info_dict['rec_cost'] = 0
-        solution_info_dict['rel_cost'] = 1
         solution_info_dict['detailed_path'] = list()
         curr_solution = OrderedDict()
         est_graph = copy.deepcopy(self.graph)
@@ -82,7 +80,6 @@ class BaselineLib(object):
                 print 'At VNF-th', nf_index
                 print 'Current solution', curr_solution
                 print 'Node candidate', node_candidate
-                print 'baseline: routing cost', routing_cost_dict
                 print 'baseline: comp cost', comp_cost_dict
                 import time
                 # time.sleep(50)

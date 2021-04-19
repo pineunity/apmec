@@ -45,7 +45,7 @@ class AdvTabu(object):
         # print 'orig-cost:', init_cost
         if init_candidate is None:
             print "Algorithm failed at first step."
-            return None, None
+            return None, None, None
         # print 'first path', self.e2e_path
         # print 'first candidate', init_candidate
         curr_solution = copy.deepcopy(init_candidate)
@@ -63,10 +63,6 @@ class AdvTabu(object):
             # match_tpl = (vnf_index, node_index, instance_index)
             # print 'end tracking'
             if bst_candidate is None:
-                # print 'Tabu++: I am None!!!'
-                # print 'Loop index:', loop_index
-                # import time
-                # time.sleep(5)
                 loop_index = loop_index + 1
                 continue
             bst_cost = solution_info_dict['total_cost']
@@ -98,11 +94,11 @@ class AdvTabu(object):
                 print "Tabu++ worked here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         if final_best_cost >= MAX:
             print "Tabu++: unable to find better solution due the the constraint"
-            return None, None
+            return None, None, None
         print "=========="
         print 'Tabu++ list:', len(self.tabu_list)
         # should return best candidate
-        return final_best_candidate, final_best_result_dict
+        return final_best_candidate, final_best_result_dict, curr_solution
 
     # Find first solution: apply local search for this case (one-by-one)
     def find_first_solution(self, strategy):

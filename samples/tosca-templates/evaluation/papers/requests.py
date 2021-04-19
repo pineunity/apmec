@@ -114,7 +114,6 @@ def initiate_graph():
     return graph
 
 
-
 if 'sap' in first_arg:
     graph = initiate_graph()
  
@@ -133,6 +132,7 @@ if 'sap' in first_arg:
             print 'Request is rejected!'
             continue
         # new_vnf_list, reused_vnf_list = sap.execute()
+        new_vnf_list = list()
         coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
         mes_name = 'mes-' + uuid.uuid4()
         openstack.mes_create(mes_name)
