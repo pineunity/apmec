@@ -136,6 +136,7 @@ if 'sap' in first_arg:
         coop_import_requirements(sample='test_simple_mesd.yaml', req_list=new_vnf_list)
         mes_name = 'mes-' + uuid.uuid4()
         openstack.mes_create(mes_name)
+        cont = False
         # sleep here until mes is active
         # update graph only if mes is active
         # if mes is active, increase req_count and update vm_count
