@@ -137,7 +137,7 @@ class AdvTabu(object):
                     final_candidate = random.choice(local_node_candidate.keys())
                     exp_total_cost = local_node_candidate[final_candidate]
                     curr_solution[nf_index] = {final_candidate: match_dict[final_candidate]}
-                    print "Tabu++: config cost:", config_cost_dict[final_candidate]
+                    # print "Tabu++: config cost:", config_cost_dict[final_candidate]
                     solution_info_dict['total_cost'] += exp_total_cost
                     solution_info_dict['config_cost'] += config_cost_dict[final_candidate]
                     solution_info_dict['comp_cost'] += comp_cost_dict[final_candidate]

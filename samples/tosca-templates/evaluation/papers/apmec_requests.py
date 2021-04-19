@@ -121,13 +121,13 @@ def initiate_graph():
 
 if 'sap' in first_arg:
     graph = initiate_graph()
- 
     cont = True
     vm_count = 0
     req_count = 0
     sap_system_dict = OrderedDict()
     while cont:
         req_list, tosca_list = request_generator()
+        print "Request:", req_list
         mes_id = uuid.uuid4()
         # update vnf_list
         # vnf_list = openstack_plugin.nfins_tracking()
@@ -136,8 +136,9 @@ if 'sap' in first_arg:
             print 'Request is rejected!'
             break
         # new_vnf_list, reused_vnf_list = sap.execute()
-        print "Solution:", solution
-        print "System dict:", sap_system_dict
+        # print "Solution:", solution
+        # print "System dict:", sap_system_dict
+        print "SAP config cost:", sap_config_cost
         new_vnf_list = list()
         coop_import_requirements(sample='coop-mesd.yaml', req_list=new_vnf_list)
         mes_name = 'mes-' + str(uuid.uuid4())
