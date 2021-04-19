@@ -127,6 +127,7 @@ if 'sap' in first_arg:
     sap_system_dict = OrderedDict()
     while cont:
         req_list, tosca_list = request_generator()
+        print "=================================="
         print "Request:", req_list
         mes_id = uuid.uuid4()
         # update vnf_list

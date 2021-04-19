@@ -94,7 +94,7 @@ class AdvTabu(object):
         if final_best_cost >= MAX:
             print "Tabu++: unable to find better solution due the the constraint"
             return None, None, None
-        print "=========="
+        #print "=========="
         print 'Tabu++ list:', len(self.tabu_list)
         # should return best candidate
         return final_best_candidate, final_best_result_dict, curr_solution
