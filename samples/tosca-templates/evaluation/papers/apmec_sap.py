@@ -4,9 +4,9 @@ import uuid
 from advanced_tabu import AdvTabu
 
 
-def scamp(system_ns_dict, graph, nf_prop, req_dict, timer):
+def scamp(system_ns_dict, graph, nf_prop, vm_cap):
     # graph will be changed automatically in Tabu
-    tabu_solver = AdvTabu(nf_prop, req_dict, graph, system_ns_dict, timer)
+    tabu_solver = AdvTabu(nf_prop, graph, system_ns_dict, vm_cap)
     # ns_candidate is formed as {node:instance}
     ns_candidate, result_dict = tabu_solver.execute_tabu()
     if not ns_candidate:
