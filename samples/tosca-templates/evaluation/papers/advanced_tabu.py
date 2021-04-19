@@ -339,14 +339,11 @@ class AdvTabu(object):
                         print 'expected load', (total_load+req_load)
                         # import time
                         # time.sleep(3)
-                # if inst_load:
-                #     exp_inst = max(inst_load, key=inst_load.get)
-                #     curr_comp_cost[node] = cni * req_load / float(req_load + inst_load[exp_inst])
 
             if not inst_existed:
                 # Limit the number of node by overal node capacity
-                curr_node_load = graph.node[node]['curr_load']
-                total_node_cap = graph.node[node]['cpu']
+                curr_node_load = graph[node]['curr_load']
+                total_node_cap = graph[node]['cap']
                 if (vnf_load + curr_node_load) > total_node_cap:
                     final_dst_node[node] = None
                     continue
