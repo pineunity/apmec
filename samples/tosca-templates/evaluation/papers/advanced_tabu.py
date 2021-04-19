@@ -25,8 +25,6 @@ TABU_ITER_MAX = 30   # Tabu size: stop after algorithm reaches this size
 LOOP_ITER_MAX = 10   # Number of iterations is executed for each tabu search
 MAX = 10**6
 
-NODE_CAP = 10
-
 
 class AdvTabu(object):
     def __init__(self, req_dict, graph, sys_nf_info, vm_cap):
@@ -37,7 +35,6 @@ class AdvTabu(object):
         self.tabu_list = list()
         self.req_id = uuid.uuid4()
         self.vm_cap = vm_cap
-        self.e2e_path = list()
         self.sys_ns_dict = sys_nf_info
         self.NSlen = len(req_dict)
         self.inst_mapping = OrderedDict()    # used for reuse, this is later used to update graph
@@ -49,7 +46,6 @@ class AdvTabu(object):
         if init_candidate is None:
             print "Algorithm failed at first step."
             return None, None
-        self.e2e_path = init_cost['detailed_path'][:]
         # print 'first path', self.e2e_path
         # print 'first candidate', init_candidate
         curr_solution = copy.deepcopy(init_candidate)
@@ -96,7 +92,6 @@ class AdvTabu(object):
                 final_best_cost = bst_cost
                 final_best_candidate = copy.deepcopy(bst_candidate)
                 final_best_result_dict = copy.deepcopy(solution_info_dict)
-                self.e2e_path = solution_info_dict['detailed_path'][:]
                 curr_solution = copy.deepcopy(bst_candidate)
                 loop_index = 0
                 # if policy is paid
@@ -131,13 +126,12 @@ class AdvTabu(object):
                 comp_cost_dict, config_cost_dict, match_dict = self.pre_comp_config_cost_func(nf_index, src_dict, est_graph)
 
                 local_node_candidate = OrderedDict()
-                for node in node_candidate:
+                for node in est_graph.keys():
                     if comp_cost_dict.get(node) is None:
                         comp_cost_dict[node] = MAX
                         local_node_candidate[node] = MAX
-                        path_dict[node] = list()
                         continue
-                    local_node_candidate[node] = ALPHA * comp_cost_dict[node] + BETA * config_cost_dict[node] # noqa
+                    local_node_candidate[node] = ALPHA * comp_cost_dict[node] + BETA * config_cost_dict[node]    # noqa
                 if not local_node_candidate:
                     print 'Tabu++: What is the fault reason:', local_node_candidate
                     print 'At VNF-th', nf_index
@@ -152,11 +146,10 @@ class AdvTabu(object):
                     solution_info_dict['total_cost'] += exp_total_cost
                     solution_info_dict['config_cost'] += config_cost_dict[final_candidate]
                     solution_info_dict['comp_cost'] += comp_cost_dict[final_candidate]
-                    solution_info_dict['detailed_path'].extend(path_dict[final_candidate])
 
                     prev_node_dict = {final_candidate: match_dict[final_candidate]}
                     # print 'First update graph', prev_node_dict
-                    self.update_graph({nf_index: {final_candidate: copy.deepcopy(match_dict[final_candidate])}}, est_graph, path_dict[final_candidate])  # noqa
+                    self.update_graph({nf_index: {final_candidate: copy.deepcopy(match_dict[final_candidate])}}, est_graph)  # noqa
 
             # print "Tabu++: conf cost for the first algorithm:", solution_info_dict['config_cost']
         return curr_solution, solution_info_dict
@@ -185,33 +178,31 @@ class AdvTabu(object):
             solution_info_dict['total_cost'] = solution_info_dict['total_cost'] + curr_cost
             solution_info_dict['config_cost'] = solution_info_dict['config_cost'] + config_cost_dict[pnode]
             solution_info_dict['comp_cost'] = solution_info_dict['comp_cost'] + comp_cost_dict[pnode]
-            solution_info_dict['detailed_path'].extend(path_dict[pnode])
-            self.update_graph({vnf_index: copy.deepcopy(node_candidate_dict)}, bst_graph, path_dict[pnode])
+            self.update_graph({vnf_index: copy.deepcopy(node_candidate_dict)}, bst_graph)
         return solution_info_dict
 
     def find_match(self, orig_solution, visited_vnf, visited_node):
+        vnf_load = 1
+        req_load = 1
         visited_solution = copy.deepcopy(orig_solution)
         prev_node_dict = visited_solution[visited_vnf]
-        curr_node_load = self.graph.node[visited_node]['curr_load']
-        total_node_cap = self.graph.node[visited_node]['cpu']
-        if self.graph.node[visited_node]['instances'].get(visited_vnf) is None:
+        curr_node_load = self.graph.node[visited_node]['load']
+        total_node_cap = self.graph.node[visited_node]['cap']
+        if self.graph[visited_node]['instances'].get(visited_vnf) is None:
             if {visited_node: None} != prev_node_dict:
-                if (self.nf_prop['proc_cap'][visited_vnf] + curr_node_load) > total_node_cap:
+                if (vnf_load + curr_node_load) > total_node_cap:
                     return None
                 else:
-                    # print 'choose an empty node'
                     visited_solution[visited_vnf] = {visited_node: None}
             # return None
         else:
             local_inst_list = list()
-            for inst_id, inst_list in self.graph.node[visited_node]['instances'][visited_vnf].items():
-                if {visited_node: inst_id} != prev_node_dict:
-                    total_load = sum([inst_info_dict['req_load'] for inst_info_dict in inst_list if
-                                      inst_info_dict['lifetime'] >= self.timer])
-                    if self.req_requirements['proc_cap'] + total_load <= self.nf_prop['proc_cap'][visited_vnf]:
-                        local_inst_list.append(inst_id)
+            for inst_id, inst_list in self.graph[visited_node]['instances'][visited_vnf].items():
+                total_load = len(inst_list)
+                if req_load + total_load <= self.vm_cap[visited_vnf]:
+                    local_inst_list.append(inst_id)
             if not local_inst_list:
-                if (self.nf_prop['proc_cap'][visited_vnf] + curr_node_load) > total_node_cap:
+                if (vnf_load + curr_node_load) > total_node_cap:
                     return None
                 else:
                     if {visited_node: None} != prev_node_dict:
@@ -251,13 +242,6 @@ class AdvTabu(object):
 
         return {picked_vnf: final_solution[picked_vnf]}, final_solution, final_solution_info_dict
         # Since the final result did not change, the same trial is run at the end
-
-    def ordered_path_list(self, paid_list):
-        paid_dict = OrderedDict()
-        for paid_index, paid in enumerate(paid_list):
-            paid_dict[paid_index] = paid
-        order_path_tup = sorted(paid_dict.items(), key=lambda kv: kv[1])
-        return order_path_tup
 
     def in_tabu_list(self, match_dict):
         check = False
@@ -486,12 +470,10 @@ class AdvTabu(object):
                 conv_candidate[node].append(index)
         return conv_candidate
 
-    def update_graph(self, ns_candidate, graph=None, path_list=None):
+    def update_graph(self, ns_candidate, graph=None):
         # For Tabu++, target VNF instance is known
         if graph is None:
             graph = self.graph
-        if path_list is None:
-            path_list = self.e2e_path
         # Update physical node
         for vnf_index, node_dict in ns_candidate.items():
             if not node_dict:
@@ -501,27 +483,24 @@ class AdvTabu(object):
             vnf_inst = node_dict[node]
 
             inst_info = OrderedDict()
-            inst_info['lifetime'] = self.req_info['lifetime']
-            inst_info['req_load'] = self.req_requirements['proc_cap']
             inst_info['ns_id'] = self.req_id
-
+            req_load = 1
             if vnf_inst is None:
-                if graph.node[node]['curr_load'] + self.nf_prop['proc_cap'][vnf_index] > graph.node[node]['cpu']:
+                if graph[node]['load'] + 1 > graph[node]['cap']:
                     print 'Tabu++: Load in physical node is over. Revise update_graph'
                     # print index
                     return
-                graph.node[node]['curr_load'] =\
-                    graph.node[node]['curr_load'] + self.nf_prop['proc_cap'][vnf_index]
+                graph[node]['load'] =\
+                    graph[node]['load'] + 1
                 inst_id = uuid.uuid4()
                 node_dict[node] = inst_id       # Update ns_candidate
-                graph.node[node]['instances'][vnf_index] = OrderedDict()
-                graph.node[node]['instances'][vnf_index][inst_id] = list()
-                graph.node[node]['instances'][vnf_index][inst_id].append(inst_info)
+                graph[node]['instances'][vnf_index] = OrderedDict()
+                graph[node]['instances'][vnf_index][inst_id] = list()
+                graph[node]['instances'][vnf_index][inst_id].append(inst_info)
             else:
-                nf_inst_list = graph.node[node]['instances'][vnf_index][vnf_inst]
-                total_load = sum([inst_info_dict['req_load'] for inst_info_dict in nf_inst_list if
-                                  inst_info_dict['lifetime'] >= self.timer])
-                if self.req_requirements['proc_cap'] + total_load <= self.nf_prop['proc_cap'][vnf_index]:
+                nf_inst_list = graph[node]['instances'][vnf_index][vnf_inst]
+                total_load = len(nf_inst_list)
+                if req_load + total_load <= self.vm_cap[vnf_index]:
                     nf_inst_list.append(inst_info)
                 else:
                     print 'Tabu++: VNF instance load is over. Revise update_graph'
@@ -547,5 +526,3 @@ class AdvTabu(object):
     def get_graph(self):
         return self.graph
 
-    def get_path(self):
-        return self.e2e_path

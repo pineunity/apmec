@@ -102,7 +102,7 @@ def update_vnf_list():
     vnf_list = openstack.nfins_tracking()
 
 
-VM_CAP = 10
+NODE_CAP = 10
 comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
 # Run algorithm here to store network function and instances
 def initiate_graph():
@@ -112,6 +112,7 @@ def initiate_graph():
         graph[node]['cap'] = VM_CAP
         graph[node]['instances'] = OrderedDict()
     return graph
+
 
 
 if 'sap' in first_arg:
