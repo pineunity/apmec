@@ -15,9 +15,6 @@ def scamp(system_ns_dict, graph, nf_prop, vm_cap):
     ns_id = tabu_solver.getReqID()
     total_cost = result_dict['total_cost']
     comp_cost = result_dict['comp_cost']
-    routing_cost = result_dict['routing_cost']
-    rec_cost = result_dict['rec_cost']
-    rel_cost = result_dict['rel_cost']
     config_cost = result_dict['config_cost']
     print 'Tabu++ candidate before update'
     print ns_candidate
@@ -26,8 +23,6 @@ def scamp(system_ns_dict, graph, nf_prop, vm_cap):
     tabu_solver.update_graph(ns_candidate)
     system_ns_dict[ns_id] = OrderedDict()
     system_ns_dict[ns_id]['mapping'] = tabu_solver.reform_ns_candidate(ns_candidate)
-    system_ns_dict[ns_id]['detailed_path'] = result_dict['detailed_path']
-    system_ns_dict[ns_id]['rel'] = result_dict['rel_cost']
     print 'Tabu++ final_candidate'
     print ns_candidate
-    return total_cost, routing_cost, comp_cost, rec_cost, rel_cost, config_cost
+    return total_cost, comp_cost, config_cost
