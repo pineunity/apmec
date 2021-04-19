@@ -17,6 +17,7 @@ def split_path(path):
             split_list.append((val, nxt_val))
     return split_list
 
+
 # Set weight for problem optimization
 ALPHA = 0.6  # weight for computation cost
 BETA = 0.4  # weight for config cost
@@ -301,14 +302,6 @@ class AdvTabu(object):
                     config_cost[dst_node] = 1
         return config_cost
 
-    def update_curr_link_usage(self, src_node, dst_node, graph):
-        graph[src_node][dst_node]['curr_load'] = 0
-        if graph[src_node][dst_node].get('req'):
-            for req in graph[src_node][dst_node]['req']:
-                if req['lifetime'] >= self.timer:
-                    graph[src_node][dst_node]['curr_load'] =\
-                        graph[src_node][dst_node]['curr_load'] + req['rate']
-
     # Combine comp cost and config cost - chain aware
     def pre_comp_config_cost_func(self, nf_index, src_dict, graph):
         req_load = 1
@@ -493,24 +486,6 @@ class AdvTabu(object):
                 conv_candidate[node].append(index)
         return conv_candidate
 
-    def add_link_usage(self, src_node, dst_node, graph):
-        # BW(src_node, dst_node) does not specify the endpoints
-        if nx.has_path(graph, src_node, dst_node):
-            # print graph[src_node][dst_node]['curr_load']
-            self.update_curr_link_usage(src_node, dst_node, graph)
-            if graph[src_node][dst_node]['curr_load'] + self.req_requirements['rate'] > \
-                    graph[src_node][dst_node]['maxBW']:
-                print 'Tabu++: the link capacity is over!!! Revise add_link_usage'
-                # print src_node, dst_node
-            graph[src_node][dst_node]['curr_load'] = graph[src_node][dst_node]['curr_load'] + \
-                                                          self.req_requirements['rate']
-            if graph[src_node][dst_node].get('req') is None:
-                graph[src_node][dst_node]['req'] = list()
-            graph[src_node][dst_node]['req'].append(
-                {'id': self.req_id, 'lifetime': self.req_info['lifetime'], 'rate': self.req_requirements['rate']})
-        else:
-            print 'Tabu++: there is no direct link. Revise add_link_usage'
-
     def update_graph(self, ns_candidate, graph=None, path_list=None):
         # For Tabu++, target VNF instance is known
         if graph is None:
@@ -550,15 +525,6 @@ class AdvTabu(object):
                     nf_inst_list.append(inst_info)
                 else:
                     print 'Tabu++: VNF instance load is over. Revise update_graph'
-
-        # Update physical link
-        for node_index, node in enumerate(path_list):
-            if node_index < len(path_list) - 1:
-                p_snode = node
-                p_dnode = path_list[node_index + 1]
-                if p_snode == p_dnode:
-                    continue
-                self.add_link_usage(p_snode, p_dnode, graph)
 
     def reform_ns_candidate(self, ns_candidate):
         # ns_candidate is a list of node: VNF index:(node - instance index)
