@@ -434,6 +434,7 @@ class AdvTabu(object):
         for inst_index in inst_list:
             inst_candidate[inst_index] = list()
             move = {nf_index: {target_node: inst_index}}
+            print "Move is:", move
             for ns_id, ns_info_dict in self.sys_ns_dict.items():   # ns_id changed here
                 mapping_dict = ns_info_dict['mapping']
                 for orig_nf, node_dict in mapping_dict.items():
@@ -443,9 +444,9 @@ class AdvTabu(object):
                             print 'Tabu++: Dest. node matched detected!!!! But source node is different'
                             inst_candidate[inst_index].append(ns_id)
                             break
-            if not inst_candidate.get(inst_index):
-                print self.sys_ns_dict
-                print 'why?????'
+            #if not inst_candidate.get(inst_index):
+            #    print self.sys_ns_dict
+            #    print 'why?????'
         if not inst_candidate:
             return None
         else:

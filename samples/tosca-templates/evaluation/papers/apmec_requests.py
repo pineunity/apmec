@@ -125,11 +125,10 @@ if 'sap' in first_arg:
     cont = True
     vm_count = 0
     req_count = 0
+    sap_system_dict = OrderedDict()
     while cont:
         req_list, tosca_list = request_generator()
         mes_id = uuid.uuid4()
-        sys_vnf_dict = OrderedDict()   # store mes_id and ordered vnf list
-        sap_system_dict = OrderedDict()
         # update vnf_list
         # vnf_list = openstack_plugin.nfins_tracking()
         sap_total_cost, sap_comp_cost, sap_config_cost, solution = apmec_sap.sap(req_list, graph, sap_system_dict, VM_CAP)
