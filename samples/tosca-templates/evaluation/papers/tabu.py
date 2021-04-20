@@ -78,7 +78,7 @@ class Tabu(object):
             return None, None, None
 
         final_best_result_dict['config_cost'] = self.chain_config_cost(final_best_candidate, self.sys_ns_dict)
-        final_best_result_dict['total_cost'] = final_best_result_dict['total_cost'] + GAMMA*final_best_result_dict['config_cost']
+        final_best_result_dict['total_cost'] = final_best_result_dict['total_cost'] + BETA*final_best_result_dict['config_cost']
         # should return best candidate
         return final_best_candidate, final_best_result_dict, curr_solution
 
@@ -101,7 +101,6 @@ class Tabu(object):
                 # Run comp cost function
                 comp_cost_dict, node_match = self.comp_cost_func(nf_index, node_candidate[:], est_graph)
                 local_node_candidate = OrderedDict()
-                sub_path_dict = OrderedDict()
                 for node in node_candidate:
                     if comp_cost_dict.get(node) is None:
                         comp_cost_dict[node] = MAX
@@ -139,35 +138,18 @@ class Tabu(object):
                 for mp_index, mp_nf in enumerate(mapping_dict.keys()):
                     mp_node_dict = mapping_dict[mp_nf]
                     if nf_index == mp_nf and curr_solution[nf_index] == mp_node_dict:
-                        # print 'SINGLE map detected'
-                        # share_list.append({nf_index: mp_node_id})
-                        # determine number of consecutive VNFs
-                        # Find the perfect mapping between VNF index and node index
-                        # for index, node_index in enumerate(curr_solution):
-                        # find the vnf index
-                        # src_vnf_index = self.sfc_dict.keys()[index]
-                        # if {src_vnf_index: node_index} in share_list:
                         if node_index < len(curr_solution) - 1:
                             dst_vnf_index = self.sfc_dict.keys()[node_index + 1]
                             dst_node_dict = curr_solution[dst_vnf_index]
-
                             if mp_index < len(mapping_dict) - 1:
                                 nxt_mp_nf = mapping_dict.keys()[mp_index + 1]
                                 nxt_node_dict = mapping_dict[nxt_mp_nf]
-                                # print 'Target couple: ' + str(dst_vnf_index) + ' - ' + str(dst_node_index)
-                                # print 'Candidate couple: ' + str(nxt_mp_nf) + ' - ' + str(nxt_node)
                                 if {dst_vnf_index: dst_node_dict} == {nxt_mp_nf: nxt_node_dict}:
                                     print 'Tabu: COUPLE map detected!!!'
                                     consec_counts = consec_counts + 1
                                     forbiden_list.append(nf_index)
                                     break
-                                    # if consec_counts:
-                                    #     ns_candidate[ns_id] = consec_counts
         config_cost = (self.NSlen - 1) - consec_counts
-        # config_rate = config_cost/float(self.NSlen)
-        # if ns_candidate:
-        #     final_candidate = max(ns_candidate, key=ns_candidate.get)
-        #     config_cost = config_cost - ns_candidate[final_candidate]
         return config_cost
 
     def cal_total_cost(self, visited_solution):
@@ -192,7 +174,6 @@ class Tabu(object):
         return solution_info_dict
 
     def find_best_neighborhood(self, curr_solution, policy):
-        bst_cost_dict = OrderedDict()
         picked_vnf = None
         picked_index = None
         # apply random VNF first
@@ -223,13 +204,14 @@ class Tabu(object):
 
     def find_temp_solution(self, orig_solution, orig_vnf, visited_node):
         req_load = 1
+        vnf_load = 1
         visited_solution = copy.deepcopy(orig_solution)
         prev_node_dict = visited_solution[orig_vnf]
         curr_node_load = self.graph[visited_node]['load']
         total_node_cap = self.graph[visited_node]['cap']
         if self.graph[visited_node]['instances'].get(orig_vnf) is None:
             if {visited_node: None} != prev_node_dict:
-                if (self.vm_cap[orig_vnf] + curr_node_load) > total_node_cap:
+                if (vnf_load + curr_node_load) > total_node_cap:
                     return None
                 else:
                     # print 'choose an empty node'
@@ -242,7 +224,7 @@ class Tabu(object):
                     if req_load + total_load <= self.vm_cap[orig_vnf]:
                         local_inst_dict[inst_id] = total_load
             if not local_inst_dict:
-                if (self.vm_cap[orig_vnf] + curr_node_load) > total_node_cap:
+                if (vnf_load + curr_node_load) > total_node_cap:
                     return None
                 else:
                     if {visited_node: None} != prev_node_dict:
@@ -278,9 +260,8 @@ class Tabu(object):
 
     # Calculate the computation cost
     def comp_cost_func(self, nf_index, node_candidate, graph):
-        req_load = self.req_requirements['proc_cap']
-        vnf_load = self.vm_cap[nf_index]
-        # routing_cost includes key (target node) and value(routing_cost)
+        req_load = 1
+        vnf_load = 1
         curr_comp_cost = OrderedDict()
         node_match = OrderedDict()
         for node in node_candidate:
@@ -293,7 +274,7 @@ class Tabu(object):
                 inst_dict = OrderedDict()
                 nf_inst_dict = graph[node]['instances'][nf_index]
                 for inst_index, inst_info_list in nf_inst_dict.items():
-                    total_load = sum([inst_info_dict['req_load'] for inst_info_dict in inst_info_list if inst_info_dict['lifetime'] >= self.timer])
+                    total_load = len(inst_info_list)
                     if req_load + total_load <= self.vm_cap[nf_index]:
                         inst_existed = True
                         inst_dict[inst_index] = total_load
@@ -309,21 +290,9 @@ class Tabu(object):
                     node_match[node] = None
                     continue
                 node_match[node] = None
-                # curr_node_load = 0.01 if curr_node_load == 0 else curr_node_load
-
                 curr_comp_cost[node] = 1 * cni   # This is node-level index
 
         return curr_comp_cost, node_match
-
-    # Calculate the reliability cost. Re-examine it
-    def rel_cost_func(self, nf_index, node_candidate):
-        rel_cost = OrderedDict()
-        for node in node_candidate:
-            node_rel = self.graph[node]['rel']
-            origin_nf_rel = self.nf_prop['rel'][nf_index]
-            nf_rel = origin_nf_rel * node_rel
-            rel_cost[node] = nf_rel
-        return rel_cost
 
     def find_coloc(self, candidate):
         conv_candidate = OrderedDict()
@@ -349,8 +318,8 @@ class Tabu(object):
                 return
             node = node_dict.keys()[0]
             inst_info = OrderedDict()
-            inst_info['req_load'] = self.req_requirements['proc_cap']
             inst_info['ns_id'] = self.req_id
+            req_load = 1
             new_inst_detection = False
             if graph[node]['instances'].get(vnf_index) is None:
                 new_inst_detection = True
@@ -359,12 +328,9 @@ class Tabu(object):
                 inst_dict = OrderedDict()
                 nf_inst_dict = graph[node]['instances'][vnf_index]
                 for inst_index, inst_info_list in nf_inst_dict.items():
-                    total_load = sum([inst_info_dict['req_load'] for inst_info_dict in inst_info_list if
-                                      inst_info_dict['lifetime'] >= self.timer])
-                    if self.req_requirements['proc_cap'] + total_load <= self.vm_cap[vnf_index]:
+                    total_load = len(inst_info_list)
+                    if req_load + total_load <= self.vm_cap[vnf_index]:
                         inst_dict[inst_index] = total_load
-                # print 'there is instance to reuse', nf_inst_dict
-                # print 'timer', self.timer
                 if inst_dict:
                     # print 'successfully loaded'
                     target_inst_id = max(inst_dict, key=inst_dict.get)
@@ -377,11 +343,10 @@ class Tabu(object):
                     new_inst_detection = True
 
             if new_inst_detection:
-                if graph[node]['load'] + self.vm_cap[vnf_index] > graph[node]['cap']:
+                if graph[node]['load'] + 1 > graph[node]['cap']:
                     print 'Tabu: Load in physical node is over. Revise update_graph'
                     return
-                graph[node]['load'] =\
-                    graph[node]['load'] + self.vm_cap[vnf_index]
+                graph[node]['load'] += 1
                 inst_id = uuid.uuid4()
                 node_dict[node] = inst_id
                 graph[node]['instances'][vnf_index][inst_id] = list()

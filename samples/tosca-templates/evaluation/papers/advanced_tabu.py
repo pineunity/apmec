@@ -444,9 +444,6 @@ class AdvTabu(object):
                             print 'Tabu++: Dest. node matched detected!!!! But source node is different'
                             inst_candidate[inst_index].append(ns_id)
                             break
-            #if not inst_candidate.get(inst_index):
-            #    print self.sys_ns_dict
-            #    print 'why?????'
         if not inst_candidate:
             return None
         else:
@@ -485,8 +482,7 @@ class AdvTabu(object):
                     print 'Tabu++: Load in physical node is over. Revise update_graph'
                     # print index
                     return
-                graph[node]['load'] =\
-                    graph[node]['load'] + 1
+                graph[node]['load'] += 1
                 inst_id = uuid.uuid4()
                 node_dict[node] = inst_id       # Update ns_candidate
                 graph[node]['instances'][vnf_index] = OrderedDict()
