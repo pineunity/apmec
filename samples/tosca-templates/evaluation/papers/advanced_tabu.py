@@ -21,8 +21,8 @@ def split_path(path):
 # Set weight for problem optimization
 ALPHA = 0.6  # weight for computation cost
 BETA = 0.4  # weight for config cost
-TABU_ITER_MAX = 30   # Tabu size: stop after algorithm reaches this size
-LOOP_ITER_MAX = 10   # Number of iterations is executed for each tabu search
+TABU_ITER_MAX = 300   # Tabu size: stop after algorithm reaches this size
+LOOP_ITER_MAX = 100   # Number of iterations is executed for each tabu search
 MAX = 10**6
 
 
@@ -124,6 +124,7 @@ class AdvTabu(object):
                 for node in est_graph.keys():
                     if comp_cost_dict.get(node) is None:
                         comp_cost_dict[node] = MAX
+                        config_cost_dict[node] = MAX
                         local_node_candidate[node] = MAX
                         continue
                     local_node_candidate[node] = ALPHA * comp_cost_dict[node] + BETA * config_cost_dict[node]    # noqa

@@ -53,6 +53,7 @@ def sepa_import_requirements(sample, req_list):
 
 # Randomize the properties of VNF between m1.tiny, m1.small, m1.medium, m1.large among 10 VNFs
 
+
 sys_Nmax = 10  # Number of NFs -- > Maximum of NFs
 vm_max_capacity = 10  # valiadate how many instances for m1.large
 req_Nmax = 3
@@ -79,6 +80,7 @@ sys_nf_list = range(0, sys_Nmax)
 #for i in range(0, sys_Nmax):
 #    nf_set[i] = randint(1, vm_capacity)
 
+
 def request_generator():
     lenSFC = randint(1, req_Nmax)
     # Build the NS request
@@ -101,13 +103,15 @@ def request_generator():
 # coop_import_requirements(sample='test_simple_mesd.yaml', req_list=tosca_req_list)
 # sepa_import_requirements(sample='sepa-nsd.yaml', req_list=tosca_req_list)
 
-def update_vnf_list():
-    vnf_list = openstack_plugin.nfins_tracking()
+# def update_vnf_list():
+#     vnf_list = openstack_plugin.nfins_tracking()
 
 
-NODE_CAP = 10
+NODE_CAP = 100
 comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
 # Run algorithm here to store network function and instances
+
+
 def initiate_graph():
     graph = OrderedDict()
     for node in comp_node_list:
@@ -115,6 +119,11 @@ def initiate_graph():
         graph[node]['cap'] = NODE_CAP
         graph[node]['load'] = 0
         graph[node]['instances'] = OrderedDict()
+        graph[node]['allowed_vnf_list'] = list()
+        for nfi in sys_nf_list:
+            nf_name = "VNF" + str(nfi)
+            graph[node]['allowed_vnf_list'].append(nf_name) if random.choice([True, False]) else None
+
     return graph
 
 # KPI here:
@@ -155,8 +164,8 @@ if 'sap' in first_arg:
         # update vnf_list
         # vnf_list = openstack_plugin.nfins_tracking()
         sap_total_cost, sap_comp_cost, sap_config_cost, solution = apmec_sap.sap(req_list, graph, sap_system_dict, VM_CAP)
-        if not sap_total_cost:
-            print 'JVP Request is rejected!'
+        if sap_total_cost is None:
+            print 'SAP Request is rejected!'
             break
         # new_vnf_list, reused_vnf_list = sap.execute()
         print "Solution:", solution
@@ -189,7 +198,7 @@ if 'jvp' in first_arg:
         # update vnf_list
         # vnf_list = openstack_plugin.nfins_tracking()
         jvp_total_cost, jvp_comp_cost, jvp_config_cost, solution = apmec_jvp.jvp(req_list, graph, jvp_system_dict, VM_CAP)
-        if not jvp_total_cost:
+        if jvp_total_cost is None:
             print 'JVP Request is rejected!'
             break
         # new_vnf_list, reused_vnf_list = jvp.execute()
@@ -218,7 +227,7 @@ if 'baseline' in first_arg:
         # update vnf_list
         # vnf_list = openstack_plugin.nfins_tracking()
         base_total_cost, base_comp_cost, base_config_cost, solution = apmec_baseline.baseline(req_list, graph, base_system_dict, VM_CAP)
-        if not base_total_cost:
+        if base_total_cost is None:
             print 'Baseline Request is rejected!'
             break
         print "Solution:", solution
