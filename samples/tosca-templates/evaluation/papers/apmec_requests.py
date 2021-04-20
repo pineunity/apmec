@@ -204,7 +204,34 @@ if 'jvp' in first_arg:
         req_count += 1
     print req_count
 
-    
+if 'baseline' in first_arg:
+    graph = initiate_graph()
+    cont = True
+    vm_count = 0
+    req_count = 0
+    base_system_dict = OrderedDict()
+    while cont:
+        req_list = request_generator()
+        print "=================================="
+        print "Request:", req_list
+        mes_id = uuid.uuid4()
+        # update vnf_list
+        # vnf_list = openstack_plugin.nfins_tracking()
+        base_total_cost, base_comp_cost, base_config_cost, solution = apmec_baseline.jvp(req_list, graph, base_system_dict, VM_CAP)
+        if not base_total_cost:
+            print 'Baseline Request is rejected!'
+            break
+        # new_vnf_list, reused_vnf_list = jvp.execute()
+        print "Solution:", solution
+        tosca_req = reform_tosca_list(solution)
+        print "Tosca format:", tosca_req
+        # print "System dict:", jvp_system_dict
+        print "JVP config cost:", base_config_cost
+        new_vnf_list = list()
+        coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req)
+        mes_name = 'mes-' + str(uuid.uuid4())
+        req_count += 1
+    print req_count
 
 
 
