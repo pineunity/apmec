@@ -21,8 +21,8 @@ def split_path(path):
 # Set weight for problem optimization
 ALPHA = 0.6  # weight for computation cost
 BETA = 0.4  # weight for config cost
-TABU_ITER_MAX = 300   # Tabu size: stop after algorithm reaches this size
-LOOP_ITER_MAX = 100   # Number of iterations is executed for each tabu search
+TABU_ITER_MAX = 30   # Tabu size: stop after algorithm reaches this size
+LOOP_ITER_MAX = 10   # Number of iterations is executed for each tabu search
 MAX = 10**6
 
 
@@ -126,6 +126,7 @@ class AdvTabu(object):
                         comp_cost_dict[node] = MAX
                         config_cost_dict[node] = MAX
                         local_node_candidate[node] = MAX
+                        match_dict[node] = None
                         continue
                     local_node_candidate[node] = ALPHA * comp_cost_dict[node] + BETA * config_cost_dict[node]    # noqa
                 if not local_node_candidate:
@@ -304,11 +305,11 @@ class AdvTabu(object):
                         inst_existed = True
                         load_dict[node][inst_index] = total_load
                         node_match[node].append(inst_index)
-                    else:
-                        print 'Overloaded node', node
-                        print 'current load', total_load
-                        print 'Req load', req_load
-                        print 'expected load', (total_load+req_load)
+                    # else:
+                        # print 'Overloaded node', node
+                        # print 'current load', total_load
+                        # print 'Req load', req_load
+                        # print 'expected load', (total_load+req_load)
                         # import time
                         # time.sleep(3)
 
@@ -317,7 +318,8 @@ class AdvTabu(object):
                 curr_node_load = graph[node]['load']
                 total_node_cap = graph[node]['cap']
                 if (vnf_load + curr_node_load) > total_node_cap:
-                    final_dst_node[node] = None
+                    # final_dst_node[node] = None
+                    # config_cost[node] = MAX
                     continue
 
                 # curr_node_load = 0.01 if curr_node_load == 0 else curr_node_load

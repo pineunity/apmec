@@ -107,7 +107,7 @@ def request_generator():
 #     vnf_list = openstack_plugin.nfins_tracking()
 
 
-NODE_CAP = 100
+NODE_CAP = 10
 comp_node_list = ['edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8', 'edge9', 'edge10']
 # Run algorithm here to store network function and instances
 
