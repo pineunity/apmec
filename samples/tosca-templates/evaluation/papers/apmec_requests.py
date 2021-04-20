@@ -129,7 +129,8 @@ def reform_tosca_list(solution):
        inst = solution[vnf_name]
        if inst is None:
            continue
-       orig_vnf_name = 'VNF' + str(vnfi+1)
+       orig_index = int(vnf_name[3:])
+       orig_vnf_name = 'VNF' + str(orig_index+1)
        sample = SAMPLE[vnf_name]
        sample_dict = dict()
        sample_dict['name'] = orig_vnf_name
@@ -138,8 +139,8 @@ def reform_tosca_list(solution):
        # edit the vnfd-file also for the availability node
     return tosca_list
 
-# NOTE: use script to remove database if some entries are error
 
+# NOTE: use script to remove database if some entries are error
 if 'sap' in first_arg:
     graph = initiate_graph()
     cont = True

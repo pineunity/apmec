@@ -19,7 +19,6 @@ MAX = 10**6
 class Tabu(object):
     def __init__(self, req_list, graph, sys_nf_info, vm_cap):
         self.graph = graph
-        # self.ns_dict = system_ns_dict
         self.sfc_dict = req_list
         self.tabu_list = list()
         self.req_id = uuid.uuid4()
@@ -74,7 +73,7 @@ class Tabu(object):
 
         if final_best_cost >= MAX:
             print "Tabu: Unable to find better solution due the the constraint"
-            print "Chain:", self.sfc_dict.keys()
+            print "Chain:", self.sfc_dict
             return None, None, None
 
         final_best_result_dict['config_cost'] = self.chain_config_cost(final_best_candidate, self.sys_ns_dict)
@@ -91,12 +90,11 @@ class Tabu(object):
         curr_solution = OrderedDict()
         est_graph = copy.deepcopy(self.graph)
         if strategy == "random":
-            for nf_index, nf_instances in self.sfc_dict.items():
+            for nf_index in self.sfc_dict:
                 # vnf_load = self.vm_cap[nf_index]
                 node_candidate = list()
-                for node in est_graph.nodes():
-                    if nf_index in est_graph.node[node]['allowed_vnf_list']:
-                        node_candidate.append(node)
+                for node in est_graph:
+                    node_candidate.append(node)
 
                 # Run comp cost function
                 comp_cost_dict, node_match = self.comp_cost_func(nf_index, node_candidate[:], est_graph)
@@ -129,7 +127,7 @@ class Tabu(object):
         consec_counts = 0
         forbiden_list = list()
         # ns_candidate = OrderedDict()
-        for node_index, nf_index in enumerate(self.sfc_dict.keys()):
+        for node_index, nf_index in enumerate(self.sfc_dict):
             for ns_id, ns_info_dict in sample_dict.items():
                 if nf_index in forbiden_list:  # to avoid accidentally increasing consec_counts
                     break
@@ -139,7 +137,7 @@ class Tabu(object):
                     mp_node_dict = mapping_dict[mp_nf]
                     if nf_index == mp_nf and curr_solution[nf_index] == mp_node_dict:
                         if node_index < len(curr_solution) - 1:
-                            dst_vnf_index = self.sfc_dict.keys()[node_index + 1]
+                            dst_vnf_index = self.sfc_dict[node_index + 1]
                             dst_node_dict = curr_solution[dst_vnf_index]
                             if mp_index < len(mapping_dict) - 1:
                                 nxt_mp_nf = mapping_dict.keys()[mp_index + 1]
@@ -178,17 +176,16 @@ class Tabu(object):
         picked_index = None
         # apply random VNF first
         if policy == 'random':
-            picked_vnf = random.choice(self.sfc_dict.keys())
+            picked_vnf = random.choice(self.sfc_dict)
 
         # from nf_index in nf_dict, find index in chain
-        picked_index = self.sfc_dict.keys().index(picked_vnf) if picked_vnf is not None else picked_index
-        visited_node_dict = curr_solution[self.sfc_dict.keys()[picked_index]]
+        picked_index = self.sfc_dict.index(picked_vnf) if picked_vnf is not None else picked_index
+        visited_node_dict = curr_solution[self.sfc_dict[picked_index]]
         visited_node = visited_node_dict.keys()[0]
         node_candidate = list()
-        for node in self.graph.nodes():
+        for node in self.graph:
             if node != visited_node:
-                if picked_vnf in self.graph[node]['allowed_vnf_list']:
-                    node_candidate.append(node)
+                node_candidate.append(node)
 
         trial_node = random.choice(node_candidate)
         trial_solution = self.find_temp_solution(curr_solution, picked_vnf, trial_node)
@@ -309,7 +306,7 @@ class Tabu(object):
         if graph is None:
             graph = self.graph
         if vnf_list is None:
-            vnf_list = self.sfc_dict.keys()
+            vnf_list = self.sfc_dict
         # Update physical node
         check_list = list()
         for vnf_index, node_dict in ns_candidate.items():
