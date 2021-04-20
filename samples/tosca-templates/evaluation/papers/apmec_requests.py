@@ -122,6 +122,7 @@ def initiate_graph():
 #  2. Number of used VMs for NFV network services
 #  3. Chain configuration cost
 
+
 def reform_tosca_list(solution):
     tosca_list = list()
     for vnfi, vnf_name in enumerate(solution.keys()):
@@ -134,7 +135,10 @@ def reform_tosca_list(solution):
        sample_dict['name'] = orig_vnf_name
        sample_dict['vnfd_template'] = sample
        tosca_list.append(sample_dict)
+       # edit the vnfd-file also for the availability node
     return tosca_list
+
+# NOTE: use script to remove database if some entries are error
 
 if 'sap' in first_arg:
     graph = initiate_graph()
@@ -151,7 +155,7 @@ if 'sap' in first_arg:
         # vnf_list = openstack_plugin.nfins_tracking()
         sap_total_cost, sap_comp_cost, sap_config_cost, solution = apmec_sap.sap(req_list, graph, sap_system_dict, VM_CAP)
         if not sap_total_cost:
-            print 'Request is rejected!'
+            print 'JVP Request is rejected!'
             break
         # new_vnf_list, reused_vnf_list = sap.execute()
         print "Solution:", solution
@@ -162,12 +166,43 @@ if 'sap' in first_arg:
         new_vnf_list = list()
         coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req)
         mes_name = 'mes-' + str(uuid.uuid4())
+        req_count += 1
+    print req_count
         # openstack_plugin.mes_create(mes_name)
-        cont = False
+        # cont = False
         # sleep here until mes is active
         # update graph only if mes is active
         # if mes is active, increase req_count and update vm_count
     
+if 'jvp' in first_arg:
+    graph = initiate_graph()
+    cont = True
+    vm_count = 0
+    req_count = 0
+    jvp_system_dict = OrderedDict()
+    while cont:
+        req_list = request_generator()
+        print "=================================="
+        print "Request:", req_list
+        mes_id = uuid.uuid4()
+        # update vnf_list
+        # vnf_list = openstack_plugin.nfins_tracking()
+        jvp_total_cost, jvp_comp_cost, jvp_config_cost, solution = apmec_jvp.jvp(req_list, graph, jvp_system_dict, VM_CAP)
+        if not jvp_total_cost:
+            print 'JVP Request is rejected!'
+            break
+        # new_vnf_list, reused_vnf_list = jvp.execute()
+        print "Solution:", solution
+        tosca_req = reform_tosca_list(solution)
+        print "Tosca format:", tosca_req
+        # print "System dict:", jvp_system_dict
+        print "JVP config cost:", jvp_config_cost
+        new_vnf_list = list()
+        coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req)
+        mes_name = 'mes-' + str(uuid.uuid4())
+        req_count += 1
+    print req_count
+
     
 
 
