@@ -334,7 +334,7 @@ class Tabu(object):
                     nf_inst_dict[target_inst_id].append(inst_info)
                     check_list.append({vnf_index: {node: target_inst_id}})
                 else:
-                    if vnf_list == self.sfc_dict.keys() and len(vnf_list) != 1:
+                    if vnf_list == self.sfc_dict and len(vnf_list) != 1:
                         print 'Tabu: new instance!!!'
                         print 'NF index', vnf_index
                     new_inst_detection = True

@@ -8,8 +8,7 @@ imports:
     nfv_driver: Tacker
     nsd_templates:
       requirements:
-      - {name: VNF9, vnfd_template: vnfd91}
-      - {name: VNF8, vnfd_template: vnfd81}
+      - {name: VNF7, vnfd_template: vnfd71}
 topology_template:
   node_templates:
     MEA1: {type: tosca.nodes.mec.MEA1}
