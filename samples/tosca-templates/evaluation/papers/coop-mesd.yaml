@@ -8,6 +8,8 @@ imports:
     nfv_driver: Tacker
     nsd_templates:
       requirements:
+      - {name: VNF1, vnfd_template: vnfd11}
+      - {name: VNF3, vnfd_template: vnfd31}
       - {name: VNF7, vnfd_template: vnfd71}
 topology_template:
   node_templates:

@@ -19,6 +19,6 @@ def baseline(req_list, graph, system_ns_dict, vm_cap):
     system_ns_dict[ns_id] = OrderedDict()
     system_ns_dict[ns_id]['mapping'] = baseline_solver.reform_ns_candidate(ns_candidate)
     print 'Baseline final_candidate', ns_candidate.values()
+    print ns_candidate.values()
     baseline_solver.update_graph(ns_candidate.values())
-
     return total_cost, comp_cost, config_cost, solution

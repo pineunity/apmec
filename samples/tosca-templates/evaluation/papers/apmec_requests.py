@@ -112,7 +112,7 @@ def initiate_graph():
     graph = OrderedDict()
     for node in comp_node_list:
         graph[node] = OrderedDict()
-        graph[node]['cap'] = VM_CAP
+        graph[node]['cap'] = NODE_CAP
         graph[node]['load'] = 0
         graph[node]['instances'] = OrderedDict()
     return graph
@@ -217,20 +217,22 @@ if 'baseline' in first_arg:
         mes_id = uuid.uuid4()
         # update vnf_list
         # vnf_list = openstack_plugin.nfins_tracking()
-        base_total_cost, base_comp_cost, base_config_cost, solution = apmec_baseline.jvp(req_list, graph, base_system_dict, VM_CAP)
+        base_total_cost, base_comp_cost, base_config_cost, solution = apmec_baseline.baseline(req_list, graph, base_system_dict, VM_CAP)
         if not base_total_cost:
             print 'Baseline Request is rejected!'
             break
-        # new_vnf_list, reused_vnf_list = jvp.execute()
         print "Solution:", solution
         tosca_req = reform_tosca_list(solution)
         print "Tosca format:", tosca_req
         # print "System dict:", jvp_system_dict
-        print "JVP config cost:", base_config_cost
+        print "Baseline config cost:", base_config_cost
         new_vnf_list = list()
         coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req)
         mes_name = 'mes-' + str(uuid.uuid4())
         req_count += 1
+        # if req_count == 10:
+        #     break
+    # print graph
     print req_count
 
 
