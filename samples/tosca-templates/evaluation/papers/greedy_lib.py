@@ -38,162 +38,53 @@ class GreedyLib(object):
         total_lat = 0
         # node:{vnf_index: instance_id} if reuse, else: node:{vnf_index: None}
         prev_node_dict = OrderedDict()
-        for index, nf_index in enumerate(self.sfc_dict.keys()):
+        for index, nf_index in enumerate(self.sfc_dict):
             src_dict = OrderedDict()
             if index:
-                prev_vnf = self.sfc_dict.keys()[index - 1]
+                prev_vnf = self.sfc_dict[index - 1]
                 src_dict[prev_vnf] = prev_node_dict
             # time.sleep(3)
             node_candidate = list()
-            for node in est_graph.nodes():
-                if nf_index in est_graph.node[node]['allowed_vnf_list']:
+            for node in est_graph:
+                if nf_index in est_graph[node]['allowed_vnf_list']:
                     node_candidate.append(node)
 
             # Run comp cost function
             comp_cost_dict, config_cost_dict, match_dict = self.pre_comp_config_cost_func(nf_index, src_dict,
                                                                                           node_candidate[:], est_graph)
 
-            # routing cost here did not include from MEA node
-            routing_cost_dict, path_dict, path_lat = self.routing_cost_func(node_candidate[:], curr_solution, est_graph)
-            # print 'Routing cost at first', routing_cost_dict
-            rel_cost_dict = self.rel_cost_func(nf_index, node_candidate)
-            # print 'Reliability cost', rel_cost_dict
-            # print 'NS system', self.sys_ns_dict
             local_node_candidate = OrderedDict()
-            sub_path_dict = OrderedDict()
             for node in node_candidate:
-                if routing_cost_dict.get(node) is None or comp_cost_dict.get(node) is None:
+                if comp_cost_dict.get(node) is None:
                     continue
-
-                if total_lat + path_lat[node] + self.nf_prop['proc_delay'][nf_index] > self.lat:
-                    continue
-
-                sub_path_dict[node] = path_dict[node]
-                local_node_candidate[node] = ALPHA * comp_cost_dict[node] + BETA * routing_cost_dict[node] + GAMMA * config_cost_dict[node] + DELTA * (1 - rel_cost_dict[node])  # noqa
+                local_node_candidate[node] = ALPHA * comp_cost_dict[node] + BETA * config_cost_dict[node]     # noqa
             if not local_node_candidate:
                 print 'greedy: What is the fault reason'
                 print 'At VNF-th', nf_index
                 print 'Current solution', curr_solution
-                print 'greedy: routing cost', routing_cost_dict
                 print 'greddy: comp cost', comp_cost_dict
-                import time
-                # time.sleep(10)
-                return None, None
+                return None, None, None
             else:
                 # print 'Total cost at first', local_node_candidate
                 min_total_cost = min([cost for node, cost in local_node_candidate.items()])
                 candidate_list = [node for node, cost in local_node_candidate.items() if cost == min_total_cost]
                 final_candidate = candidate_list[0]
-                total_lat += path_lat[final_candidate] + self.nf_prop['proc_delay'][nf_index]
                 curr_solution[nf_index] = {final_candidate: match_dict[final_candidate]}
                 solution_info_dict['total_cost'] = solution_info_dict['total_cost'] + min_total_cost
                 solution_info_dict['config_cost'] = solution_info_dict['config_cost'] + config_cost_dict[
                     final_candidate]
-                solution_info_dict['routing_cost'] = solution_info_dict['routing_cost'] + routing_cost_dict[
-                    final_candidate]
                 solution_info_dict['comp_cost'] = solution_info_dict['comp_cost'] + comp_cost_dict[final_candidate]
-                solution_info_dict['rec_cost'] += (1 - rel_cost_dict[final_candidate])
-                solution_info_dict['rel_cost'] = solution_info_dict['rel_cost'] * rel_cost_dict[final_candidate]
-                solution_info_dict['detailed_path'].extend(path_dict[final_candidate])
 
                 prev_node_dict = {final_candidate: match_dict[final_candidate]}
                 # print 'First update graph', prev_node_dict
                 self.update_graph({nf_index: {final_candidate: copy.deepcopy(match_dict[final_candidate])}},
-                                  est_graph, path_dict[final_candidate])  # noqa
+                                  est_graph)  # noqa
 
-        return curr_solution, solution_info_dict
-
-    # Calculate the routing cost cost
-    def routing_cost_func(self, node_candidate, curr_solution, graph):
-        path_dict = OrderedDict()
-        # comm_cost includes key (target node) and value(comm_cost)
-        curr_routing_cost = OrderedDict()
-        path_lat = OrderedDict()
-        source_node = None
-        if curr_solution:
-            curr_len = len(curr_solution)
-            source_node_dict = curr_solution.values()[curr_len - 1]
-            source_node = source_node_dict.keys()[0]
-        for node in node_candidate:
-            if node == source_node or not curr_solution:
-                curr_routing_cost[node] = 0
-                path_dict[node] = list()
-                path_lat[node] = 0
-            else:
-                # This can return a list of paths, strictly condition needed
-                # this will be a number of nodes for routing cost
-                path_list = nx.all_shortest_paths(graph, source=source_node, target=node)
-                # path_list = nx.all_shortest_paths(self.graph, source=source_node, target=node, weight='delay')
-                # Add constrains for link capacity. Traffic rate is also considered as link rate
-                filtered_path = list()
-                # Determine the current link usage the existing source and destination for link
-                # Find link with lowest latency: path = [1 5 7]
-                # visited_path = list()
-                for path in path_list:
-                    illegal_path = False
-                    for pindex, pnode in enumerate(path):
-                        if pindex < len(path) - 1:
-                            p_snode = pnode
-                            p_dnode = path[pindex + 1]
-                            # determine the BW usage between them. Check whether there are same NS
-                            # across 2 physical nodes
-                            if not nx.has_path(graph, p_snode, p_dnode):
-                                print 'Greedy: There is no direct link. Revise comm_cost_func'
-                                return
-
-                            self.update_curr_link_usage(p_snode, p_dnode, graph)
-                            if graph[p_snode][p_dnode]['curr_load'] + self.req_requirements['rate'] > \
-                                    graph[p_snode][p_dnode]['maxBW']:
-                                illegal_path = True
-                                break
-                    if not illegal_path:
-                        filtered_path.append(path)
-
-                # nx.dijkstra_path(rdgraph, source=0, target=5, weight='avail')
-                # remember here paths can have same cost but different length
-                if not filtered_path:
-                    continue
-                else:
-                    path_candidate = OrderedDict()
-                    for pi, dpath in enumerate(filtered_path):
-                        spath = split_path(dpath)
-                        curr_load = 0
-                        exp_load = 0
-                        for pair in spath:
-                            src_node = pair[0]
-                            dst_node = pair[1]
-                            self.update_curr_link_usage(src_node, dst_node, graph)
-                            curr_load += graph[src_node][dst_node]['curr_load']
-                            exp_load += self.req_requirements['rate']
-                        path_candidate[pi] = exp_load / float(curr_load + exp_load)
-                    selected_pi = min(path_candidate, key=path_candidate.get)
-                    path_dict[node] = filtered_path[selected_pi]
-                    print "Greedy:", path_dict[node]
-                    lat_data = 0
-                    for pindex, pnode in enumerate(path_dict[node]):
-                        if pindex < len(path_dict[node]) - 1:
-                            p_snode = pnode
-                            p_dnode = path_dict[node][pindex + 1]
-                            lat_data += graph[p_snode][p_dnode]['delay']
-                    path_lat[node] = lat_data
-                    curr_routing_cost[node] = path_candidate[selected_pi]
-        return curr_routing_cost, path_dict, path_lat
-
-    def update_curr_link_usage(self, src_node, dst_node, graph):
-        graph[src_node][dst_node]['curr_load'] = 0
-        if graph[src_node][dst_node].get('req'):
-            for req in graph[src_node][dst_node]['req']:
-                if req['lifetime'] >= self.timer:
-                    graph[src_node][dst_node]['curr_load'] = \
-                        graph[src_node][dst_node]['curr_load'] + req['rate']
-
-                    # Calculate the computation cost
-
-                    # Combine comp cost and config cost - chain aware
+        return curr_solution, solution_info_dict, curr_solution
 
     def pre_comp_config_cost_func(self, nf_index, src_dict, node_candidate, graph):
-        req_load = self.req_requirements['proc_cap']
-        vnf_load = self.nf_prop['proc_cap'][nf_index]
+        req_load = 1
+        vnf_load = 1
         # comm_cost includes key (target node) and value(comm_cost)
         curr_comp_cost = OrderedDict()
         config_cost = OrderedDict()
@@ -203,17 +94,15 @@ class GreedyLib(object):
         # Determine a set of possible instances on a visited node
         for node in node_candidate:
             inst_existed = False
-            if graph.node[node]['instances'].get(nf_index):
-                nf_inst_dict = graph.node[node]['instances'][nf_index]
+            if graph[node]['instances'].get(nf_index):
+                nf_inst_dict = graph[node]['instances'][nf_index]
                 node_match[node] = list()
                 print 'Checked node', node
                 load_dict[node] = OrderedDict()
                 for inst_index, inst_info_list in nf_inst_dict.items():
-                    total_load = sum([inst_info_dict['req_load'] for inst_info_dict in inst_info_list if
-                                      inst_info_dict['lifetime'] >= self.timer])
-                    if req_load + total_load <= self.nf_prop['proc_cap'][nf_index]:
+                    total_load = len(inst_info_list)
+                    if total_load + req_load <= self.vm_cap[nf_index]:
                         inst_existed = True
-                        # node_match[node].append({'id': inst_index, 'curr_load': total_load})
                         load_dict[node][inst_index] = total_load
                         node_match[node].append(inst_index)
                     else:
@@ -221,11 +110,10 @@ class GreedyLib(object):
                         print 'current load', total_load
                         print 'Req load', req_load
                         print 'expected load', (total_load + req_load)
-                        print 'VNF cap', self.nf_prop['proc_cap'][nf_index]
             if not inst_existed:
                 # Limit the number of node by overal node capacity
-                curr_node_load = graph.node[node]['curr_load']
-                total_node_cap = graph.node[node]['cpu']
+                curr_node_load = graph[node]['load']
+                total_node_cap = graph[node]['cap']
                 if (vnf_load + curr_node_load) > total_node_cap:
                     continue
                 # curr_node_load = 0.01 if curr_node_load == 0 else curr_node_load
@@ -258,7 +146,7 @@ class GreedyLib(object):
                     target_inst_id = max(local_ins_dict, key=local_ins_dict.get)
                     final_dst_node[cd_node] = target_inst_id
                     config_cost[cd_node] = 0
-                    curr_node_load = graph.node[cd_node]['curr_load']
+                    curr_node_load = graph[cd_node]['load']
                     exp_node_load = curr_node_load + vnf_load
                     cni = vnf_load / float(exp_node_load)  # computation node index
                     curr_comp_cost[cd_node] = cni * req_load / float(req_load + local_ins_dict[target_inst_id])
@@ -282,16 +170,7 @@ class GreedyLib(object):
                     for ns_id, ns_info_dict in self.sys_ns_dict.items():   # ns_id changed here
                         mapping_dict = ns_info_dict['mapping']
                         for map_index, orig_nf in enumerate(mapping_dict.keys()):
-                            # if src_dict:
-                                # print 'check the match'
-                                # print {orig_nf: mapping_dict[orig_nf]}
-                                # print src_dict
-                                # import time
-                                # time.sleep(2)
                             if {orig_nf: mapping_dict[orig_nf]} == src_dict:
-                                # print 'I am here'
-                                # print 'Destination dict', dst_dict
-                                # print 'Src', src_dict
                                 if map_index < len(mapping_dict) - 1:
                                     nxt_orig_nf = mapping_dict.keys()[map_index+1]
                                     # print 'Possible Mirror', {nxt_orig_nf: mapping_dict[nxt_orig_nf]}
@@ -334,65 +213,6 @@ class GreedyLib(object):
             most_shared_list = [inst_id for inst_id, ns_list in inst_candidate.items() if len(ns_list) == max_ns]
             return most_shared_list[0]
 
-    # Calculate the reliability cost. Re-examine it
-    def rel_cost_func(self, nf_index, node_candidate):
-        rel_cost = OrderedDict()
-        for node in node_candidate:
-            node_rel = self.graph.node[node]['rel']
-            origin_nf_rel = self.nf_prop['rel'][nf_index]
-            nf_rel = origin_nf_rel * node_rel
-            rel_cost[node] = nf_rel
-        return rel_cost
-
-    # This is used to calculate chain configuration cost
-    # def chain_config_cost(self, curr_solution, sample_dict):
-    #     # check each chain candidate whether they have consecutive VNFs
-    #     # dont need to check bandwidth between two consecutive VNFs since routing cost already check it
-    #     # somewhere should store dict for mapping between vnf_index and node index
-    #     # calculate number of consecutive VNFs
-    #     consec_counts = 0
-    #     forbiden_list = list()
-    #     # ns_candidate = OrderedDict()
-    #     for node_index, nf_index in enumerate(self.sfc_dict.keys()):
-    #         for ns_id, ns_info_dict in sample_dict.items():
-    #             if nf_index in forbiden_list:  # to avoid accidentally increasing consec_counts
-    #                 break
-    #             mapping_dict = ns_info_dict['mapping']
-    #             # share_list = list()
-    #             for mp_index, mp_nf in enumerate(mapping_dict.keys()):
-    #                 mp_node_id = mapping_dict[mp_nf]
-    #                 if nf_index == mp_nf and curr_solution[node_index] == mp_node_id:
-    #                     # print 'SINGLE map detected'
-    #                     # share_list.append({nf_index: mp_node_id})
-    #                     # determine number of consecutive VNFs
-    #                     # Find the perfect mapping between VNF index and node index
-    #                     # for index, node_index in enumerate(curr_solution):
-    #                     # find the vnf index
-    #                     # src_vnf_index = self.sfc_dict.keys()[index]
-    #                     # if {src_vnf_index: node_index} in share_list:
-    #                     if node_index < len(curr_solution) - 1:
-    #                         dst_vnf_index = self.sfc_dict.keys()[node_index + 1]
-    #                         dst_node_index = curr_solution[node_index + 1]
-    #
-    #                         if mp_index < len(mapping_dict) - 1:
-    #                             nxt_mp_nf = mapping_dict.keys()[mp_index + 1]
-    #                             nxt_node = mapping_dict[nxt_mp_nf]
-    #                             # print 'Target couple: ' + str(dst_vnf_index) + ' - ' + str(dst_node_index)
-    #                             # print 'Candidate couple: ' + str(nxt_mp_nf) + ' - ' + str(nxt_node)
-    #                             if {dst_vnf_index: dst_node_index} == {nxt_mp_nf: nxt_node}:
-    #                                 print 'COUPLE map detected!!!'
-    #                                 consec_counts = consec_counts + 1
-    #                                 forbiden_list.append(nf_index)
-    #                                 break
-    #                                 # if consec_counts:
-    #                                 #     ns_candidate[ns_id] = consec_counts
-    #     config_cost = (self.NSlen - 1) - consec_counts
-    #     config_rate = config_cost / float(self.NSlen)
-    #     # if ns_candidate:
-    #     #     final_candidate = max(ns_candidate, key=ns_candidate.get)
-    #     #     config_cost = config_cost - ns_candidate[final_candidate]
-    #     return config_rate
-
     # This is used to calculate chain configuration cost
     def chain_config_cost(self, dst_nf, src_dict, node_candidate):
         # calculate number of consecutive VNFs
@@ -424,40 +244,6 @@ class GreedyLib(object):
                     config_cost[dst_node] = 1
         return config_cost
 
-    # The good thing of paid is calculate the reliability of all VNFs on the same node
-    # type_of_search=single, cluster
-    def paid_engine(self, candidate, type_of_search):
-        paid_list = list()
-        if type_of_search == 'single':
-            for nf_index, nf_inst in self.sfc_dict:
-                index = self.sfc_dict.keys().index(nf_index)
-                target_node = candidate[index]
-                rel = self.graph.node[target_node]['rel']
-                # availability if this node is shared with other VNFs in chain
-                for cindex in self.find_coloc(target_node):
-                    dup_nf_index = self.sfc_dict.keys()[cindex]
-                    rel = rel * self.nf_prop['rel'][dup_nf_index]
-                # load_index = req_load/curr_load      # This is VNF-level index
-                req_load = self.req_requirements['proc_cap']
-                inst_dict = OrderedDict()
-                min_load = 0.01
-                if self.graph.node[target_node]['instances'].get(nf_index):
-                    nf_inst_dict = self.graph.node[target_node]['instances'][nf_index]
-                    for inst_index, inst_info_list in nf_inst_dict.items():
-                        total_load = sum([inst_info_dict['vnf_load'] for inst_info_dict in inst_info_list if
-                                          inst_info_dict['lifetime'] >= self.timer])
-                        if req_load + total_load <= self.nf_prop['proc_cap'][nf_index]:
-                            inst_dict[inst_index] = total_load
-                if inst_dict:
-                    min_load = min([load for inst_index, load in inst_dict.items()])
-                reuse_factor = req_load / float(min_load)
-                paid = rel / reuse_factor
-                paid_list.append(paid)
-
-        if type_of_search == 'cluster':
-            return []
-        return paid_list
-
     def find_coloc(self, candidate):
         conv_candidate = OrderedDict()
         for index, node in enumerate(candidate):
@@ -468,76 +254,42 @@ class GreedyLib(object):
                 conv_candidate[node].append(index)
         return conv_candidate
 
-    def add_link_usage(self, src_node, dst_node, graph):
-        # BW(src_node, dst_node) does not specify the endpoints
-        if nx.has_path(graph, src_node, dst_node):
-            self.update_curr_link_usage(src_node, dst_node, graph)
-            if graph[src_node][dst_node]['curr_load'] + self.req_requirements['rate'] > \
-                    graph[src_node][dst_node]['maxBW']:
-                print 'Greedy: The link capacity is over!!! Revise add_link_usage'
-            graph[src_node][dst_node]['curr_load'] = graph[src_node][dst_node]['curr_load'] + \
-                                                          self.req_requirements['rate']
-            if graph[src_node][dst_node].get('req') is None:
-                graph[src_node][dst_node]['req'] = list()
-            graph[src_node][dst_node]['req'].append(
-                {'id': self.req_id, 'lifetime': self.req_info['lifetime'], 'rate': self.req_requirements['rate']})
-        else:
-            print 'Greedy: there is no direct link. Revise add_link_usage'
-
-    def update_graph(self, ns_candidate, graph=None, path_list=None):
-        # For Greedy, target VNF instance is known
+    def update_graph(self, ns_candidate, graph=None):
+        # For Tabu++, target VNF instance is known
         if graph is None:
             graph = self.graph
-        if path_list is None:
-            path_list = self.e2e_path
         # Update physical node
         for vnf_index, node_dict in ns_candidate.items():
             if not node_dict:
-                print 'Greedy: Node dict error. Revise update graph'
+                print 'Tabu++: Node dict error. Revise update graph'
                 return
             node = node_dict.keys()[0]
             vnf_inst = node_dict[node]
 
             inst_info = OrderedDict()
-            inst_info['lifetime'] = self.req_info['lifetime']
-            inst_info['req_load'] = self.req_requirements['proc_cap']
             inst_info['ns_id'] = self.req_id
-
+            req_load = 1
             if vnf_inst is None:
-                if graph.node[node]['curr_load'] + self.nf_prop['proc_cap'][vnf_index] > graph.node[node]['cpu']:
-                    print 'Greedy: Load in physical node is over. Revise update_graph'
+                if graph[node]['load'] + 1 > graph[node]['cap']:
+                    print 'Tabu++: Load in physical node is over. Revise update_graph'
                     # print index
                     return
-                graph.node[node]['curr_load'] =\
-                    graph.node[node]['curr_load'] + self.nf_prop['proc_cap'][vnf_index]
+                graph[node]['load'] += 1
                 inst_id = uuid.uuid4()
                 node_dict[node] = inst_id       # Update ns_candidate
-                graph.node[node]['instances'][vnf_index] = OrderedDict()
-                graph.node[node]['instances'][vnf_index][inst_id] = list()
-                graph.node[node]['instances'][vnf_index][inst_id].append(inst_info)
+                graph[node]['instances'][vnf_index] = OrderedDict()
+                graph[node]['instances'][vnf_index][inst_id] = list()
+                graph[node]['instances'][vnf_index][inst_id].append(inst_info)
             else:
-                nf_inst_list = graph.node[node]['instances'][vnf_index][vnf_inst]
-                total_load = sum([inst_info_dict['req_load'] for inst_info_dict in nf_inst_list if
-                                  inst_info_dict['lifetime'] >= self.timer])
-                if self.req_requirements['proc_cap'] + total_load <= self.nf_prop['proc_cap'][vnf_index]:
+                nf_inst_list = graph[node]['instances'][vnf_index][vnf_inst]
+                total_load = len(nf_inst_list)
+                if req_load + total_load <= self.vm_cap[vnf_index]:
                     nf_inst_list.append(inst_info)
                 else:
-                    print 'Greedy: VNF instance load is over. Revise update_graph'
-
-        # Update physical link
-        for node_index, node in enumerate(path_list):
-            if node_index < len(path_list) - 1:
-                p_snode = node
-                p_dnode = path_list[node_index + 1]
-                if p_snode == p_dnode:
-                    continue
-                self.add_link_usage(p_snode, p_dnode, graph)
+                    print 'Tabu++: VNF instance load is over. Revise update_graph'
 
     def get_graph(self):
         return self.graph
-
-    def get_path(self):
-        return self.e2e_path
 
     def getReqID(self):
         return self.req_id

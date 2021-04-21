@@ -41,7 +41,8 @@ class BaselineLib(object):
                 src_dict[prev_vnf] = curr_solution[prev_vnf]
             node_candidate = list()
             for node in est_graph:
-                node_candidate.append(node)
+                if nf_index in est_graph[node]['allowed_vnf_list']:
+                    node_candidate.append(node)
 
             # Run comp cost function
             comp_cost_dict = self.comp_cost_func(nf_index, node_candidate[:], est_graph)

@@ -13,6 +13,7 @@ import uuid
 import apmec_sap
 import apmec_jvp
 import apmec_baseline
+import apmec_greedy
 
 first_arg = sys.argv[1]
 
@@ -206,6 +207,8 @@ if 'jvp' in first_arg:
         tosca_req = reform_tosca_list(solution)
         print "Tosca format:", tosca_req
         # print "System dict:", jvp_system_dict
+        print "JVP total cost:", jvp_total_cost
+        print "JVP comp cost:", jvp_comp_cost
         print "JVP config cost:", jvp_config_cost
         new_vnf_list = list()
         coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req)
@@ -244,6 +247,34 @@ if 'baseline' in first_arg:
     # print graph
     print req_count
 
+if 'greedy' in first_arg:
+    graph = initiate_graph()
+    cont = True
+    vm_count = 0
+    req_count = 0
+    greedy_system_dict = OrderedDict()
+    while cont:
+        req_list = request_generator()
+        print "=================================="
+        print "Request:", req_list
+        mes_id = uuid.uuid4()
+        # update vnf_list
+        # vnf_list = openstack_plugin.nfins_tracking()
+        greedy_total_cost, greedy_comp_cost, greedy_config_cost, solution = apmec_greedy.greedy(req_list, graph, greedy_system_dict, VM_CAP)
+        if greedy_total_cost is None:
+            print 'Greedy Request is rejected!'
+            break
+        print "Solution:", solution
+        tosca_req = reform_tosca_list(solution)
+        print "Tosca format:", tosca_req
+        # print "System dict:", jvp_system_dict
+        print "Greedy config cost:", greedy_config_cost
+        new_vnf_list = list()
+        coop_import_requirements(sample='coop-mesd.yaml', req_list=tosca_req)
+        mes_name = 'mes-' + str(uuid.uuid4())
+        req_count += 1
+    # print graph
+    print req_count
 
 
 
