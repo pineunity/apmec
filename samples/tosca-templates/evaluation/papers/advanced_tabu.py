@@ -45,16 +45,10 @@ class AdvTabu(object):
         if init_candidate is None:
             print "Algorithm failed at first step."
             return None, None, None
-        # print 'first path', self.e2e_path
-        # print 'first candidate', init_candidate
         curr_solution = copy.deepcopy(init_candidate)
         final_best_cost = init_cost['total_cost']
-        # print final_best_cost
         final_best_candidate = copy.deepcopy(init_candidate)
         final_best_result_dict = copy.deepcopy(init_cost)
-        # print 'First result'
-        # print final_best_candidate
-        # print final_best_cost
         loop_index = 0
         while loop_index < LOOP_ITER_MAX:
             # match_dict is a move
@@ -116,9 +110,14 @@ class AdvTabu(object):
                 if index:
                     prev_vnf = self.sfc_dict[index - 1]
                     src_dict[prev_vnf] = copy.deepcopy(curr_solution[prev_vnf])
-                
+
+                node_candidate = list()
+                for node in est_graph:
+                    if nf_index in est_graph[node]['allowed_vnf_list']:
+                        node_candidate.append(node)
+
                 # Run comp cost function
-                comp_cost_dict, config_cost_dict, match_dict = self.pre_comp_config_cost_func(nf_index, src_dict, est_graph)
+                comp_cost_dict, config_cost_dict, match_dict = self.pre_comp_config_cost_func(nf_index, src_dict, node_candidate[:], est_graph)
 
                 local_node_candidate = OrderedDict()
                 for node in est_graph.keys():
@@ -223,7 +222,8 @@ class AdvTabu(object):
         picked_index = self.sfc_dict.index(picked_vnf)
         node_candidate = list()
         for node in self.graph:
-            node_candidate.append(node)
+            if picked_vnf in self.graph[node]['allowed_vnf_list']:
+                node_candidate.append(node)
 
         trial_node = random.choice(node_candidate)    # does not make any sense to the chain configuration
         new_solution = self.find_match(curr_solution, picked_vnf, trial_node)
@@ -283,7 +283,7 @@ class AdvTabu(object):
         return config_cost
 
     # Combine comp cost and config cost - chain aware
-    def pre_comp_config_cost_func(self, nf_index, src_dict, graph):
+    def pre_comp_config_cost_func(self, nf_index, src_dict, node_candidate, graph):
         req_load = 1
         vnf_load = 1
         # comm_cost includes key (target node) and value(comm_cost)
@@ -293,7 +293,7 @@ class AdvTabu(object):
         node_match = OrderedDict()
         load_dict = OrderedDict()
         # Determine a set of possible instances on a visited node
-        for node in graph.keys():
+        for node in node_candidate:
             inst_existed = False
             if graph[node]['instances'].get(nf_index):
                 nf_inst_dict = graph[node]['instances'][nf_index]

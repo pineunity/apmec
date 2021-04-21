@@ -94,7 +94,8 @@ class Tabu(object):
                 # vnf_load = self.vm_cap[nf_index]
                 node_candidate = list()
                 for node in est_graph:
-                    node_candidate.append(node)
+                    if nf_index in est_graph[node]['allowed_vnf_list']:
+                        node_candidate.append(node)
 
                 # Run comp cost function
                 comp_cost_dict, node_match = self.comp_cost_func(nf_index, node_candidate[:], est_graph)
@@ -185,7 +186,8 @@ class Tabu(object):
         node_candidate = list()
         for node in self.graph:
             if node != visited_node:
-                node_candidate.append(node)
+                if picked_vnf in self.graph[node]['allowed_vnf_list']:
+                    node_candidate.append(node)
 
         trial_node = random.choice(node_candidate)
         trial_solution = self.find_temp_solution(curr_solution, picked_vnf, trial_node)
