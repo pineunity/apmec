@@ -226,7 +226,8 @@ class AdvTabu(object):
             if picked_vnf in self.graph[node]['allowed_vnf_list']:
                 node_candidate.append(node)
 
-        print node_candidate
+        if not node_candidate:
+            return None, None, None
         trial_node = random.choice(node_candidate)    # does not make any sense to the chain configuration
         new_solution = self.find_match(curr_solution, picked_vnf, trial_node)
         if new_solution is None:

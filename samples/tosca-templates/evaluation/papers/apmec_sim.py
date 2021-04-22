@@ -133,17 +133,25 @@ while retry < maxRetry:
     for nslen_max in ns_len_list:
         sap_graph = copy.deepcopy(init_graph)
         # NOTE: use script to remove database if some entries are error
-        sap_vm_count = 0
-        sap_req_count = 0
-        sap_system_dict = OrderedDict()
-        sap_req_entry = 0
-        sap_total_cost_entry = list()
-        sap_comp_cost_entry = list()
-        sap_config_cost_entry = list()
-        # jvp_graph = initiate_graph()
-        # jvp_vm_count = 0
-        # jvp_req_count = 0
-        # jvp_system_dict = OrderedDict()
+
+
+        # sap_vm_count = 0
+        # sap_req_count = 0
+        # sap_system_dict = OrderedDict()
+        # sap_req_entry = 0
+        # sap_total_cost_entry = list()
+        # sap_comp_cost_entry = list()
+        # sap_config_cost_entry = list()
+
+        jvp_graph = initiate_graph()
+        jvp_vm_count = 0
+        jvp_req_count = 0
+        jvp_system_dict = OrderedDict()
+        jvp_req_entry = 0
+        jvp_total_cost_entry = list()
+        jvp_comp_cost_entry = list()
+        jvp_config_cost_entry = list()
+
         #
         # greedy_graph = initiate_graph()
         # greedy_vm_count = 0
@@ -161,32 +169,36 @@ while retry < maxRetry:
             # print "=================================="
             # print "Request:", req_list
 
-            sap_total_cost, sap_comp_cost, sap_config_cost, sap_solution = apmec_sap.sap(req_list, sap_graph, sap_system_dict,
-                                                                                     VM_CAP)
-            if sap_total_cost is None:
-                print 'SAP Request is rejected!'
-                break
-
-            # print "Solution:", sap_solution
-            # print "SAP config cost:", sap_config_cost
-            sap_req_entry += 1
-            sap_total_cost_entry.append(sap_total_cost)
-            sap_comp_cost_entry.append(sap_comp_cost)
-            sap_config_cost_entry.append(sap_config_cost)
+            # sap_total_cost, sap_comp_cost, sap_config_cost, sap_solution = apmec_sap.sap(req_list, sap_graph, sap_system_dict,
+            #                                                                          VM_CAP)
+            # if sap_total_cost is None:
+            #     print 'SAP Request is rejected!'
+            #     break
+            #
+            # # print "Solution:", sap_solution
+            # # print "SAP config cost:", sap_config_cost
+            # sap_req_entry += 1
+            # sap_total_cost_entry.append(sap_total_cost)
+            # sap_comp_cost_entry.append(sap_comp_cost)
+            # sap_config_cost_entry.append(sap_config_cost)
 
             # # ========================================================================================
-            # jvp_total_cost, jvp_comp_cost, jvp_config_cost, jvp_solution = apmec_jvp.jvp(req_list, jvp_graph,
-            #                                                                          jvp_system_dict,
-            #                                                                          VM_CAP)
-            # if jvp_total_cost is None:
-            #     print 'JVP Request is rejected!'
-            #     break
-            # # new_vnf_list, reused_vnf_list = jvp.execute()
+            jvp_total_cost, jvp_comp_cost, jvp_config_cost, jvp_solution = apmec_jvp.jvp(req_list, jvp_graph,
+                                                                                     jvp_system_dict,
+                                                                                     VM_CAP)
+            if jvp_total_cost is None:
+                print 'JVP Request is rejected!'
+                break
+            # new_vnf_list, reused_vnf_list = jvp.execute()
             # print "Solution:", jvp_solution
             # print "JVP total cost:", jvp_total_cost
             # print "JVP comp cost:", jvp_comp_cost
             # print "JVP config cost:", jvp_config_cost
-            # jvp_req_count += 1
+            jvp_req_entry += 1
+            jvp_total_cost_entry.append(jvp_total_cost)
+            jvp_comp_cost_entry.append(jvp_comp_cost)
+            jvp_config_cost_entry.append(jvp_config_cost)
+
             #
             # # ========================================================================================
             # base_total_cost, base_comp_cost, base_config_cost, base_solution = apmec_baseline.baseline(req_list, base_graph,
@@ -213,37 +225,68 @@ while retry < maxRetry:
             # print "Greedy comp cost:", greedy_comp_cost
             # print "Greedy config cost:", greedy_config_cost
 
-        if not sap_req_entry:
+        # if not sap_req_entry:
+        #     # retry = retry - 1 if retry else 0
+        #     continue
+
+        if not jvp_req_entry:
             # retry = retry - 1 if retry else 0
             continue
-        if sap_total_cost_results.get(nslen_max) is None:
-            sap_total_cost_results[nslen_max] = list()
-        sap_total_cost_results[nslen_max].append(sum(sap_total_cost_entry)/float(len(sap_total_cost_entry)))
 
-        if sap_comp_cost_results.get(nslen_max) is None:
-            sap_comp_cost_results[nslen_max] = list()
-        sap_comp_cost_results[nslen_max].append(sum(sap_comp_cost_entry)/float(len(sap_comp_cost_entry)))
+        # if sap_total_cost_results.get(nslen_max) is None:
+        #     sap_total_cost_results[nslen_max] = list()
+        # sap_total_cost_results[nslen_max].append(sum(sap_total_cost_entry)/float(len(sap_total_cost_entry)))
+        #
+        # if sap_comp_cost_results.get(nslen_max) is None:
+        #     sap_comp_cost_results[nslen_max] = list()
+        # sap_comp_cost_results[nslen_max].append(sum(sap_comp_cost_entry)/float(len(sap_comp_cost_entry)))
+        #
+        # if sap_config_cost_results.get(nslen_max) is None:
+        #     sap_config_cost_results[nslen_max] = list()
+        # sap_config_cost_results[nslen_max].append(sum(sap_config_cost_entry)/float(len(sap_config_cost_entry)))
+        #
+        # if sap_req_results.get(nslen_max) is None:
+        #     sap_req_results[nslen_max] = list()
+        # sap_req_results[nslen_max].append(sap_req_entry)
 
-        if sap_config_cost_results.get(nslen_max) is None:
-            sap_config_cost_results[nslen_max] = list()
-        sap_config_cost_results[nslen_max].append(sum(sap_config_cost_entry)/float(len(sap_config_cost_entry)))
+        if jvp_total_cost_results.get(nslen_max) is None:
+            jvp_total_cost_results[nslen_max] = list()
+        jvp_total_cost_results[nslen_max].append(sum(jvp_total_cost_entry)/float(len(jvp_total_cost_entry)))
 
-        if sap_req_results.get(nslen_max) is None:
-            sap_req_results[nslen_max] = list()
-        sap_req_results[nslen_max].append(sap_req_entry)
+        if jvp_comp_cost_results.get(nslen_max) is None:
+            jvp_comp_cost_results[nslen_max] = list()
+        jvp_comp_cost_results[nslen_max].append(sum(jvp_comp_cost_entry)/float(len(jvp_comp_cost_entry)))
+
+        if jvp_config_cost_results.get(nslen_max) is None:
+            jvp_config_cost_results[nslen_max] = list()
+        jvp_config_cost_results[nslen_max].append(sum(jvp_config_cost_entry)/float(len(jvp_config_cost_entry)))
+
+        if jvp_req_results.get(nslen_max) is None:
+            jvp_req_results[nslen_max] = list()
+        jvp_req_results[nslen_max].append(jvp_req_entry)
 
     retry += 1
 
-print sap_req_results
-print sap_total_cost_results
-print sap_comp_cost_results
-print sap_config_cost_results
+# print sap_req_results
+# print sap_total_cost_results
+# print sap_comp_cost_results
+# print sap_config_cost_results
+#
+# pickle.dump(sap_total_cost_results, open("sap_total_cost_results.pickle", "wb"))
+# pickle.dump(sap_comp_cost_results, open("sap_comp_cost_results.pickle", "wb"))
+# pickle.dump(sap_config_cost_results, open("sap_config_cost_results.pickle", "wb"))
+# pickle.dump(sap_req_results, open("sap_req_results.pickle", "wb"))
 
-pickle.dump(sap_total_cost_results, open("sap_total_cost_results.pickle", "wb"))
-pickle.dump(sap_comp_cost_results, open("sap_comp_cost_results.pickle", "wb"))
-pickle.dump(sap_config_cost_results, open("sap_config_cost_results.pickle", "wb"))
-pickle.dump(sap_req_results, open("sap_req_results.pickle", "wb"))
 
+print jvp_req_results
+print jvp_total_cost_results
+print jvp_comp_cost_results
+print jvp_config_cost_results
+
+pickle.dump(jvp_total_cost_results, open("jvp_total_cost_results.pickle", "wb"))
+pickle.dump(jvp_comp_cost_results, open("jvp_comp_cost_results.pickle", "wb"))
+pickle.dump(jvp_config_cost_results, open("jvp_config_cost_results.pickle", "wb"))
+pickle.dump(jvp_req_results, open("jvp_req_results.pickle", "wb"))
 
 
 

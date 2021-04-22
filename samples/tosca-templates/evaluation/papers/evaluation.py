@@ -5,7 +5,7 @@ from matplotlib import legend_handler
 import numpy as np
 from confidence import mean_confidence_interval
 
-path = "/home/pine/01-github_tung/0-apmec/00-wallaby/apmec/samples/tosca-templates/evaluation/papers/"
+path = "/home/test/00-OpenStack-repo/00-apmec-server/wallaby/apmec/samples/tosca-templates/evaluation/papers/"
 
 # =======================================================================================
 sap_total_cost_result_dict = pickle.load(open(path + "sap_total_cost_results.pickle", "rb"))
