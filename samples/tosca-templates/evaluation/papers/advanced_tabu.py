@@ -115,7 +115,8 @@ class AdvTabu(object):
                 for node in est_graph:
                     if nf_index in est_graph[node]['allowed_vnf_list']:
                         node_candidate.append(node)
-
+                if not node_candidate:
+                    return None, None
                 # Run comp cost function
                 comp_cost_dict, config_cost_dict, match_dict = self.pre_comp_config_cost_func(nf_index, src_dict, node_candidate[:], est_graph)
 
