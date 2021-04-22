@@ -5,7 +5,7 @@ from matplotlib import legend_handler
 import numpy as np
 from confidence import mean_confidence_interval
 
-path = "/home/test/00-OpenStack-repo/00-apmec-server/wallaby/apmec/samples/tosca-templates/evaluation/papers/"
+path = "/home/pine/01-github_tung/0-apmec/00-wallaby/apmec/samples/tosca-templates/evaluation/papers/"
 
 # =======================================================================================
 sap_total_cost_result_dict = pickle.load(open(path + "sap_total_cost_results.pickle", "rb"))
@@ -47,6 +47,16 @@ for num in sap_total_config_cost_result_dict:
     sap_total_config_cost_result.append(result)
     sap_total_config_cost_err.append(err)
 
+sap_req_result = list()
+sap_req_err = list()
+for num in sap_req_result_dict:
+    result, err = mean_confidence_interval(sap_req_result_dict[num], confidence=0.95)
+    sap_req_result.append(result)
+    sap_req_err.append(err)
+
+
+print sap_total_cost_result
+print sap_total_cost_err
 
 fig = plt.figure(1)
 ax1 = fig.add_subplot(111)
@@ -59,9 +69,10 @@ colors = ['darkorange', 'green', 'firebrick', 'navy', 'blue', 'purple']
 # print len(sap_total_cost_result), len(sap_total_cost_err)
 # markeredgewidth=2,
 index = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-plt.errorbar(index, sap_total_cost_result, yerr=sap_total_cost_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, sap_total_cost_result, yerr=sap_total_cost_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
 # plt.errorbar(index, sap_total_comp_cost_result, yerr=sap_total_comp_cost_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
 # plt.errorbar(index, sap_total_cost_result, yerr=sap_total_cost_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+plt.errorbar(index, sap_req_result, yerr=sap_req_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
 
 
 # plt.legend(handler_map={f1: legend_handler.HandlerErrorbar(xerr_size=5)})

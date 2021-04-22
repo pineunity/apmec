@@ -6,6 +6,7 @@ from numpy import random as random_choice
 import time
 from collections import OrderedDict
 import uuid
+import copy
 
 import apmec_sap
 import apmec_jvp
@@ -125,11 +126,12 @@ base_comp_cost_results = OrderedDict()
 base_config_cost_results = OrderedDict()
 
 ns_len_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-maxRetry = 10
+maxRetry = 50
 retry = 0
 while retry < maxRetry:
-    sap_graph = initiate_graph()
+    init_graph = initiate_graph()
     for nslen_max in ns_len_list:
+        sap_graph = copy.deepcopy(init_graph)
         # NOTE: use script to remove database if some entries are error
         sap_vm_count = 0
         sap_req_count = 0
