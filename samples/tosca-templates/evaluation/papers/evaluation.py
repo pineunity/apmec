@@ -5,7 +5,7 @@ from matplotlib import legend_handler
 import numpy as np
 from confidence import mean_confidence_interval
 
-path = "/home/test/00-OpenStack-repo/00-apmec-server/wallaby/apmec/samples/tosca-templates/evaluation/papers/"
+path = "/home/pine/01-github_tung/0-apmec/00-wallaby/apmec/samples/tosca-templates/evaluation/papers/"
 
 # =======================================================================================
 sap_total_cost_result_dict = pickle.load(open(path + "sap_total_cost_results.pickle", "rb"))
@@ -182,9 +182,9 @@ index = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 # plt.errorbar(index, base_total_config_cost_result, yerr=base_total_config_cost_err, color=colors[1], linewidth=3, marker='x', markersize=15, label=r'Baseline', markeredgewidth=2, capsize=3, fillstyle='none')
 
 
-plt.errorbar(index, sap_req_result, yerr=sap_req_err, color=colors[3], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
-plt.errorbar(index, jvp_req_result, yerr=jvp_req_err, color=colors[0], linewidth=3, marker='x', markersize=15, label=r'JVP', markeredgewidth=2, capsize=3, fillstyle='none')
-plt.errorbar(index, base_req_result, yerr=base_req_err, color=colors[1], linewidth=3, marker='x', markersize=15, label=r'Baseline', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, sap_req_result, yerr=sap_req_err, color=colors[3], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, jvp_req_result, yerr=jvp_req_err, color=colors[0], linewidth=3, marker='x', markersize=15, label=r'JVP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, base_req_result, yerr=base_req_err, color=colors[1], linewidth=3, marker='x', markersize=15, label=r'Baseline', markeredgewidth=2, capsize=3, fillstyle='none')
 
 
 # plt.legend(handler_map={f1: legend_handler.HandlerErrorbar(xerr_size=5)})

@@ -37,6 +37,8 @@ VM_CAP = OrderedDict()
 
 for index, vnf_name in enumerate(SAMPLE.keys()):
     VM_CAP[vnf_name] = random.randint(1, vm_max_capacity)
+    # VM_CAP[vnf_name] = random.randint(1, vm_max_capacity)
+
 
 # NSins_list = [1, 2, 3, 4, 5, 6]
 sys_nf_list = range(0, sys_Nmax)
@@ -77,7 +79,7 @@ def initiate_graph():
         for nfi in sys_nf_list:
             nf_name = "VNF" + str(nfi)
             graph[node]['allowed_vnf_list'].append(nf_name) if random.choice([True, False]) else None
-
+            # graph[node]['allowed_vnf_list'].append(nf_name) if random.choice([True, False]) else None
     return graph
 
 
@@ -104,26 +106,26 @@ def reform_tosca_list(solution):
     return tosca_list
 
 
-sap_req_results = OrderedDict()
-sap_total_cost_results = OrderedDict()
-sap_comp_cost_results = OrderedDict()
-sap_config_cost_results = OrderedDict()
+# sap_req_results = OrderedDict()
+# sap_total_cost_results = OrderedDict()
+# sap_comp_cost_results = OrderedDict()
+# sap_config_cost_results = OrderedDict()
 
 jvp_req_results = OrderedDict()
 jvp_total_cost_results = OrderedDict()
 jvp_comp_cost_results = OrderedDict()
 jvp_config_cost_results = OrderedDict()
-
-
-greedy_req_results = OrderedDict()
-greedy_total_cost_results = OrderedDict()
-greedy_comp_cost_results = OrderedDict()
-greedy_config_cost_results = OrderedDict()
-
-base_req_results = OrderedDict()
-base_total_cost_results = OrderedDict()
-base_comp_cost_results = OrderedDict()
-base_config_cost_results = OrderedDict()
+#
+#
+# greedy_req_results = OrderedDict()
+# greedy_total_cost_results = OrderedDict()
+# greedy_comp_cost_results = OrderedDict()
+# greedy_config_cost_results = OrderedDict()
+#
+# base_req_results = OrderedDict()
+# base_total_cost_results = OrderedDict()
+# base_comp_cost_results = OrderedDict()
+# base_config_cost_results = OrderedDict()
 
 ns_len_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 maxRetry = 50
@@ -131,10 +133,8 @@ retry = 0
 while retry < maxRetry:
     init_graph = initiate_graph()
     for nslen_max in ns_len_list:
-        sap_graph = copy.deepcopy(init_graph)
-        # NOTE: use script to remove database if some entries are error
-
-
+        # sap_graph = copy.deepcopy(init_graph)
+        # # NOTE: use script to remove database if some entries are error
         # sap_vm_count = 0
         # sap_req_count = 0
         # sap_system_dict = OrderedDict()
@@ -143,7 +143,7 @@ while retry < maxRetry:
         # sap_comp_cost_entry = list()
         # sap_config_cost_entry = list()
 
-        jvp_graph = initiate_graph()
+        jvp_graph = copy.deepcopy(init_graph)
         jvp_vm_count = 0
         jvp_req_count = 0
         jvp_system_dict = OrderedDict()
@@ -153,15 +153,19 @@ while retry < maxRetry:
         jvp_config_cost_entry = list()
 
         #
-        # greedy_graph = initiate_graph()
+        # greedy_graph = copy.deepcopy(init_graph)
         # greedy_vm_count = 0
         # greedy_req_count = 0
         # greedy_system_dict = OrderedDict()
         #
-        # base_graph = initiate_graph()
+        # base_graph = copy.deepcopy(init_graph)
         # base_vm_count = 0
         # base_req_count = 0
         # base_system_dict = OrderedDict()
+        # base_req_entry = 0
+        # base_total_cost_entry = list()
+        # base_comp_cost_entry = list()
+        # base_config_cost_entry = list()
 
         cont = True
         while cont:
@@ -211,7 +215,10 @@ while retry < maxRetry:
             # print "Baseeline total cost:", base_total_cost
             # print "Baseline comp cost:", base_comp_cost
             # print "Baseline config cost:", base_config_cost
-            # base_req_count += 1
+            # base_req_entry += 1
+            # base_total_cost_entry.append(base_total_cost)
+            # base_comp_cost_entry.append(base_comp_cost)
+            # base_config_cost_entry.append(base_config_cost)
             #
             # # ========================================================================================
             # greedy_total_cost, greedy_comp_cost, greedy_config_cost, greedy_solution = apmec_greedy.greedy(req_list, greedy_graph,
@@ -232,6 +239,10 @@ while retry < maxRetry:
         if not jvp_req_entry:
             # retry = retry - 1 if retry else 0
             continue
+
+        # if not base_req_entry:
+        #     # retry = retry - 1 if retry else 0
+        #     continue
 
         # if sap_total_cost_results.get(nslen_max) is None:
         #     sap_total_cost_results[nslen_max] = list()
@@ -265,6 +276,22 @@ while retry < maxRetry:
             jvp_req_results[nslen_max] = list()
         jvp_req_results[nslen_max].append(jvp_req_entry)
 
+        # if base_total_cost_results.get(nslen_max) is None:
+        #     base_total_cost_results[nslen_max] = list()
+        # base_total_cost_results[nslen_max].append(sum(base_total_cost_entry)/float(len(base_total_cost_entry)))
+        #
+        # if base_comp_cost_results.get(nslen_max) is None:
+        #     base_comp_cost_results[nslen_max] = list()
+        # base_comp_cost_results[nslen_max].append(sum(base_comp_cost_entry)/float(len(base_comp_cost_entry)))
+        #
+        # if base_config_cost_results.get(nslen_max) is None:
+        #     base_config_cost_results[nslen_max] = list()
+        # base_config_cost_results[nslen_max].append(sum(base_config_cost_entry)/float(len(base_config_cost_entry)))
+        #
+        # if base_req_results.get(nslen_max) is None:
+        #     base_req_results[nslen_max] = list()
+        # base_req_results[nslen_max].append(base_req_entry)
+
     retry += 1
 
 # print sap_req_results
@@ -278,15 +305,21 @@ while retry < maxRetry:
 # pickle.dump(sap_req_results, open("sap_req_results.pickle", "wb"))
 
 
-print jvp_req_results
-print jvp_total_cost_results
-print jvp_comp_cost_results
-print jvp_config_cost_results
+# print jvp_req_results
+# print jvp_total_cost_results
+# print jvp_comp_cost_results
+# print jvp_config_cost_results
 
 pickle.dump(jvp_total_cost_results, open("jvp_total_cost_results.pickle", "wb"))
 pickle.dump(jvp_comp_cost_results, open("jvp_comp_cost_results.pickle", "wb"))
 pickle.dump(jvp_config_cost_results, open("jvp_config_cost_results.pickle", "wb"))
 pickle.dump(jvp_req_results, open("jvp_req_results.pickle", "wb"))
+
+
+# pickle.dump(base_total_cost_results, open("base_total_cost_results.pickle", "wb"))
+# pickle.dump(base_comp_cost_results, open("base_comp_cost_results.pickle", "wb"))
+# pickle.dump(base_config_cost_results, open("base_config_cost_results.pickle", "wb"))
+# pickle.dump(base_req_results, open("base_req_results.pickle", "wb"))
 
 
 
