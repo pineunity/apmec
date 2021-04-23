@@ -14,7 +14,7 @@ sap_total_config_cost_result_dict = pickle.load(open(path + "sap_config_cost_res
 sap_req_result_dict = pickle.load(open(path + "sap_req_results.pickle", "rb"))
 
 
-print sap_total_cost_result_dict, len(sap_total_cost_result_dict)
+# print sap_total_cost_result_dict, len(sap_total_cost_result_dict)
 
 sap_total_cost_result = list()
 sap_total_cost_err = list()
@@ -55,8 +55,106 @@ for num in sap_req_result_dict:
     sap_req_err.append(err)
 
 
-print sap_total_cost_result
-print sap_total_cost_err
+# print sap_total_cost_result
+# print sap_total_cost_err
+
+# =============================================================
+
+jvp_total_cost_result_dict = pickle.load(open(path + "jvp_total_cost_results.pickle", "rb"))
+jvp_total_comp_result_dict = pickle.load(open(path + "jvp_comp_cost_results.pickle", "rb"))
+jvp_total_config_cost_result_dict = pickle.load(open(path + "jvp_config_cost_results.pickle", "rb"))
+jvp_req_result_dict = pickle.load(open(path + "jvp_req_results.pickle", "rb"))
+
+
+# print jvp_total_cost_result_dict, len(jvp_total_cost_result_dict)
+
+jvp_total_cost_result = list()
+jvp_total_cost_err = list()
+
+for num in jvp_total_cost_result_dict:
+    result, err = mean_confidence_interval(jvp_total_cost_result_dict[num], confidence=0.95)
+    jvp_total_cost_result.append(result)
+    jvp_total_cost_err.append(err)
+
+jvp_total_requests_result = list()
+jvp_total_requests_err = list()
+
+for num in jvp_req_result_dict:
+    result, err = mean_confidence_interval(jvp_req_result_dict[num], confidence=0.95)
+    jvp_total_requests_result.append(result)
+    jvp_total_requests_err.append(err)
+
+jvp_total_comp_cost_result = list()
+jvp_total_comp_cost_err = list()
+
+for num in jvp_total_comp_result_dict:
+    result, err = mean_confidence_interval(jvp_total_comp_result_dict[num], confidence=0.95)
+    jvp_total_comp_cost_result.append(result)
+    jvp_total_comp_cost_err.append(err)
+
+jvp_total_config_cost_result = list()
+jvp_total_config_cost_err = list()
+for num in jvp_total_config_cost_result_dict:
+    result, err = mean_confidence_interval(jvp_total_config_cost_result_dict[num], confidence=0.95)
+    jvp_total_config_cost_result.append(result)
+    jvp_total_config_cost_err.append(err)
+
+jvp_req_result = list()
+jvp_req_err = list()
+for num in jvp_req_result_dict:
+    result, err = mean_confidence_interval(jvp_req_result_dict[num], confidence=0.95)
+    jvp_req_result.append(result)
+    jvp_req_err.append(err)
+
+# ============================================================================
+
+
+base_total_cost_result_dict = pickle.load(open(path + "base_total_cost_results.pickle", "rb"))
+base_total_comp_result_dict = pickle.load(open(path + "base_comp_cost_results.pickle", "rb"))
+base_total_config_cost_result_dict = pickle.load(open(path + "base_config_cost_results.pickle", "rb"))
+base_req_result_dict = pickle.load(open(path + "base_req_results.pickle", "rb"))
+
+
+# print base_total_cost_result_dict, len(base_total_cost_result_dict)
+
+base_total_cost_result = list()
+base_total_cost_err = list()
+
+for num in base_total_cost_result_dict:
+    result, err = mean_confidence_interval(base_total_cost_result_dict[num], confidence=0.95)
+    base_total_cost_result.append(result)
+    base_total_cost_err.append(err)
+
+base_total_requests_result = list()
+base_total_requests_err = list()
+
+for num in base_req_result_dict:
+    result, err = mean_confidence_interval(base_req_result_dict[num], confidence=0.95)
+    base_total_requests_result.append(result)
+    base_total_requests_err.append(err)
+
+base_total_comp_cost_result = list()
+base_total_comp_cost_err = list()
+
+for num in base_total_comp_result_dict:
+    result, err = mean_confidence_interval(base_total_comp_result_dict[num], confidence=0.95)
+    base_total_comp_cost_result.append(result)
+    base_total_comp_cost_err.append(err)
+
+base_total_config_cost_result = list()
+base_total_config_cost_err = list()
+for num in base_total_config_cost_result_dict:
+    result, err = mean_confidence_interval(base_total_config_cost_result_dict[num], confidence=0.95)
+    base_total_config_cost_result.append(result)
+    base_total_config_cost_err.append(err)
+
+base_req_result = list()
+base_req_err = list()
+for num in base_req_result_dict:
+    result, err = mean_confidence_interval(base_req_result_dict[num], confidence=0.95)
+    base_req_result.append(result)
+    base_req_err.append(err)
+
 
 fig = plt.figure(1)
 ax1 = fig.add_subplot(111)
@@ -69,10 +167,24 @@ colors = ['darkorange', 'green', 'firebrick', 'navy', 'blue', 'purple']
 # print len(sap_total_cost_result), len(sap_total_cost_err)
 # markeredgewidth=2,
 index = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-# plt.errorbar(index, sap_total_cost_result, yerr=sap_total_cost_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
-# plt.errorbar(index, sap_total_comp_cost_result, yerr=sap_total_comp_cost_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
-# plt.errorbar(index, sap_total_cost_result, yerr=sap_total_cost_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
-plt.errorbar(index, sap_req_result, yerr=sap_req_err, color=colors[4], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, sap_total_cost_result, yerr=sap_total_cost_err, color=colors[3], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, jvp_total_cost_result, yerr=jvp_total_cost_err, color=colors[0], linewidth=3, marker='x', markersize=15, label=r'JVP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, base_total_cost_result, yerr=base_total_cost_err, color=colors[1], linewidth=3, marker='x', markersize=15, label=r'Baseline', markeredgewidth=2, capsize=3, fillstyle='none')
+
+
+# plt.errorbar(index, sap_total_comp_cost_result, yerr=sap_total_comp_cost_err, color=colors[3], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, jvp_total_comp_cost_result, yerr=jvp_total_comp_cost_err, color=colors[0], linewidth=3, marker='x', markersize=15, label=r'JVP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, base_total_comp_cost_result, yerr=base_total_comp_cost_err, color=colors[1], linewidth=3, marker='x', markersize=15, label=r'Baseline', markeredgewidth=2, capsize=3, fillstyle='none')
+
+
+# plt.errorbar(index, sap_total_config_cost_result, yerr=sap_total_config_cost_err, color=colors[3], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, jvp_total_config_cost_result, yerr=jvp_total_config_cost_err, color=colors[0], linewidth=3, marker='x', markersize=15, label=r'JVP', markeredgewidth=2, capsize=3, fillstyle='none')
+# plt.errorbar(index, base_total_config_cost_result, yerr=base_total_config_cost_err, color=colors[1], linewidth=3, marker='x', markersize=15, label=r'Baseline', markeredgewidth=2, capsize=3, fillstyle='none')
+
+
+plt.errorbar(index, sap_req_result, yerr=sap_req_err, color=colors[3], linewidth=3, marker='x', markersize=15, label=r'SAP', markeredgewidth=2, capsize=3, fillstyle='none')
+plt.errorbar(index, jvp_req_result, yerr=jvp_req_err, color=colors[0], linewidth=3, marker='x', markersize=15, label=r'JVP', markeredgewidth=2, capsize=3, fillstyle='none')
+plt.errorbar(index, base_req_result, yerr=base_req_err, color=colors[1], linewidth=3, marker='x', markersize=15, label=r'Baseline', markeredgewidth=2, capsize=3, fillstyle='none')
 
 
 # plt.legend(handler_map={f1: legend_handler.HandlerErrorbar(xerr_size=5)})
